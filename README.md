@@ -1,4 +1,3 @@
-framed
+FRAMED
 ======
-
-FRAMED - FRAmework for Metabolic Engineering and Design
+FRAmework for Metabolic Engineering and Design
