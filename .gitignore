@@ -1,2 +1,10 @@
 
 .DS_Store
+
+.project
+
+.pydevproject
+
+*.pyc
+
+*.log
