@@ -3,7 +3,7 @@ Implementation of a Gurobi based solver interface.
 
 '''
 from solver import Solver, Solution
-from gurobipy import Model, GRB, quicksum
+from gurobipy import Model as GurobiModel, GRB, quicksum
 
 class GurobiSolver(Solver):
     """ Implements the solver interface using gurobipy. """
@@ -15,7 +15,7 @@ class GurobiSolver(Solver):
     def build_lp(self, model):
         """ Implements method from Solver class. """
         
-        problem = Model()
+        problem = GurobiModel()
         
         #create variables
         lpvars = {r_id: problem.addVar(name=r_id,
@@ -61,10 +61,10 @@ class GurobiSolver(Solver):
         
         if problem.status == GRB.OPTIMAL:
             fobj = problem.ObjVal
-            result = [var.X for var in problem.getVars()]
+            values = [var.X for var in problem.getVars()]
             shadow_prices = [constr.Pi for constr in problem.getConstrs()] if get_shadow_prices else None
             reduced_costs = [var.RC for var in problem.getVars()] if get_reduced_costs else None
-            solution = Solution(True, fobj, result, None, shadow_prices, reduced_costs)
+            solution = Solution(True, fobj, values, None, shadow_prices, reduced_costs)
         else:
             solution = Solution()
         

@@ -72,10 +72,10 @@ class PuLPSolver(Solver):
 #                result = OrderedDict([(r_id, lpvars[r_id].varValue) for r_id in lpvars])
 #                shadow_prices = OrderedDict([(m_id, lpcons[m_id].pi) for m_id in lpcons]) if hasattr(lpcons.items()[0], 'pi') else None
 #                reduced_costs = OrderedDict([(r_id, lpvars[r_id].dj) for r_id in lpvars]) if hasattr(lpvars.items()[0], 'dj') else None
-                result = [lpvar.varValue for lpvar in lpvars.values()]
+                values = [lpvar.varValue for lpvar in lpvars.values()]
                 shadow_prices = [cons.pi for cons in lpcons.values()] if get_shadow_prices and hasattr(lpcons.values()[0], 'pi') else None
                 reduced_costs = [lpvar.dj for lpvar in lpvars.values()] if get_reduced_costs and hasattr(lpvars.values()[0], 'dj') else None
-                solution = Solution(True, fobj, result, msg, shadow_prices, reduced_costs)
+                solution = Solution(True, fobj, values, msg, shadow_prices, reduced_costs)
             else:
                 solution = Solution(msg=LpStatus[problem.status])
         
