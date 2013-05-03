@@ -1,10 +1,10 @@
 '''
 Implementation a of PuLP based solver interface.
 '''
+from .solver import Solver, Solution
 
 from pulp import LpProblem, LpMaximize, LpVariable, lpSum, LpStatus, LpStatusOptimal
 from pulp.solvers import GUROBI, GUROBI_CMD, CPLEX_DLL, CPLEX_CMD, GLPK, GLPK_CMD
-from solver import Solver, Solution
 
 SELECTED_SOLVER = None
 preference_order = [GUROBI, GUROBI_CMD, CPLEX_DLL, CPLEX_CMD, GLPK, GLPK_CMD]

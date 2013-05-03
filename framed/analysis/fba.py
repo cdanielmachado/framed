@@ -1,5 +1,5 @@
 from collections import OrderedDict
-from solvers import solver_instance
+from ..solvers import solver_instance
 
 def FBA(model, target=None, maximize=True):
     """ Run an FBA simulation:

@@ -3,9 +3,9 @@ Unit testing module.
 '''
 import unittest
 
-from io_utils.sbml import load_sbml_model, save_sbml_model, CONSTRAINT_BASED, GPR_CONSTRAINED
-from core.fixes import fix_bigg_model
-from analysis.fba import FBA, FVA
+from framed.io_utils.sbml import load_sbml_model, save_sbml_model, CONSTRAINT_BASED, GPR_CONSTRAINED
+from framed.core.fixes import fix_bigg_model
+from framed.analysis.fba import FBA, FVA
 
 SMALL_TEST_MODEL = '../misc/ecoli_core_model.xml'
 TEST_MODEL_COPY = '../misc/model_copy.xml'

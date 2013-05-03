@@ -3,7 +3,7 @@
 TODO: Import/export of bounds follows the BiGG model format,
 consider changing to the new SBML fbc package.
 """
-from core.models import StoichiometricModel, ConstraintBasedModel, GPRConstrainedModel, Metabolite, Reaction, Gene
+from ..core.models import StoichiometricModel, ConstraintBasedModel, GPRConstrainedModel, Metabolite, Reaction, Gene
 
 from libsbml import SBMLReader, SBMLWriter, SBMLDocument 
 
