@@ -103,8 +103,23 @@ class StoichiometricModel:
     def full_matrix(self):
         return [[self.stoichiometry[(m_id, r_id)] if (m_id, r_id) in self.stoichiometry else 0
                  for r_id in self.reactions]
-                for m_id in self.metabolites]
+                for m_id in self.metabolites]        
     
+    def __repr__(self):
+        return '\n'.join([self.print_reaction(r_id) for r_id in self.reactions])
+    
+    def print_reaction(self, r_id):
+        res = r_id + ': '
+        res += ' + '.join([m_id if coeff == -1.0 else str(-coeff) + ' ' + m_id
+                         for (m_id, r_id2), coeff in self.stoichiometry.items()
+                         if r_id2 == r_id and coeff < 0])
+        res += ' <-> ' if self.reactions[r_id].reversible else ' --> '
+        res += ' + '.join([m_id if coeff == 1.0 else str(coeff) + ' ' + m_id
+                         for (m_id, r_id2), coeff in self.stoichiometry.items()
+                         if r_id2 == r_id and coeff > 0])
+        return res   
+            
+             
 class ConstraintBasedModel(StoichiometricModel):
     """ Base class for constraint-based models.
     Extends StoichiometricModel with flux bounds
@@ -131,6 +146,14 @@ class ConstraintBasedModel(StoichiometricModel):
         for r_id in id_list:
             del self.bounds[r_id]
 
+    def print_reaction(self, r_id):
+        res = StoichiometricModel.print_reaction(self, r_id)
+        lb, ub = self.bounds[r_id]
+        rev = self.reactions[r_id].reversible
+        if lb != None and (rev or lb != 0.0) or ub != None:
+            res += ' [{}, {}]'.format(lb if lb != None else '',
+                                      ub if ub != None else '')
+        return res 
 
 
 class GPRConstrainedModel(ConstraintBasedModel):
