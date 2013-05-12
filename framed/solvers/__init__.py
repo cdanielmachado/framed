@@ -7,13 +7,13 @@ from warnings import warn
 solvers = dict()
 
 try:
-    from pulp_wrapper import PuLPSolver
+    from .pulp_wrapper import PuLPSolver
     solvers['pulp'] = PuLPSolver
 except:
     pass
 
 try:
-    from gurobi_wrapper import GurobiSolver
+    from .gurobi_wrapper import GurobiSolver
     solvers['gurobi'] = GurobiSolver
 except:
     pass

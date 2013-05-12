@@ -2,7 +2,7 @@
 Implementation of a Gurobi based solver interface.
 
 '''
-from solver import Solver, Solution
+from .solver import Solver, Solution
 from gurobipy import Model as GurobiModel, GRB, quicksum
 
 class GurobiSolver(Solver):
