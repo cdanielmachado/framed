@@ -3,7 +3,7 @@ __author__ = 'kaizhuang'
 import unittest
 
 from framed.io_utils.plaintext import *
-from framed.bioreactor.mdfba import *
+from framed.bioreactor.dymmm import *
 from framed.core.fixes import fix_bigg_model
 
 PLAIN_TEXT_MODEL = 'fixtures/ec_core_model.txt'
@@ -34,9 +34,69 @@ class OrganismTest(unittest.TestCase):
         del self.ec_core_model
 
 
+class EnvironmentTest(unittest.TestCase):
+
+    def setUp(self):
+        self.ec_core_model = read_model_from_file(PLAIN_TEXT_MODEL, kind=CONSTRAINT_BASED)
+        fix_bigg_model(self.ec_core_model)
+        self.o1 = Organism(self.ec_core_model)
+        self.o2 = Organism(self.ec_core_model)
+        self.env = Environment()
+
+    def testInitialization(self):
+        assert type(self.env) == Environment
+
+    def test_add_organisms(self):
+        self.env.add_organism(self.o1)
+        assert self.env.organisms == [self.o1]
+        self.env.add_organism(self.o2)
+        assert self.env.organisms == [self.o1, self.o2]
+        self.env.add_organisms([self.o1, self.o2])
+        assert self.env.organisms == [self.o1, self.o2, self.o1, self.o2]
+
+    def test_add_metabolites(self):
+        self.env.add_metabolite('EX_glc(e)')
+        assert self.env.metabolites == ['EX_glc(e)']
+        self.env.add_metabolites(['EX_ac(e)', 'EX_o2(e)'])
+        assert self.env.metabolites == ['EX_glc(e)', 'EX_ac(e)', 'EX_o2(e)']
+
+    def tearDown(self):
+        del self.ec_core_model
+        del self.o1
+        del self.o2
+        del self.env
+
+
+class BioreactorTest(unittest.TestCase):
+
+    def setUp(self):
+        self.ec_core_model = read_model_from_file(PLAIN_TEXT_MODEL, kind=CONSTRAINT_BASED)
+        self.o1 = Organism(self.ec_core_model)
+        self.o2 = Organism(self.ec_core_model)
+        self.br = Bioreactor([self.o1, self.o2], ['EX_glc(e)', 'EX_ac(e)', 'EX_o2(e)'])
+
+    def testInitialization(self):
+        assert self.br.organisms == [self.o1, self.o2]
+        assert self.br.metabolites == ['EX_glc(e)', 'EX_ac(e)', 'EX_o2(e)']
+
+    def test_set_Xfeed(self):
+        self.br.set_Xfeed([1, 1])
+        assert(self.br.Xfeed == [1, 1])
+        self.assertRaises(AssertionError, self.br.set_Xfeed, [1, 2, 3])
+
+    def test_setSfeed(self):
+        self.br.set_Sfeed([1, 1, 1])
+        assert(self.br.Sfeed == [1, 1, 1])
+        self.assertRaises(AssertionError, self.br.set_Sfeed, [1, 2])
+
+    def tearDown(self):
+        del self.br
+        del self.o1
+        del self.o2
+
+
 def suite():
-    tests = [OrganismTest]
-    #tests = [PlainTextIOTest]
+    tests = [OrganismTest, EnvironmentTest, BioreactorTest]
 
     test_suite = unittest.TestSuite()
     for test in tests:
