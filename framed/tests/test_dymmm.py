@@ -6,7 +6,8 @@ from framed.io_utils.plaintext import *
 from framed.bioreactor.dymmm import *
 from framed.analysis.fba import FBA, detect_biomass_reaction
 from framed.core.fixes import fix_bigg_model
-
+from scipy.integrate import ode
+from numpy import linspace
 
 PLAIN_TEXT_MODEL = 'fixtures/ec_core_model.txt'
 
@@ -115,8 +116,41 @@ class BioreactorTest(unittest.TestCase):
         del self.o1
         del self.o2
 
+
+class MultispeciesTest(unittest.TestCase):
+
+    def setUp(self):
+        self.ec_core_model = read_model_from_file(PLAIN_TEXT_MODEL, kind=CONSTRAINT_BASED)
+        self.o1 = GlucoseUser(self.ec_core_model)
+        self.o2 = AcetateUser(self.ec_core_model)
+
+        self.br = Bioreactor([self.o1, self.o2],['R_EX_glc_e(e)', 'EX_ac(R_EX_ac_e)'])
+
+    def test_2_organisms(self):
+        time = linspace(0, 10, 101)
+
+        f = self.br._ode_RHS
+        y0 = [1, 0.01, 0.01, 10, 0]
+        t0 = 0
+        tf = 10
+        dt = 0.1
+
+        dymmm_ode = ode(f).set_integrator('dopri5')
+        dymmm_ode.set_initial_value(y0, t0)
+
+        while dymmm_ode.successful() and dymmm_ode.t < tf:
+            dymmm_ode.integrate(dymmm_ode.t + dt)
+            print dymmm_ode.t, dymmm_ode.y
+
+
+
+    def tearDown(self):
+        del self.br
+        del self.o1
+        del self.o2
+
 def suite():
-    tests = [OrganismTest, EnvironmentTest, BioreactorTest]
+    tests = [OrganismTest, EnvironmentTest, BioreactorTest, MultispeciesTest]
 
     test_suite = unittest.TestSuite()
     for test in tests:
@@ -131,18 +165,34 @@ def updateOrganism(self):
     return self
 
 
-def updateEcoli(self):
+class GlucoseUser(Organism):
     """
-    fixture function for testing Organism.update()
+    Fixture class for testing dynamic simulations
     """
-    BR = self.environment
+    def update(self):
+        BR = self.environment
 
-    rid = BR.metabolites.index('R_EX_glc_e')
-    vlb_glc = -10 * BR.S[rid] / (BR.S[id] + 1)
-    self.model.bounds['R_EX_glc_e'] = (vlb_glc, 0)
+        rid = BR.metabolites.index('R_EX_glc_e')
+        vlb_glc = -10 * BR.S[rid] / (BR.S[id] + 1)
+        self.model.bounds['R_EX_glc_e'] = (vlb_glc, 0)
 
-    #rid = BR.metabolites.index('R_EX_ac_e')
-    self.model.bounds['R_EX_ac_e'] = (0, None)
+        #rid = BR.metabolites.index('R_EX_ac_e')
+        self.model.bounds['R_EX_ac_e'] = (0, None)
+
+
+class AcetateUser(Organism):
+    """
+    Fixture class for testing dynamic simulations
+    """
+    def update(self):
+        BR = self.environment
+
+        #rid = BR.metabolites.index('R_EX_glc_e')
+        self.model.bounds['R_EX_glc_e'] = (0, 0)
+
+        rid = BR.metabolites.index('R_EX_ac_e')
+        vlb_ac = -10 * BR.S[rid] / (BR.S[id] + 1)
+        self.model.bounds['R_EX_ac_e'] = (vlb_ac, None)
 
 
 if __name__ == "__main__":
