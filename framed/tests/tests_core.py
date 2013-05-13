@@ -8,9 +8,9 @@ from framed.core.fixes import fix_bigg_model
 from framed.analysis.fba import FBA, FVA
 from framed.io_utils.plaintext import read_model_from_file, write_model_to_file
 
-SMALL_TEST_MODEL = '../misc/ecoli_core_model.xml'
-TEST_MODEL_COPY = '../misc/model_copy.xml'
-PLAIN_TEXT_COPY = '../misc/model_copy.txt'
+SMALL_TEST_MODEL = '../../misc/ecoli_core_model.xml'
+TEST_MODEL_COPY = '../../misc/model_copy.xml'
+PLAIN_TEXT_COPY = '../../misc/model_copy.txt'
 GROWTH_RATE = 0.8739
 
 class SBMLTest(unittest.TestCase):
