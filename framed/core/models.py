@@ -128,14 +128,22 @@ class ConstraintBasedModel(StoichiometricModel):
         StoichiometricModel.__init__(self, model_id)
         self.bounds = OrderedDict()
     
-    def add_bounds(self, bounds_list):
+    def set_bounds(self, bounds_list):
         for r_id, lb, ub in bounds_list:
-            self.add_flux_bounds(r_id, lb, ub)
+            self.set_flux_bounds(r_id, lb, ub)
     
-    def add_flux_bounds(self, reaction_id, lb=None, ub=None):
+    def set_flux_bounds(self, reaction_id, lb=None, ub=None):
         if reaction_id in self.reactions:
             self.bounds[reaction_id] = (lb, ub)
             
+    def set_lower_bound(self, reaction_id, lb=None):
+        if reaction_id in self.reactions:
+            self.bounds[reaction_id][0] = lb
+                
+    def set_upper_bound(self, reaction_id, ub=None):
+        if reaction_id in self.reactions:
+            self.bounds[reaction_id][1] = ub
+
     def add_reaction(self, reaction, lb=None, ub=None):
         StoichiometricModel.add_reaction(self, reaction)
         self.bounds[reaction.id] = (lb, ub)

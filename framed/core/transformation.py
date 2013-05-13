@@ -32,8 +32,8 @@ def make_irreversible(model):
             
             if isinstance(model, ConstraintBasedModel):
                 lb, ub = model.bounds[r_id]
-                model.add_flux_bounds(fwd_id, 0, ub)
-                model.add_flux_bounds(bwd_id, 0, -lb if lb != None else None)
+                model.set_flux_bounds(fwd_id, 0, ub)
+                model.set_flux_bounds(bwd_id, 0, -lb if lb != None else None)
             
             if isinstance(model, GPRConstrainedModel):
                 model.add_rule(fwd_id, model.rules[r_id])
