@@ -4,7 +4,9 @@ import unittest
 
 from framed.io_utils.plaintext import *
 from framed.bioreactor.dymmm import *
+from framed.analysis.fba import FBA, detect_biomass_reaction
 from framed.core.fixes import fix_bigg_model
+
 
 PLAIN_TEXT_MODEL = 'fixtures/ec_core_model.txt'
 
@@ -29,6 +31,25 @@ class OrganismTest(unittest.TestCase):
         self.assertNotEqual(self.ec_core_model.bounds['R_EX_glc_e'], self.ec1.model.bounds['R_EX_glc_e'])
         self.ec1.model.bounds['R_EX_glc_e'] = (-15, 0)
         self.assertEqual(self.ec_core_model.bounds['R_EX_glc_e'], self.ec1.model.bounds['R_EX_glc_e'])
+
+    def testUpdate(self):
+        self.assertRaises(NotImplementedError, self.ec1.update)
+        self.ec1.update = updateOrganism
+        self.assertTrue(self.ec1.update() == 111)
+
+    def testFBA(self):
+        correct_solution = FBA(self.ec_core_model)
+
+        solution1 = FBA(self.ec1.model)
+        self.assertTrue(solution1.status)
+        self.assertEqual(correct_solution.fobj, solution1.fobj)
+
+        solver = solver_instance()
+        solver.build_lp(self.ec1.model)
+        obj = {detect_biomass_reaction(self.ec1.model): 1}
+        solution2 = solver.solve_lp(obj)
+        self.assertTrue(solution2.status)
+        self.assertEqual(correct_solution.fobj, solution2.fobj)
 
     def tearDown(self):
         del self.ec_core_model
@@ -93,6 +114,10 @@ class BioreactorTest(unittest.TestCase):
         del self.br
         del self.o1
         del self.o2
+
+
+def updateOrganism():
+    return 111
 
 
 def suite():

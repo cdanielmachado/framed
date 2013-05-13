@@ -8,6 +8,7 @@ TODO: rewrite the _ode_RHS method in Bioreactor
 
 from copy import deepcopy
 import numpy
+from ..solvers import solver_instance
 
 class Organism(object):
     """
@@ -21,7 +22,7 @@ class Organism(object):
         self.model = deepcopy(model)
         self.environment = None  # upon initiation, the organism is not placed in any environment
 
-    def update(self, update_function=None):
+    def update(self):
         """
         This method updates the states of the organism.
         the organism's response to changes in the environmental conditions should be described here
@@ -48,7 +49,7 @@ class Environment(object):
 
         ** this is an abstract method, must be implemented for specific environments **
         """
-        raise NotImplementedError
+        raise NotImplementedError("update method for individual organisms must be implemented for DyMMM to work")
 
     def ode_RHS(self, y, t):
         """
@@ -166,6 +167,23 @@ class Bioreactor(Environment):
         i = 0
         for organism in self.organisms:
             organism.update()       # updates the constraints of the organism model based on environment conditions
+
+            if not target:
+                target = detect_biomass_reaction(model)
+            direction = 1 if maximize else -1
+            objective = {target : direction}
+            if t == 0:
+                organism.solver = solver_instance()
+                organism.solver.build_lp(organism.model)
+                solution = organism.solver.solve_lp(objective)
+
+
+            # create fba problem
+
+            organism.model
+            # solve it for this iteration
+
+
             organism.optimize(solver='cplex')
             if organism.solution.status is 'optimal':
                 mu[i] = organism.solution.f
