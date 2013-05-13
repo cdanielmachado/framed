@@ -35,7 +35,7 @@ class OrganismTest(unittest.TestCase):
     def testUpdate(self):
         self.assertRaises(NotImplementedError, self.ec1.update)
         self.ec1.update = updateOrganism
-        self.assertTrue(self.ec1.update() == 111)
+        self.assertTrue(self.ec1.update(self.ec1) == self.ec1)
 
     def testFBA(self):
         correct_solution = FBA(self.ec_core_model)
@@ -115,11 +115,6 @@ class BioreactorTest(unittest.TestCase):
         del self.o1
         del self.o2
 
-
-def updateOrganism():
-    return 111
-
-
 def suite():
     tests = [OrganismTest, EnvironmentTest, BioreactorTest]
 
@@ -127,6 +122,28 @@ def suite():
     for test in tests:
         test_suite.addTest(unittest.makeSuite(test))
     return test_suite
+
+
+def updateOrganism(self):
+    """
+    fixture function for testing Organism.update()
+    """
+    return self
+
+
+def updateEcoli(self):
+    """
+    fixture function for testing Organism.update()
+    """
+    BR = self.environment
+
+    rid = BR.metabolites.index('R_EX_glc_e')
+    vlb_glc = -10 * BR.S[rid] / (BR.S[id] + 1)
+    self.model.bounds['R_EX_glc_e'] = (vlb_glc, 0)
+
+    #rid = BR.metabolites.index('R_EX_ac_e')
+    self.model.bounds['R_EX_ac_e'] = (0, None)
+
 
 if __name__ == "__main__":
     runner = unittest.TextTestRunner(verbosity=2)
