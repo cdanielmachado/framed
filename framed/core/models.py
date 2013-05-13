@@ -1,6 +1,5 @@
 """ This module defines base classes for metabolic modeling.
 
-TODO: Add pretty printing
 TODO: Add support for compartments
 TODO: Add self consistency check (e.g: no disconnected components)
 TODO: Add gpr parsing
