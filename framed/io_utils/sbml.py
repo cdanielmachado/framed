@@ -80,7 +80,7 @@ def _load_constraintbased_model(sbml_model):
     model.add_metabolites(_load_metabolites(sbml_model))
     model.add_reactions(_load_reactions(sbml_model))
     model.add_stoichiometry(_load_stoichiometry(sbml_model))
-    model.add_bounds(_load_bounds(sbml_model))
+    model.set_bounds(_load_bounds(sbml_model))
     return model
 
 def _load_bounds(sbml_model):
@@ -96,7 +96,7 @@ def _load_gprconstrained_model(sbml_model):
     model.add_metabolites(_load_metabolites(sbml_model))
     model.add_reactions(_load_reactions(sbml_model))
     model.add_stoichiometry(_load_stoichiometry(sbml_model))
-    model.add_bounds(_load_bounds(sbml_model))
+    model.set_bounds(_load_bounds(sbml_model))
     genes, rules = _load_gpr(sbml_model)
     model.add_genes(genes)
     model.add_rules(rules)
