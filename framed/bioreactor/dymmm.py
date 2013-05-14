@@ -9,6 +9,7 @@ TODO: rewrite the _ode_RHS method in Bioreactor
 from copy import deepcopy
 import numpy
 from ..solvers import solver_instance
+from ..analysis.fba import detect_biomass_reaction
 
 class Organism(object):
     """
@@ -18,9 +19,14 @@ class Organism(object):
     :param environment: a reference to which environment the organism is placed in
     """
 
-    def __init__(self, model):
+    def __init__(self, model, fba_objective=None):
         self.model = deepcopy(model)
         self.environment = None  # upon initiation, the organism is not placed in any environment
+
+        if fba_objective:
+            self.fba_objective = fba_objective
+        else:
+            self.fba_objective = {detect_biomass_reaction(model): 1}
 
     def update(self):
         """
@@ -168,29 +174,17 @@ class Bioreactor(Environment):
         for organism in self.organisms:
             organism.update()       # updates the constraints of the organism model based on environment conditions
 
-            if not target:
-                target = detect_biomass_reaction(model)
-            direction = 1 if maximize else -1
-            objective = {target : direction}
             if t == 0:
                 organism.solver = solver_instance()
                 organism.solver.build_lp(organism.model)
-                solution = organism.solver.solve_lp(objective)
+            solution = organism.solver.solve_lp(organism.fba_objective)
 
-
-            # create fba problem
-
-            organism.model
-            # solve it for this iteration
-
-
-            organism.optimize(solver='cplex')
-            if organism.solution.status is 'optimal':
-                mu[i] = organism.solution.f
+            if solution.status:
+                mu[i] = solution.fobj
                 j = 0
                 for metabolite in self.metabolites:
-                    if metabolite in organism.solution.x_dict.keys():
-                        vs[i, j] = organism.solution.x_dict[metabolite]
+                    if metabolite in organism.model.reactions.keys():
+                        vs[i, j] = solution.values[organism.model.reactions.keys().index(metabolite)]
                     j += 1
             else:
                 mu[i] = 0

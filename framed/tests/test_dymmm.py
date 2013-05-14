@@ -26,6 +26,7 @@ class OrganismTest(unittest.TestCase):
         self.assertListEqual(self.ec_core_model.reactions.keys(), self.ec1.model.reactions.keys())
         self.assertDictEqual(self.ec_core_model.stoichiometry, self.ec1.model.stoichiometry)
         self.assertDictEqual(self.ec_core_model.bounds, self.ec1.model.bounds)
+        self.assertEqual(self.ec1.fba_objective, {'R_Biomass_Ecoli_core_w_GAM': 1})
 
     def testBoundChanges(self):
         self.ec_core_model.bounds['R_EX_glc_e'] = (-15, 0)
@@ -124,7 +125,12 @@ class MultispeciesTest(unittest.TestCase):
         self.o1 = GlucoseUser(self.ec_core_model)
         self.o2 = AcetateUser(self.ec_core_model)
 
-        self.br = Bioreactor([self.o1, self.o2],['R_EX_glc_e(e)', 'EX_ac(R_EX_ac_e)'])
+        self.br = Bioreactor([self.o1, self.o2], ['R_EX_glc_e', 'R_EX_ac_e'])
+
+    def test_setUp(self):
+        self.assertEqual(self.o1.model.id, 'ec_core_model')
+        self.assertEqual(self.o1.fba_objective, {'R_Biomass_Ecoli_core_w_GAM': 1})
+
 
     def test_2_organisms(self):
         time = linspace(0, 10, 101)
@@ -141,7 +147,6 @@ class MultispeciesTest(unittest.TestCase):
         while dymmm_ode.successful() and dymmm_ode.t < tf:
             dymmm_ode.integrate(dymmm_ode.t + dt)
             print dymmm_ode.t, dymmm_ode.y
-
 
 
     def tearDown(self):
@@ -169,11 +174,12 @@ class GlucoseUser(Organism):
     """
     Fixture class for testing dynamic simulations
     """
+
     def update(self):
         BR = self.environment
 
         rid = BR.metabolites.index('R_EX_glc_e')
-        vlb_glc = -10 * BR.S[rid] / (BR.S[id] + 1)
+        vlb_glc = -10 * BR.S[rid] / (BR.S[rid] + 1)
         self.model.bounds['R_EX_glc_e'] = (vlb_glc, 0)
 
         #rid = BR.metabolites.index('R_EX_ac_e')
@@ -191,7 +197,7 @@ class AcetateUser(Organism):
         self.model.bounds['R_EX_glc_e'] = (0, 0)
 
         rid = BR.metabolites.index('R_EX_ac_e')
-        vlb_ac = -10 * BR.S[rid] / (BR.S[id] + 1)
+        vlb_ac = -10 * BR.S[rid] / (BR.S[rid] + 1)
         self.model.bounds['R_EX_ac_e'] = (vlb_ac, None)
 
 
