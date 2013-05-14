@@ -1,6 +1,5 @@
 """ This module defines base classes for metabolic modeling.
 
-TODO: Add support for compartments
 TODO: Add self consistency check (e.g: no disconnected components)
 TODO: Add gpr parsing
 TODO: Add explicit (graph-based) gene-reaction associations
@@ -17,9 +16,10 @@ class Metabolite:
         name : String -- common metabolite name
     """
     
-    def __init__(self, elem_id, name=None):
+    def __init__(self, elem_id, name=None, compartment=None):
         self.id = elem_id
         self.name = name
+        self.compartment = compartment
 
 
 class Reaction:
@@ -48,6 +48,18 @@ class Gene:
         self.id = elem_id
         self.name = name
 
+class Compartment:
+    """ Base class for compartments.
+    
+    Arguments:
+        elem_id : String -- a valid unique identifier
+        name : String -- compartment name
+    """
+    
+    def __init__(self, elem_id, name=None):
+        self.id = elem_id
+        self.name = name
+            
 
 class StoichiometricModel:
     """ Base class for all metabolic models implemented as a bipartite network.
@@ -58,6 +70,7 @@ class StoichiometricModel:
         self.id = model_id
         self.metabolites = OrderedDict()
         self.reactions = OrderedDict()
+        self.compartments = OrderedDict()
         self.stoichiometry = OrderedDict()
         
     def add_metabolites(self, metabolites):
@@ -65,7 +78,8 @@ class StoichiometricModel:
             self.add_metabolite(metabolite)
 
     def add_metabolite(self, metabolite):
-        self.metabolites[metabolite.id] = metabolite
+        if metabolite.compartment in self.compartments or not metabolite.compartment:
+            self.metabolites[metabolite.id] = metabolite
 
     def add_reactions(self, reactions):
         for reaction in reactions:
@@ -73,6 +87,14 @@ class StoichiometricModel:
 
     def add_reaction(self, reaction):
         self.reactions[reaction.id] = reaction
+    
+    def add_compartments(self, compartments):
+        for compartment in compartments:
+            self.add_compartment(compartment)
+
+    def add_compartment(self, compartment):
+        self.compartments[compartment.id] = compartment
+        
         
     def add_stoichiometry(self, stoichiometry):
         for m_id, r_id, coeff in stoichiometry:
@@ -98,6 +120,16 @@ class StoichiometricModel:
     
     def remove_reaction(self, r_id):
         self.remove_reactions([r_id])
+        
+        
+    def remove_compartment(self, c_id, delete_metabolites=True):
+        if c_id in self.compartments:
+            del self.compartments[c_id]
+            
+            if delete_metabolites:
+                self.remove_metabolites([m_id for m_id, metabolite in self.metabolites 
+                                         if metabolite.compartment == c_id]) 
+        
     
     def full_matrix(self):
         return [[self.stoichiometry[(m_id, r_id)] if (m_id, r_id) in self.stoichiometry else 0
@@ -132,15 +164,15 @@ class ConstraintBasedModel(StoichiometricModel):
         for r_id, lb, ub in bounds_list:
             self.set_flux_bounds(r_id, lb, ub)
     
-    def set_flux_bounds(self, reaction_id, lb=None, ub=None):
+    def set_flux_bounds(self, reaction_id, lb, ub):
         if reaction_id in self.reactions:
             self.bounds[reaction_id] = (lb, ub)
             
-    def set_lower_bound(self, reaction_id, lb=None):
+    def set_lower_bound(self, reaction_id, lb):
         if reaction_id in self.reactions:
             self.bounds[reaction_id][0] = lb
                 
-    def set_upper_bound(self, reaction_id, ub=None):
+    def set_upper_bound(self, reaction_id, ub):
         if reaction_id in self.reactions:
             self.bounds[reaction_id][1] = ub
 
