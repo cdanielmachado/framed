@@ -25,7 +25,7 @@ class PuLPSolver(Solver):
     def __init__(self):
         Solver.__init__(self)
         
-    def build_lp(self, model):
+    def build_problem(self, model):
         """ Implements method from Solver class. """
 
         problem = LpProblem(sense=LpMaximize)
@@ -45,7 +45,7 @@ class PuLPSolver(Solver):
         """ Implements method from Solver class. """
        
         if model: 
-            self.build_lp(model)
+            self.build_problem(model)
 
         if self.problem:
             problem = self.problem

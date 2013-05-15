@@ -5,13 +5,28 @@ import unittest
 
 from framed.io_utils.sbml import load_sbml_model, save_sbml_model, CONSTRAINT_BASED, GPR_CONSTRAINED
 from framed.core.fixes import fix_bigg_model
-from framed.analysis.fba import FBA, FVA
+from framed.analysis.simulation import FBA, MOMA
+from framed.analysis.variability import FVA
 from framed.io_utils.plaintext import read_model_from_file, write_model_to_file
+from framed.analysis.deletion import gene_deletion
+from framed.analysis.essentiality import essential_genes
 
 SMALL_TEST_MODEL = '../../misc/ecoli_core_model.xml'
 TEST_MODEL_COPY = '../../misc/model_copy.xml'
 PLAIN_TEXT_COPY = '../../misc/model_copy.txt'
+
 GROWTH_RATE = 0.8739
+
+DOUBLE_GENE_KO = ['b3731', 's0001']
+DOUBLE_KO_GROWTH_RATE = 0.108
+DOUBLE_KO_SUCC_EX = 3.8188
+
+MOMA_GENE_KO = ['b0721']
+MOMA_GROWTH_RATE = 0.5745
+MOMA_SUCC_EX = 4.467
+
+ESSENTIAL_GENES = ['b0720', 'b1136', 'b1779', 'b2415', 'b2416', 'b2779', 'b2926']
+
 
 class SBMLTest(unittest.TestCase):
     """ Test SBML import and export. """
@@ -72,10 +87,47 @@ class FVATest(unittest.TestCase):
         self.assertTrue(all([lb <= ub if lb is not None and ub is not None else True
                              for lb, ub in variability.values()]))
 
+
+class GeneDeletionFBATest(unittest.TestCase):
+    """ Test gene deletion with FBA. """
+    
+    def testRun(self):
+        model = load_sbml_model(SMALL_TEST_MODEL, kind=GPR_CONSTRAINED)
+        fix_bigg_model(model)
+        solution = gene_deletion(model, DOUBLE_GENE_KO)
+        self.assertTrue(solution.status)
+        biomass = model.reactions.keys().index(model.detect_biomass_reaction())
+        succ_ex = model.reactions.keys().index('R_EX_succ_e')
+        self.assertAlmostEqual(solution.values[biomass], DOUBLE_KO_GROWTH_RATE, 3)
+        self.assertAlmostEqual(solution.values[succ_ex], DOUBLE_KO_SUCC_EX, 3)
+
+class GeneDeletionMOMATest(unittest.TestCase):
+    """ Test gene deletion with MOMA. """
+    
+    def testRun(self):
+        model = load_sbml_model(SMALL_TEST_MODEL, kind=GPR_CONSTRAINED)
+        fix_bigg_model(model)
+        solution = gene_deletion(model, MOMA_GENE_KO, 'MOMA')
+        self.assertTrue(solution.status)
+        biomass = model.reactions.keys().index(model.detect_biomass_reaction())
+        succ_ex = model.reactions.keys().index('R_EX_succ_e')
+        self.assertAlmostEqual(solution.values[biomass], MOMA_GROWTH_RATE, 3)
+        self.assertAlmostEqual(solution.values[succ_ex], MOMA_SUCC_EX, 3)
+                
+class GeneEssentialityTest(unittest.TestCase):
+    """ Test gene deletion with MOMA. """
+    
+    def testRun(self):
+        model = load_sbml_model(SMALL_TEST_MODEL, kind=GPR_CONSTRAINED)
+        fix_bigg_model(model)
+        essential = essential_genes(model)
+        self.assertListEqual(essential, ESSENTIAL_GENES)
         
+        
+                
 def suite():
-    tests = [SBMLTest, PlainTextIOTest, FBATest, FVATest, FBATest2]
-    #tests = [PlainTextIOTest]
+    #tests = [SBMLTest, PlainTextIOTest, FBATest, FVATest, FBATest2, GeneDeletionFBATest, GeneDeletionMOMATest]
+    tests = [GeneEssentialityTest]
     
     test_suite = unittest.TestSuite()
     for test in tests:

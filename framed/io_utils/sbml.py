@@ -106,7 +106,7 @@ def _load_gprconstrained_model(sbml_model):
     model.set_bounds(_load_bounds(sbml_model))
     genes, rules = _load_gpr(sbml_model)
     model.add_genes(genes)
-    model.add_rules(rules)
+    model.set_rules(rules)
     return model
 
 def _load_gpr(sbml_model):

@@ -1,5 +1,6 @@
 ''' This module implements methods for reading and writing models from a plain text format.
 
+TODO: Add support for compartments.
 TODO: Add support for GPRConstrainedModel (problem GPRs can't be parsed with regex).
 '''
 

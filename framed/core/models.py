@@ -194,6 +194,9 @@ class ConstraintBasedModel(StoichiometricModel):
                                       ub if ub != None else '')
         return res 
 
+    def detect_biomass_reaction(self):
+        matches = [r_id for r_id in self.reactions if 'biomass' in r_id.lower()]
+        return matches[0] if matches else None
 
 class GPRConstrainedModel(ConstraintBasedModel):
     """ Base class for constraint-based models with GPR associations.
@@ -204,6 +207,7 @@ class GPRConstrainedModel(ConstraintBasedModel):
         ConstraintBasedModel.__init__(self, model_id)
         self.genes = OrderedDict()
         self.rules = OrderedDict()
+        self.rule_functions = OrderedDict()
 
     def add_genes(self, genes):
         for gene in genes:
@@ -211,19 +215,34 @@ class GPRConstrainedModel(ConstraintBasedModel):
 
     def add_gene(self, gene):
         self.genes[gene.id] = gene
-    
-    def add_rules(self, rules):
-        for r_id, rule in rules:
-            self.add_rule(r_id, rule)
-    
-    def add_rule(self, reaction_id, rule):
-        self.rules[reaction_id] = rule
 
     def add_reaction(self, reaction, lb=None, ub=None, rule=None):
         ConstraintBasedModel.add_reaction(self, reaction, lb, ub)
-        self.rules[reaction.id] = rule
+        self.set_rule(reaction.id, rule)
     
     def remove_reactions(self, id_list):
         ConstraintBasedModel.remove_reactions(self, id_list)
         for r_id in id_list:
             del self.rules[r_id]
+            del self.rule_functions[r_id]
+    
+    def set_rules(self, rules):
+        for r_id, rule in rules:
+            self.set_rule(r_id, rule)
+    
+    def set_rule(self, r_id, rule):
+        if r_id in self.reactions:
+            self.rules[r_id] = rule
+            self.rule_functions[r_id] = self._rule_to_function(rule)
+    
+    def _rule_to_function(self, rule):
+        if not rule:
+            rule = 'True'
+        else:
+            for gene in self.genes:
+                rule = rule.replace(gene, 'x[\'' + gene + '\']')
+        return eval('lambda x: ' + rule)
+    
+    def eval_GPR(self, active_genes):
+        genes_state = {gene: gene in active_genes for gene in self.genes}
+        return [r_id for r_id, f in self.rule_functions.items() if f(genes_state)]
