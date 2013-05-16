@@ -21,7 +21,7 @@ def reaction_deletion(model, reactions, method='FBA', reference=None):
     """ Simulate deletion of a set of reactions. """
     
     if method == 'MOMA':
-        v0 = reference if reference else FBA(model).values.values()
+        v0 = reference if reference else FBA(model).values
         
     constraints = {r_id: (0, 0) for r_id in reactions}
     

@@ -40,8 +40,9 @@ class GurobiSolver(Solver):
             problem.addConstr(constr == 0, m_id)
 
         self.problem = problem
-        self.model = model 
-        
+        self.var_ids = model.reactions.keys()
+        self.constr_ids = model.metabolites.keys()
+                
     def solve_lp(self, objective, model=None, constraints=None, get_shadow_prices=False, get_reduced_costs=False):
         """ Implements method from Solver class. """
         
@@ -58,8 +59,6 @@ class GurobiSolver(Solver):
         
         if model: 
             self.build_problem(model)
-        else:
-            model = self.model
 
         if self.problem:
             problem = self.problem
@@ -87,9 +86,9 @@ class GurobiSolver(Solver):
         
         if status == Status.OPTIMAL:
             fobj = problem.ObjVal
-            values = OrderedDict([(r_id, problem.getVarByName(r_id).X) for r_id in model.reactions])
-            shadow_prices = OrderedDict([(m_id, problem.getConstrByName(m_id).Pi) for m_id in model.metabolites]) if get_shadow_prices else None
-            reduced_costs = OrderedDict([(r_id, problem.getVarByName(r_id).RC) for r_id in model.reactions]) if get_reduced_costs else None
+            values = OrderedDict([(r_id, problem.getVarByName(r_id).X) for r_id in self.var_ids])
+            shadow_prices = OrderedDict([(m_id, problem.getConstrByName(m_id).Pi) for m_id in self.constr_ids]) if get_shadow_prices else None
+            reduced_costs = OrderedDict([(r_id, problem.getVarByName(r_id).RC) for r_id in self.var_ids]) if get_reduced_costs else None
             solution = Solution(status, fobj, values, shadow_prices, reduced_costs)
         else:
             solution = Solution(status)

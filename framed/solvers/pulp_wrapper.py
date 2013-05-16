@@ -46,7 +46,8 @@ class PuLPSolver(Solver):
                               if m_id2 == m_id]) == 0, m_id
         
         self.problem = problem
-        self.model = model
+        self.var_ids = model.reactions.keys()
+        self.constr_ids = model.metabolites.keys()
                 
         
     def solve_lp(self, objective, model=None, constraints=None, get_shadow_prices=False, get_reduced_costs=False): 
@@ -54,8 +55,6 @@ class PuLPSolver(Solver):
        
         if model: 
             self.build_problem(model)
-        else:
-            model = self.model
 
         if self.problem:
             problem = self.problem
@@ -80,12 +79,9 @@ class PuLPSolver(Solver):
 
         if status == Status.OPTIMAL:
             fobj = problem.objective.value()
-            values = OrderedDict([(r_id, lpvars[r_id].varValue) for r_id in model.reactions])
-            shadow_prices = OrderedDict([(m_id, lpcons[m_id].pi) for m_id in model.metabolites]) if get_shadow_prices and hasattr(lpcons.values()[0], 'pi') else None
-            reduced_costs = OrderedDict([(r_id, lpvars[r_id].dj) for r_id in model.reactions]) if get_reduced_costs and hasattr(lpvars.values()[0], 'dj') else None
-#            varvalues = [lpvars[r_id].varValue for r_id in model.reactions]
-#            shadow_prices = [lpcons[m_id].pi for m_id in model.metabolites] if get_shadow_prices and hasattr(lpcons.values()[0], 'pi') else None
-#            reduced_costs = [lpvars[r_id].dj for r_id in model.reactions] if get_reduced_costs and hasattr(lpvars.values()[0], 'dj') else None
+            values = OrderedDict([(r_id, lpvars[r_id].varValue) for r_id in self.var_ids])
+            shadow_prices = OrderedDict([(m_id, lpcons[m_id].pi) for m_id in self.constr_ids]) if get_shadow_prices and hasattr(lpcons[self.constr_ids[0]], 'pi') else None
+            reduced_costs = OrderedDict([(r_id, lpvars[r_id].dj) for r_id in self.var_ids]) if get_reduced_costs and hasattr(lpvars[self.var_ids[0]], 'dj') else None
             solution = Solution(status, fobj, values, shadow_prices, reduced_costs)
         else:
             solution = Solution(status=status)

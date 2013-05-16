@@ -20,12 +20,10 @@ def FBA(model, target=None, maximize=True, constraints=None, get_shadow_prices=F
 
 def MOMA(model, v0=None, constraints=None):
     
-    if not v0:
-        solution = FBA(model, constraints=constraints)
-        v0 = solution.values.values()
+    v0 = FBA(model, constraints=constraints).values if not v0 else v0
     
     quad_obj = dict([((r_id, r_id), 1) for r_id in model.reactions])
-    lin_obj = dict([(r_id, -2*x) for r_id, x in zip(model.reactions, v0)])
+    lin_obj = dict([(r_id, -2*x) for r_id, x in zip(model.reactions, v0.values())])
     
     solver = solver_instance()
     solution = solver.solve_qp(quad_obj, lin_obj, model, constraints)

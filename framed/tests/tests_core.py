@@ -11,6 +11,8 @@ from framed.io_utils.plaintext import read_model_from_file, write_model_to_file
 from framed.analysis.deletion import gene_deletion
 from framed.analysis.essentiality import essential_genes
 from framed.solvers.solver import Status
+from framed.core.transformation import make_irreversible
+from framed.analysis.optimization import combinatorial_gene_deletion
 
 SMALL_TEST_MODEL = '../../misc/ecoli_core_model.xml'
 TEST_MODEL_COPY = '../../misc/model_copy.xml'
@@ -77,7 +79,21 @@ class FBATest2(unittest.TestCase):
         solution = FBA(model)
         self.assertEqual(solution.status, Status.OPTIMAL)
         self.assertAlmostEqual(solution.fobj, GROWTH_RATE, places=2)
+
         
+class FBATest3(unittest.TestCase):
+    """ Test FBA simulation after reversible decomposition. """
+    
+    def testRun(self):
+        model = load_sbml_model(SMALL_TEST_MODEL, kind=CONSTRAINT_BASED)
+        fix_bigg_model(model)
+        make_irreversible(model)
+        self.assertTrue(all([not reaction.reversible for reaction in model.reactions.values()]))
+        solution = FBA(model)
+        self.assertEqual(solution.status, Status.OPTIMAL)
+        self.assertAlmostEqual(solution.fobj, GROWTH_RATE, places=2)
+        
+                
 class FVATest(unittest.TestCase):
     """ Test flux variability analysis """
     
@@ -120,11 +136,21 @@ class GeneEssentialityTest(unittest.TestCase):
         essential = essential_genes(model)
         self.assertListEqual(essential, ESSENTIAL_GENES)
         
-        
+class CombinatorialGeneDeletion(unittest.TestCase):
+    """ Test combinatorial gene deletion with FBA. """
+    
+    def testRun(self):
+        model = load_sbml_model(SMALL_TEST_MODEL, kind=GPR_CONSTRAINED)
+        fix_bigg_model(model)
+        objective = {'R_EX_succ_e': 1}
+        max_dels = 2
+        result = combinatorial_gene_deletion(model, objective, max_dels)
+        self.assertTrue(result is not None)
+
                 
 def suite():
-    tests = [SBMLTest, PlainTextIOTest, FBATest, FVATest, FBATest2, GeneDeletionFBATest, GeneDeletionMOMATest, GeneEssentialityTest]
-    #tests = [GeneDeletionFBATest]
+    tests = [SBMLTest, PlainTextIOTest, FBATest, FVATest, FBATest2, FBATest3, GeneDeletionFBATest, GeneDeletionMOMATest, GeneEssentialityTest]
+    #tests = [CombinatorialGeneDeletion]
     
     test_suite = unittest.TestSuite()
     for test in tests:
