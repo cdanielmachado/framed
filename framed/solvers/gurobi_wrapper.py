@@ -66,8 +66,10 @@ class GurobiSolver(Solver):
             raise Exception('A model must be given if solver is used for the first time.')
         
         if constraints:
+            old_constraints = {}
             for r_id, (lb, ub) in constraints.items():
                 lpvar = problem.getVarByName(r_id)
+                old_constraints[r_id] = (lpvar.lb, lpvar.ub)
                 lpvar.lb = lb if lb is not None else -GRB.INFINITY
                 lpvar.ub = ub if ub is not None else GRB.INFINITY
             problem.update()
@@ -93,4 +95,11 @@ class GurobiSolver(Solver):
         else:
             solution = Solution(status)
         
+        #reset old constraints because temporary constraints should not be persistent
+        if constraints:
+            for r_id, (lb, ub) in old_constraints.items():
+                lpvar = problem.getVarByName(r_id)
+                lpvar.lb, lpvar.ub = lb, ub
+            problem.update()
+                    
         return solution

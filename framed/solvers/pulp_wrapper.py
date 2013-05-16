@@ -64,8 +64,11 @@ class PuLPSolver(Solver):
             raise Exception('A model must be given if solver is used for the first time.')
         
         if constraints:
+            old_constraints = {}
             for r_id, (lb, ub) in constraints.items():
-                lpvars[r_id].bounds(lb, ub)
+                lpvar = lpvars[r_id]
+                old_constraints[r_id] = (lpvar.lowBound, lpvar.upBound)
+                lpvar.bounds(lb, ub)
         
         #create objective function
         problem += lpSum([f * lpvars[r_id] for r_id, f in objective.items() if f])
@@ -86,4 +89,9 @@ class PuLPSolver(Solver):
         else:
             solution = Solution(status=status)
         
+        #reset old constraints because temporary constraints should not be persistent
+        if constraints:
+            for r_id, (lb, ub) in old_constraints.items():
+                lpvars[r_id].bounds(lb, ub)
+                
         return solution

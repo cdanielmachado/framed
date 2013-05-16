@@ -29,12 +29,13 @@ def FVA(model, obj_percentage=0, reactions=None):
         reactions = model.reactions.keys()
     
     solver = solver_instance()
-    variability = OrderedDict([(r_id, [None, None]) for r_id in model.reactions])
-    
     solver.build_problem(model)
+
+    variability = OrderedDict([(r_id, [None, None]) for r_id in model.reactions])
         
     for r_id in model.reactions:
-        solution = solver.solve_lp({r_id: -1}, constraints=obj_constraint)
+        #solution = solver.solve_lp({r_id: -1}, constraints=obj_constraint)
+        solution = FBA(model, r_id, False, constraints=obj_constraint, solver=solver)
         if solution.status == Status.OPTIMAL:
             variability[r_id][0] = -solution.fobj
         elif solution.status == Status.UNBOUNDED:
@@ -42,7 +43,8 @@ def FVA(model, obj_percentage=0, reactions=None):
         else:
             variability[r_id][0] = 0
             
-        solution = solver.solve_lp({r_id: 1}, constraints=obj_constraint)
+#        solution = solver.solve_lp({r_id: 1}, constraints=obj_constraint)
+        solution = FBA(model, r_id, True, constraints=obj_constraint, solver=solver)
         if solution.status:
             variability[r_id][1] = solution.fobj
         elif solution.status == Status.UNBOUNDED:
