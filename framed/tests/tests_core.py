@@ -5,11 +5,12 @@ import unittest
 
 from framed.io_utils.sbml import load_sbml_model, save_sbml_model, CONSTRAINT_BASED, GPR_CONSTRAINED
 from framed.core.fixes import fix_bigg_model
-from framed.analysis.simulation import FBA, MOMA
+from framed.analysis.simulation import FBA
 from framed.analysis.variability import FVA
 from framed.io_utils.plaintext import read_model_from_file, write_model_to_file
 from framed.analysis.deletion import gene_deletion
 from framed.analysis.essentiality import essential_genes
+from framed.solvers.solver import Status
 
 SMALL_TEST_MODEL = '../../misc/ecoli_core_model.xml'
 TEST_MODEL_COPY = '../../misc/model_copy.xml'
@@ -64,8 +65,8 @@ class FBATest(unittest.TestCase):
     def testRun(self):
         model = load_sbml_model(SMALL_TEST_MODEL, kind=CONSTRAINT_BASED)
         fix_bigg_model(model)
-        solution = FBA(model)
-        self.assertTrue(solution.status)
+        solution = FBA(model, get_shadow_prices=True, get_reduced_costs=True)
+        self.assertEqual(solution.status, Status.OPTIMAL)
         self.assertAlmostEqual(solution.fobj, GROWTH_RATE, places=2)
 
 class FBATest2(unittest.TestCase):
@@ -74,7 +75,7 @@ class FBATest2(unittest.TestCase):
     def testRun(self):
         model = read_model_from_file(PLAIN_TEXT_COPY, kind=CONSTRAINT_BASED)
         solution = FBA(model)
-        self.assertTrue(solution.status)
+        self.assertEqual(solution.status, Status.OPTIMAL)
         self.assertAlmostEqual(solution.fobj, GROWTH_RATE, places=2)
         
 class FVATest(unittest.TestCase):
@@ -95,11 +96,9 @@ class GeneDeletionFBATest(unittest.TestCase):
         model = load_sbml_model(SMALL_TEST_MODEL, kind=GPR_CONSTRAINED)
         fix_bigg_model(model)
         solution = gene_deletion(model, DOUBLE_GENE_KO)
-        self.assertTrue(solution.status)
-        biomass = model.reactions.keys().index(model.detect_biomass_reaction())
-        succ_ex = model.reactions.keys().index('R_EX_succ_e')
-        self.assertAlmostEqual(solution.values[biomass], DOUBLE_KO_GROWTH_RATE, 3)
-        self.assertAlmostEqual(solution.values[succ_ex], DOUBLE_KO_SUCC_EX, 3)
+        self.assertEqual(solution.status, Status.OPTIMAL)
+        self.assertAlmostEqual(solution.values[model.detect_biomass_reaction()], DOUBLE_KO_GROWTH_RATE, 3)
+        self.assertAlmostEqual(solution.values['R_EX_succ_e'], DOUBLE_KO_SUCC_EX, 3)
 
 class GeneDeletionMOMATest(unittest.TestCase):
     """ Test gene deletion with MOMA. """
@@ -108,11 +107,9 @@ class GeneDeletionMOMATest(unittest.TestCase):
         model = load_sbml_model(SMALL_TEST_MODEL, kind=GPR_CONSTRAINED)
         fix_bigg_model(model)
         solution = gene_deletion(model, MOMA_GENE_KO, 'MOMA')
-        self.assertTrue(solution.status)
-        biomass = model.reactions.keys().index(model.detect_biomass_reaction())
-        succ_ex = model.reactions.keys().index('R_EX_succ_e')
-        self.assertAlmostEqual(solution.values[biomass], MOMA_GROWTH_RATE, 3)
-        self.assertAlmostEqual(solution.values[succ_ex], MOMA_SUCC_EX, 3)
+        self.assertEqual(solution.status, Status.OPTIMAL)
+        self.assertAlmostEqual(solution.values[model.detect_biomass_reaction()], MOMA_GROWTH_RATE, 3)
+        self.assertAlmostEqual(solution.values['R_EX_succ_e'], MOMA_SUCC_EX, 3)
                 
 class GeneEssentialityTest(unittest.TestCase):
     """ Test gene deletion with MOMA. """
@@ -126,8 +123,8 @@ class GeneEssentialityTest(unittest.TestCase):
         
                 
 def suite():
-    #tests = [SBMLTest, PlainTextIOTest, FBATest, FVATest, FBATest2, GeneDeletionFBATest, GeneDeletionMOMATest]
-    tests = [GeneEssentialityTest]
+    tests = [SBMLTest, PlainTextIOTest, FBATest, FVATest, FBATest2, GeneDeletionFBATest, GeneDeletionMOMATest, GeneEssentialityTest]
+    #tests = [GeneDeletionFBATest]
     
     test_suite = unittest.TestSuite()
     for test in tests:

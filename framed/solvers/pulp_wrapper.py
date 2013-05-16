@@ -1,10 +1,12 @@
 '''
 Implementation a of PuLP based solver interface.
 '''
-from .solver import Solver, Solution
-
-from pulp import LpProblem, LpMaximize, LpVariable, lpSum, LpStatus, LpStatusOptimal
+from collections import OrderedDict
+from pulp import LpProblem, LpMaximize, LpVariable, lpSum, LpStatusOptimal, LpStatusInfeasible, LpStatusUnbounded
 from pulp.solvers import GUROBI, GUROBI_CMD, CPLEX_DLL, CPLEX_CMD, GLPK, GLPK_CMD
+
+from .solver import Solver, Solution, Status
+
 
 SELECTED_SOLVER = None
 preference_order = [GUROBI, GUROBI_CMD, CPLEX_DLL, CPLEX_CMD, GLPK, GLPK_CMD]
@@ -17,6 +19,10 @@ for solver in preference_order:
 
 if not SELECTED_SOLVER:
     raise Exception('No suitable solver found for PuLP.')
+
+status_mapping = {LpStatusOptimal: Status.OPTIMAL,
+                  LpStatusUnbounded: Status.UNBOUNDED,
+                  LpStatusInfeasible: Status.UNFEASIBLE}
 
 
 class PuLPSolver(Solver):
@@ -39,13 +45,17 @@ class PuLPSolver(Solver):
             problem += lpSum([coeff*lpvars[r_id] for (m_id2, r_id), coeff in model.stoichiometry.items()
                               if m_id2 == m_id]) == 0, m_id
         
-        self.problem = problem        
+        self.problem = problem
+        self.model = model
+                
         
     def solve_lp(self, objective, model=None, constraints=None, get_shadow_prices=False, get_reduced_costs=False): 
         """ Implements method from Solver class. """
        
         if model: 
             self.build_problem(model)
+        else:
+            model = self.model
 
         if self.problem:
             problem = self.problem
@@ -64,19 +74,20 @@ class PuLPSolver(Solver):
         try:      
             problem.solve()
         except:
-            solution = Solution(msg=LpStatus[problem.status])
+            pass
+        
+        status = status_mapping[problem.status] if problem.status in status_mapping else Status.UNKNOWN
+
+        if status == Status.OPTIMAL:
+            fobj = problem.objective.value()
+            values = OrderedDict([(r_id, lpvars[r_id].varValue) for r_id in model.reactions])
+            shadow_prices = OrderedDict([(m_id, lpcons[m_id].pi) for m_id in model.metabolites]) if get_shadow_prices and hasattr(lpcons.values()[0], 'pi') else None
+            reduced_costs = OrderedDict([(r_id, lpvars[r_id].dj) for r_id in model.reactions]) if get_reduced_costs and hasattr(lpvars.values()[0], 'dj') else None
+#            varvalues = [lpvars[r_id].varValue for r_id in model.reactions]
+#            shadow_prices = [lpcons[m_id].pi for m_id in model.metabolites] if get_shadow_prices and hasattr(lpcons.values()[0], 'pi') else None
+#            reduced_costs = [lpvars[r_id].dj for r_id in model.reactions] if get_reduced_costs and hasattr(lpvars.values()[0], 'dj') else None
+            solution = Solution(status, fobj, values, shadow_prices, reduced_costs)
         else:
-            if problem.status == LpStatusOptimal:
-                fobj = problem.objective.value()
-                msg = LpStatus[problem.status]
-#                result = OrderedDict([(r_id, lpvars[r_id].varValue) for r_id in lpvars])
-#                shadow_prices = OrderedDict([(m_id, lpcons[m_id].pi) for m_id in lpcons]) if hasattr(lpcons.items()[0], 'pi') else None
-#                reduced_costs = OrderedDict([(r_id, lpvars[r_id].dj) for r_id in lpvars]) if hasattr(lpvars.items()[0], 'dj') else None
-                values = [lpvar.varValue for lpvar in lpvars.values()]
-                shadow_prices = [cons.pi for cons in lpcons.values()] if get_shadow_prices and hasattr(lpcons.values()[0], 'pi') else None
-                reduced_costs = [lpvar.dj for lpvar in lpvars.values()] if get_reduced_costs and hasattr(lpvars.values()[0], 'dj') else None
-                solution = Solution(True, fobj, values, msg, shadow_prices, reduced_costs)
-            else:
-                solution = Solution(msg=LpStatus[problem.status])
+            solution = Solution(status=status)
         
         return solution

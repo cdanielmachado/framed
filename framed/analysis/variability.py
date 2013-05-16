@@ -6,6 +6,7 @@ Created on May 15, 2013
 
 from collections import OrderedDict
 from ..solvers import solver_instance
+from ..solvers.solver import Status
 from simulation import FBA
 
 def FVA(model, obj_percentage=0, reactions=None):
@@ -34,11 +35,20 @@ def FVA(model, obj_percentage=0, reactions=None):
         
     for r_id in model.reactions:
         solution = solver.solve_lp({r_id: -1}, constraints=obj_constraint)
-        if solution.status:
+        if solution.status == Status.OPTIMAL:
             variability[r_id][0] = -solution.fobj
+        elif solution.status == Status.UNBOUNDED:
+            variability[r_id][0] = None
+        else:
+            variability[r_id][0] = 0
+            
         solution = solver.solve_lp({r_id: 1}, constraints=obj_constraint)
         if solution.status:
             variability[r_id][1] = solution.fobj
-    
+        elif solution.status == Status.UNBOUNDED:
+            variability[r_id][1] = None
+        else:
+            variability[r_id][1] = 0
+                
     return variability
 

@@ -2,19 +2,27 @@
 Abstract classes for solver specific implementations.
 '''
 
+#CONSTANTS
+class Status:
+    OPTIMAL = 1
+    UNKNOWN = 0
+    UNBOUNDED = -1
+    UNFEASIBLE = -2
+
+
 class Solution:
     """ Stores the results of an optimization.
     
     Invoke without arguments to create an empty Solution representing a failed optimization.
     """ 
     
-    def __init__(self, status=False, fobj=None, values=None, msg=None, shadow_prices=None, reduced_costs=None):
+    def __init__(self, status=Status.UNKNOWN, fobj=None, values=None, shadow_prices=None, reduced_costs=None):
         self.status = status
         self.fobj = fobj
         self.values = values
-        self.msg = msg
         self.shadow_prices = shadow_prices
         self.reduced_costs = reduced_costs
+
 
 class Solver:
     """ Abstract class representing a generic solver.
