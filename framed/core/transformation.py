@@ -15,6 +15,7 @@ def make_irreversible(model):
     """
     
     mapping = dict()
+    table = model.reaction_metabolite_lookup_table()
     
     for r_id, reaction in model.reactions.items():
         if reaction.reversible:
@@ -25,10 +26,9 @@ def make_irreversible(model):
             model.add_reaction(Reaction(fwd_id, reaction.name, False))
             model.add_reaction(Reaction(bwd_id, reaction.name, False))
             
-            for (m_id, r_id2), coeff in model.stoichiometry.items():
-                if r_id2 == r_id:
-                    model.stoichiometry[(m_id, fwd_id)] = coeff
-                    model.stoichiometry[(m_id, bwd_id)] = -coeff
+            for m_id, coeff in table[r_id].items():
+                model.stoichiometry[(m_id, fwd_id)] = coeff
+                model.stoichiometry[(m_id, bwd_id)] = -coeff
             
             if isinstance(model, ConstraintBasedModel):
                 lb, ub = model.bounds[r_id]
