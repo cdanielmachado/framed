@@ -144,13 +144,15 @@ class CombinatorialGeneDeletion(unittest.TestCase):
         fix_bigg_model(model)
         objective = {'R_EX_succ_e': 1}
         max_dels = 2
-        result = combinatorial_gene_deletion(model, objective, max_dels)
+        result = combinatorial_gene_deletion(model, objective, max_dels, parallel=True)
+        print len(result)
+        #print result
         self.assertTrue(result is not None)
 
                 
 def suite():
-    tests = [SBMLTest, PlainTextIOTest, FBATest, FVATest, FBATest2, FBATest3, GeneDeletionFBATest, GeneDeletionMOMATest, GeneEssentialityTest]
-    #tests = [CombinatorialGeneDeletion]
+    #tests = [SBMLTest, PlainTextIOTest, FBATest, FVATest, FBATest2, FBATest3, GeneDeletionFBATest, GeneDeletionMOMATest, GeneEssentialityTest]
+    tests = [CombinatorialGeneDeletion]
     
     test_suite = unittest.TestSuite()
     for test in tests:

@@ -1,7 +1,7 @@
 '''
-Created on May 15, 2013
+This module implements methods to compute gene and reaction essentiality.
 
-@author: daniel
+@author: Daniel Machado
 '''
 
 from ..core.models import GPRConstrainedModel
