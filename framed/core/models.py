@@ -130,11 +130,30 @@ class StoichiometricModel:
                 self.remove_metabolites([m_id for m_id, metabolite in self.metabolites 
                                          if metabolite.compartment == c_id]) 
         
+
+    def metabolite_reaction_lookup_table(self):
+        table = {m_id : dict() for m_id in self.metabolites} 
     
-    def full_matrix(self):
+        for (m_id, r_id), coeff in self.stoichiometry.items():
+            table[m_id][r_id] = coeff
+        
+        return table
+ 
+   
+    def reaction_metabolite_lookup_table(self):
+        table = {r_id : dict() for r_id in self.reactions} 
+    
+        for (m_id, r_id), coeff in self.stoichiometry.items():
+            table[r_id][m_id] = coeff
+        
+        return table
+ 
+    
+    def stoichiometric_matrix(self):
         return [[self.stoichiometry[(m_id, r_id)] if (m_id, r_id) in self.stoichiometry else 0
                  for r_id in self.reactions]
                 for m_id in self.metabolites]        
+    
     
     def __repr__(self):
         return '\n'.join([self.print_reaction(r_id) for r_id in self.reactions])

@@ -15,6 +15,7 @@ from framed.core.transformation import make_irreversible
 from framed.design.combinatorial import combinatorial_gene_deletion
 
 SMALL_TEST_MODEL = '../../misc/ecoli_core_model.xml'
+LARGE_TEST_MODEL = '../../misc/Ec_iAF1260_flux1.xml'
 TEST_MODEL_COPY = '../../misc/model_copy.xml'
 PLAIN_TEXT_COPY = '../../misc/model_copy.txt'
 
@@ -65,7 +66,7 @@ class FBATest(unittest.TestCase):
     """ Test FBA simulation. """
     
     def testRun(self):
-        model = load_sbml_model(SMALL_TEST_MODEL, kind=CONSTRAINT_BASED)
+        model = load_sbml_model(LARGE_TEST_MODEL, kind=CONSTRAINT_BASED)
         fix_bigg_model(model)
         solution = FBA(model, get_shadow_prices=True, get_reduced_costs=True)
         self.assertEqual(solution.status, Status.OPTIMAL)
@@ -152,7 +153,7 @@ class CombinatorialGeneDeletion(unittest.TestCase):
                 
 def suite():
     #tests = [SBMLTest, PlainTextIOTest, FBATest, FVATest, FBATest2, FBATest3, GeneDeletionFBATest, GeneDeletionMOMATest, GeneEssentialityTest]
-    tests = [CombinatorialGeneDeletion]
+    tests = [FBATest]
     
     test_suite = unittest.TestSuite()
     for test in tests:
