@@ -1,6 +1,5 @@
 """ This module defines base classes for metabolic modeling.
 
-TODO: Add support for compartments
 TODO: Add self consistency check (e.g: no disconnected components)
 TODO: Add gpr parsing
 TODO: Add explicit (graph-based) gene-reaction associations
@@ -17,9 +16,10 @@ class Metabolite:
         name : String -- common metabolite name
     """
     
-    def __init__(self, elem_id, name=None):
+    def __init__(self, elem_id, name=None, compartment=None):
         self.id = elem_id
         self.name = name
+        self.compartment = compartment
 
 
 class Reaction:
@@ -48,6 +48,18 @@ class Gene:
         self.id = elem_id
         self.name = name
 
+class Compartment:
+    """ Base class for compartments.
+    
+    Arguments:
+        elem_id : String -- a valid unique identifier
+        name : String -- compartment name
+    """
+    
+    def __init__(self, elem_id, name=None):
+        self.id = elem_id
+        self.name = name
+            
 
 class StoichiometricModel:
     """ Base class for all metabolic models implemented as a bipartite network.
@@ -58,6 +70,7 @@ class StoichiometricModel:
         self.id = model_id
         self.metabolites = OrderedDict()
         self.reactions = OrderedDict()
+        self.compartments = OrderedDict()
         self.stoichiometry = OrderedDict()
         
     def add_metabolites(self, metabolites):
@@ -65,7 +78,8 @@ class StoichiometricModel:
             self.add_metabolite(metabolite)
 
     def add_metabolite(self, metabolite):
-        self.metabolites[metabolite.id] = metabolite
+        if metabolite.compartment in self.compartments or not metabolite.compartment:
+            self.metabolites[metabolite.id] = metabolite
 
     def add_reactions(self, reactions):
         for reaction in reactions:
@@ -73,6 +87,14 @@ class StoichiometricModel:
 
     def add_reaction(self, reaction):
         self.reactions[reaction.id] = reaction
+    
+    def add_compartments(self, compartments):
+        for compartment in compartments:
+            self.add_compartment(compartment)
+
+    def add_compartment(self, compartment):
+        self.compartments[compartment.id] = compartment
+        
         
     def add_stoichiometry(self, stoichiometry):
         for m_id, r_id, coeff in stoichiometry:
@@ -98,6 +120,16 @@ class StoichiometricModel:
     
     def remove_reaction(self, r_id):
         self.remove_reactions([r_id])
+        
+        
+    def remove_compartment(self, c_id, delete_metabolites=True):
+        if c_id in self.compartments:
+            del self.compartments[c_id]
+            
+            if delete_metabolites:
+                self.remove_metabolites([m_id for m_id, metabolite in self.metabolites 
+                                         if metabolite.compartment == c_id]) 
+        
     
     def full_matrix(self):
         return [[self.stoichiometry[(m_id, r_id)] if (m_id, r_id) in self.stoichiometry else 0
@@ -132,15 +164,15 @@ class ConstraintBasedModel(StoichiometricModel):
         for r_id, lb, ub in bounds_list:
             self.set_flux_bounds(r_id, lb, ub)
     
-    def set_flux_bounds(self, reaction_id, lb=None, ub=None):
+    def set_flux_bounds(self, reaction_id, lb, ub):
         if reaction_id in self.reactions:
             self.bounds[reaction_id] = (lb, ub)
             
-    def set_lower_bound(self, reaction_id, lb=None):
+    def set_lower_bound(self, reaction_id, lb):
         if reaction_id in self.reactions:
             self.bounds[reaction_id][0] = lb
                 
-    def set_upper_bound(self, reaction_id, ub=None):
+    def set_upper_bound(self, reaction_id, ub):
         if reaction_id in self.reactions:
             self.bounds[reaction_id][1] = ub
 
@@ -162,6 +194,9 @@ class ConstraintBasedModel(StoichiometricModel):
                                       ub if ub != None else '')
         return res 
 
+    def detect_biomass_reaction(self):
+        matches = [r_id for r_id in self.reactions if 'biomass' in r_id.lower()]
+        return matches[0] if matches else None
 
 class GPRConstrainedModel(ConstraintBasedModel):
     """ Base class for constraint-based models with GPR associations.
@@ -172,6 +207,7 @@ class GPRConstrainedModel(ConstraintBasedModel):
         ConstraintBasedModel.__init__(self, model_id)
         self.genes = OrderedDict()
         self.rules = OrderedDict()
+        self.rule_functions = OrderedDict()
 
     def add_genes(self, genes):
         for gene in genes:
@@ -179,19 +215,34 @@ class GPRConstrainedModel(ConstraintBasedModel):
 
     def add_gene(self, gene):
         self.genes[gene.id] = gene
-    
-    def add_rules(self, rules):
-        for r_id, rule in rules:
-            self.add_rule(r_id, rule)
-    
-    def add_rule(self, reaction_id, rule):
-        self.rules[reaction_id] = rule
 
     def add_reaction(self, reaction, lb=None, ub=None, rule=None):
         ConstraintBasedModel.add_reaction(self, reaction, lb, ub)
-        self.rules[reaction.id] = rule
+        self.set_rule(reaction.id, rule)
     
     def remove_reactions(self, id_list):
         ConstraintBasedModel.remove_reactions(self, id_list)
         for r_id in id_list:
             del self.rules[r_id]
+            del self.rule_functions[r_id]
+    
+    def set_rules(self, rules):
+        for r_id, rule in rules:
+            self.set_rule(r_id, rule)
+    
+    def set_rule(self, r_id, rule):
+        if r_id in self.reactions:
+            self.rules[r_id] = rule
+            self.rule_functions[r_id] = self._rule_to_function(rule)
+    
+    def _rule_to_function(self, rule):
+        if not rule:
+            rule = 'True'
+        else:
+            for gene in self.genes:
+                rule = rule.replace(gene, 'x[\'' + gene + '\']')
+        return eval('lambda x: ' + rule)
+    
+    def eval_GPR(self, active_genes):
+        genes_state = {gene: gene in active_genes for gene in self.genes}
+        return [r_id for r_id, f in self.rule_functions.items() if f(genes_state)]

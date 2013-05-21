@@ -3,7 +3,7 @@
 TODO: Import/export of bounds follows the BiGG model format,
 consider changing to the new SBML fbc package.
 """
-from ..core.models import StoichiometricModel, ConstraintBasedModel, GPRConstrainedModel, Metabolite, Reaction, Gene
+from ..core.models import StoichiometricModel, ConstraintBasedModel, GPRConstrainedModel, Metabolite, Reaction, Gene, Compartment
 
 from libsbml import SBMLReader, SBMLWriter, SBMLDocument 
 
@@ -18,8 +18,7 @@ GPR_TAG = 'GENE_ASSOCIATION:'
 
 DEFAULT_SBML_LEVEL = 2
 DEFAULT_SBML_VERSION = 1
-DEFAULT_COMPARTMENT_ID = 'default'
-DEFAULT_COMPARTMENT_SIZE = 1.0
+
 
 
 def load_sbml_model(filename, kind=STOICHIOMETRIC):
@@ -50,17 +49,23 @@ def load_sbml_model(filename, kind=STOICHIOMETRIC):
 
 def _load_stoichiometric_model(sbml_model):
     model = StoichiometricModel(sbml_model.getId())
+    model.add_compartments(_load_compartments(sbml_model))
     model.add_metabolites(_load_metabolites(sbml_model))
     model.add_reactions(_load_reactions(sbml_model))
     model.add_stoichiometry(_load_stoichiometry(sbml_model))
     return model
     
+def _load_compartments(sbml_model):
+    return [_load_compartment(compartment) for compartment in sbml_model.getListOfCompartments()]
+
+def _load_compartment(compartment):
+    return Compartment(compartment.getId(), compartment.getName())
     
 def _load_metabolites(sbml_model):
     return [_load_metabolite(species) for species in sbml_model.getListOfSpecies()]
 
 def _load_metabolite(species):
-    return Metabolite(species.getId(), species.getName())
+    return Metabolite(species.getId(), species.getName(), species.getCompartment())
 
 def _load_reactions(sbml_model):
     return [_load_reaction(reaction) for reaction in sbml_model.getListOfReactions()]
@@ -77,6 +82,7 @@ def _load_stoichiometry(model):
      
 def _load_constraintbased_model(sbml_model):
     model = ConstraintBasedModel(sbml_model.getId())
+    model.add_compartments(_load_compartments(sbml_model))
     model.add_metabolites(_load_metabolites(sbml_model))
     model.add_reactions(_load_reactions(sbml_model))
     model.add_stoichiometry(_load_stoichiometry(sbml_model))
@@ -93,13 +99,14 @@ def _get_flux_bound(reaction, tag):
 
 def _load_gprconstrained_model(sbml_model):
     model = GPRConstrainedModel(sbml_model.getId())
+    model.add_compartments(_load_compartments(sbml_model))
     model.add_metabolites(_load_metabolites(sbml_model))
     model.add_reactions(_load_reactions(sbml_model))
     model.add_stoichiometry(_load_stoichiometry(sbml_model))
     model.set_bounds(_load_bounds(sbml_model))
     genes, rules = _load_gpr(sbml_model)
     model.add_genes(genes)
-    model.add_rules(rules)
+    model.set_rules(rules)
     return model
 
 def _load_gpr(sbml_model):
@@ -121,6 +128,7 @@ def _extract_rule(reaction):
         rule = ''
     return rule
 
+
 def save_sbml_model(model, filename):
     """ Save a model to an SBML file.
     
@@ -131,9 +139,7 @@ def save_sbml_model(model, filename):
 
     document = SBMLDocument(DEFAULT_SBML_LEVEL, DEFAULT_SBML_VERSION)
     sbml_model = document.createModel(model.id)
-    compartment = sbml_model.createCompartment()
-    compartment.setId(DEFAULT_COMPARTMENT_ID)
-    compartment.setSize(DEFAULT_COMPARTMENT_SIZE)
+    _save_compartments(model, sbml_model)
     _save_metabolites(model, sbml_model)
     _save_reactions(model, sbml_model)
     _save_stoichiometry(model, sbml_model)
@@ -144,12 +150,18 @@ def save_sbml_model(model, filename):
     writer = SBMLWriter()
     writer.writeSBML(document, filename)
 
+def _save_compartments(model, sbml_model):
+    for compartment in model.compartments.values():
+        sbml_compartment = sbml_model.createCompartment()
+        sbml_compartment.setId(compartment.id)
+        sbml_compartment.setName(compartment.name)
+        
 def _save_metabolites(model, sbml_model):
     for metabolite in model.metabolites.values():
         species = sbml_model.createSpecies()
         species.setId(metabolite.id)
         species.setName(metabolite.name)
-        species.setCompartment(DEFAULT_COMPARTMENT_ID)
+        species.setCompartment(metabolite.compartment)
 
 def _save_reactions(model, sbml_model):
     for reaction in model.reactions.values():
