@@ -34,14 +34,15 @@ class GurobiSolver(Solver):
         problem.update() #confirm if really necessary
         
         #create constraints
+        table = model.metabolite_reaction_lookup_table()
         for m_id in model.metabolites:
-            constr = quicksum([coeff*lpvars[r_id] for (m_id2, r_id), coeff in model.stoichiometry.items()
-                                 if m_id2 == m_id])
+            constr = quicksum([coeff*lpvars[r_id] for r_id, coeff in table[m_id].items()])
             problem.addConstr(constr == 0, m_id)
 
         self.problem = problem
         self.var_ids = model.reactions.keys()
         self.constr_ids = model.metabolites.keys()
+
                 
     def solve_lp(self, objective, model=None, constraints=None, get_shadow_prices=False, get_reduced_costs=False):
         """ Implements method from Solver class. """
