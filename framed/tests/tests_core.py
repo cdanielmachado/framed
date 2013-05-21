@@ -12,7 +12,7 @@ from framed.analysis.deletion import gene_deletion
 from framed.analysis.essentiality import essential_genes
 from framed.solvers.solver import Status
 from framed.core.transformation import make_irreversible
-from framed.analysis.optimization import combinatorial_gene_deletion
+from framed.design.combinatorial import combinatorial_gene_deletion
 
 SMALL_TEST_MODEL = '../../misc/ecoli_core_model.xml'
 TEST_MODEL_COPY = '../../misc/model_copy.xml'
@@ -144,7 +144,7 @@ class CombinatorialGeneDeletion(unittest.TestCase):
         fix_bigg_model(model)
         objective = {'R_EX_succ_e': 1}
         max_dels = 2
-        result = combinatorial_gene_deletion(model, objective, max_dels, parallel=True)
+        result = combinatorial_gene_deletion(model, objective, max_dels)
         print len(result)
         #print result
         self.assertTrue(result is not None)
