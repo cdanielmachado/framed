@@ -32,3 +32,13 @@ def reaction_deletion(model, reactions, method='FBA', reference=None, solver=Non
         solution = MOMA(model, ref_fluxes, constraints=constraints, solver=solver)
 
     return solution
+
+
+def deletion(model, elements, kind='reactions', method='FBA', reference=None, solver=None):
+    
+    if kind == 'genes':    
+        solution = gene_deletion(model, elements, method, reference, solver)
+    else:
+        solution = reaction_deletion(model, elements, method, reference, solver)
+        
+    return solution
