@@ -148,11 +148,11 @@ class MultispeciesTest(unittest.TestCase):
             dymmm_ode.integrate(dymmm_ode.t + dt)
             print dymmm_ode.t, dymmm_ode.y
 
-
     def tearDown(self):
         del self.br
         del self.o1
         del self.o2
+
 
 def suite():
     tests = [OrganismTest, EnvironmentTest, BioreactorTest, MultispeciesTest]
