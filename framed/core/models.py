@@ -132,7 +132,7 @@ class StoichiometricModel:
         
 
     def metabolite_reaction_lookup_table(self):
-        table = {m_id : dict() for m_id in self.metabolites} 
+        table = OrderedDict([(m_id, OrderedDict()) for m_id in self.metabolites])
     
         for (m_id, r_id), coeff in self.stoichiometry.items():
             table[m_id][r_id] = coeff
@@ -141,7 +141,7 @@ class StoichiometricModel:
  
    
     def reaction_metabolite_lookup_table(self):
-        table = {r_id : dict() for r_id in self.reactions} 
+        table = OrderedDict([(r_id, OrderedDict()) for r_id in self.reactions])
     
         for (m_id, r_id), coeff in self.stoichiometry.items():
             table[r_id][m_id] = coeff
@@ -156,17 +156,20 @@ class StoichiometricModel:
     
     
     def __repr__(self):
-        return '\n'.join([self.print_reaction(r_id) for r_id in self.reactions])
+        table = self.reaction_metabolite_lookup_table()
+        return '\n'.join([self.print_reaction(r_id, table) for r_id in self.reactions])
     
-    def print_reaction(self, r_id):
+    
+    def print_reaction(self, r_id, lookup_table=None):
+        if not lookup_table: 
+            lookup_table = self.reaction_metabolite_lookup_table()
+        
         res = r_id + ': '
         res += ' + '.join([m_id if coeff == -1.0 else str(-coeff) + ' ' + m_id
-                         for (m_id, r_id2), coeff in self.stoichiometry.items()
-                         if r_id2 == r_id and coeff < 0])
+                         for m_id, coeff in lookup_table[r_id].items() if coeff < 0])
         res += ' <-> ' if self.reactions[r_id].reversible else ' --> '
         res += ' + '.join([m_id if coeff == 1.0 else str(coeff) + ' ' + m_id
-                         for (m_id, r_id2), coeff in self.stoichiometry.items()
-                         if r_id2 == r_id and coeff > 0])
+                         for m_id, coeff in lookup_table[r_id].items() if coeff > 0])
         return res   
             
              
@@ -204,8 +207,8 @@ class ConstraintBasedModel(StoichiometricModel):
         for r_id in id_list:
             del self.bounds[r_id]
 
-    def print_reaction(self, r_id):
-        res = StoichiometricModel.print_reaction(self, r_id)
+    def print_reaction(self, r_id, lookup_table=None):
+        res = StoichiometricModel.print_reaction(self, r_id, lookup_table)
         lb, ub = self.bounds[r_id]
         rev = self.reactions[r_id].reversible
         if lb != None and (rev or lb != 0.0) or ub != None:

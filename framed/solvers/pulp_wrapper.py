@@ -41,9 +41,9 @@ class PuLPSolver(Solver):
         lpvars = {r_id: LpVariable(r_id, lb, ub) for r_id, (lb, ub) in model.bounds.items()}
         
         #create constraints
+        table = model.metabolite_reaction_lookup_table()
         for m_id in model.metabolites:
-            problem += lpSum([coeff*lpvars[r_id] for (m_id2, r_id), coeff in model.stoichiometry.items()
-                              if m_id2 == m_id]) == 0, m_id
+            problem += lpSum([coeff*lpvars[r_id] for r_id, coeff in table[m_id].items()]) == 0, m_id
         
         self.problem = problem
         self.var_ids = model.reactions.keys()
