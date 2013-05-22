@@ -43,7 +43,9 @@ def essentiality(model, kind='reactions', min_growth=0.01, constraints=None):
         else:
             solution = reaction_deletion(model, [elem], solver=solver)
 
-        if solution.status == Status.OPTIMAL and solution.fobj < min_growth * wt_growth or solution.status == Status.UNFEASIBLE:
+        if solution and (solution.status == Status.OPTIMAL
+                         and solution.fobj < min_growth * wt_growth
+                         or solution.status == Status.UNFEASIBLE):
             essential.append(elem)
             
     return essential

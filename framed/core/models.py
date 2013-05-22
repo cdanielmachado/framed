@@ -1,7 +1,6 @@
 """ This module defines base classes for metabolic modeling.
 
 TODO: Add self consistency check (e.g: no disconnected components)
-TODO: Add gpr parsing
 TODO: Add explicit (graph-based) gene-reaction associations
 """
 
