@@ -1,17 +1,37 @@
 '''
 Module for model transformation operations.
+
+@author: Daniel Machado
 '''
 
 from models import Reaction, ConstraintBasedModel, GPRConstrainedModel
+from ..analysis.variability import blocked_reactions
+
+def simplify(model):
+    """ Removes all blocked reactions in a constraint based model
+    
+    Arguments:
+        model : ConstraintBasedModel
+        
+    Returns:
+        list (of str): list of removed reactions
+    """
+
+    blocked = blocked_reactions(model)
+    model.remove_reactions(blocked)
+    
+    return blocked
+
 
 def make_irreversible(model):
     """ Splits all reversible reactions into forward and backward directions.
+    For efficiency the given model is converted. To keep a copy use deepcopy first.
     
     Arguments:
-        model : StoichiometricModel or any subclass
+        model : StoichiometricModel
         
     Returns:
-        dictionary : mapping olds ids to new ids
+        dictionary (str to (str, str)): mapping of old reaction ids to splitted reaction ids
     """
     
     mapping = dict()
@@ -36,8 +56,8 @@ def make_irreversible(model):
                 model.set_flux_bounds(bwd_id, 0, -lb if lb != None else None)
             
             if isinstance(model, GPRConstrainedModel):
-                model.add_rule(fwd_id, model.rules[r_id])
-                model.add_rule(bwd_id, model.rules[r_id])
+                model.set_rule(fwd_id, model.rules[r_id])
+                model.set_rule(bwd_id, model.rules[r_id])
             
             model.remove_reaction(r_id)
             

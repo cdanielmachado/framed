@@ -1,7 +1,6 @@
-'''
-Created on May 15, 2013
+''' This module implements flux variability analysis methods.
 
-@author: daniel
+@author: Daniel Machado
 '''
 
 from collections import OrderedDict
@@ -10,12 +9,15 @@ from ..solvers.solver import Status
 from simulation import FBA
 
 def FVA(model, obj_percentage=0, reactions=None):
-    """ Run flux variability analysis.
+    """ Run Flux Variability Analysis (FVA).
     
     Arguments:
         model : ConstraintBasedModel -- a constraint-based model
         obj_percentage : float -- minimum percentage of growth rate (default 0.0, max: 1.0)
-        reactions : list of String -- list of reactions to analyze (default: all)
+        reactions : list (of str) -- list of reactions to analyze (default: all)
+        
+    Returns:
+        dict (of str to (float, float)) -- flux variation ranges
     """
         
     if obj_percentage > 0:
@@ -54,3 +56,17 @@ def FVA(model, obj_percentage=0, reactions=None):
                 
     return variability
 
+
+def blocked_reactions(model):
+    """ Find all blocked reactions in a model
+    
+    Arguments:
+        model : ConstraintBasedModel -- a constraint-based model
+        
+    Returns:
+        list (of str) -- blocked reactions
+    """
+
+    variability = FVA(model)
+    
+    return [r_id for r_id, (lb, ub) in variability.items() if lb == 0 and ub == 0]

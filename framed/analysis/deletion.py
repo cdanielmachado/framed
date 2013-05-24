@@ -1,5 +1,4 @@
-'''
-Created on May 15, 2013
+''' This module implements gene and reaction deletion methods.
 
 @author: Daniel Machado
 '''
@@ -8,7 +7,19 @@ from simulation import FBA, MOMA
 
 
 def gene_deletion(model, genes, method='FBA', reference=None, solver=None, compute_silent_deletions=False):
-    """ Simulate deletion of a set of genes. """
+    """ Simulate the deletion of a set of genes.
+    
+    Arguments:
+        model : GPRConstrainedModel -- model
+        genes : list (of str) -- genes to delete
+        method : str -- simulation method: FBA (default) or MOMA
+        reference : dict (of str to float) -- reference flux distribution for MOMA (optional)
+        solver : Solver -- solver instance instantiated with the model, for speed (optional)
+        compute_silent_deletions : Bool -- don't compute gene deletion if no reactions are affected (optional, default: True)
+
+    Returns:
+        Solution -- solution
+    """
     
     inactive_reactions = deleted_genes_to_reactions(model, genes)
     
@@ -19,7 +30,17 @@ def gene_deletion(model, genes, method='FBA', reference=None, solver=None, compu
     
     return solution
 
+
 def deleted_genes_to_reactions(model, genes):
+    """ Convert a set of deleted genes to the respective deleted reactions.
+    
+    Arguments:
+        model : GPRConstrainedModel -- model
+        genes : list (of str) -- genes to delete
+
+    Returns:
+        list (of str) -- list of deleted reactions
+    """
     active_genes = set(model.genes) - set(genes)
     active_reactions = model.eval_GPR(active_genes)
     inactive_reactions = set(model.reactions) - set(active_reactions)
@@ -28,8 +49,19 @@ def deleted_genes_to_reactions(model, genes):
     
 
 def reaction_deletion(model, reactions, method='FBA', reference=None, solver=None):
-    """ Simulate deletion of a set of reactions. """
+    """ Simulate the deletion of a set of reactions.
     
+    Arguments:
+        model : GPRConstrainedModel -- model
+        reactions : list (of str) -- reactions to delete
+        method : str -- simulation method: FBA (default) or MOMA
+        reference : dict (of str to float) -- reference flux distribution for MOMA (optional)
+        solver : Solver -- solver instance instantiated with the model, for speed (optional)
+
+    Returns:
+        Solution -- solution
+    """
+        
     if method == 'MOMA' and not reference:
         wt_solution = FBA(model, solver=solver)
         reference = wt_solution.values
@@ -45,6 +77,19 @@ def reaction_deletion(model, reactions, method='FBA', reference=None, solver=Non
 
 
 def deletion(model, elements, kind='reactions', method='FBA', reference=None, solver=None):
+    """ Generic interface for gene or reaction deletion.
+    
+    Arguments:
+        model : ConstraintBasedModel -- model (GPRConstrainedModel is required for gene deletions)
+        elements : list (of str) -- elements to delete
+        kind : str -- genes or reactions (default)
+        method : str -- simulation method: FBA (default) or MOMA
+        reference : dict (of str to float) -- reference flux distribution for MOMA (optional)
+        solver : Solver -- solver instance instantiated with the model, for speed (optional)
+
+    Returns:
+        Solution -- solution
+    """
     
     if kind == 'genes':    
         solution = gene_deletion(model, elements, method, reference, solver)

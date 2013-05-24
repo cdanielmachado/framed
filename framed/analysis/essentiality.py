@@ -12,16 +12,46 @@ from deletion import gene_deletion, reaction_deletion
 
 
 def essential_genes(model, min_growth=0.01, constraints=None):
+    """ Compute the set of essential genes.
     
+    Arguments:
+        model : GPRConstrainedModel -- model
+        min_growth : float -- minimum percentage of growth rate to consider a deletion non-letal (default: 0.01)
+        constraints: dict (of str to float) -- environmental or additional constraints (optional)
+
+    Returns:
+        list (of str) -- essential genes
+    """    
     return essentiality(model, 'genes', min_growth, constraints)
 
 
 def essential_reactions(model, min_growth=0.01, constraints=None):
+    """ Compute the set of essential reactions.
+    
+    Arguments:
+        model : ConstraintBasedModel -- model
+        min_growth : float -- minimum percentage of growth rate to consider a deletion non-letal (default: 0.01)
+        constraints: dict (of str to float) -- environmental or additional constraints (optional)
+
+    Returns:
+        list (of str) -- essential reactions
+    """    
     
     return essentiality(model, 'reactions', min_growth, constraints)
 
 
 def essentiality(model, kind='reactions', min_growth=0.01, constraints=None):
+    """ Generic interface for computing gene or reaction essentiality.
+    
+    Arguments:
+        model : ConstraintBasedModel -- model (GPRConstrainedModel is required for gene essentiality)
+        kind : str -- genes or reactions (default)
+        min_growth : float -- minimum percentage of growth rate to consider a deletion non-letal (default: 0.01)
+        constraints: dict (of str to float) -- environmental or additional constraints (optional)
+
+    Returns:
+        list (of str) -- essential elements
+    """    
     
     solver = solver_instance()
     solver.build_problem(model)

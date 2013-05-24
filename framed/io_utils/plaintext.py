@@ -2,6 +2,8 @@
 
 TODO: Add support for compartments.
 TODO: Add support for GPRConstrainedModel (problem GPRs can't be parsed with regex).
+
+@author: Daniel Machado
 '''
 
 from ..core.models import Metabolite, Reaction, StoichiometricModel, ConstraintBasedModel
@@ -39,6 +41,16 @@ regex_bounds = compile(bounds)
 regex_reaction = compile(reaction)
 
 def read_model_from_file(filename, kind=STOICHIOMETRIC):
+    """ Reads a model from a file.
+    
+    Arguments:
+        filename : str -- file path
+        kind: {STOICHIOMETRIC (default), CONSTRAINT_BASED} -- define kind of model to read (optional)
+
+    Returns:
+        StoichiometricModel -- Stoichiometric model or respective subclass
+    """   
+    
     try:
         with open(filename, 'r') as stream:
             model_id = splitext(basename(filename))[0]
@@ -64,6 +76,12 @@ def read_model_from_file(filename, kind=STOICHIOMETRIC):
                           
                
 def add_reaction_from_str(model, reaction_str):
+    """ Parse a reaction from a string and add it to the model.
+    
+    Arguments:
+        model : StoichiometricModel -- model
+        reaction_str: str -- string representation a the reaction
+    """   
         
     match = regex_reaction.match(reaction_str)
     
@@ -116,6 +134,12 @@ def _parse_bounds(expression, reversible):
 
 
 def write_model_to_file(model, filename):
+    """ Writes a model to a file.
+    
+    Arguments:
+        model: StoichiometricModel -- Stoichiometric model (or subclass)
+        filename : str -- file path
+    """   
     try:
         with open(filename, 'w') as stream:
             stream.write(INSTRUCTIONS)

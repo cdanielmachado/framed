@@ -1,6 +1,9 @@
 '''
 Implementation a of PuLP based solver interface.
+
+@author: Daniel Machado
 '''
+
 from collections import OrderedDict
 from pulp import LpProblem, LpMaximize, LpVariable, lpSum, LpStatusOptimal, LpStatusInfeasible, LpStatusUnbounded
 from pulp.solvers import GUROBI, GUROBI_CMD, CPLEX_DLL, CPLEX_CMD, GLPK, GLPK_CMD
@@ -32,7 +35,11 @@ class PuLPSolver(Solver):
         Solver.__init__(self)
         
     def build_problem(self, model):
-        """ Implements method from Solver class. """
+        """ Create and store solver-specific internal structure for the given model.
+        
+        Arguments:
+            model : ConstraintBasedModel
+        """
 
         problem = LpProblem(sense=LpMaximize)
         problem.setSolver(SELECTED_SOLVER)
@@ -51,7 +58,19 @@ class PuLPSolver(Solver):
                 
         
     def solve_lp(self, objective, model=None, constraints=None, get_shadow_prices=False, get_reduced_costs=False): 
-        """ Implements method from Solver class. """
+        """ Solve an LP optimization problem.
+        
+        Arguments:
+            objective : dict (of str to float) -- reaction ids in the objective function and respective
+                        coefficients, the sense is maximization by default
+            model : ConstraintBasedModel -- model (optional, leave blank to reuse previous model structure)
+            constraints : dict (of str to (float, float)) -- environmental or additional constraints (optional)
+            get_shadow_prices : bool -- return shadow price information if available (optional, default: False)
+            get_reduced_costs : bool -- return reduced costs information if available (optional, default: False)
+            
+        Returns:
+            Solution
+        """
        
         if model: 
             self.build_problem(model)

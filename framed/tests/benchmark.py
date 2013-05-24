@@ -12,7 +12,10 @@ from cobra.flux_analysis.double_deletion import double_deletion
 
 from time import time
 
-MODEL = '/Users/daniel/Dropbox/models/ecoli/constraint-based/Reed2003/Ec_iJR904_flux1.xml'
+#MODEL = '/Users/daniel/Dropbox/models/ecoli/constraint-based/Reed2003/Ec_iJR904_flux1.xml'
+MODEL = 'misc/Ec_iAF1260_flux1.xml'
+
+N = 10
 
 def test_framed_single():
     model = load_sbml_model(MODEL, GPR_CONSTRAINED)
@@ -46,5 +49,5 @@ def test_cobrapy_parallel():
 
 if __name__ == '__main__':
     test_framed_single()
-#    test_cobrapy_single()
+    test_cobrapy_single()
 #    test_cobrapy_parallel()
