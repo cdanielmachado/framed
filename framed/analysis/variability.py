@@ -7,8 +7,9 @@ from collections import OrderedDict
 from ..solvers import solver_instance
 from ..solvers.solver import Status
 from simulation import FBA
+from numpy import linspace
 
-def FVA(model, obj_percentage=0, reactions=None):
+def FVA(model, obj_percentage=0, reactions=None, constraints=None):
     """ Run Flux Variability Analysis (FVA).
     
     Arguments:
@@ -23,9 +24,10 @@ def FVA(model, obj_percentage=0, reactions=None):
     if obj_percentage > 0:
         target = model.detect_biomass_reaction()
         solution = FBA(model)
-        obj_constraint = {target : (obj_percentage*solution.fobj, None)}
-    else:
-        obj_constraint = None
+        if constraints == None:
+            constraints = dict()
+        constraints[target] = (obj_percentage*solution.fobj, None)
+
     
     if not reactions:
         reactions = model.reactions.keys()
@@ -37,7 +39,7 @@ def FVA(model, obj_percentage=0, reactions=None):
         
     for r_id in model.reactions:
         #solution = solver.solve_lp({r_id: -1}, constraints=obj_constraint)
-        solution = FBA(model, r_id, False, constraints=obj_constraint, solver=solver)
+        solution = FBA(model, r_id, False, constraints=constraints, solver=solver)
         if solution.status == Status.OPTIMAL:
             variability[r_id][0] = -solution.fobj
         elif solution.status == Status.UNBOUNDED:
@@ -46,7 +48,7 @@ def FVA(model, obj_percentage=0, reactions=None):
             variability[r_id][0] = 0
             
 #        solution = solver.solve_lp({r_id: 1}, constraints=obj_constraint)
-        solution = FBA(model, r_id, True, constraints=obj_constraint, solver=solver)
+        solution = FBA(model, r_id, True, constraints=constraints, solver=solver)
         if solution.status:
             variability[r_id][1] = solution.fobj
         elif solution.status == Status.UNBOUNDED:
@@ -70,3 +72,20 @@ def blocked_reactions(model):
     variability = FVA(model)
     
     return [r_id for r_id, (lb, ub) in variability.items() if lb == 0 and ub == 0]
+
+
+def PhPP(model, r_x, r_y, steps=10):
+    """ Build the phenotypic phase plane for reactions r_x, r_y."""
+    
+    x_range = FVA(model, reactions=[r_x])
+    xmin, xmax = x_range[r_x]
+    xvals = linspace(xmin, xmax, steps).tolist()
+    ymins, ymaxs = [None]*steps, [None]*steps
+
+    for i, xval in enumerate(xvals):
+        constraints = {r_x: (xval, xval)}
+        y_range = FVA(model, reactions=[r_y], constraints=constraints)
+        ymins[i], ymaxs[i] = y_range[r_y]
+    
+    return xvals, ymins, ymaxs
+    
