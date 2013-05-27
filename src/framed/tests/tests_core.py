@@ -15,8 +15,7 @@ from framed.analysis.essentiality import essential_genes
 from framed.solvers.solver import Status
 from framed.core.transformation import make_irreversible, simplify
 from framed.design.combinatorial import combinatorial_gene_deletion
-from framed.analysis.variability import PhPP
-from matplotlib.pyplot import plot, xlabel, ylabel, show
+from framed.analysis.plotting import plot_flux_cone_projection
 
 SMALL_TEST_MODEL = '../../../misc/ecoli_core_model.xml'
 LARGE_TEST_MODEL = '../../../misc/Ec_iAF1260_flux1.xml'
@@ -197,15 +196,11 @@ class PhPPTest(unittest.TestCase):
         model = load_sbml_model(SMALL_TEST_MODEL, kind=GPR_CONSTRAINED)
         fix_bigg_model(model)
         r_x, r_y = 'R_EX_glc_e', 'R_EX_co2_e'
-        xvals, ymins, ymaxs = PhPP(model, r_x, r_y)
-        plot(xvals, ymins, 'k', xvals, ymaxs, 'k')
-        xlabel(model.reactions[r_x].name)
-        ylabel(model.reactions[r_y].name)
-        show()
+        plot_flux_cone_projection(model, r_x, r_y)
                             
 def suite():
-    tests = [SBMLTest, PlainTextIOTest, FBATest, FVATest, IrreversibleModelFBATest, SimplifiedModelFBATest, TransformationCommutativityTest, GeneDeletionFBATest, GeneDeletionMOMATest, GeneEssentialityTest]
-    #tests = [PhPPTest]
+    #tests = [SBMLTest, PlainTextIOTest, FBATest, FVATest, IrreversibleModelFBATest, SimplifiedModelFBATest, TransformationCommutativityTest, GeneDeletionFBATest, GeneDeletionMOMATest, GeneEssentialityTest]
+    tests = [PhPPTest]
     
     test_suite = unittest.TestSuite()
     for test in tests:
