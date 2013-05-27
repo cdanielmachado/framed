@@ -1,4 +1,0 @@
-""" 
-Top level package.
-
-"""

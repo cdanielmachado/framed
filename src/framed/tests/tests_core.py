@@ -1,5 +1,7 @@
 '''
-Unit testing module.
+Unit testing module for core features.
+
+@author: Daniel Machado
 '''
 import unittest
 
@@ -11,13 +13,15 @@ from framed.io_utils.plaintext import read_model_from_file, write_model_to_file
 from framed.analysis.deletion import gene_deletion
 from framed.analysis.essentiality import essential_genes
 from framed.solvers.solver import Status
-from framed.core.transformation import make_irreversible
+from framed.core.transformation import make_irreversible, simplify
 from framed.design.combinatorial import combinatorial_gene_deletion
+from framed.analysis.variability import PhPP
+from matplotlib.pyplot import plot, xlabel, ylabel, show
 
-SMALL_TEST_MODEL = '../../misc/ecoli_core_model.xml'
-LARGE_TEST_MODEL = '../../misc/Ec_iAF1260_flux1.xml'
-TEST_MODEL_COPY = '../../misc/model_copy.xml'
-PLAIN_TEXT_COPY = '../../misc/model_copy.txt'
+SMALL_TEST_MODEL = '../../../misc/ecoli_core_model.xml'
+LARGE_TEST_MODEL = '../../../misc/Ec_iAF1260_flux1.xml'
+TEST_MODEL_COPY = '../../../misc/model_copy.xml'
+PLAIN_TEXT_COPY = '../../../misc/model_copy.txt'
 
 GROWTH_RATE = 0.8739
 
@@ -66,13 +70,13 @@ class FBATest(unittest.TestCase):
     """ Test FBA simulation. """
     
     def testRun(self):
-        model = load_sbml_model(SMALL_TEST_MODEL, kind=CONSTRAINT_BASED)
+        model = load_sbml_model(SMALL_TEST_MODEL, kind=GPR_CONSTRAINED)
         fix_bigg_model(model)
         solution = FBA(model, get_shadow_prices=True, get_reduced_costs=True)
         self.assertEqual(solution.status, Status.OPTIMAL)
         self.assertAlmostEqual(solution.fobj, GROWTH_RATE, places=2)
 
-class FBATest2(unittest.TestCase):
+class FBAFromPlainTextTest(unittest.TestCase):
     """ Test FBA simulation from plain text model. """
     
     def testRun(self):
@@ -82,24 +86,60 @@ class FBATest2(unittest.TestCase):
         self.assertAlmostEqual(solution.fobj, GROWTH_RATE, places=2)
 
         
-class FBATest3(unittest.TestCase):
+class IrreversibleModelFBATest(unittest.TestCase):
     """ Test FBA simulation after reversible decomposition. """
     
     def testRun(self):
-        model = load_sbml_model(SMALL_TEST_MODEL, kind=CONSTRAINT_BASED)
+        model = load_sbml_model(SMALL_TEST_MODEL, kind=GPR_CONSTRAINED)
         fix_bigg_model(model)
         make_irreversible(model)
         self.assertTrue(all([not reaction.reversible for reaction in model.reactions.values()]))
         solution = FBA(model)
         self.assertEqual(solution.status, Status.OPTIMAL)
         self.assertAlmostEqual(solution.fobj, GROWTH_RATE, places=2)
+
+
+class SimplifiedModelFBATest(unittest.TestCase):
+    """ Test FBA simulation after model simplification. """
+    
+    def testRun(self):
+        model = load_sbml_model(SMALL_TEST_MODEL, kind=GPR_CONSTRAINED)
+        fix_bigg_model(model)
+        simplify(model)
+        solution = FBA(model)
+        self.assertEqual(solution.status, Status.OPTIMAL)
+        self.assertAlmostEqual(solution.fobj, GROWTH_RATE, places=2)
+
+
+class TransformationCommutativityTest(unittest.TestCase):
+    """ Test commutativity between transformations. """
+
+    def testRun(self):
+        model = load_sbml_model(SMALL_TEST_MODEL, kind=GPR_CONSTRAINED)
+        fix_bigg_model(model)
+        simplify(model)
+        make_irreversible(model)
+        simplify(model) #remove directionally blocked reactions
         
+        model2 = load_sbml_model(SMALL_TEST_MODEL, kind=GPR_CONSTRAINED)
+        fix_bigg_model(model2)
+        make_irreversible(model2)
+        simplify(model2)
+
+        self.assertEqual(model.id, model2.id)
+        self.assertListEqual(model.metabolites.keys(), model2.metabolites.keys())
+        self.assertListEqual(model.reactions.keys(), model2.reactions.keys())
+        self.assertDictEqual(model.stoichiometry, model2.stoichiometry)
+        self.assertDictEqual(model.bounds, model2.bounds)
+        self.assertListEqual(model.genes.keys(), model2.genes.keys())
+        self.assertDictEqual(model.rules, model2.rules)
+                        
                 
 class FVATest(unittest.TestCase):
     """ Test flux variability analysis """
     
     def testRun(self):
-        model = load_sbml_model(SMALL_TEST_MODEL, kind=CONSTRAINT_BASED)
+        model = load_sbml_model(SMALL_TEST_MODEL, kind=GPR_CONSTRAINED)
         fix_bigg_model(model)
         variability = FVA(model)        
         self.assertTrue(all([lb <= ub if lb is not None and ub is not None else True
@@ -150,10 +190,22 @@ class CombinatorialGeneDeletion(unittest.TestCase):
         #print result
         self.assertTrue(result is not None)
 
-                
+class PhPPTest(unittest.TestCase):
+    """ Test combinatorial gene deletion with FBA. """
+    
+    def testRun(self):
+        model = load_sbml_model(SMALL_TEST_MODEL, kind=GPR_CONSTRAINED)
+        fix_bigg_model(model)
+        r_x, r_y = 'R_EX_glc_e', 'R_EX_co2_e'
+        xvals, ymins, ymaxs = PhPP(model, r_x, r_y)
+        plot(xvals, ymins, 'k', xvals, ymaxs, 'k')
+        xlabel(model.reactions[r_x].name)
+        ylabel(model.reactions[r_y].name)
+        show()
+                            
 def suite():
-    tests = [SBMLTest, PlainTextIOTest, FBATest, FVATest, FBATest2, FBATest3, GeneDeletionFBATest, GeneDeletionMOMATest, GeneEssentialityTest]
-    #tests = [FBATest]
+    tests = [SBMLTest, PlainTextIOTest, FBATest, FVATest, IrreversibleModelFBATest, SimplifiedModelFBATest, TransformationCommutativityTest, GeneDeletionFBATest, GeneDeletionMOMATest, GeneEssentialityTest]
+    #tests = [PhPPTest]
     
     test_suite = unittest.TestSuite()
     for test in tests:

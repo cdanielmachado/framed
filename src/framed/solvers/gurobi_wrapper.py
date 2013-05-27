@@ -1,7 +1,25 @@
 '''
 Implementation of a Gurobi based solver interface.
 
+@author: Daniel Machado
+
+   Copyright 2013 Novo Nordisk Foundation Center for Biosustainability,
+   Technical University of Denmark.
+
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+   
 '''
+
 from collections import OrderedDict
 from .solver import Solver, Solution, Status
 from gurobipy import setParam, Model as GurobiModel, GRB, quicksum
@@ -21,8 +39,12 @@ class GurobiSolver(Solver):
 
         
     def build_problem(self, model):
-        """ Implements method from Solver class. """
+        """ Create and store solver-specific internal structure for the given model.
         
+        Arguments:
+            model : ConstraintBasedModel
+        """
+         
         problem = GurobiModel()
         
         #create variables
@@ -45,17 +67,42 @@ class GurobiSolver(Solver):
 
                 
     def solve_lp(self, objective, model=None, constraints=None, get_shadow_prices=False, get_reduced_costs=False):
-        """ Implements method from Solver class. """
+        """ Solve an LP optimization problem.
+        
+        Arguments:
+            objective : dict (of str to float) -- reaction ids in the objective function and respective
+                        coefficients, the sense is maximization by default
+            model : ConstraintBasedModel -- model (optional, leave blank to reuse previous model structure)
+            constraints : dict (of str to (float, float)) -- environmental or additional constraints (optional)
+            get_shadow_prices : bool -- return shadow price information if available (optional, default: False)
+            get_reduced_costs : bool -- return reduced costs information if available (optional, default: False)
+            
+        Returns:
+            Solution
+        """
         
         return self._generic_solve(None, objective, GRB.MAXIMIZE, model, constraints, get_shadow_prices, get_reduced_costs)
 
 
     def solve_qp(self, quad_obj, lin_obj, model=None, constraints=None, get_shadow_prices=False, get_reduced_costs=False):
-        """ Implements method from Solver class. """
+        """ Solve an LP optimization problem.
+        
+        Arguments:
+            quad_obj : dict (of (str, str) to float) -- map reaction pairs to respective coefficients
+            lin_obj : dict (of str to float) -- map single reaction ids to respective linear coefficients
+            model : ConstraintBasedModel -- model (optional, leave blank to reuse previous model structure)
+            constraints : dict (of str to (float, float)) -- overriding constraints (optional)
+            get_shadow_prices : bool -- return shadow price information if available (default: False)
+            get_reduced_costs : bool -- return reduced costs information if available (default: False)
+        
+        Returns:
+            Solution
+        """
         
         return self._generic_solve(quad_obj, lin_obj, GRB.MINIMIZE, model, constraints, get_shadow_prices, get_reduced_costs)
 
     
+
     def _generic_solve(self, quad_obj, lin_obj, sense, model=None, constraints=None, get_shadow_prices=False, get_reduced_costs=False):
         
         if model: 

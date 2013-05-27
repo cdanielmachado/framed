@@ -1,7 +1,24 @@
 """ This module implements methods for reading and writing SBML files.
 
-TODO: Import/export of bounds follows the BiGG model format,
-consider changing to the new SBML fbc package.
+TODO: Import/export of bounds and GPR follows the BiGG model format, consider changing to the new SBML fbc package.
+
+@author: Daniel Machado
+
+   Copyright 2013 Novo Nordisk Foundation Center for Biosustainability,
+   Technical University of Denmark.
+
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+   
 """
 from ..core.models import StoichiometricModel, ConstraintBasedModel, GPRConstrainedModel, Metabolite, Reaction, Gene, Compartment
 
@@ -25,8 +42,11 @@ def load_sbml_model(filename, kind=STOICHIOMETRIC):
     """ Loads a metabolic model from a file.
     
     Arguments:
-    filename : String -- SBML file name
-    kind : {STOICHIOMETRIC (default), CONSTRAINT_BASED, GPR_CONSTRAINED} -- set to define kind of model to load
+        filename : String -- SBML file path
+        kind : {STOICHIOMETRIC (default), CONSTRAINT_BASED, GPR_CONSTRAINED} -- define kind of model to load (optional)
+    
+    Returns:
+        StoichiometricModel -- Stoichiometric model or respective subclass
     """
     reader = SBMLReader()
     document = reader.readSBML(filename)
@@ -133,8 +153,8 @@ def save_sbml_model(model, filename):
     """ Save a model to an SBML file.
     
     Arguments:
-    model : StoichiometricModel (or any subclass) -- the model
-    filename : String -- SBML file name
+        model : StoichiometricModel (or any subclass) -- Stoichiometric model (or subclass)
+        filename : String -- SBML file path
     """
 
     document = SBMLDocument(DEFAULT_SBML_LEVEL, DEFAULT_SBML_VERSION)
