@@ -18,10 +18,10 @@ from framed.design.combinatorial import combinatorial_gene_deletion
 from framed.analysis.variability import PhPP
 from matplotlib.pyplot import plot, xlabel, ylabel, show
 
-SMALL_TEST_MODEL = '../../misc/ecoli_core_model.xml'
-LARGE_TEST_MODEL = '../../misc/Ec_iAF1260_flux1.xml'
-TEST_MODEL_COPY = '../../misc/model_copy.xml'
-PLAIN_TEXT_COPY = '../../misc/model_copy.txt'
+SMALL_TEST_MODEL = '../../../misc/ecoli_core_model.xml'
+LARGE_TEST_MODEL = '../../../misc/Ec_iAF1260_flux1.xml'
+TEST_MODEL_COPY = '../../../misc/model_copy.xml'
+PLAIN_TEXT_COPY = '../../../misc/model_copy.txt'
 
 GROWTH_RATE = 0.8739
 
@@ -204,8 +204,8 @@ class PhPPTest(unittest.TestCase):
         show()
                             
 def suite():
-    #tests = [SBMLTest, PlainTextIOTest, FBATest, FVATest, IrreversibleModelFBATest, SimplifiedModelFBATest, TransformationCommutativityTest, GeneDeletionFBATest, GeneDeletionMOMATest, GeneEssentialityTest]
-    tests = [PhPPTest]
+    tests = [SBMLTest, PlainTextIOTest, FBATest, FVATest, IrreversibleModelFBATest, SimplifiedModelFBATest, TransformationCommutativityTest, GeneDeletionFBATest, GeneDeletionMOMATest, GeneEssentialityTest]
+    #tests = [PhPPTest]
     
     test_suite = unittest.TestSuite()
     for test in tests:
