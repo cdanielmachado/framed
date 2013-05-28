@@ -1,0 +1,256 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>framed.io_utils.plaintext &mdash; framed 0.1.0 documentation</title>
+    
+    <link rel="stylesheet" href="../../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '0.1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <link rel="top" title="framed 0.1.0 documentation" href="../../../index.html" />
+    <link rel="up" title="Module code" href="../../index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../index.html">framed 0.1.0 documentation</a> &raquo;</li>
+          <li><a href="../../index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for framed.io_utils.plaintext</h1><div class="highlight"><pre>
+<span class="sd">&#39;&#39;&#39; This module implements methods for reading and writing models from a plain text format.</span>
+
+<span class="sd">TODO: Add support for compartments.</span>
+<span class="sd">TODO: Add support for GPRConstrainedModel (problem GPRs can&#39;t be parsed with regex).</span>
+
+<span class="sd">@author: Daniel Machado</span>
+
+<span class="sd">   Copyright 2013 Novo Nordisk Foundation Center for Biosustainability,</span>
+<span class="sd">   Technical University of Denmark.</span>
+
+<span class="sd">   Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);</span>
+<span class="sd">   you may not use this file except in compliance with the License.</span>
+<span class="sd">   You may obtain a copy of the License at</span>
+
+<span class="sd">       http://www.apache.org/licenses/LICENSE-2.0</span>
+
+<span class="sd">   Unless required by applicable law or agreed to in writing, software</span>
+<span class="sd">   distributed under the License is distributed on an &quot;AS IS&quot; BASIS,</span>
+<span class="sd">   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.</span>
+<span class="sd">   See the License for the specific language governing permissions and</span>
+<span class="sd">   limitations under the License.</span>
+<span class="sd">   </span>
+<span class="sd">&#39;&#39;&#39;</span>
+
+<span class="kn">from</span> <span class="nn">..core.models</span> <span class="kn">import</span> <span class="n">Metabolite</span><span class="p">,</span> <span class="n">Reaction</span><span class="p">,</span> <span class="n">StoichiometricModel</span><span class="p">,</span> <span class="n">ConstraintBasedModel</span>
+<span class="kn">from</span> <span class="nn">re</span> <span class="kn">import</span> <span class="nb">compile</span>
+<span class="kn">from</span> <span class="nn">os.path</span> <span class="kn">import</span> <span class="n">splitext</span><span class="p">,</span> <span class="n">basename</span>
+
+<span class="n">STOICHIOMETRIC</span> <span class="o">=</span> <span class="s">&#39;Stoichiometric&#39;</span>
+<span class="n">CONSTRAINT_BASED</span> <span class="o">=</span> <span class="s">&#39;Constraint-based&#39;</span>
+
+<span class="n">INSTRUCTIONS</span> <span class="o">=</span> <span class="s">&quot;&quot;&quot;</span>
+<span class="s"># Text based model representation</span>
+<span class="s"># Format: &quot;Reaction id : substrates --&gt; products [lower bound, upper bound]&quot;</span>
+<span class="s"># valid identifiers can contain letters, numbers or underscore (_) but must begin with a letter</span>
+<span class="s"># Use --&gt; or &lt;-&gt; for irreversible or reversible reactions respectively</span>
+<span class="s"># bounds are optional and can be specified only in one direction, eg: [-10.0,]</span>
+<span class="s"># begin with # to comment out any line</span>
+
+<span class="s">&quot;&quot;&quot;</span>
+
+<span class="n">id_re</span> <span class="o">=</span> <span class="s">&#39;[a-zA-Z]\w*&#39;</span>
+<span class="n">pos_float_re</span> <span class="o">=</span> <span class="s">&#39;\d+(?:\.\d+)?&#39;</span>
+<span class="n">float_re</span> <span class="o">=</span> <span class="s">&#39;-?\d+(?:\.\d+)?&#39;</span>
+
+<span class="n">compound</span> <span class="o">=</span> <span class="s">&#39;(?:&#39;</span> <span class="o">+</span> <span class="n">pos_float_re</span> <span class="o">+</span> <span class="s">&#39;\s+)?&#39;</span> <span class="o">+</span> <span class="n">id_re</span>
+<span class="n">expression</span> <span class="o">=</span> <span class="n">compound</span> <span class="o">+</span> <span class="s">&#39;(?:\s*\+\s*&#39;</span> <span class="o">+</span> <span class="n">compound</span> <span class="o">+</span> <span class="s">&#39;)*&#39;</span>
+<span class="n">bounds</span> <span class="o">=</span> <span class="s">&#39;\[\s*(?P&lt;lb&gt;&#39;</span> <span class="o">+</span> <span class="n">float_re</span> <span class="o">+</span> <span class="s">&#39;)?\s*,\s*(?P&lt;ub&gt;&#39;</span> <span class="o">+</span> <span class="n">float_re</span> <span class="o">+</span> <span class="s">&#39;)?\s*\]&#39;</span> 
+<span class="n">reaction</span> <span class="o">=</span> <span class="s">&#39;^(?P&lt;reaction_id&gt;&#39;</span> <span class="o">+</span> <span class="n">id_re</span> <span class="o">+</span> <span class="s">&#39;)\s*:&#39;</span> <span class="o">+</span> \
+           <span class="s">&#39;\s*(?P&lt;substrates&gt;&#39;</span> <span class="o">+</span> <span class="n">expression</span> <span class="o">+</span> <span class="s">&#39;)?&#39;</span> <span class="o">+</span> \
+           <span class="s">&#39;\s*(?P&lt;direction&gt;--&gt;|&lt;-&gt;)&#39;</span> <span class="o">+</span> \
+           <span class="s">&#39;\s*(?P&lt;products&gt;&#39;</span> <span class="o">+</span> <span class="n">expression</span> <span class="o">+</span> <span class="s">&#39;)?&#39;</span> <span class="o">+</span> \
+           <span class="s">&#39;\s*(?P&lt;bounds&gt;&#39;</span> <span class="o">+</span> <span class="n">bounds</span> <span class="o">+</span> <span class="s">&#39;)?$&#39;</span>
+           
+<span class="n">regex_compound</span> <span class="o">=</span> <span class="nb">compile</span><span class="p">(</span><span class="s">&#39;(?P&lt;coeff&gt;&#39;</span> <span class="o">+</span> <span class="n">pos_float_re</span> <span class="o">+</span> <span class="s">&#39;\s+)?(?P&lt;met_id&gt;&#39;</span> <span class="o">+</span> <span class="n">id_re</span> <span class="o">+</span> <span class="s">&#39;)&#39;</span><span class="p">)</span>
+<span class="n">regex_bounds</span> <span class="o">=</span> <span class="nb">compile</span><span class="p">(</span><span class="n">bounds</span><span class="p">)</span>
+<span class="n">regex_reaction</span> <span class="o">=</span> <span class="nb">compile</span><span class="p">(</span><span class="n">reaction</span><span class="p">)</span>
+
+<div class="viewcode-block" id="read_model_from_file"><a class="viewcode-back" href="../../../framed.io_utils.html#framed.io_utils.plaintext.read_model_from_file">[docs]</a><span class="k">def</span> <span class="nf">read_model_from_file</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">kind</span><span class="o">=</span><span class="n">STOICHIOMETRIC</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Reads a model from a file.</span>
+<span class="sd">    </span>
+<span class="sd">    Arguments:</span>
+<span class="sd">        filename : str -- file path</span>
+<span class="sd">        kind: {STOICHIOMETRIC (default), CONSTRAINT_BASED} -- define kind of model to read (optional)</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        StoichiometricModel -- Stoichiometric model or respective subclass</span>
+<span class="sd">    &quot;&quot;&quot;</span>   
+    
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">stream</span><span class="p">:</span>
+            <span class="n">model_id</span> <span class="o">=</span> <span class="n">splitext</span><span class="p">(</span><span class="n">basename</span><span class="p">(</span><span class="n">filename</span><span class="p">))[</span><span class="mi">0</span><span class="p">]</span>
+            
+            <span class="k">if</span> <span class="n">kind</span> <span class="o">==</span> <span class="n">STOICHIOMETRIC</span><span class="p">:</span>
+                <span class="n">model</span> <span class="o">=</span> <span class="n">StoichiometricModel</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">kind</span> <span class="o">==</span> <span class="n">CONSTRAINT_BASED</span><span class="p">:</span>
+                <span class="n">model</span> <span class="o">=</span> <span class="n">ConstraintBasedModel</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">model</span> <span class="o">=</span> <span class="bp">None</span>
+            
+            <span class="k">if</span> <span class="n">model</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">stream</span><span class="p">:</span>
+                    <span class="n">line</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+                    <span class="k">if</span> <span class="n">line</span> <span class="o">!=</span> <span class="s">&#39;&#39;</span> <span class="ow">and</span> <span class="n">line</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="s">&#39;#&#39;</span><span class="p">:</span>
+                        <span class="n">add_reaction_from_str</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">line</span><span class="p">)</span>
+    
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="k">print</span> <span class="n">e</span>
+        <span class="n">model</span> <span class="o">=</span> <span class="bp">None</span>
+    
+    <span class="k">return</span> <span class="n">model</span>
+                          
+               </div>
+<div class="viewcode-block" id="add_reaction_from_str"><a class="viewcode-back" href="../../../framed.io_utils.html#framed.io_utils.plaintext.add_reaction_from_str">[docs]</a><span class="k">def</span> <span class="nf">add_reaction_from_str</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">reaction_str</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Parse a reaction from a string and add it to the model.</span>
+<span class="sd">    </span>
+<span class="sd">    Arguments:</span>
+<span class="sd">        model : StoichiometricModel -- model</span>
+<span class="sd">        reaction_str: str -- string representation a the reaction</span>
+<span class="sd">    &quot;&quot;&quot;</span>   
+        
+    <span class="n">match</span> <span class="o">=</span> <span class="n">regex_reaction</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">reaction_str</span><span class="p">)</span>
+    
+    <span class="k">if</span> <span class="n">match</span><span class="p">:</span>
+        <span class="n">reaction_id</span> <span class="o">=</span> <span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="s">&#39;reaction_id&#39;</span><span class="p">)</span>
+        <span class="n">reversible</span> <span class="o">=</span> <span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="s">&#39;direction&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="s">&#39;&lt;-&gt;&#39;</span>                        
+        <span class="n">substrates</span> <span class="o">=</span> <span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="s">&#39;substrates&#39;</span><span class="p">)</span>
+        <span class="n">products</span> <span class="o">=</span> <span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="s">&#39;products&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">substrates</span> <span class="ow">or</span> <span class="n">products</span><span class="p">:</span>
+            <span class="n">reaction</span> <span class="o">=</span> <span class="n">Reaction</span><span class="p">(</span><span class="n">reaction_id</span><span class="p">,</span> <span class="n">reaction_id</span><span class="p">,</span> <span class="n">reversible</span><span class="p">);</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">ConstraintBasedModel</span><span class="p">):</span>
+                <span class="n">bounds</span> <span class="o">=</span> <span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="s">&#39;bounds&#39;</span><span class="p">)</span>
+                <span class="n">lb</span><span class="p">,</span> <span class="n">ub</span> <span class="o">=</span> <span class="n">_parse_bounds</span><span class="p">(</span><span class="n">bounds</span><span class="p">,</span> <span class="n">reversible</span><span class="p">)</span>
+                <span class="n">model</span><span class="o">.</span><span class="n">add_reaction</span><span class="p">(</span><span class="n">reaction</span><span class="p">,</span> <span class="n">lb</span><span class="p">,</span> <span class="n">ub</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">model</span><span class="o">.</span><span class="n">add_reaction</span><span class="p">(</span><span class="n">reaction</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">substrates</span><span class="p">:</span>
+            <span class="n">_parse_coefficients</span><span class="p">(</span><span class="n">substrates</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">reaction_id</span><span class="p">,</span> <span class="n">sense</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">products</span><span class="p">:</span>
+            <span class="n">_parse_coefficients</span><span class="p">(</span><span class="n">products</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">reaction_id</span><span class="p">,</span> <span class="n">sense</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        
+
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s">&#39;Unable to parse: &#39;</span> <span class="o">+</span> <span class="n">reaction_str</span><span class="p">)</span>
+
+</div>
+<span class="k">def</span> <span class="nf">_parse_coefficients</span><span class="p">(</span><span class="n">expression</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">reaction_id</span><span class="p">,</span> <span class="n">sense</span><span class="p">):</span>
+    
+    <span class="n">terms</span> <span class="o">=</span> <span class="n">expression</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&#39;+&#39;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">term</span> <span class="ow">in</span> <span class="n">terms</span><span class="p">:</span>
+        <span class="n">match</span> <span class="o">=</span> <span class="n">regex_compound</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">term</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span>
+        <span class="n">coeff</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="s">&#39;coeff&#39;</span><span class="p">))</span> <span class="k">if</span> <span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="s">&#39;coeff&#39;</span><span class="p">)</span> <span class="k">else</span> <span class="mf">1.0</span>
+        <span class="n">met_id</span> <span class="o">=</span> <span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="s">&#39;met_id&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">met_id</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">model</span><span class="o">.</span><span class="n">metabolites</span><span class="p">:</span>
+            <span class="n">model</span><span class="o">.</span><span class="n">add_metabolite</span><span class="p">(</span><span class="n">Metabolite</span><span class="p">(</span><span class="n">met_id</span><span class="p">,</span> <span class="n">met_id</span><span class="p">))</span>
+        <span class="n">model</span><span class="o">.</span><span class="n">add_stoichiometry</span><span class="p">([(</span><span class="n">met_id</span><span class="p">,</span> <span class="n">reaction_id</span><span class="p">,</span> <span class="n">coeff</span><span class="o">*</span><span class="n">sense</span><span class="p">)])</span>
+
+
+<span class="k">def</span> <span class="nf">_parse_bounds</span><span class="p">(</span><span class="n">expression</span><span class="p">,</span> <span class="n">reversible</span><span class="p">):</span>
+    <span class="n">lb</span> <span class="o">=</span> <span class="bp">None</span> <span class="k">if</span> <span class="n">reversible</span> <span class="k">else</span> <span class="mf">0.0</span>
+    <span class="n">ub</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="k">if</span> <span class="n">expression</span><span class="p">:</span>
+        <span class="n">match</span> <span class="o">=</span> <span class="n">regex_bounds</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">expression</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="s">&#39;lb&#39;</span><span class="p">):</span>
+            <span class="n">lb</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="s">&#39;lb&#39;</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="s">&#39;ub&#39;</span><span class="p">):</span>
+            <span class="n">lb</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="s">&#39;ub&#39;</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="n">lb</span><span class="p">,</span> <span class="n">ub</span>
+
+
+<div class="viewcode-block" id="write_model_to_file"><a class="viewcode-back" href="../../../framed.io_utils.html#framed.io_utils.plaintext.write_model_to_file">[docs]</a><span class="k">def</span> <span class="nf">write_model_to_file</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Writes a model to a file.</span>
+<span class="sd">    </span>
+<span class="sd">    Arguments:</span>
+<span class="sd">        model: StoichiometricModel -- Stoichiometric model (or subclass)</span>
+<span class="sd">        filename : str -- file path</span>
+<span class="sd">    &quot;&quot;&quot;</span>   
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">stream</span><span class="p">:</span>
+            <span class="n">stream</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">INSTRUCTIONS</span><span class="p">)</span>
+            <span class="n">stream</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="nb">repr</span><span class="p">(</span><span class="n">model</span><span class="p">))</span>
+    <span class="k">except</span><span class="p">:</span>
+        <span class="k">pass</span></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../index.html">framed 0.1.0 documentation</a> &raquo;</li>
+          <li><a href="../../index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2013, Technical University of Denmark.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2b1.
+    </div>
+  </body>
+</html>

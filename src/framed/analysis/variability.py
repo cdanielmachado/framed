@@ -90,8 +90,18 @@ def blocked_reactions(model):
     return [r_id for r_id, (lb, ub) in variability.items() if lb == 0 and ub == 0]
 
 
-def PhPP(model, r_x, r_y, steps=10):
-    """ Build the phenotypic phase plane for reactions r_x, r_y."""
+def flux_cone_projection(model, r_x, r_y, steps=10):
+    """ Calculate the flux cone projection for a pair of reactions.
+    
+    Arguments:
+        model : ConstraintBasedModel -- the model
+        r_x : str -- reaction on x-axis
+        r_y : str -- reaction on y-axis
+        steps : int -- number of steps to compute (default: 10)
+        
+    Returns:
+        list (of float), list (of float), list (of float) -- x values, y min values, y max values
+    """
     
     x_range = FVA(model, reactions=[r_x])
     xmin, xmax = x_range[r_x]

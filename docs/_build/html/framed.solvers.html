@@ -1,0 +1,404 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>solvers Package &mdash; framed 0.1.0 documentation</title>
+    
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '0.1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="framed 0.1.0 documentation" href="index.html" />
+    <link rel="up" title="framed Package" href="framed.html" />
+    <link rel="next" title="tests Package" href="framed.tests.html" />
+    <link rel="prev" title="io_utils Package" href="framed.io_utils.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="framed.tests.html" title="tests Package"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="framed.io_utils.html" title="io_utils Package"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">framed 0.1.0 documentation</a> &raquo;</li>
+          <li><a href="framed.html" accesskey="U">framed Package</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="solvers-package">
+<h1>solvers Package<a class="headerlink" href="#solvers-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="id1">
+<h2><tt class="xref py py-mod docutils literal"><span class="pre">solvers</span></tt> Package<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
+<span class="target" id="module-framed.solvers"></span><p>Package implementing interfaces to common solvers.</p>
+<p>&#64;author: Daniel Machado</p>
+<blockquote>
+<div><p>Copyright 2013 Novo Nordisk Foundation Center for Biosustainability,
+Technical University of Denmark.</p>
+<p>Licensed under the Apache License, Version 2.0 (the &#8220;License&#8221;);
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at</p>
+<blockquote>
+<div><a class="reference external" href="http://www.apache.org/licenses/LICENSE-2.0">http://www.apache.org/licenses/LICENSE-2.0</a></div></blockquote>
+<p>Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an &#8220;AS IS&#8221; BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.</p>
+</div></blockquote>
+<dl class="function">
+<dt id="framed.solvers.set_default_solver">
+<tt class="descclassname">framed.solvers.</tt><tt class="descname">set_default_solver</tt><big>(</big><em>solvername</em><big>)</big><a class="reference internal" href="_modules/framed/solvers.html#set_default_solver"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#framed.solvers.set_default_solver" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets default solver.</p>
+<dl class="docutils">
+<dt>Arguments:</dt>
+<dd>solvername : str &#8211; solver name (currently available: gurobi, pulp)</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="framed.solvers.solver_instance">
+<tt class="descclassname">framed.solvers.</tt><tt class="descname">solver_instance</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/framed/solvers.html#solver_instance"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#framed.solvers.solver_instance" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a new instance of the currently selected solver.</p>
+<dl class="docutils">
+<dt>Returns:</dt>
+<dd>Solver</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="module-framed.solvers.gurobi_wrapper">
+<span id="gurobi-wrapper-module"></span><h2><tt class="xref py py-mod docutils literal"><span class="pre">gurobi_wrapper</span></tt> Module<a class="headerlink" href="#module-framed.solvers.gurobi_wrapper" title="Permalink to this headline">¶</a></h2>
+<p>Implementation of a Gurobi based solver interface.</p>
+<p>&#64;author: Daniel Machado</p>
+<blockquote>
+<div><p>Copyright 2013 Novo Nordisk Foundation Center for Biosustainability,
+Technical University of Denmark.</p>
+<p>Licensed under the Apache License, Version 2.0 (the &#8220;License&#8221;);
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at</p>
+<blockquote>
+<div><a class="reference external" href="http://www.apache.org/licenses/LICENSE-2.0">http://www.apache.org/licenses/LICENSE-2.0</a></div></blockquote>
+<p>Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an &#8220;AS IS&#8221; BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.</p>
+</div></blockquote>
+<dl class="class">
+<dt id="framed.solvers.gurobi_wrapper.GurobiSolver">
+<em class="property">class </em><tt class="descclassname">framed.solvers.gurobi_wrapper.</tt><tt class="descname">GurobiSolver</tt><a class="reference internal" href="_modules/framed/solvers/gurobi_wrapper.html#GurobiSolver"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#framed.solvers.gurobi_wrapper.GurobiSolver" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#framed.solvers.solver.Solver" title="framed.solvers.solver.Solver"><tt class="xref py py-class docutils literal"><span class="pre">framed.solvers.solver.Solver</span></tt></a></p>
+<p>Implements the solver interface using gurobipy.</p>
+<dl class="method">
+<dt id="framed.solvers.gurobi_wrapper.GurobiSolver.build_problem">
+<tt class="descname">build_problem</tt><big>(</big><em>model</em><big>)</big><a class="reference internal" href="_modules/framed/solvers/gurobi_wrapper.html#GurobiSolver.build_problem"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#framed.solvers.gurobi_wrapper.GurobiSolver.build_problem" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create and store solver-specific internal structure for the given model.</p>
+<dl class="docutils">
+<dt>Arguments:</dt>
+<dd>model : ConstraintBasedModel</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="framed.solvers.gurobi_wrapper.GurobiSolver.solve_lp">
+<tt class="descname">solve_lp</tt><big>(</big><em>objective</em>, <em>model=None</em>, <em>constraints=None</em>, <em>get_shadow_prices=False</em>, <em>get_reduced_costs=False</em><big>)</big><a class="reference internal" href="_modules/framed/solvers/gurobi_wrapper.html#GurobiSolver.solve_lp"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#framed.solvers.gurobi_wrapper.GurobiSolver.solve_lp" title="Permalink to this definition">¶</a></dt>
+<dd><p>Solve an LP optimization problem.</p>
+<dl class="docutils">
+<dt>Arguments:</dt>
+<dd><dl class="first docutils">
+<dt>objective <span class="classifier-delimiter">:</span> <span class="classifier">dict (of str to float) &#8211; reaction ids in the objective function and respective</span></dt>
+<dd>coefficients, the sense is maximization by default</dd>
+</dl>
+<p class="last">model : ConstraintBasedModel &#8211; model (optional, leave blank to reuse previous model structure)
+constraints : dict (of str to (float, float)) &#8211; environmental or additional constraints (optional)
+get_shadow_prices : bool &#8211; return shadow price information if available (optional, default: False)
+get_reduced_costs : bool &#8211; return reduced costs information if available (optional, default: False)</p>
+</dd>
+<dt>Returns:</dt>
+<dd>Solution</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="framed.solvers.gurobi_wrapper.GurobiSolver.solve_qp">
+<tt class="descname">solve_qp</tt><big>(</big><em>quad_obj</em>, <em>lin_obj</em>, <em>model=None</em>, <em>constraints=None</em>, <em>get_shadow_prices=False</em>, <em>get_reduced_costs=False</em><big>)</big><a class="reference internal" href="_modules/framed/solvers/gurobi_wrapper.html#GurobiSolver.solve_qp"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#framed.solvers.gurobi_wrapper.GurobiSolver.solve_qp" title="Permalink to this definition">¶</a></dt>
+<dd><p>Solve an LP optimization problem.</p>
+<dl class="docutils">
+<dt>Arguments:</dt>
+<dd>quad_obj : dict (of (str, str) to float) &#8211; map reaction pairs to respective coefficients
+lin_obj : dict (of str to float) &#8211; map single reaction ids to respective linear coefficients
+model : ConstraintBasedModel &#8211; model (optional, leave blank to reuse previous model structure)
+constraints : dict (of str to (float, float)) &#8211; overriding constraints (optional)
+get_shadow_prices : bool &#8211; return shadow price information if available (default: False)
+get_reduced_costs : bool &#8211; return reduced costs information if available (default: False)</dd>
+<dt>Returns:</dt>
+<dd>Solution</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-framed.solvers.pulp_wrapper">
+<span id="pulp-wrapper-module"></span><h2><tt class="xref py py-mod docutils literal"><span class="pre">pulp_wrapper</span></tt> Module<a class="headerlink" href="#module-framed.solvers.pulp_wrapper" title="Permalink to this headline">¶</a></h2>
+<p>Implementation a of PuLP based solver interface.</p>
+<p>&#64;author: Daniel Machado</p>
+<blockquote>
+<div><p>Copyright 2013 Novo Nordisk Foundation Center for Biosustainability,
+Technical University of Denmark.</p>
+<p>Licensed under the Apache License, Version 2.0 (the &#8220;License&#8221;);
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at</p>
+<blockquote>
+<div><a class="reference external" href="http://www.apache.org/licenses/LICENSE-2.0">http://www.apache.org/licenses/LICENSE-2.0</a></div></blockquote>
+<p>Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an &#8220;AS IS&#8221; BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.</p>
+</div></blockquote>
+<dl class="class">
+<dt id="framed.solvers.pulp_wrapper.PuLPSolver">
+<em class="property">class </em><tt class="descclassname">framed.solvers.pulp_wrapper.</tt><tt class="descname">PuLPSolver</tt><a class="reference internal" href="_modules/framed/solvers/pulp_wrapper.html#PuLPSolver"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#framed.solvers.pulp_wrapper.PuLPSolver" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#framed.solvers.solver.Solver" title="framed.solvers.solver.Solver"><tt class="xref py py-class docutils literal"><span class="pre">framed.solvers.solver.Solver</span></tt></a></p>
+<p>Implements the solver interface using the PuLP library.</p>
+<dl class="method">
+<dt id="framed.solvers.pulp_wrapper.PuLPSolver.build_problem">
+<tt class="descname">build_problem</tt><big>(</big><em>model</em><big>)</big><a class="reference internal" href="_modules/framed/solvers/pulp_wrapper.html#PuLPSolver.build_problem"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#framed.solvers.pulp_wrapper.PuLPSolver.build_problem" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create and store solver-specific internal structure for the given model.</p>
+<dl class="docutils">
+<dt>Arguments:</dt>
+<dd>model : ConstraintBasedModel</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="framed.solvers.pulp_wrapper.PuLPSolver.solve_lp">
+<tt class="descname">solve_lp</tt><big>(</big><em>objective</em>, <em>model=None</em>, <em>constraints=None</em>, <em>get_shadow_prices=False</em>, <em>get_reduced_costs=False</em><big>)</big><a class="reference internal" href="_modules/framed/solvers/pulp_wrapper.html#PuLPSolver.solve_lp"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#framed.solvers.pulp_wrapper.PuLPSolver.solve_lp" title="Permalink to this definition">¶</a></dt>
+<dd><p>Solve an LP optimization problem.</p>
+<dl class="docutils">
+<dt>Arguments:</dt>
+<dd><dl class="first docutils">
+<dt>objective <span class="classifier-delimiter">:</span> <span class="classifier">dict (of str to float) &#8211; reaction ids in the objective function and respective</span></dt>
+<dd>coefficients, the sense is maximization by default</dd>
+</dl>
+<p class="last">model : ConstraintBasedModel &#8211; model (optional, leave blank to reuse previous model structure)
+constraints : dict (of str to (float, float)) &#8211; environmental or additional constraints (optional)
+get_shadow_prices : bool &#8211; return shadow price information if available (optional, default: False)
+get_reduced_costs : bool &#8211; return reduced costs information if available (optional, default: False)</p>
+</dd>
+<dt>Returns:</dt>
+<dd>Solution</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-framed.solvers.solver">
+<span id="solver-module"></span><h2><tt class="xref py py-mod docutils literal"><span class="pre">solver</span></tt> Module<a class="headerlink" href="#module-framed.solvers.solver" title="Permalink to this headline">¶</a></h2>
+<p>Abstract classes for solver specific implementations.</p>
+<p>&#64;author: Daniel Machado</p>
+<blockquote>
+<div><p>Copyright 2013 Novo Nordisk Foundation Center for Biosustainability,
+Technical University of Denmark.</p>
+<p>Licensed under the Apache License, Version 2.0 (the &#8220;License&#8221;);
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at</p>
+<blockquote>
+<div><a class="reference external" href="http://www.apache.org/licenses/LICENSE-2.0">http://www.apache.org/licenses/LICENSE-2.0</a></div></blockquote>
+<p>Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an &#8220;AS IS&#8221; BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.</p>
+</div></blockquote>
+<dl class="class">
+<dt id="framed.solvers.solver.Solution">
+<em class="property">class </em><tt class="descclassname">framed.solvers.solver.</tt><tt class="descname">Solution</tt><big>(</big><em>status=0</em>, <em>fobj=None</em>, <em>values=None</em>, <em>shadow_prices=None</em>, <em>reduced_costs=None</em><big>)</big><a class="reference internal" href="_modules/framed/solvers/solver.html#Solution"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#framed.solvers.solver.Solution" title="Permalink to this definition">¶</a></dt>
+<dd><p>Stores the results of an optimization.
+Invoke without arguments to create an empty Solution representing a failed optimization.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="framed.solvers.solver.Solver">
+<em class="property">class </em><tt class="descclassname">framed.solvers.solver.</tt><tt class="descname">Solver</tt><a class="reference internal" href="_modules/framed/solvers/solver.html#Solver"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#framed.solvers.solver.Solver" title="Permalink to this definition">¶</a></dt>
+<dd><p>Abstract class representing a generic solver.
+All solver interfaces should implement the basic methods.</p>
+<dl class="method">
+<dt id="framed.solvers.solver.Solver.build_problem">
+<tt class="descname">build_problem</tt><big>(</big><em>model</em><big>)</big><a class="reference internal" href="_modules/framed/solvers/solver.html#Solver.build_problem"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#framed.solvers.solver.Solver.build_problem" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create and store solver-specific internal structure for the given model.</p>
+<dl class="docutils">
+<dt>Arguments:</dt>
+<dd>model : ConstraintBasedModel</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="framed.solvers.solver.Solver.solve_lp">
+<tt class="descname">solve_lp</tt><big>(</big><em>objective</em>, <em>model=None</em>, <em>constraints=None</em>, <em>get_shadow_prices=False</em>, <em>get_reduced_costs=False</em><big>)</big><a class="reference internal" href="_modules/framed/solvers/solver.html#Solver.solve_lp"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#framed.solvers.solver.Solver.solve_lp" title="Permalink to this definition">¶</a></dt>
+<dd><p>Solve an LP optimization problem.</p>
+<dl class="docutils">
+<dt>Arguments:</dt>
+<dd><dl class="first docutils">
+<dt>objective <span class="classifier-delimiter">:</span> <span class="classifier">dict (of str to float) &#8211; reaction ids in the objective function and respective</span></dt>
+<dd>coefficients, the sense is maximization by default</dd>
+</dl>
+<p class="last">model : ConstraintBasedModel &#8211; model (optional, leave blank to reuse previous model structure)
+constraints : dict (of str to (float, float)) &#8211; environmental or additional constraints (optional)
+get_shadow_prices : bool &#8211; return shadow price information if available (optional, default: False)
+get_reduced_costs : bool &#8211; return reduced costs information if available (optional, default: False)</p>
+</dd>
+<dt>Returns:</dt>
+<dd>Solution</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="framed.solvers.solver.Solver.solve_qp">
+<tt class="descname">solve_qp</tt><big>(</big><em>quad_obj</em>, <em>lin_obj</em>, <em>model=None</em>, <em>constraints=None</em>, <em>get_shadow_prices=False</em>, <em>get_reduced_costs=False</em><big>)</big><a class="reference internal" href="_modules/framed/solvers/solver.html#Solver.solve_qp"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#framed.solvers.solver.Solver.solve_qp" title="Permalink to this definition">¶</a></dt>
+<dd><p>Solve an LP optimization problem.</p>
+<dl class="docutils">
+<dt>Arguments:</dt>
+<dd>quad_obj : dict (of (str, str) to float) &#8211; map reaction pairs to respective coefficients
+lin_obj : dict (of str to float) &#8211; map single reaction ids to respective linear coefficients
+model : ConstraintBasedModel &#8211; model (optional, leave blank to reuse previous model structure)
+constraints : dict (of str to (float, float)) &#8211; overriding constraints (optional)
+get_shadow_prices : bool &#8211; return shadow price information if available (default: False)
+get_reduced_costs : bool &#8211; return reduced costs information if available (default: False)</dd>
+<dt>Returns:</dt>
+<dd>Solution</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="framed.solvers.solver.Status">
+<em class="property">class </em><tt class="descclassname">framed.solvers.solver.</tt><tt class="descname">Status</tt><a class="reference internal" href="_modules/framed/solvers/solver.html#Status"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#framed.solvers.solver.Status" title="Permalink to this definition">¶</a></dt>
+<dd><p>Enumeration of possible solution status.</p>
+<dl class="attribute">
+<dt id="framed.solvers.solver.Status.OPTIMAL">
+<tt class="descname">OPTIMAL</tt><em class="property"> = 1</em><a class="headerlink" href="#framed.solvers.solver.Status.OPTIMAL" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="framed.solvers.solver.Status.UNBOUNDED">
+<tt class="descname">UNBOUNDED</tt><em class="property"> = -1</em><a class="headerlink" href="#framed.solvers.solver.Status.UNBOUNDED" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="framed.solvers.solver.Status.UNFEASIBLE">
+<tt class="descname">UNFEASIBLE</tt><em class="property"> = -2</em><a class="headerlink" href="#framed.solvers.solver.Status.UNFEASIBLE" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="framed.solvers.solver.Status.UNKNOWN">
+<tt class="descname">UNKNOWN</tt><em class="property"> = 0</em><a class="headerlink" href="#framed.solvers.solver.Status.UNKNOWN" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">solvers Package</a><ul>
+<li><a class="reference internal" href="#id1"><tt class="docutils literal"><span class="pre">solvers</span></tt> Package</a></li>
+<li><a class="reference internal" href="#module-framed.solvers.gurobi_wrapper"><tt class="docutils literal"><span class="pre">gurobi_wrapper</span></tt> Module</a></li>
+<li><a class="reference internal" href="#module-framed.solvers.pulp_wrapper"><tt class="docutils literal"><span class="pre">pulp_wrapper</span></tt> Module</a></li>
+<li><a class="reference internal" href="#module-framed.solvers.solver"><tt class="docutils literal"><span class="pre">solver</span></tt> Module</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="framed.io_utils.html"
+                        title="previous chapter">io_utils Package</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="framed.tests.html"
+                        title="next chapter">tests Package</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/framed.solvers.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="framed.tests.html" title="tests Package"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="framed.io_utils.html" title="io_utils Package"
+             >previous</a> |</li>
+        <li><a href="index.html">framed 0.1.0 documentation</a> &raquo;</li>
+          <li><a href="framed.html" >framed Package</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2013, Technical University of Denmark.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2b1.
+    </div>
+  </body>
+</html>

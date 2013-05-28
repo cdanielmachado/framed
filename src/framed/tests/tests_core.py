@@ -15,11 +15,10 @@ from framed.analysis.essentiality import essential_genes
 from framed.solvers.solver import Status
 from framed.core.transformation import make_irreversible, simplify
 from framed.design.combinatorial import combinatorial_gene_deletion
-from framed.analysis.variability import PhPP
-from matplotlib.pyplot import plot, xlabel, ylabel, show
+from framed.analysis.plotting import plot_flux_cone_projection
 
 SMALL_TEST_MODEL = '../../../misc/ecoli_core_model.xml'
-LARGE_TEST_MODEL = '../../../misc/Ec_iAF1260_flux1.xml'
+LARGE_TEST_MODEL = '../../../misc/iAF1260.xml'
 TEST_MODEL_COPY = '../../../misc/model_copy.xml'
 PLAIN_TEXT_COPY = '../../../misc/model_copy.txt'
 
@@ -56,7 +55,6 @@ class PlainTextIOTest(unittest.TestCase):
         
     def testRun(self):
         model = load_sbml_model(SMALL_TEST_MODEL, kind=CONSTRAINT_BASED)
-        fix_bigg_model(model)
         write_model_to_file(model, PLAIN_TEXT_COPY)
         model_copy = read_model_from_file(PLAIN_TEXT_COPY, kind=CONSTRAINT_BASED)
         self.assertListEqual(sorted(model.metabolites.keys()),
@@ -80,8 +78,11 @@ class FBAFromPlainTextTest(unittest.TestCase):
     """ Test FBA simulation from plain text model. """
     
     def testRun(self):
-        model = read_model_from_file(PLAIN_TEXT_COPY, kind=CONSTRAINT_BASED)
-        solution = FBA(model)
+        model = load_sbml_model(SMALL_TEST_MODEL, kind=CONSTRAINT_BASED)
+        fix_bigg_model(model)
+        write_model_to_file(model, PLAIN_TEXT_COPY)
+        model_copy = read_model_from_file(PLAIN_TEXT_COPY, kind=CONSTRAINT_BASED)
+        solution = FBA(model_copy)
         self.assertEqual(solution.status, Status.OPTIMAL)
         self.assertAlmostEqual(solution.fobj, GROWTH_RATE, places=2)
 
@@ -190,22 +191,18 @@ class CombinatorialGeneDeletion(unittest.TestCase):
         #print result
         self.assertTrue(result is not None)
 
-class PhPPTest(unittest.TestCase):
+class FluxConeProjectionTest(unittest.TestCase):
     """ Test combinatorial gene deletion with FBA. """
     
     def testRun(self):
         model = load_sbml_model(SMALL_TEST_MODEL, kind=GPR_CONSTRAINED)
         fix_bigg_model(model)
         r_x, r_y = 'R_EX_glc_e', 'R_EX_co2_e'
-        xvals, ymins, ymaxs = PhPP(model, r_x, r_y)
-        plot(xvals, ymins, 'k', xvals, ymaxs, 'k')
-        xlabel(model.reactions[r_x].name)
-        ylabel(model.reactions[r_y].name)
-        show()
+        plot_flux_cone_projection(model, r_x, r_y)
                             
 def suite():
-    tests = [SBMLTest, PlainTextIOTest, FBATest, FVATest, IrreversibleModelFBATest, SimplifiedModelFBATest, TransformationCommutativityTest, GeneDeletionFBATest, GeneDeletionMOMATest, GeneEssentialityTest]
-    #tests = [PhPPTest]
+    tests = [SBMLTest, PlainTextIOTest, FBATest, FBAFromPlainTextTest, FVATest, IrreversibleModelFBATest, SimplifiedModelFBATest, TransformationCommutativityTest, GeneDeletionFBATest, GeneDeletionMOMATest, GeneEssentialityTest]
+    #tests = [PlainTextIOTest]
     
     test_suite = unittest.TestSuite()
     for test in tests:

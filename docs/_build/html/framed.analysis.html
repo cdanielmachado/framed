@@ -1,0 +1,410 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>analysis Package &mdash; framed 0.1.0 documentation</title>
+    
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '0.1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="framed 0.1.0 documentation" href="index.html" />
+    <link rel="up" title="framed Package" href="framed.html" />
+    <link rel="next" title="core Package" href="framed.core.html" />
+    <link rel="prev" title="framed Package" href="framed.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="framed.core.html" title="core Package"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="framed.html" title="framed Package"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">framed 0.1.0 documentation</a> &raquo;</li>
+          <li><a href="framed.html" accesskey="U">framed Package</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="analysis-package">
+<h1>analysis Package<a class="headerlink" href="#analysis-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="id1">
+<h2><tt class="xref py py-mod docutils literal"><span class="pre">analysis</span></tt> Package<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
+<span class="target" id="module-framed.analysis"></span><p>Package implementing constraint-based analysis methods.</p>
+<p>&#64;author: Daniel Machado</p>
+<blockquote>
+<div><p>Copyright 2013 Novo Nordisk Foundation Center for Biosustainability,
+Technical University of Denmark.</p>
+<p>Licensed under the Apache License, Version 2.0 (the &#8220;License&#8221;);
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at</p>
+<blockquote>
+<div><a class="reference external" href="http://www.apache.org/licenses/LICENSE-2.0">http://www.apache.org/licenses/LICENSE-2.0</a></div></blockquote>
+<p>Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an &#8220;AS IS&#8221; BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.</p>
+</div></blockquote>
+</div>
+<div class="section" id="module-framed.analysis.deletion">
+<span id="deletion-module"></span><h2><tt class="xref py py-mod docutils literal"><span class="pre">deletion</span></tt> Module<a class="headerlink" href="#module-framed.analysis.deletion" title="Permalink to this headline">¶</a></h2>
+<p>This module implements gene and reaction deletion methods.</p>
+<p>&#64;author: Daniel Machado</p>
+<blockquote>
+<div><p>Copyright 2013 Novo Nordisk Foundation Center for Biosustainability,
+Technical University of Denmark.</p>
+<p>Licensed under the Apache License, Version 2.0 (the &#8220;License&#8221;);
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at</p>
+<blockquote>
+<div><a class="reference external" href="http://www.apache.org/licenses/LICENSE-2.0">http://www.apache.org/licenses/LICENSE-2.0</a></div></blockquote>
+<p>Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an &#8220;AS IS&#8221; BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.</p>
+</div></blockquote>
+<dl class="function">
+<dt id="framed.analysis.deletion.deleted_genes_to_reactions">
+<tt class="descclassname">framed.analysis.deletion.</tt><tt class="descname">deleted_genes_to_reactions</tt><big>(</big><em>model</em>, <em>genes</em><big>)</big><a class="reference internal" href="_modules/framed/analysis/deletion.html#deleted_genes_to_reactions"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#framed.analysis.deletion.deleted_genes_to_reactions" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert a set of deleted genes to the respective deleted reactions.</p>
+<dl class="docutils">
+<dt>Arguments:</dt>
+<dd>model : GPRConstrainedModel &#8211; model
+genes : list (of str) &#8211; genes to delete</dd>
+<dt>Returns:</dt>
+<dd>list (of str) &#8211; list of deleted reactions</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="framed.analysis.deletion.deletion">
+<tt class="descclassname">framed.analysis.deletion.</tt><tt class="descname">deletion</tt><big>(</big><em>model</em>, <em>elements</em>, <em>kind='reactions'</em>, <em>method='FBA'</em>, <em>reference=None</em>, <em>solver=None</em><big>)</big><a class="reference internal" href="_modules/framed/analysis/deletion.html#deletion"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#framed.analysis.deletion.deletion" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generic interface for gene or reaction deletion.</p>
+<dl class="docutils">
+<dt>Arguments:</dt>
+<dd>model : ConstraintBasedModel &#8211; model (GPRConstrainedModel is required for gene deletions)
+elements : list (of str) &#8211; elements to delete
+kind : str &#8211; genes or reactions (default)
+method : str &#8211; simulation method: FBA (default) or MOMA
+reference : dict (of str to float) &#8211; reference flux distribution for MOMA (optional)
+solver : Solver &#8211; solver instance instantiated with the model, for speed (optional)</dd>
+<dt>Returns:</dt>
+<dd>Solution &#8211; solution</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="framed.analysis.deletion.gene_deletion">
+<tt class="descclassname">framed.analysis.deletion.</tt><tt class="descname">gene_deletion</tt><big>(</big><em>model</em>, <em>genes</em>, <em>method='FBA'</em>, <em>reference=None</em>, <em>solver=None</em>, <em>compute_silent_deletions=False</em><big>)</big><a class="reference internal" href="_modules/framed/analysis/deletion.html#gene_deletion"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#framed.analysis.deletion.gene_deletion" title="Permalink to this definition">¶</a></dt>
+<dd><p>Simulate the deletion of a set of genes.</p>
+<dl class="docutils">
+<dt>Arguments:</dt>
+<dd>model : GPRConstrainedModel &#8211; model
+genes : list (of str) &#8211; genes to delete
+method : str &#8211; simulation method: FBA (default) or MOMA
+reference : dict (of str to float) &#8211; reference flux distribution for MOMA (optional)
+solver : Solver &#8211; solver instance instantiated with the model, for speed (optional)
+compute_silent_deletions : Bool &#8211; don&#8217;t compute gene deletion if no reactions are affected (optional, default: True)</dd>
+<dt>Returns:</dt>
+<dd>Solution &#8211; solution</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="framed.analysis.deletion.reaction_deletion">
+<tt class="descclassname">framed.analysis.deletion.</tt><tt class="descname">reaction_deletion</tt><big>(</big><em>model</em>, <em>reactions</em>, <em>method='FBA'</em>, <em>reference=None</em>, <em>solver=None</em><big>)</big><a class="reference internal" href="_modules/framed/analysis/deletion.html#reaction_deletion"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#framed.analysis.deletion.reaction_deletion" title="Permalink to this definition">¶</a></dt>
+<dd><p>Simulate the deletion of a set of reactions.</p>
+<dl class="docutils">
+<dt>Arguments:</dt>
+<dd>model : GPRConstrainedModel &#8211; model
+reactions : list (of str) &#8211; reactions to delete
+method : str &#8211; simulation method: FBA (default) or MOMA
+reference : dict (of str to float) &#8211; reference flux distribution for MOMA (optional)
+solver : Solver &#8211; solver instance instantiated with the model, for speed (optional)</dd>
+<dt>Returns:</dt>
+<dd>Solution &#8211; solution</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="module-framed.analysis.essentiality">
+<span id="essentiality-module"></span><h2><tt class="xref py py-mod docutils literal"><span class="pre">essentiality</span></tt> Module<a class="headerlink" href="#module-framed.analysis.essentiality" title="Permalink to this headline">¶</a></h2>
+<p>This module implements methods to compute gene and reaction essentiality.</p>
+<p>&#64;author: Daniel Machado</p>
+<blockquote>
+<div><p>Copyright 2013 Novo Nordisk Foundation Center for Biosustainability,
+Technical University of Denmark.</p>
+<p>Licensed under the Apache License, Version 2.0 (the &#8220;License&#8221;);
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at</p>
+<blockquote>
+<div><a class="reference external" href="http://www.apache.org/licenses/LICENSE-2.0">http://www.apache.org/licenses/LICENSE-2.0</a></div></blockquote>
+<p>Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an &#8220;AS IS&#8221; BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.</p>
+</div></blockquote>
+<dl class="function">
+<dt id="framed.analysis.essentiality.essential_genes">
+<tt class="descclassname">framed.analysis.essentiality.</tt><tt class="descname">essential_genes</tt><big>(</big><em>model</em>, <em>min_growth=0.01</em>, <em>constraints=None</em><big>)</big><a class="reference internal" href="_modules/framed/analysis/essentiality.html#essential_genes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#framed.analysis.essentiality.essential_genes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute the set of essential genes.</p>
+<dl class="docutils">
+<dt>Arguments:</dt>
+<dd>model : GPRConstrainedModel &#8211; model
+min_growth : float &#8211; minimum percentage of growth rate to consider a deletion non-letal (default: 0.01)
+constraints: dict (of str to float) &#8211; environmental or additional constraints (optional)</dd>
+<dt>Returns:</dt>
+<dd>list (of str) &#8211; essential genes</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="framed.analysis.essentiality.essential_reactions">
+<tt class="descclassname">framed.analysis.essentiality.</tt><tt class="descname">essential_reactions</tt><big>(</big><em>model</em>, <em>min_growth=0.01</em>, <em>constraints=None</em><big>)</big><a class="reference internal" href="_modules/framed/analysis/essentiality.html#essential_reactions"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#framed.analysis.essentiality.essential_reactions" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute the set of essential reactions.</p>
+<dl class="docutils">
+<dt>Arguments:</dt>
+<dd>model : ConstraintBasedModel &#8211; model
+min_growth : float &#8211; minimum percentage of growth rate to consider a deletion non-letal (default: 0.01)
+constraints: dict (of str to float) &#8211; environmental or additional constraints (optional)</dd>
+<dt>Returns:</dt>
+<dd>list (of str) &#8211; essential reactions</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="framed.analysis.essentiality.essentiality">
+<tt class="descclassname">framed.analysis.essentiality.</tt><tt class="descname">essentiality</tt><big>(</big><em>model</em>, <em>kind='reactions'</em>, <em>min_growth=0.01</em>, <em>constraints=None</em><big>)</big><a class="reference internal" href="_modules/framed/analysis/essentiality.html#essentiality"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#framed.analysis.essentiality.essentiality" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generic interface for computing gene or reaction essentiality.</p>
+<dl class="docutils">
+<dt>Arguments:</dt>
+<dd>model : ConstraintBasedModel &#8211; model (GPRConstrainedModel is required for gene essentiality)
+kind : str &#8211; genes or reactions (default)
+min_growth : float &#8211; minimum percentage of growth rate to consider a deletion non-letal (default: 0.01)
+constraints: dict (of str to float) &#8211; environmental or additional constraints (optional)</dd>
+<dt>Returns:</dt>
+<dd>list (of str) &#8211; essential elements</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="plotting-module">
+<h2><tt class="xref py py-mod docutils literal"><span class="pre">plotting</span></tt> Module<a class="headerlink" href="#plotting-module" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-framed.analysis.simulation">
+<span id="simulation-module"></span><h2><tt class="xref py py-mod docutils literal"><span class="pre">simulation</span></tt> Module<a class="headerlink" href="#module-framed.analysis.simulation" title="Permalink to this headline">¶</a></h2>
+<p>This module implements common constraint-based simulation methods.</p>
+<p>&#64;author: Daniel Machado</p>
+<blockquote>
+<div><p>Copyright 2013 Novo Nordisk Foundation Center for Biosustainability,
+Technical University of Denmark.</p>
+<p>Licensed under the Apache License, Version 2.0 (the &#8220;License&#8221;);
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at</p>
+<blockquote>
+<div><a class="reference external" href="http://www.apache.org/licenses/LICENSE-2.0">http://www.apache.org/licenses/LICENSE-2.0</a></div></blockquote>
+<p>Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an &#8220;AS IS&#8221; BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.</p>
+</div></blockquote>
+<dl class="function">
+<dt id="framed.analysis.simulation.FBA">
+<tt class="descclassname">framed.analysis.simulation.</tt><tt class="descname">FBA</tt><big>(</big><em>model</em>, <em>target=None</em>, <em>maximize=True</em>, <em>constraints=None</em>, <em>solver=None</em>, <em>get_shadow_prices=False</em>, <em>get_reduced_costs=False</em><big>)</big><a class="reference internal" href="_modules/framed/analysis/simulation.html#FBA"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#framed.analysis.simulation.FBA" title="Permalink to this definition">¶</a></dt>
+<dd><p>Run a Flux Balance Analysis (FBA) simulation:</p>
+<dl class="docutils">
+<dt>Arguments:</dt>
+<dd>model : ConstraintBasedModel &#8211; a constraint-based model
+target : String (None) &#8211; target reaction (automatically detects biomass reaction if none given)
+maximize : bool (True) &#8211; sense of optimization (maximize by default)
+constraints: dict (of str to float) &#8211; environmental or additional constraints (optional)
+solver : Solver &#8211; solver instance instantiated with the model, for speed (optional)
+get_shadow_prices : Bool &#8211; retrieve shadow prices (default: False)
+get_reduced_costs : Bool &#8211; retrieve reduced costs (default: False)</dd>
+<dt>Returns:</dt>
+<dd>Solution &#8211; solution</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="framed.analysis.simulation.MOMA">
+<tt class="descclassname">framed.analysis.simulation.</tt><tt class="descname">MOMA</tt><big>(</big><em>model</em>, <em>reference=None</em>, <em>constraints=None</em>, <em>solver=None</em><big>)</big><a class="reference internal" href="_modules/framed/analysis/simulation.html#MOMA"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#framed.analysis.simulation.MOMA" title="Permalink to this definition">¶</a></dt>
+<dd><p>Run a Minimization Of Metabolic Adjustment (MOMA) simulation:</p>
+<dl class="docutils">
+<dt>Arguments:</dt>
+<dd>model : ConstraintBasedModel &#8211; a constraint-based model
+reference : dict (of str to float) &#8211; reference flux distribution (optional)
+constraints: dict (of str to float) &#8211; environmental or additional constraints (optional)
+solver : Solver &#8211; solver instance instantiated with the model, for speed (optional)</dd>
+<dt>Returns:</dt>
+<dd>Solution &#8211; solution</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="module-framed.analysis.variability">
+<span id="variability-module"></span><h2><tt class="xref py py-mod docutils literal"><span class="pre">variability</span></tt> Module<a class="headerlink" href="#module-framed.analysis.variability" title="Permalink to this headline">¶</a></h2>
+<p>This module implements flux variability analysis methods.</p>
+<p>&#64;author: Daniel Machado</p>
+<blockquote>
+<div><p>Copyright 2013 Novo Nordisk Foundation Center for Biosustainability,
+Technical University of Denmark.</p>
+<p>Licensed under the Apache License, Version 2.0 (the &#8220;License&#8221;);
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at</p>
+<blockquote>
+<div><a class="reference external" href="http://www.apache.org/licenses/LICENSE-2.0">http://www.apache.org/licenses/LICENSE-2.0</a></div></blockquote>
+<p>Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an &#8220;AS IS&#8221; BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.</p>
+</div></blockquote>
+<dl class="function">
+<dt id="framed.analysis.variability.FVA">
+<tt class="descclassname">framed.analysis.variability.</tt><tt class="descname">FVA</tt><big>(</big><em>model</em>, <em>obj_percentage=0</em>, <em>reactions=None</em>, <em>constraints=None</em><big>)</big><a class="reference internal" href="_modules/framed/analysis/variability.html#FVA"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#framed.analysis.variability.FVA" title="Permalink to this definition">¶</a></dt>
+<dd><p>Run Flux Variability Analysis (FVA).</p>
+<dl class="docutils">
+<dt>Arguments:</dt>
+<dd>model : ConstraintBasedModel &#8211; a constraint-based model
+obj_percentage : float &#8211; minimum percentage of growth rate (default 0.0, max: 1.0)
+reactions : list (of str) &#8211; list of reactions to analyze (default: all)</dd>
+<dt>Returns:</dt>
+<dd>dict (of str to (float, float)) &#8211; flux variation ranges</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="framed.analysis.variability.blocked_reactions">
+<tt class="descclassname">framed.analysis.variability.</tt><tt class="descname">blocked_reactions</tt><big>(</big><em>model</em><big>)</big><a class="reference internal" href="_modules/framed/analysis/variability.html#blocked_reactions"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#framed.analysis.variability.blocked_reactions" title="Permalink to this definition">¶</a></dt>
+<dd><p>Find all blocked reactions in a model</p>
+<dl class="docutils">
+<dt>Arguments:</dt>
+<dd>model : ConstraintBasedModel &#8211; a constraint-based model</dd>
+<dt>Returns:</dt>
+<dd>list (of str) &#8211; blocked reactions</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="framed.analysis.variability.flux_cone_projection">
+<tt class="descclassname">framed.analysis.variability.</tt><tt class="descname">flux_cone_projection</tt><big>(</big><em>model</em>, <em>r_x</em>, <em>r_y</em>, <em>steps=10</em><big>)</big><a class="reference internal" href="_modules/framed/analysis/variability.html#flux_cone_projection"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#framed.analysis.variability.flux_cone_projection" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate the flux cone projection for a pair of reactions.</p>
+<dl class="docutils">
+<dt>Arguments:</dt>
+<dd>model : ConstraintBasedModel &#8211; the model
+r_x : str &#8211; reaction on x-axis
+r_y : str &#8211; reaction on y-axis
+steps : int &#8211; number of steps to compute (default: 10)</dd>
+<dt>Returns:</dt>
+<dd>list (of float), list (of float), list (of float) &#8211; x values, y min values, y max values</dd>
+</dl>
+</dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">analysis Package</a><ul>
+<li><a class="reference internal" href="#id1"><tt class="docutils literal"><span class="pre">analysis</span></tt> Package</a></li>
+<li><a class="reference internal" href="#module-framed.analysis.deletion"><tt class="docutils literal"><span class="pre">deletion</span></tt> Module</a></li>
+<li><a class="reference internal" href="#module-framed.analysis.essentiality"><tt class="docutils literal"><span class="pre">essentiality</span></tt> Module</a></li>
+<li><a class="reference internal" href="#plotting-module"><tt class="docutils literal"><span class="pre">plotting</span></tt> Module</a></li>
+<li><a class="reference internal" href="#module-framed.analysis.simulation"><tt class="docutils literal"><span class="pre">simulation</span></tt> Module</a></li>
+<li><a class="reference internal" href="#module-framed.analysis.variability"><tt class="docutils literal"><span class="pre">variability</span></tt> Module</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="framed.html"
+                        title="previous chapter">framed Package</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="framed.core.html"
+                        title="next chapter">core Package</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/framed.analysis.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="framed.core.html" title="core Package"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="framed.html" title="framed Package"
+             >previous</a> |</li>
+        <li><a href="index.html">framed 0.1.0 documentation</a> &raquo;</li>
+          <li><a href="framed.html" >framed Package</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2013, Technical University of Denmark.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2b1.
+    </div>
+  </body>
+</html>
