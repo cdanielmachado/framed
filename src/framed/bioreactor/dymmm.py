@@ -12,6 +12,7 @@ from ..solvers import solver_instance
 from ..solvers.solver import Status
 from ..analysis.simulation import FBA
 
+
 class Organism(object):
     """
     Organism describes a generic biological organism.

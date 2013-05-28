@@ -146,7 +146,7 @@ class MultispeciesTest(unittest.TestCase):
         f = self.br._ode_RHS
         y0 = [1, 0.01, 0.01, 10, 0]
         t0 = 0
-        tf = 10
+        tf = 20
         dt = 0.1
 
         dymmm_ode = ode(f).set_integrator('dopri5')
