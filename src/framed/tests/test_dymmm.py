@@ -4,7 +4,7 @@ import unittest
 
 from framed.io_utils.plaintext import *
 from framed.bioreactor.dymmm import *
-from framed.analysis.fba import FBA, detect_biomass_reaction
+from framed.analysis.simulation import FBA
 from framed.core.fixes import fix_bigg_model
 from scipy.integrate import ode
 from numpy import linspace
@@ -47,8 +47,8 @@ class OrganismTest(unittest.TestCase):
         self.assertEqual(correct_solution.fobj, solution1.fobj)
 
         solver = solver_instance()
-        solver.build_lp(self.ec1.model)
-        obj = {detect_biomass_reaction(self.ec1.model): 1}
+        solver.build_problem(self.ec1.model)
+        obj = {self.ec1.model.detect_biomass_reaction(): 1}
         solution2 = solver.solve_lp(obj)
         self.assertTrue(solution2.status)
         self.assertEqual(correct_solution.fobj, solution2.fobj)
@@ -101,6 +101,7 @@ class BioreactorTest(unittest.TestCase):
     def testInitialization(self):
         assert self.br.organisms == [self.o1, self.o2]
         assert self.br.metabolites == ['EX_glc(e)', 'EX_ac(e)', 'EX_o2(e)']
+        assert len(self.br.organisms) == 2
 
     def test_set_Xfeed(self):
         self.br.set_Xfeed([1, 1])
@@ -111,6 +112,13 @@ class BioreactorTest(unittest.TestCase):
         self.br.set_Sfeed([1, 1, 1])
         assert(self.br.Sfeed == [1, 1, 1])
         self.assertRaises(AssertionError, self.br.set_Sfeed, [1, 2])
+
+    def test_set_initial_conditions(self):
+        self.br.set_initial_conditions([1], [0.1, 0.1], [10, 1, 0])
+        self.assertEqual(self.br.initial_conditions, [1, 0.1, 0.1, 10, 1, 0])
+        self.br.set_initial_conditions(1, [0.1, 0.1], [10, 1, 0])
+        self.assertEqual(self.br.initial_conditions, [1, 0.1, 0.1, 10, 1, 0])
+
 
     def tearDown(self):
         del self.br
@@ -133,7 +141,7 @@ class MultispeciesTest(unittest.TestCase):
 
 
     def test_2_organisms(self):
-        time = linspace(0, 10, 101)
+        #time = linspace(0, 10, 101)
 
         f = self.br._ode_RHS
         y0 = [1, 0.01, 0.01, 10, 0]
@@ -179,11 +187,12 @@ class GlucoseUser(Organism):
         BR = self.environment
 
         rid = BR.metabolites.index('R_EX_glc_e')
-        vlb_glc = -10 * BR.S[rid] / (BR.S[rid] + 1)
-        self.model.bounds['R_EX_glc_e'] = (vlb_glc, 0)
+        vlb_glc = float(-10 * BR.S[rid] / (BR.S[rid] + 1))
+        self.fba_constraints['R_EX_glc_e'] = (vlb_glc, 0)
 
         #rid = BR.metabolites.index('R_EX_ac_e')
-        self.model.bounds['R_EX_ac_e'] = (0, None)
+        self.fba_constraints['R_EX_ac_e'] = (0, None)
+        self.fba_constraints['R_EX_o2_e'] = (-10, None)
 
 
 class AcetateUser(Organism):
@@ -194,11 +203,12 @@ class AcetateUser(Organism):
         BR = self.environment
 
         #rid = BR.metabolites.index('R_EX_glc_e')
-        self.model.bounds['R_EX_glc_e'] = (0, 0)
+        self.fba_constraints['R_EX_glc_e'] = (0, 0)
 
         rid = BR.metabolites.index('R_EX_ac_e')
-        vlb_ac = -10 * BR.S[rid] / (BR.S[rid] + 1)
-        self.model.bounds['R_EX_ac_e'] = (vlb_ac, None)
+        vlb_ac = float(-10 * BR.S[rid] / (BR.S[rid] + 1))
+        self.fba_constraints['R_EX_ac_e'] = (vlb_ac, None)
+        self.fba_constraints['R_EX_o2_e'] = (-10, None)
 
 
 if __name__ == "__main__":

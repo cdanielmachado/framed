@@ -9,7 +9,8 @@ TODO: rewrite the _ode_RHS method in Bioreactor
 from copy import deepcopy
 import numpy
 from ..solvers import solver_instance
-from ..analysis.fba import detect_biomass_reaction
+from ..solvers.solver import Status
+from ..analysis.simulation import FBA
 
 class Organism(object):
     """
@@ -21,12 +22,13 @@ class Organism(object):
 
     def __init__(self, model, fba_objective=None):
         self.model = deepcopy(model)
+        self.fba_constraints = {}
         self.environment = None  # upon initiation, the organism is not placed in any environment
 
         if fba_objective:
             self.fba_objective = fba_objective
         else:
-            self.fba_objective = {detect_biomass_reaction(model): 1}
+            self.fba_objective = {model.detect_biomass_reaction(): 1}
 
     def update(self):
         """
@@ -133,10 +135,12 @@ class Bioreactor(Environment):
         self.Sfeed = Sfeed
 
     def set_initial_conditions(self, Vinit, Xinit, Sinit):
-        assert type(Vinit) == type(Xinit) == type(Sinit) == list
+        assert type(Xinit) == type(Sinit) == list
+        if type(Vinit) != list:
+            Vinit = [Vinit]
         assert len(Vinit) == 1
         assert len(Xinit) == len(self.organisms), 'The length of Xinit should equal to the number of organisms'
-        assert len(Sinit) == len(self.metabolites), 'The length of Xinit should equal to the number of organisms'
+        assert len(Sinit) == len(self.metabolites), 'The length of Sinit should equal to the number of organisms'
         self.initial_conditions = Vinit + Xinit + Sinit
 
     def update(self):
@@ -170,26 +174,26 @@ class Bioreactor(Environment):
         vs = numpy.zeros([number_of_organisms, number_of_metabolites])     # fluxes through metabolites
         mu = numpy.zeros([number_of_organisms])                          # growth rates of organisms
 
-        i = 0
-        for organism in self.organisms:
+        for i, organism in enumerate(self.organisms):
             organism.update()       # updates the constraints of the organism model based on environment conditions
 
             if t == 0:
                 organism.solver = solver_instance()
-                organism.solver.build_lp(organism.model)
-            solution = organism.solver.solve_lp(organism.fba_objective)
+                organism.solver.build_problem(organism.model)
 
-            if solution.status:
+            solution = organism.solver.solve_lp(organism.fba_objective, constraints=organism.fba_constraints)
+
+            #solution = FBA(organism.model, solver=organism.solver, constraints=organism.fba_constraints)
+
+            if solution.status == Status.OPTIMAL:
                 mu[i] = solution.fobj
-                j = 0
-                for metabolite in self.metabolites:
+
+                for j, metabolite in enumerate(self.metabolites):
                     if metabolite in organism.model.reactions.keys():
-                        vs[i, j] = solution.values[organism.model.reactions.keys().index(metabolite)]
-                    j += 1
+                        vs[i, j] = solution.values[metabolite]
             else:
                 mu[i] = 0
-                print 'non-growth / death phase'
-            i += 1
+                #print 'no growth'
 
         self.update()   # updating bioreactor parameters such as flow rates and feed concentration
 
