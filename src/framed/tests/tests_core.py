@@ -18,7 +18,7 @@ from framed.design.combinatorial import combinatorial_gene_deletion
 from framed.analysis.plotting import plot_flux_cone_projection
 
 SMALL_TEST_MODEL = '../../../misc/ecoli_core_model.xml'
-LARGE_TEST_MODEL = '../../../misc/Ec_iAF1260_flux1.xml'
+LARGE_TEST_MODEL = '../../../misc/iAF1260.xml'
 TEST_MODEL_COPY = '../../../misc/model_copy.xml'
 PLAIN_TEXT_COPY = '../../../misc/model_copy.txt'
 
@@ -55,7 +55,6 @@ class PlainTextIOTest(unittest.TestCase):
         
     def testRun(self):
         model = load_sbml_model(SMALL_TEST_MODEL, kind=CONSTRAINT_BASED)
-        fix_bigg_model(model)
         write_model_to_file(model, PLAIN_TEXT_COPY)
         model_copy = read_model_from_file(PLAIN_TEXT_COPY, kind=CONSTRAINT_BASED)
         self.assertListEqual(sorted(model.metabolites.keys()),
@@ -79,8 +78,11 @@ class FBAFromPlainTextTest(unittest.TestCase):
     """ Test FBA simulation from plain text model. """
     
     def testRun(self):
-        model = read_model_from_file(PLAIN_TEXT_COPY, kind=CONSTRAINT_BASED)
-        solution = FBA(model)
+        model = load_sbml_model(SMALL_TEST_MODEL, kind=CONSTRAINT_BASED)
+        fix_bigg_model(model)
+        write_model_to_file(model, PLAIN_TEXT_COPY)
+        model_copy = read_model_from_file(PLAIN_TEXT_COPY, kind=CONSTRAINT_BASED)
+        solution = FBA(model_copy)
         self.assertEqual(solution.status, Status.OPTIMAL)
         self.assertAlmostEqual(solution.fobj, GROWTH_RATE, places=2)
 
@@ -199,8 +201,8 @@ class FluxConeProjectionTest(unittest.TestCase):
         plot_flux_cone_projection(model, r_x, r_y)
                             
 def suite():
-    #tests = [SBMLTest, PlainTextIOTest, FBATest, FVATest, IrreversibleModelFBATest, SimplifiedModelFBATest, TransformationCommutativityTest, GeneDeletionFBATest, GeneDeletionMOMATest, GeneEssentialityTest]
-    tests = [FluxConeProjectionTest]
+    tests = [SBMLTest, PlainTextIOTest, FBATest, FBAFromPlainTextTest, FVATest, IrreversibleModelFBATest, SimplifiedModelFBATest, TransformationCommutativityTest, GeneDeletionFBATest, GeneDeletionMOMATest, GeneEssentialityTest]
+    #tests = [PlainTextIOTest]
     
     test_suite = unittest.TestSuite()
     for test in tests:

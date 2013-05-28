@@ -1,5 +1,6 @@
 ''' This module implements methods for reading and writing models from a plain text format.
 
+TODO: Add support for coefficients in scientific notation e.g: 1.2e-05 
 TODO: Add support for compartments.
 TODO: Add support for GPRConstrainedModel (problem GPRs can't be parsed with regex).
 
@@ -144,7 +145,7 @@ def _parse_bounds(expression, reversible):
         if match.group('lb'):
             lb = float(match.group('lb'))
         if match.group('ub'):
-            lb = float(match.group('ub'))
+            ub = float(match.group('ub'))
 
     return lb, ub
 
