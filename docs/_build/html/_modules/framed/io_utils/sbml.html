@@ -1,0 +1,315 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>framed.io_utils.sbml &mdash; framed 0.1.0 documentation</title>
+    
+    <link rel="stylesheet" href="../../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '0.1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <link rel="top" title="framed 0.1.0 documentation" href="../../../index.html" />
+    <link rel="up" title="Module code" href="../../index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../index.html">framed 0.1.0 documentation</a> &raquo;</li>
+          <li><a href="../../index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for framed.io_utils.sbml</h1><div class="highlight"><pre>
+<span class="sd">&quot;&quot;&quot; This module implements methods for reading and writing SBML files.</span>
+
+<span class="sd">TODO: Import/export of bounds and GPR follows the BiGG model format, consider changing to the new SBML fbc package.</span>
+
+<span class="sd">@author: Daniel Machado</span>
+
+<span class="sd">   Copyright 2013 Novo Nordisk Foundation Center for Biosustainability,</span>
+<span class="sd">   Technical University of Denmark.</span>
+
+<span class="sd">   Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);</span>
+<span class="sd">   you may not use this file except in compliance with the License.</span>
+<span class="sd">   You may obtain a copy of the License at</span>
+
+<span class="sd">       http://www.apache.org/licenses/LICENSE-2.0</span>
+
+<span class="sd">   Unless required by applicable law or agreed to in writing, software</span>
+<span class="sd">   distributed under the License is distributed on an &quot;AS IS&quot; BASIS,</span>
+<span class="sd">   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.</span>
+<span class="sd">   See the License for the specific language governing permissions and</span>
+<span class="sd">   limitations under the License.</span>
+<span class="sd">   </span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">..core.models</span> <span class="kn">import</span> <span class="n">StoichiometricModel</span><span class="p">,</span> <span class="n">ConstraintBasedModel</span><span class="p">,</span> <span class="n">GPRConstrainedModel</span><span class="p">,</span> <span class="n">Metabolite</span><span class="p">,</span> <span class="n">Reaction</span><span class="p">,</span> <span class="n">Gene</span><span class="p">,</span> <span class="n">Compartment</span>
+
+<span class="kn">from</span> <span class="nn">libsbml</span> <span class="kn">import</span> <span class="n">SBMLReader</span><span class="p">,</span> <span class="n">SBMLWriter</span><span class="p">,</span> <span class="n">SBMLDocument</span> 
+
+
+<span class="n">STOICHIOMETRIC</span> <span class="o">=</span> <span class="s">&#39;Stoichiometric&#39;</span>
+<span class="n">CONSTRAINT_BASED</span> <span class="o">=</span> <span class="s">&#39;Constraint-based&#39;</span>
+<span class="n">GPR_CONSTRAINED</span> <span class="o">=</span> <span class="s">&#39;GPR-Constrained&#39;</span>
+
+<span class="n">LB_TAG</span> <span class="o">=</span> <span class="s">&#39;LOWER_BOUND&#39;</span>
+<span class="n">UB_TAG</span> <span class="o">=</span> <span class="s">&#39;UPPER_BOUND&#39;</span>
+<span class="n">GPR_TAG</span> <span class="o">=</span> <span class="s">&#39;GENE_ASSOCIATION:&#39;</span>
+
+<span class="n">DEFAULT_SBML_LEVEL</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="n">DEFAULT_SBML_VERSION</span> <span class="o">=</span> <span class="mi">1</span>
+
+
+
+<div class="viewcode-block" id="load_sbml_model"><a class="viewcode-back" href="../../../framed.io_utils.html#framed.io_utils.sbml.load_sbml_model">[docs]</a><span class="k">def</span> <span class="nf">load_sbml_model</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">kind</span><span class="o">=</span><span class="n">STOICHIOMETRIC</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Loads a metabolic model from a file.</span>
+<span class="sd">    </span>
+<span class="sd">    Arguments:</span>
+<span class="sd">        filename : String -- SBML file path</span>
+<span class="sd">        kind : {STOICHIOMETRIC (default), CONSTRAINT_BASED, GPR_CONSTRAINED} -- define kind of model to load (optional)</span>
+<span class="sd">    </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        StoichiometricModel -- Stoichiometric model or respective subclass</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">reader</span> <span class="o">=</span> <span class="n">SBMLReader</span><span class="p">()</span>
+    <span class="n">document</span> <span class="o">=</span> <span class="n">reader</span><span class="o">.</span><span class="n">readSBML</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+    <span class="n">sbml_model</span> <span class="o">=</span> <span class="n">document</span><span class="o">.</span><span class="n">getModel</span><span class="p">()</span>
+    
+    <span class="k">if</span> <span class="n">sbml_model</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span><span class="s">&#39;Failed to load model.&#39;</span><span class="p">)</span>
+       
+    <span class="k">if</span> <span class="n">kind</span> <span class="o">==</span> <span class="n">STOICHIOMETRIC</span><span class="p">:</span>
+        <span class="n">model</span> <span class="o">=</span> <span class="n">_load_stoichiometric_model</span><span class="p">(</span><span class="n">sbml_model</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">kind</span> <span class="o">==</span> <span class="n">CONSTRAINT_BASED</span><span class="p">:</span>
+        <span class="n">model</span> <span class="o">=</span> <span class="n">_load_constraintbased_model</span><span class="p">(</span><span class="n">sbml_model</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">kind</span> <span class="o">==</span> <span class="n">GPR_CONSTRAINED</span><span class="p">:</span>
+        <span class="n">model</span> <span class="o">=</span> <span class="n">_load_gprconstrained_model</span><span class="p">(</span><span class="n">sbml_model</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">model</span> <span class="o">=</span> <span class="bp">None</span>
+    
+    <span class="k">return</span> <span class="n">model</span>
+
+</div>
+<span class="k">def</span> <span class="nf">_load_stoichiometric_model</span><span class="p">(</span><span class="n">sbml_model</span><span class="p">):</span>
+    <span class="n">model</span> <span class="o">=</span> <span class="n">StoichiometricModel</span><span class="p">(</span><span class="n">sbml_model</span><span class="o">.</span><span class="n">getId</span><span class="p">())</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">add_compartments</span><span class="p">(</span><span class="n">_load_compartments</span><span class="p">(</span><span class="n">sbml_model</span><span class="p">))</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">add_metabolites</span><span class="p">(</span><span class="n">_load_metabolites</span><span class="p">(</span><span class="n">sbml_model</span><span class="p">))</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">add_reactions</span><span class="p">(</span><span class="n">_load_reactions</span><span class="p">(</span><span class="n">sbml_model</span><span class="p">))</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">add_stoichiometry</span><span class="p">(</span><span class="n">_load_stoichiometry</span><span class="p">(</span><span class="n">sbml_model</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">model</span>
+    
+<span class="k">def</span> <span class="nf">_load_compartments</span><span class="p">(</span><span class="n">sbml_model</span><span class="p">):</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">_load_compartment</span><span class="p">(</span><span class="n">compartment</span><span class="p">)</span> <span class="k">for</span> <span class="n">compartment</span> <span class="ow">in</span> <span class="n">sbml_model</span><span class="o">.</span><span class="n">getListOfCompartments</span><span class="p">()]</span>
+
+<span class="k">def</span> <span class="nf">_load_compartment</span><span class="p">(</span><span class="n">compartment</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">Compartment</span><span class="p">(</span><span class="n">compartment</span><span class="o">.</span><span class="n">getId</span><span class="p">(),</span> <span class="n">compartment</span><span class="o">.</span><span class="n">getName</span><span class="p">())</span>
+    
+<span class="k">def</span> <span class="nf">_load_metabolites</span><span class="p">(</span><span class="n">sbml_model</span><span class="p">):</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">_load_metabolite</span><span class="p">(</span><span class="n">species</span><span class="p">)</span> <span class="k">for</span> <span class="n">species</span> <span class="ow">in</span> <span class="n">sbml_model</span><span class="o">.</span><span class="n">getListOfSpecies</span><span class="p">()]</span>
+
+<span class="k">def</span> <span class="nf">_load_metabolite</span><span class="p">(</span><span class="n">species</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">Metabolite</span><span class="p">(</span><span class="n">species</span><span class="o">.</span><span class="n">getId</span><span class="p">(),</span> <span class="n">species</span><span class="o">.</span><span class="n">getName</span><span class="p">(),</span> <span class="n">species</span><span class="o">.</span><span class="n">getCompartment</span><span class="p">())</span>
+
+<span class="k">def</span> <span class="nf">_load_reactions</span><span class="p">(</span><span class="n">sbml_model</span><span class="p">):</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">_load_reaction</span><span class="p">(</span><span class="n">reaction</span><span class="p">)</span> <span class="k">for</span> <span class="n">reaction</span> <span class="ow">in</span> <span class="n">sbml_model</span><span class="o">.</span><span class="n">getListOfReactions</span><span class="p">()]</span>
+
+<span class="k">def</span> <span class="nf">_load_reaction</span><span class="p">(</span><span class="n">reaction</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">Reaction</span><span class="p">(</span><span class="n">reaction</span><span class="o">.</span><span class="n">getId</span><span class="p">(),</span> <span class="n">reaction</span><span class="o">.</span><span class="n">getName</span><span class="p">(),</span> <span class="n">reaction</span><span class="o">.</span><span class="n">getReversible</span><span class="p">())</span>
+
+<span class="k">def</span> <span class="nf">_load_stoichiometry</span><span class="p">(</span><span class="n">model</span><span class="p">):</span>
+    <span class="n">inputs</span> <span class="o">=</span> <span class="p">[(</span><span class="n">reactant</span><span class="o">.</span><span class="n">getSpecies</span><span class="p">(),</span> <span class="n">reaction</span><span class="o">.</span><span class="n">getId</span><span class="p">(),</span> <span class="o">-</span><span class="n">reactant</span><span class="o">.</span><span class="n">getStoichiometry</span><span class="p">())</span> <span class="k">for</span> <span class="n">reaction</span> <span class="ow">in</span> <span class="n">model</span><span class="o">.</span><span class="n">getListOfReactions</span><span class="p">()</span>
+              <span class="k">for</span> <span class="n">reactant</span> <span class="ow">in</span> <span class="n">reaction</span><span class="o">.</span><span class="n">getListOfReactants</span><span class="p">()]</span>
+    <span class="n">outputs</span> <span class="o">=</span> <span class="p">[(</span><span class="n">product</span><span class="o">.</span><span class="n">getSpecies</span><span class="p">(),</span> <span class="n">reaction</span><span class="o">.</span><span class="n">getId</span><span class="p">(),</span> <span class="n">product</span><span class="o">.</span><span class="n">getStoichiometry</span><span class="p">())</span> <span class="k">for</span> <span class="n">reaction</span> <span class="ow">in</span> <span class="n">model</span><span class="o">.</span><span class="n">getListOfReactions</span><span class="p">()</span>
+              <span class="k">for</span> <span class="n">product</span> <span class="ow">in</span> <span class="n">reaction</span><span class="o">.</span><span class="n">getListOfProducts</span><span class="p">()]</span>
+    <span class="k">return</span> <span class="n">inputs</span> <span class="o">+</span> <span class="n">outputs</span>
+     
+<span class="k">def</span> <span class="nf">_load_constraintbased_model</span><span class="p">(</span><span class="n">sbml_model</span><span class="p">):</span>
+    <span class="n">model</span> <span class="o">=</span> <span class="n">ConstraintBasedModel</span><span class="p">(</span><span class="n">sbml_model</span><span class="o">.</span><span class="n">getId</span><span class="p">())</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">add_compartments</span><span class="p">(</span><span class="n">_load_compartments</span><span class="p">(</span><span class="n">sbml_model</span><span class="p">))</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">add_metabolites</span><span class="p">(</span><span class="n">_load_metabolites</span><span class="p">(</span><span class="n">sbml_model</span><span class="p">))</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">add_reactions</span><span class="p">(</span><span class="n">_load_reactions</span><span class="p">(</span><span class="n">sbml_model</span><span class="p">))</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">add_stoichiometry</span><span class="p">(</span><span class="n">_load_stoichiometry</span><span class="p">(</span><span class="n">sbml_model</span><span class="p">))</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">set_bounds</span><span class="p">(</span><span class="n">_load_bounds</span><span class="p">(</span><span class="n">sbml_model</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">model</span>
+
+<span class="k">def</span> <span class="nf">_load_bounds</span><span class="p">(</span><span class="n">sbml_model</span><span class="p">):</span>
+    <span class="k">return</span> <span class="p">[(</span><span class="n">reaction</span><span class="o">.</span><span class="n">getId</span><span class="p">(),</span> <span class="n">_get_flux_bound</span><span class="p">(</span><span class="n">reaction</span><span class="p">,</span> <span class="n">LB_TAG</span><span class="p">),</span> <span class="n">_get_flux_bound</span><span class="p">(</span><span class="n">reaction</span><span class="p">,</span> <span class="n">UB_TAG</span><span class="p">))</span>
+            <span class="k">for</span> <span class="n">reaction</span> <span class="ow">in</span> <span class="n">sbml_model</span><span class="o">.</span><span class="n">getListOfReactions</span><span class="p">()]</span>
+
+<span class="k">def</span> <span class="nf">_get_flux_bound</span><span class="p">(</span><span class="n">reaction</span><span class="p">,</span> <span class="n">tag</span><span class="p">):</span>
+    <span class="n">parameter</span> <span class="o">=</span> <span class="n">reaction</span><span class="o">.</span><span class="n">getKineticLaw</span><span class="p">()</span><span class="o">.</span><span class="n">getParameter</span><span class="p">(</span><span class="n">tag</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">parameter</span><span class="o">.</span><span class="n">getValue</span><span class="p">()</span> <span class="k">if</span> <span class="n">parameter</span> <span class="k">else</span> <span class="bp">None</span>
+
+<span class="k">def</span> <span class="nf">_load_gprconstrained_model</span><span class="p">(</span><span class="n">sbml_model</span><span class="p">):</span>
+    <span class="n">model</span> <span class="o">=</span> <span class="n">GPRConstrainedModel</span><span class="p">(</span><span class="n">sbml_model</span><span class="o">.</span><span class="n">getId</span><span class="p">())</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">add_compartments</span><span class="p">(</span><span class="n">_load_compartments</span><span class="p">(</span><span class="n">sbml_model</span><span class="p">))</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">add_metabolites</span><span class="p">(</span><span class="n">_load_metabolites</span><span class="p">(</span><span class="n">sbml_model</span><span class="p">))</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">add_reactions</span><span class="p">(</span><span class="n">_load_reactions</span><span class="p">(</span><span class="n">sbml_model</span><span class="p">))</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">add_stoichiometry</span><span class="p">(</span><span class="n">_load_stoichiometry</span><span class="p">(</span><span class="n">sbml_model</span><span class="p">))</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">set_bounds</span><span class="p">(</span><span class="n">_load_bounds</span><span class="p">(</span><span class="n">sbml_model</span><span class="p">))</span>
+    <span class="n">genes</span><span class="p">,</span> <span class="n">rules</span> <span class="o">=</span> <span class="n">_load_gpr</span><span class="p">(</span><span class="n">sbml_model</span><span class="p">)</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">add_genes</span><span class="p">(</span><span class="n">genes</span><span class="p">)</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">set_rules</span><span class="p">(</span><span class="n">rules</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">model</span>
+
+<span class="k">def</span> <span class="nf">_load_gpr</span><span class="p">(</span><span class="n">sbml_model</span><span class="p">):</span>
+    <span class="n">genes</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+    <span class="n">rules</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">reaction</span> <span class="ow">in</span> <span class="n">sbml_model</span><span class="o">.</span><span class="n">getListOfReactions</span><span class="p">():</span>
+        <span class="n">rule</span> <span class="o">=</span> <span class="n">_extract_rule</span><span class="p">(</span><span class="n">reaction</span><span class="p">)</span>
+        <span class="n">new_genes</span> <span class="o">=</span> <span class="n">rule</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&#39;(&#39;</span><span class="p">,</span> <span class="s">&#39;&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&#39;)&#39;</span><span class="p">,</span><span class="s">&#39;&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&#39;and&#39;</span><span class="p">,</span><span class="s">&#39;&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&#39;or&#39;</span><span class="p">,</span><span class="s">&#39;&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+        <span class="n">genes</span> <span class="o">=</span> <span class="n">genes</span> <span class="o">|</span> <span class="nb">set</span><span class="p">(</span><span class="n">new_genes</span><span class="p">)</span>
+        <span class="n">rules</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">reaction</span><span class="o">.</span><span class="n">getId</span><span class="p">(),</span> <span class="n">rule</span><span class="p">))</span>
+    <span class="n">genes</span> <span class="o">=</span> <span class="p">[</span><span class="n">Gene</span><span class="p">(</span><span class="n">gene</span><span class="p">)</span> <span class="k">for</span> <span class="n">gene</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">genes</span><span class="p">)]</span>
+    <span class="k">return</span> <span class="n">genes</span><span class="p">,</span> <span class="n">rules</span>
+
+<span class="k">def</span> <span class="nf">_extract_rule</span><span class="p">(</span><span class="n">reaction</span><span class="p">):</span>
+    <span class="n">notes</span> <span class="o">=</span> <span class="n">reaction</span><span class="o">.</span><span class="n">getNotesString</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">GPR_TAG</span> <span class="ow">in</span> <span class="n">notes</span><span class="p">:</span>
+        <span class="n">rule</span> <span class="o">=</span> <span class="n">notes</span><span class="o">.</span><span class="n">partition</span><span class="p">(</span><span class="n">GPR_TAG</span><span class="p">)[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">partition</span><span class="p">(</span><span class="s">&#39;&lt;&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">rule</span> <span class="o">=</span> <span class="s">&#39;&#39;</span>
+    <span class="k">return</span> <span class="n">rule</span>
+
+
+<div class="viewcode-block" id="save_sbml_model"><a class="viewcode-back" href="../../../framed.io_utils.html#framed.io_utils.sbml.save_sbml_model">[docs]</a><span class="k">def</span> <span class="nf">save_sbml_model</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Save a model to an SBML file.</span>
+<span class="sd">    </span>
+<span class="sd">    Arguments:</span>
+<span class="sd">        model : StoichiometricModel (or any subclass) -- Stoichiometric model (or subclass)</span>
+<span class="sd">        filename : String -- SBML file path</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">document</span> <span class="o">=</span> <span class="n">SBMLDocument</span><span class="p">(</span><span class="n">DEFAULT_SBML_LEVEL</span><span class="p">,</span> <span class="n">DEFAULT_SBML_VERSION</span><span class="p">)</span>
+    <span class="n">sbml_model</span> <span class="o">=</span> <span class="n">document</span><span class="o">.</span><span class="n">createModel</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
+    <span class="n">_save_compartments</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">sbml_model</span><span class="p">)</span>
+    <span class="n">_save_metabolites</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">sbml_model</span><span class="p">)</span>
+    <span class="n">_save_reactions</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">sbml_model</span><span class="p">)</span>
+    <span class="n">_save_stoichiometry</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">sbml_model</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">ConstraintBasedModel</span><span class="p">):</span>
+        <span class="n">_save_bounds</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">sbml_model</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">GPRConstrainedModel</span><span class="p">):</span>
+        <span class="n">_save_gpr</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">sbml_model</span><span class="p">)</span>
+    <span class="n">writer</span> <span class="o">=</span> <span class="n">SBMLWriter</span><span class="p">()</span>
+    <span class="n">writer</span><span class="o">.</span><span class="n">writeSBML</span><span class="p">(</span><span class="n">document</span><span class="p">,</span> <span class="n">filename</span><span class="p">)</span>
+</div>
+<span class="k">def</span> <span class="nf">_save_compartments</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">sbml_model</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">compartment</span> <span class="ow">in</span> <span class="n">model</span><span class="o">.</span><span class="n">compartments</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+        <span class="n">sbml_compartment</span> <span class="o">=</span> <span class="n">sbml_model</span><span class="o">.</span><span class="n">createCompartment</span><span class="p">()</span>
+        <span class="n">sbml_compartment</span><span class="o">.</span><span class="n">setId</span><span class="p">(</span><span class="n">compartment</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
+        <span class="n">sbml_compartment</span><span class="o">.</span><span class="n">setName</span><span class="p">(</span><span class="n">compartment</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+        
+<span class="k">def</span> <span class="nf">_save_metabolites</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">sbml_model</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">metabolite</span> <span class="ow">in</span> <span class="n">model</span><span class="o">.</span><span class="n">metabolites</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+        <span class="n">species</span> <span class="o">=</span> <span class="n">sbml_model</span><span class="o">.</span><span class="n">createSpecies</span><span class="p">()</span>
+        <span class="n">species</span><span class="o">.</span><span class="n">setId</span><span class="p">(</span><span class="n">metabolite</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
+        <span class="n">species</span><span class="o">.</span><span class="n">setName</span><span class="p">(</span><span class="n">metabolite</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+        <span class="n">species</span><span class="o">.</span><span class="n">setCompartment</span><span class="p">(</span><span class="n">metabolite</span><span class="o">.</span><span class="n">compartment</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">_save_reactions</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">sbml_model</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">reaction</span> <span class="ow">in</span> <span class="n">model</span><span class="o">.</span><span class="n">reactions</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+        <span class="n">sbml_reaction</span> <span class="o">=</span> <span class="n">sbml_model</span><span class="o">.</span><span class="n">createReaction</span><span class="p">()</span>
+        <span class="n">sbml_reaction</span><span class="o">.</span><span class="n">setId</span><span class="p">(</span><span class="n">reaction</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
+        <span class="n">sbml_reaction</span><span class="o">.</span><span class="n">setName</span><span class="p">(</span><span class="n">reaction</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+        <span class="n">sbml_reaction</span><span class="o">.</span><span class="n">setReversible</span><span class="p">(</span><span class="n">reaction</span><span class="o">.</span><span class="n">reversible</span><span class="p">)</span>     
+        
+<span class="k">def</span> <span class="nf">_save_stoichiometry</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">sbml_model</span><span class="p">):</span>
+    <span class="k">for</span> <span class="p">(</span><span class="n">m_id</span><span class="p">,</span> <span class="n">r_id</span><span class="p">),</span> <span class="n">coeff</span> <span class="ow">in</span> <span class="n">model</span><span class="o">.</span><span class="n">stoichiometry</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">sbml_reaction</span> <span class="o">=</span> <span class="n">sbml_model</span><span class="o">.</span><span class="n">getReaction</span><span class="p">(</span><span class="n">r_id</span><span class="p">)</span>        
+        <span class="k">if</span> <span class="n">coeff</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">speciesReference</span> <span class="o">=</span> <span class="n">sbml_reaction</span><span class="o">.</span><span class="n">createReactant</span><span class="p">()</span>
+            <span class="n">speciesReference</span><span class="o">.</span><span class="n">setSpecies</span><span class="p">(</span><span class="n">m_id</span><span class="p">)</span>
+            <span class="n">speciesReference</span><span class="o">.</span><span class="n">setStoichiometry</span><span class="p">(</span><span class="o">-</span><span class="n">coeff</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">coeff</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">speciesReference</span> <span class="o">=</span> <span class="n">sbml_reaction</span><span class="o">.</span><span class="n">createProduct</span><span class="p">()</span>
+            <span class="n">speciesReference</span><span class="o">.</span><span class="n">setSpecies</span><span class="p">(</span><span class="n">m_id</span><span class="p">)</span>
+            <span class="n">speciesReference</span><span class="o">.</span><span class="n">setStoichiometry</span><span class="p">(</span><span class="n">coeff</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">_save_bounds</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">sbml_model</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">r_id</span> <span class="ow">in</span> <span class="n">model</span><span class="o">.</span><span class="n">reactions</span><span class="p">:</span>
+        <span class="n">sbml_reaction</span> <span class="o">=</span> <span class="n">sbml_model</span><span class="o">.</span><span class="n">getReaction</span><span class="p">(</span><span class="n">r_id</span><span class="p">)</span>        
+        <span class="n">kineticLaw</span> <span class="o">=</span> <span class="n">sbml_reaction</span><span class="o">.</span><span class="n">createKineticLaw</span><span class="p">()</span>
+        <span class="n">lb</span><span class="p">,</span> <span class="n">ub</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">bounds</span><span class="p">[</span><span class="n">r_id</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">lb</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">lbParameter</span> <span class="o">=</span> <span class="n">kineticLaw</span><span class="o">.</span><span class="n">createParameter</span><span class="p">()</span>
+            <span class="n">lbParameter</span><span class="o">.</span><span class="n">setId</span><span class="p">(</span><span class="n">LB_TAG</span><span class="p">)</span>
+            <span class="n">lbParameter</span><span class="o">.</span><span class="n">setValue</span><span class="p">(</span><span class="n">lb</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">ub</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">ubParameter</span> <span class="o">=</span> <span class="n">kineticLaw</span><span class="o">.</span><span class="n">createParameter</span><span class="p">()</span>
+            <span class="n">ubParameter</span><span class="o">.</span><span class="n">setId</span><span class="p">(</span><span class="n">UB_TAG</span><span class="p">)</span>
+            <span class="n">ubParameter</span><span class="o">.</span><span class="n">setValue</span><span class="p">(</span><span class="n">ub</span><span class="p">)</span> 
+
+<span class="k">def</span> <span class="nf">_save_gpr</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">sbml_model</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">r_id</span> <span class="ow">in</span> <span class="n">model</span><span class="o">.</span><span class="n">reactions</span><span class="p">:</span>
+        <span class="n">sbml_reaction</span> <span class="o">=</span> <span class="n">sbml_model</span><span class="o">.</span><span class="n">getReaction</span><span class="p">(</span><span class="n">r_id</span><span class="p">)</span>   
+        <span class="n">sbml_reaction</span><span class="o">.</span><span class="n">appendNotes</span><span class="p">(</span><span class="n">GPR_TAG</span> <span class="o">+</span> <span class="s">&#39; &#39;</span> <span class="o">+</span> <span class="n">model</span><span class="o">.</span><span class="n">rules</span><span class="p">[</span><span class="n">r_id</span><span class="p">])</span>
+        
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../index.html">framed 0.1.0 documentation</a> &raquo;</li>
+          <li><a href="../../index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2013, Technical University of Denmark.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2b1.
+    </div>
+  </body>
+</html>

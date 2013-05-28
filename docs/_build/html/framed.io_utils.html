@@ -1,0 +1,249 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>io_utils Package &mdash; framed 0.1.0 documentation</title>
+    
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '0.1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="framed 0.1.0 documentation" href="index.html" />
+    <link rel="up" title="framed Package" href="framed.html" />
+    <link rel="next" title="solvers Package" href="framed.solvers.html" />
+    <link rel="prev" title="design Package" href="framed.design.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="framed.solvers.html" title="solvers Package"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="framed.design.html" title="design Package"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">framed 0.1.0 documentation</a> &raquo;</li>
+          <li><a href="framed.html" accesskey="U">framed Package</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="io-utils-package">
+<h1>io_utils Package<a class="headerlink" href="#io-utils-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="id1">
+<h2><tt class="xref py py-mod docutils literal"><span class="pre">io_utils</span></tt> Package<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
+<span class="target" id="module-framed.io_utils"></span><p>Package implementing all I/O methods for reading and writing models.</p>
+<p>Warning: Renamed from &#8216;io&#8217; to avoid name conflicts with python&#8217;s io package.</p>
+<p>&#64;author: Daniel Machado</p>
+<blockquote>
+<div><p>Copyright 2013 Novo Nordisk Foundation Center for Biosustainability,
+Technical University of Denmark.</p>
+<p>Licensed under the Apache License, Version 2.0 (the &#8220;License&#8221;);
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at</p>
+<blockquote>
+<div><a class="reference external" href="http://www.apache.org/licenses/LICENSE-2.0">http://www.apache.org/licenses/LICENSE-2.0</a></div></blockquote>
+<p>Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an &#8220;AS IS&#8221; BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.</p>
+</div></blockquote>
+</div>
+<div class="section" id="module-framed.io_utils.plaintext">
+<span id="plaintext-module"></span><h2><tt class="xref py py-mod docutils literal"><span class="pre">plaintext</span></tt> Module<a class="headerlink" href="#module-framed.io_utils.plaintext" title="Permalink to this headline">¶</a></h2>
+<p>This module implements methods for reading and writing models from a plain text format.</p>
+<p>TODO: Add support for compartments.
+TODO: Add support for GPRConstrainedModel (problem GPRs can&#8217;t be parsed with regex).</p>
+<p>&#64;author: Daniel Machado</p>
+<blockquote>
+<div><p>Copyright 2013 Novo Nordisk Foundation Center for Biosustainability,
+Technical University of Denmark.</p>
+<p>Licensed under the Apache License, Version 2.0 (the &#8220;License&#8221;);
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at</p>
+<blockquote>
+<div><a class="reference external" href="http://www.apache.org/licenses/LICENSE-2.0">http://www.apache.org/licenses/LICENSE-2.0</a></div></blockquote>
+<p>Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an &#8220;AS IS&#8221; BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.</p>
+</div></blockquote>
+<dl class="function">
+<dt id="framed.io_utils.plaintext.add_reaction_from_str">
+<tt class="descclassname">framed.io_utils.plaintext.</tt><tt class="descname">add_reaction_from_str</tt><big>(</big><em>model</em>, <em>reaction_str</em><big>)</big><a class="reference internal" href="_modules/framed/io_utils/plaintext.html#add_reaction_from_str"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#framed.io_utils.plaintext.add_reaction_from_str" title="Permalink to this definition">¶</a></dt>
+<dd><p>Parse a reaction from a string and add it to the model.</p>
+<dl class="docutils">
+<dt>Arguments:</dt>
+<dd>model : StoichiometricModel &#8211; model
+reaction_str: str &#8211; string representation a the reaction</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="framed.io_utils.plaintext.read_model_from_file">
+<tt class="descclassname">framed.io_utils.plaintext.</tt><tt class="descname">read_model_from_file</tt><big>(</big><em>filename</em>, <em>kind='Stoichiometric'</em><big>)</big><a class="reference internal" href="_modules/framed/io_utils/plaintext.html#read_model_from_file"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#framed.io_utils.plaintext.read_model_from_file" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reads a model from a file.</p>
+<dl class="docutils">
+<dt>Arguments:</dt>
+<dd>filename : str &#8211; file path
+kind: {STOICHIOMETRIC (default), CONSTRAINT_BASED} &#8211; define kind of model to read (optional)</dd>
+<dt>Returns:</dt>
+<dd>StoichiometricModel &#8211; Stoichiometric model or respective subclass</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="framed.io_utils.plaintext.write_model_to_file">
+<tt class="descclassname">framed.io_utils.plaintext.</tt><tt class="descname">write_model_to_file</tt><big>(</big><em>model</em>, <em>filename</em><big>)</big><a class="reference internal" href="_modules/framed/io_utils/plaintext.html#write_model_to_file"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#framed.io_utils.plaintext.write_model_to_file" title="Permalink to this definition">¶</a></dt>
+<dd><p>Writes a model to a file.</p>
+<dl class="docutils">
+<dt>Arguments:</dt>
+<dd>model: StoichiometricModel &#8211; Stoichiometric model (or subclass)
+filename : str &#8211; file path</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="module-framed.io_utils.sbml">
+<span id="sbml-module"></span><h2><tt class="xref py py-mod docutils literal"><span class="pre">sbml</span></tt> Module<a class="headerlink" href="#module-framed.io_utils.sbml" title="Permalink to this headline">¶</a></h2>
+<p>This module implements methods for reading and writing SBML files.</p>
+<p>TODO: Import/export of bounds and GPR follows the BiGG model format, consider changing to the new SBML fbc package.</p>
+<p>&#64;author: Daniel Machado</p>
+<blockquote>
+<div><p>Copyright 2013 Novo Nordisk Foundation Center for Biosustainability,
+Technical University of Denmark.</p>
+<p>Licensed under the Apache License, Version 2.0 (the &#8220;License&#8221;);
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at</p>
+<blockquote>
+<div><a class="reference external" href="http://www.apache.org/licenses/LICENSE-2.0">http://www.apache.org/licenses/LICENSE-2.0</a></div></blockquote>
+<p>Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an &#8220;AS IS&#8221; BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.</p>
+</div></blockquote>
+<dl class="function">
+<dt id="framed.io_utils.sbml.load_sbml_model">
+<tt class="descclassname">framed.io_utils.sbml.</tt><tt class="descname">load_sbml_model</tt><big>(</big><em>filename</em>, <em>kind='Stoichiometric'</em><big>)</big><a class="reference internal" href="_modules/framed/io_utils/sbml.html#load_sbml_model"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#framed.io_utils.sbml.load_sbml_model" title="Permalink to this definition">¶</a></dt>
+<dd><p>Loads a metabolic model from a file.</p>
+<dl class="docutils">
+<dt>Arguments:</dt>
+<dd>filename : String &#8211; SBML file path
+kind : {STOICHIOMETRIC (default), CONSTRAINT_BASED, GPR_CONSTRAINED} &#8211; define kind of model to load (optional)</dd>
+<dt>Returns:</dt>
+<dd>StoichiometricModel &#8211; Stoichiometric model or respective subclass</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="framed.io_utils.sbml.save_sbml_model">
+<tt class="descclassname">framed.io_utils.sbml.</tt><tt class="descname">save_sbml_model</tt><big>(</big><em>model</em>, <em>filename</em><big>)</big><a class="reference internal" href="_modules/framed/io_utils/sbml.html#save_sbml_model"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#framed.io_utils.sbml.save_sbml_model" title="Permalink to this definition">¶</a></dt>
+<dd><p>Save a model to an SBML file.</p>
+<dl class="docutils">
+<dt>Arguments:</dt>
+<dd>model : StoichiometricModel (or any subclass) &#8211; Stoichiometric model (or subclass)
+filename : String &#8211; SBML file path</dd>
+</dl>
+</dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">io_utils Package</a><ul>
+<li><a class="reference internal" href="#id1"><tt class="docutils literal"><span class="pre">io_utils</span></tt> Package</a></li>
+<li><a class="reference internal" href="#module-framed.io_utils.plaintext"><tt class="docutils literal"><span class="pre">plaintext</span></tt> Module</a></li>
+<li><a class="reference internal" href="#module-framed.io_utils.sbml"><tt class="docutils literal"><span class="pre">sbml</span></tt> Module</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="framed.design.html"
+                        title="previous chapter">design Package</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="framed.solvers.html"
+                        title="next chapter">solvers Package</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/framed.io_utils.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="framed.solvers.html" title="solvers Package"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="framed.design.html" title="design Package"
+             >previous</a> |</li>
+        <li><a href="index.html">framed 0.1.0 documentation</a> &raquo;</li>
+          <li><a href="framed.html" >framed Package</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2013, Technical University of Denmark.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2b1.
+    </div>
+  </body>
+</html>

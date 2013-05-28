@@ -1,0 +1,226 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>framed.solvers.pulp_wrapper &mdash; framed 0.1.0 documentation</title>
+    
+    <link rel="stylesheet" href="../../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '0.1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <link rel="top" title="framed 0.1.0 documentation" href="../../../index.html" />
+    <link rel="up" title="framed.solvers" href="../solvers.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../index.html">framed 0.1.0 documentation</a> &raquo;</li>
+          <li><a href="../../index.html" >Module code</a> &raquo;</li>
+          <li><a href="../solvers.html" accesskey="U">framed.solvers</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for framed.solvers.pulp_wrapper</h1><div class="highlight"><pre>
+<span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">Implementation a of PuLP based solver interface.</span>
+
+<span class="sd">@author: Daniel Machado</span>
+
+<span class="sd">   Copyright 2013 Novo Nordisk Foundation Center for Biosustainability,</span>
+<span class="sd">   Technical University of Denmark.</span>
+
+<span class="sd">   Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);</span>
+<span class="sd">   you may not use this file except in compliance with the License.</span>
+<span class="sd">   You may obtain a copy of the License at</span>
+
+<span class="sd">       http://www.apache.org/licenses/LICENSE-2.0</span>
+
+<span class="sd">   Unless required by applicable law or agreed to in writing, software</span>
+<span class="sd">   distributed under the License is distributed on an &quot;AS IS&quot; BASIS,</span>
+<span class="sd">   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.</span>
+<span class="sd">   See the License for the specific language governing permissions and</span>
+<span class="sd">   limitations under the License.</span>
+<span class="sd">   </span>
+<span class="sd">&#39;&#39;&#39;</span>
+
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">OrderedDict</span>
+<span class="kn">from</span> <span class="nn">pulp</span> <span class="kn">import</span> <span class="n">LpProblem</span><span class="p">,</span> <span class="n">LpMaximize</span><span class="p">,</span> <span class="n">LpVariable</span><span class="p">,</span> <span class="n">lpSum</span><span class="p">,</span> <span class="n">LpStatusOptimal</span><span class="p">,</span> <span class="n">LpStatusInfeasible</span><span class="p">,</span> <span class="n">LpStatusUnbounded</span>
+<span class="kn">from</span> <span class="nn">pulp.solvers</span> <span class="kn">import</span> <span class="n">GUROBI</span><span class="p">,</span> <span class="n">GUROBI_CMD</span><span class="p">,</span> <span class="n">CPLEX_DLL</span><span class="p">,</span> <span class="n">CPLEX_CMD</span><span class="p">,</span> <span class="n">GLPK</span><span class="p">,</span> <span class="n">GLPK_CMD</span>
+
+<span class="kn">from</span> <span class="nn">.solver</span> <span class="kn">import</span> <span class="n">Solver</span><span class="p">,</span> <span class="n">Solution</span><span class="p">,</span> <span class="n">Status</span>
+
+
+<span class="n">SELECTED_SOLVER</span> <span class="o">=</span> <span class="bp">None</span>
+<span class="n">preference_order</span> <span class="o">=</span> <span class="p">[</span><span class="n">GUROBI</span><span class="p">,</span> <span class="n">GUROBI_CMD</span><span class="p">,</span> <span class="n">CPLEX_DLL</span><span class="p">,</span> <span class="n">CPLEX_CMD</span><span class="p">,</span> <span class="n">GLPK</span><span class="p">,</span> <span class="n">GLPK_CMD</span><span class="p">]</span>
+
+<span class="k">for</span> <span class="n">solver</span> <span class="ow">in</span> <span class="n">preference_order</span><span class="p">:</span>
+    <span class="n">instance</span> <span class="o">=</span> <span class="n">solver</span><span class="p">(</span><span class="n">msg</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">instance</span><span class="o">.</span><span class="n">available</span><span class="p">():</span>
+        <span class="n">SELECTED_SOLVER</span> <span class="o">=</span> <span class="n">instance</span>
+        <span class="k">break</span>
+
+<span class="k">if</span> <span class="ow">not</span> <span class="n">SELECTED_SOLVER</span><span class="p">:</span>
+    <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s">&#39;No suitable solver found for PuLP.&#39;</span><span class="p">)</span>
+
+<span class="n">status_mapping</span> <span class="o">=</span> <span class="p">{</span><span class="n">LpStatusOptimal</span><span class="p">:</span> <span class="n">Status</span><span class="o">.</span><span class="n">OPTIMAL</span><span class="p">,</span>
+                  <span class="n">LpStatusUnbounded</span><span class="p">:</span> <span class="n">Status</span><span class="o">.</span><span class="n">UNBOUNDED</span><span class="p">,</span>
+                  <span class="n">LpStatusInfeasible</span><span class="p">:</span> <span class="n">Status</span><span class="o">.</span><span class="n">UNFEASIBLE</span><span class="p">}</span>
+
+
+<div class="viewcode-block" id="PuLPSolver"><a class="viewcode-back" href="../../../framed.solvers.html#framed.solvers.pulp_wrapper.PuLPSolver">[docs]</a><span class="k">class</span> <span class="nc">PuLPSolver</span><span class="p">(</span><span class="n">Solver</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Implements the solver interface using the PuLP library. &quot;&quot;&quot;</span>
+    
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">Solver</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        
+<div class="viewcode-block" id="PuLPSolver.build_problem"><a class="viewcode-back" href="../../../framed.solvers.html#framed.solvers.pulp_wrapper.PuLPSolver.build_problem">[docs]</a>    <span class="k">def</span> <span class="nf">build_problem</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Create and store solver-specific internal structure for the given model.</span>
+<span class="sd">        </span>
+<span class="sd">        Arguments:</span>
+<span class="sd">            model : ConstraintBasedModel</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">problem</span> <span class="o">=</span> <span class="n">LpProblem</span><span class="p">(</span><span class="n">sense</span><span class="o">=</span><span class="n">LpMaximize</span><span class="p">)</span>
+        <span class="n">problem</span><span class="o">.</span><span class="n">setSolver</span><span class="p">(</span><span class="n">SELECTED_SOLVER</span><span class="p">)</span>
+        
+        <span class="c">#create variables</span>
+        <span class="n">lpvars</span> <span class="o">=</span> <span class="p">{</span><span class="n">r_id</span><span class="p">:</span> <span class="n">LpVariable</span><span class="p">(</span><span class="n">r_id</span><span class="p">,</span> <span class="n">lb</span><span class="p">,</span> <span class="n">ub</span><span class="p">)</span> <span class="k">for</span> <span class="n">r_id</span><span class="p">,</span> <span class="p">(</span><span class="n">lb</span><span class="p">,</span> <span class="n">ub</span><span class="p">)</span> <span class="ow">in</span> <span class="n">model</span><span class="o">.</span><span class="n">bounds</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+        
+        <span class="c">#create constraints</span>
+        <span class="n">table</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">metabolite_reaction_lookup_table</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">m_id</span> <span class="ow">in</span> <span class="n">model</span><span class="o">.</span><span class="n">metabolites</span><span class="p">:</span>
+            <span class="n">problem</span> <span class="o">+=</span> <span class="n">lpSum</span><span class="p">([</span><span class="n">coeff</span><span class="o">*</span><span class="n">lpvars</span><span class="p">[</span><span class="n">r_id</span><span class="p">]</span> <span class="k">for</span> <span class="n">r_id</span><span class="p">,</span> <span class="n">coeff</span> <span class="ow">in</span> <span class="n">table</span><span class="p">[</span><span class="n">m_id</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">()])</span> <span class="o">==</span> <span class="mi">0</span><span class="p">,</span> <span class="n">m_id</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">problem</span> <span class="o">=</span> <span class="n">problem</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">var_ids</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">reactions</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">constr_ids</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">metabolites</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+                
+        </div>
+<div class="viewcode-block" id="PuLPSolver.solve_lp"><a class="viewcode-back" href="../../../framed.solvers.html#framed.solvers.pulp_wrapper.PuLPSolver.solve_lp">[docs]</a>    <span class="k">def</span> <span class="nf">solve_lp</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">objective</span><span class="p">,</span> <span class="n">model</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">constraints</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">get_shadow_prices</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">get_reduced_costs</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span> 
+        <span class="sd">&quot;&quot;&quot; Solve an LP optimization problem.</span>
+<span class="sd">        </span>
+<span class="sd">        Arguments:</span>
+<span class="sd">            objective : dict (of str to float) -- reaction ids in the objective function and respective</span>
+<span class="sd">                        coefficients, the sense is maximization by default</span>
+<span class="sd">            model : ConstraintBasedModel -- model (optional, leave blank to reuse previous model structure)</span>
+<span class="sd">            constraints : dict (of str to (float, float)) -- environmental or additional constraints (optional)</span>
+<span class="sd">            get_shadow_prices : bool -- return shadow price information if available (optional, default: False)</span>
+<span class="sd">            get_reduced_costs : bool -- return reduced costs information if available (optional, default: False)</span>
+<span class="sd">            </span>
+<span class="sd">        Returns:</span>
+<span class="sd">            Solution</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+       
+        <span class="k">if</span> <span class="n">model</span><span class="p">:</span> 
+            <span class="bp">self</span><span class="o">.</span><span class="n">build_problem</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">problem</span><span class="p">:</span>
+            <span class="n">problem</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">problem</span>
+            <span class="n">lpvars</span> <span class="o">=</span> <span class="n">problem</span><span class="o">.</span><span class="n">variablesDict</span><span class="p">()</span>
+            <span class="n">lpcons</span> <span class="o">=</span> <span class="n">problem</span><span class="o">.</span><span class="n">constraints</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s">&#39;A model must be given if solver is used for the first time.&#39;</span><span class="p">)</span>
+        
+        <span class="k">if</span> <span class="n">constraints</span><span class="p">:</span>
+            <span class="n">old_constraints</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="k">for</span> <span class="n">r_id</span><span class="p">,</span> <span class="p">(</span><span class="n">lb</span><span class="p">,</span> <span class="n">ub</span><span class="p">)</span> <span class="ow">in</span> <span class="n">constraints</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="n">lpvar</span> <span class="o">=</span> <span class="n">lpvars</span><span class="p">[</span><span class="n">r_id</span><span class="p">]</span>
+                <span class="n">old_constraints</span><span class="p">[</span><span class="n">r_id</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">lpvar</span><span class="o">.</span><span class="n">lowBound</span><span class="p">,</span> <span class="n">lpvar</span><span class="o">.</span><span class="n">upBound</span><span class="p">)</span>
+                <span class="n">lpvar</span><span class="o">.</span><span class="n">bounds</span><span class="p">(</span><span class="n">lb</span><span class="p">,</span> <span class="n">ub</span><span class="p">)</span>
+        
+        <span class="c">#create objective function</span>
+        <span class="n">problem</span> <span class="o">+=</span> <span class="n">lpSum</span><span class="p">([</span><span class="n">f</span> <span class="o">*</span> <span class="n">lpvars</span><span class="p">[</span><span class="n">r_id</span><span class="p">]</span> <span class="k">for</span> <span class="n">r_id</span><span class="p">,</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">objective</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">f</span><span class="p">])</span>
+        
+        <span class="k">try</span><span class="p">:</span>      
+            <span class="n">problem</span><span class="o">.</span><span class="n">solve</span><span class="p">()</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="k">pass</span>
+        
+        <span class="n">status</span> <span class="o">=</span> <span class="n">status_mapping</span><span class="p">[</span><span class="n">problem</span><span class="o">.</span><span class="n">status</span><span class="p">]</span> <span class="k">if</span> <span class="n">problem</span><span class="o">.</span><span class="n">status</span> <span class="ow">in</span> <span class="n">status_mapping</span> <span class="k">else</span> <span class="n">Status</span><span class="o">.</span><span class="n">UNKNOWN</span>
+
+        <span class="k">if</span> <span class="n">status</span> <span class="o">==</span> <span class="n">Status</span><span class="o">.</span><span class="n">OPTIMAL</span><span class="p">:</span>
+            <span class="n">fobj</span> <span class="o">=</span> <span class="n">problem</span><span class="o">.</span><span class="n">objective</span><span class="o">.</span><span class="n">value</span><span class="p">()</span>
+            <span class="n">values</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">([(</span><span class="n">r_id</span><span class="p">,</span> <span class="n">lpvars</span><span class="p">[</span><span class="n">r_id</span><span class="p">]</span><span class="o">.</span><span class="n">varValue</span><span class="p">)</span> <span class="k">for</span> <span class="n">r_id</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">var_ids</span><span class="p">])</span>
+            <span class="n">shadow_prices</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">([(</span><span class="n">m_id</span><span class="p">,</span> <span class="n">lpcons</span><span class="p">[</span><span class="n">m_id</span><span class="p">]</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span> <span class="k">for</span> <span class="n">m_id</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">constr_ids</span><span class="p">])</span> <span class="k">if</span> <span class="n">get_shadow_prices</span> <span class="ow">and</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">lpcons</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">constr_ids</span><span class="p">[</span><span class="mi">0</span><span class="p">]],</span> <span class="s">&#39;pi&#39;</span><span class="p">)</span> <span class="k">else</span> <span class="bp">None</span>
+            <span class="n">reduced_costs</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">([(</span><span class="n">r_id</span><span class="p">,</span> <span class="n">lpvars</span><span class="p">[</span><span class="n">r_id</span><span class="p">]</span><span class="o">.</span><span class="n">dj</span><span class="p">)</span> <span class="k">for</span> <span class="n">r_id</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">var_ids</span><span class="p">])</span> <span class="k">if</span> <span class="n">get_reduced_costs</span> <span class="ow">and</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">lpvars</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">var_ids</span><span class="p">[</span><span class="mi">0</span><span class="p">]],</span> <span class="s">&#39;dj&#39;</span><span class="p">)</span> <span class="k">else</span> <span class="bp">None</span>
+            <span class="n">solution</span> <span class="o">=</span> <span class="n">Solution</span><span class="p">(</span><span class="n">status</span><span class="p">,</span> <span class="n">fobj</span><span class="p">,</span> <span class="n">values</span><span class="p">,</span> <span class="n">shadow_prices</span><span class="p">,</span> <span class="n">reduced_costs</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">solution</span> <span class="o">=</span> <span class="n">Solution</span><span class="p">(</span><span class="n">status</span><span class="o">=</span><span class="n">status</span><span class="p">)</span>
+        
+        <span class="c">#reset old constraints because temporary constraints should not be persistent</span>
+        <span class="k">if</span> <span class="n">constraints</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">r_id</span><span class="p">,</span> <span class="p">(</span><span class="n">lb</span><span class="p">,</span> <span class="n">ub</span><span class="p">)</span> <span class="ow">in</span> <span class="n">old_constraints</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="n">lpvars</span><span class="p">[</span><span class="n">r_id</span><span class="p">]</span><span class="o">.</span><span class="n">bounds</span><span class="p">(</span><span class="n">lb</span><span class="p">,</span> <span class="n">ub</span><span class="p">)</span>
+                
+        <span class="k">return</span> <span class="n">solution</span></div></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../index.html">framed 0.1.0 documentation</a> &raquo;</li>
+          <li><a href="../../index.html" >Module code</a> &raquo;</li>
+          <li><a href="../solvers.html" >framed.solvers</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2013, Technical University of Denmark.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2b1.
+    </div>
+  </body>
+</html>

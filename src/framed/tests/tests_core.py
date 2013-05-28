@@ -189,7 +189,7 @@ class CombinatorialGeneDeletion(unittest.TestCase):
         #print result
         self.assertTrue(result is not None)
 
-class PhPPTest(unittest.TestCase):
+class FluxConeProjectionTest(unittest.TestCase):
     """ Test combinatorial gene deletion with FBA. """
     
     def testRun(self):
@@ -200,7 +200,7 @@ class PhPPTest(unittest.TestCase):
                             
 def suite():
     #tests = [SBMLTest, PlainTextIOTest, FBATest, FVATest, IrreversibleModelFBATest, SimplifiedModelFBATest, TransformationCommutativityTest, GeneDeletionFBATest, GeneDeletionMOMATest, GeneEssentialityTest]
-    tests = [PhPPTest]
+    tests = [FluxConeProjectionTest]
     
     test_suite = unittest.TestSuite()
     for test in tests:
