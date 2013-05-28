@@ -25,27 +25,113 @@ from simulation import FBA
 from ..solvers import solver_instance
 from ..solvers.solver import Status
 import numpy
+import matplotlib.pyplot as plt
 
 
 class PhenotypePhasePlane(object):
-    
+
+    def __init__(self, rxn_x, rxn_y, rxn_x_range, rxn_y_range):
+        self.rxn_x = rxn_x
+        self.rxn_y = rxn_y
+
+        # converting reaction ranges to numpy array and storing it inside self
+        self.x_range = numpy.array(rxn_x_range)
+        self.y_range = numpy.array(rxn_y_range)
+
+        # find length of reaction ranges
+        len_x = len(self.x_range)
+        len_y = len(self.y_range)
+
+        # creating empty arrays for storing analysis results
+        self.f_objective = numpy.zeros((len_x, len_y))
+        self.shadow_price_x = numpy.zeros((len_x, len_y))
+        self.shadow_price_y = numpy.zeros((len_x, len_y))
+
+    def plot_objective_function(self, new_figure=True, show_plot=True):
+        """
+        new_figure: if set to True, a new matplotlib figure will be created.
+        show_plot: if set to True, current figure will be shown
+        """
+
+        if new_figure:
+            plt.figure()
+        f = self.f_objective
+        x = self.x_range
+        y = self.y_range
+
+        if 'EX_' in self.rxn_x:
+            x = x*-1
+
+        if 'EX_' in self.rxn_y:
+            y = y*-1
+
+        plt.pcolormesh(x, y, numpy.transpose(f))
+        plt.colorbar()
+        if show_plot:
+            plt.show()
+
+    def plot_shadow_price_x(self, new_figure=True, show_plot=True):
+        """
+        this method plots the shadow price of metabolites that are associated with reaction x
+        new_figure: if set to True, a new matplotlib figure will be created.
+        show_plot: if set to True, current figure will be shown
+        """
+
+        if new_figure:
+            plt.figure()
+        sp_x = self.shadow_price_x
+        x = self.x_range
+        y = self.y_range
+
+        if 'EX_' in self.rxn_x:
+            x = x*-1
+
+        if 'EX_' in self.rxn_y:
+            y = y*-1
+
+        plt.pcolormesh(x, y, numpy.transpose(sp_x))
+        plt.colorbar()
+        if show_plot:
+            plt.show()
+
+    def plot_shadow_price_y(self, new_figure=True, show_plot=True):
+        """
+        this method plots the shadow price of metabolites that are associated with reaction x
+        new_figure: if set to True, a new matplotlib figure will be created.
+        show_plot: if set to True, current figure will be shown
+        """
+
+        if new_figure:
+            plt.figure()
+        sp_y = self.shadow_price_y
+        x = self.x_range
+        y = self.y_range
+
+        if 'EX_' in self.rxn_x:
+            x = x*-1
+
+        if 'EX_' in self.rxn_y:
+            y = y*-1
+
+        plt.pcolormesh(x, y, numpy.transpose(sp_y))
+        plt.colorbar()
+        if show_plot:
+            plt.show()
 
 def PhPP(model, rxn_x, rxn_y, rxn_x_range, rxn_y_range, target=None, maximize=True):
     """
     Phenotype Phase Plane Analysis
     analyze the changes in the objective function and the shadow prices
 
-    :param model: the metabolic model
-    :param rxn_x: the first control reaction
-    :param rxn_y: the second control reaction
-    :param rxn_x_range: the range of the first control reaction
-    :param rxn_y_range: the range of the second control reaction
-    :param target: the target reaction for the optimization.  if None is included, it will attempt to detect the biomass function
-    :param maximize: the sense of the optimization
-    :return:
-            f_objective
-            shadow_price_x
-            shadow_price_y
+    :param model: ConstraintBasedModel -- the metabolic model
+    :param rxn_x: str -- reaction to be plotted along x axis.  must be of a type convertable to numpy.array
+    :param rxn_y: str -- reaction to be plotted along y axis.  must be of a type convertable to numpy.array
+    :param rxn_x_range: list or array -- the range of the reaction x
+    :param rxn_y_range: list or array -- the range of the reaction y
+    :param target: str -- the  reaction id of the optimization target.
+                   if None is included, it will attempt to detect the biomass function
+    :param maximize: True or False. the sense of the optimization
+    :return: phaseplane
     """
     solver = solver_instance()
     solver.build_problem(model)
@@ -55,32 +141,18 @@ def PhPP(model, rxn_x, rxn_y, rxn_x_range, rxn_y_range, target=None, maximize=Tr
     met_x = table[rxn_x].keys()[0]
     met_y = table[rxn_y].keys()[0]
 
-    # find length of reaction ranges
-    len_x = len(rxn_x_range)
-    len_y = len(rxn_y_range)
+    # create a PhenotypePhasePlane instance for storing results
+    phase_plane = PhenotypePhasePlane(rxn_x, rxn_y, rxn_x_range, rxn_y_range)
 
-    f_objective = numpy.zeros(len_x,len_y)
-    shadow_price_x = numpy.zeros(len_x,len_y)
-    shadow_price_y = numpy.zeros(len_x,len_y)
-
-
-    for v_x in rxn_x_range:
-        for v_y in rxn_y_range:
+    for i, v_x in enumerate(rxn_x_range):
+        for j, v_y in enumerate(rxn_y_range):
             constraints = {rxn_x: (v_x, v_x), rxn_y: (v_y, v_y)}
             solution = FBA(model, constraints=constraints, target=target, maximize=maximize, solver=solver,
                            get_shadow_prices=True)
 
-            if solution.status==Status.OPTIMAL:
-                fobj[v_x, v_y] = solution.fobj
-                shadow_price_x[v_x, v_y] = solution.shadow_prices[met_x]
-                shadow_price_y[v_x, v_y] = solution.shadow_prices[met_y]
+            if solution.status == Status.OPTIMAL:
+                phase_plane.f_objective[i, j] = solution.fobj
+                phase_plane.shadow_price_x[i, j] = solution.shadow_prices[met_x]
+                phase_plane.shadow_price_y[i, j] = solution.shadow_prices[met_y]
 
-    phaseplane = {}
-    phaseplane['f_objective'] = fobj
-    phaseplane['shadow_price_x'] = shadow_price_x
-    phaseplane['shadow_price_y'] = shadow_price_y
-    phaseplane['x_range'] = x_range
-    phaseplane['y_range'] = y_range
-
-
-    return fobj, shadow_price_x, shadow_price_y
+    return phase_plane
