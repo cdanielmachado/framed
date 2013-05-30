@@ -32,8 +32,7 @@ For DyMMM, please cite:
 
 __author__ = 'kaizhuang'
 
-
-def MdFBA(bioreactor, t0, tf, dt, initial_conditions=None, solver='lsoda'):
+def MdFBA(bioreactor, t0, tf, dt, initial_conditions=None, solver='dopri5', verbose=False):
     """
     Dynamic Flux Balance Analysis with Multi-organism support
     :param bioreactor: Bioreactor -- the bioreactor to be simulated
@@ -44,24 +43,24 @@ def MdFBA(bioreactor, t0, tf, dt, initial_conditions=None, solver='lsoda'):
     :param solver:
     :return:
     """
-    t, y = bioreactor.integrate(t0, tf, dt, initial_conditions, solver)
+    t, y = bioreactor.integrate(t0, tf, dt, initial_conditions, solver, verbose)
     return t, y
 
 
-def dFBA(bioreactor, t0, tf, dt, initial_conditions=None, solver='lsoda'):
+def dFBA(bioreactor, t0, tf, dt, initial_conditions=None, solver='dopri5', verbose=False):
     """
     dFBA() is a alias for dFBAm().
     It is intended to provide legacy support for the name "dFBA"
     """
-    t, y = MdFBA(bioreactor, t0, tf, dt, initial_conditions, solver)
+    t, y = MdFBA(bioreactor, t0, tf, dt, initial_conditions, solver, verbose)
     return t, y
 
 
-def DyMMM(bioreactor, t0, tf, dt, initial_conditions=None, solver='lsoda'):
+def DyMMM(bioreactor, t0, tf, dt, initial_conditions=None, solver='dopri5', verbose=False):
     """
     DyMMM() is a alias for dFBAm()
     It is intended to provide legacy support for the name "DyMMM"
     """
-    t, y = MdFBA(bioreactor, t0, tf, dt, initial_conditions, solver)
+    t, y = MdFBA(bioreactor, t0, tf, dt, initial_conditions, solver, verbose)
     return t, y
 

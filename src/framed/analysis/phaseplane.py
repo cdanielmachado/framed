@@ -1,5 +1,5 @@
 """
-This module implements the phenotype phase plane analysis.
+This module implements the Phenotype Phase Plane Analysis.
 (Edwards et al. 2001, Characterizing the metabolic phenotype: A phenotype phase plane analysis)
 
 @author: Kai Zhuang
