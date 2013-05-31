@@ -61,7 +61,7 @@ def clean_bounds(model, threshold=1000):
 
 def clean_bigg_ids(model):
     
-    clean = lambda x: x.replace('LPAREN_','').replace('RPAREN_','').replace('DASH_','')
+    clean = lambda x: x.replace('_LPAREN_','_').replace('_RPAREN_','_').replace('_DASH_','_')
     
     def key_replace(ord_dict, key, new_key):
         item = ord_dict[key]
