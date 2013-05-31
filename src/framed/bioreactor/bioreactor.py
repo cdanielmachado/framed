@@ -140,14 +140,14 @@ class DynamicSystem(object):
                 t, y = self.analytical_integrator(t0, tf, dt, initial_conditions, solver, verbose)
             except NotImplementedError:
                 print 'analytical solver have no been implemented yet. will use numerical solver dopri5.'
-                t, y = self.numeric_integrator(t0, tf, dt, initial_conditions, solver='dopri5')
+                t, y = self.numerical_integrator(t0, tf, dt, initial_conditions, solver='dopri5')
         else:
-            t, y = self.numeric_integrator(t0, tf, dt, initial_conditions, solver, verbose)
+            t, y = self.numerical_integrator(t0, tf, dt, initial_conditions, solver, verbose)
         return t, y
 
-    def numeric_integrator(self, t0, tf, dt, initial_conditions, solver, verbose):
+    def numerical_integrator(self, t0, tf, dt, initial_conditions, solver, verbose):
         """
-        the numeric_integrator() method integrates the ODE of the dynamic system using a numerical solver
+        the numerical_integrator() method integrates the ODE of the dynamic system using a numerical solver
         """
         f = self._ode_RHS
         if initial_conditions:
@@ -176,7 +176,7 @@ class DynamicSystem(object):
 
     def analytical_integrator(self, t0, tf, dt, initial_conditions, solver, verbose):
         """
-        the numeric_integrator() method integrates the ODE of the dynamic system using a user-defined analytical method
+        the analytical_integrator() method integrates the ODE of the dynamic system using a user-defined analytical method
 
         ** this is an abstract method, must be implemented for specific dynamic systems **
         """
