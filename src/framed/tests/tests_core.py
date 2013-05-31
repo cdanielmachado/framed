@@ -8,7 +8,7 @@ import unittest
 from framed.io_utils.sbml import load_sbml_model, save_sbml_model, CONSTRAINT_BASED, GPR_CONSTRAINED
 from framed.core.fixes import fix_bigg_model
 from framed.analysis.simulation import FBA
-from framed.analysis.variability import FVA
+from framed.analysis.variability import FVA, blocked_reactions
 from framed.io_utils.plaintext import read_model_from_file, write_model_to_file
 from framed.analysis.deletion import gene_deletion
 from framed.analysis.essentiality import essential_genes
@@ -16,6 +16,7 @@ from framed.solvers.solver import Status
 from framed.core.transformation import make_irreversible, simplify
 from framed.design.combinatorial import combinatorial_gene_deletion
 from framed.analysis.plotting import plot_flux_cone_projection
+from framed.core.transformation import balanced_model_reduction, _disconnected_metabolites, decompose_biomass
 
 SMALL_TEST_MODEL = '../../../misc/ecoli_core_model.xml'
 LARGE_TEST_MODEL = '../../../misc/iAF1260.xml'
@@ -199,10 +200,41 @@ class FluxConeProjectionTest(unittest.TestCase):
         fix_bigg_model(model)
         r_x, r_y = 'R_EX_glc_e', 'R_EX_co2_e'
         plot_flux_cone_projection(model, r_x, r_y)
+                      
+class ModelReductionTest(unittest.TestCase):
+    """ Test combinatorial gene deletion with FBA. """
+    
+    def testRun(self):
+        from copy import deepcopy
+        from framed.core.models import Metabolite
+        
+        full_model = load_sbml_model(SMALL_TEST_MODEL, kind=CONSTRAINT_BASED)
+        full_model.add_metabolite(Metabolite('X_b'))
+        full_model.stoichiometry[('X_b', full_model.detect_biomass_reaction())] = 1
+        
+        fix_bigg_model(full_model, boundary_metabolites=False)
+        model = deepcopy(full_model)
+        fix_bigg_model(model)
+        
+        to_remove = model.metabolites.keys()
+        to_remove.remove('M_glc_D_e')
+        to_remove.append('M_glc_D_e')
+                
+        decompose_biomass(model)
+        solution = FBA(model)
+
+        decompose_biomass(full_model)
+
+        balanced_model_reduction(full_model, to_remove, solution.values)
+                
+        print full_model
+
+
+
                             
 def suite():
-    tests = [SBMLTest, PlainTextIOTest, FBATest, FBAFromPlainTextTest, FVATest, IrreversibleModelFBATest, SimplifiedModelFBATest, TransformationCommutativityTest, GeneDeletionFBATest, GeneDeletionMOMATest, GeneEssentialityTest]
-    #tests = [PlainTextIOTest]
+    #tests = [SBMLTest, PlainTextIOTest, FBATest, FBAFromPlainTextTest, FVATest, IrreversibleModelFBATest, SimplifiedModelFBATest, TransformationCommutativityTest, GeneDeletionFBATest, GeneDeletionMOMATest, GeneEssentialityTest]
+    tests = [ModelReductionTest]
     
     test_suite = unittest.TestSuite()
     for test in tests:

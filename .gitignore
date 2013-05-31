@@ -10,3 +10,5 @@
 *.log
 
 .settings/org.eclipse.ltk.core.refactoring.prefs
+
+src/framed/tests/yeast_project.py

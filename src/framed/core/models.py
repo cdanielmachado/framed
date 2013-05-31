@@ -224,7 +224,7 @@ class StoichiometricModel:
             del self.compartments[c_id]
             
             if delete_metabolites:
-                self.remove_metabolites([m_id for m_id, metabolite in self.metabolites 
+                self.remove_metabolites([m_id for m_id, metabolite in self.metabolites.items() 
                                          if metabolite.compartment == c_id]) 
         
 
@@ -267,7 +267,7 @@ class StoichiometricModel:
                 for m_id in self.metabolites]        
     
     
-    def print_reaction(self, r_id, lookup_table=None):
+    def print_reaction(self, r_id, lookup_table=None, reaction_names=False, metabolite_names=False):
         """ Print a reaction to a text based representation.
         
         Arguments:
@@ -280,22 +280,29 @@ class StoichiometricModel:
         if not lookup_table: 
             lookup_table = self.reaction_metabolite_lookup_table()
         
-        res = r_id + ': '
-        res += ' + '.join([m_id if coeff == -1.0 else str(-coeff) + ' ' + m_id
+        r_repr = self.reactions[r_id].name if reaction_names else r_id
+        m_repr = lambda m_id: self.metabolites[m_id].name if metabolite_names else m_id
+        
+        res = r_repr + ': '
+        res += ' + '.join([m_repr(m_id) if coeff == -1.0 else str(-coeff) + ' ' + m_repr(m_id)
                          for m_id, coeff in lookup_table[r_id].items() if coeff < 0])
         res += ' <-> ' if self.reactions[r_id].reversible else ' --> '
-        res += ' + '.join([m_id if coeff == 1.0 else str(coeff) + ' ' + m_id
+        res += ' + '.join([m_repr(m_id) if coeff == 1.0 else str(coeff) + ' ' + m_repr(m_id)
                          for m_id, coeff in lookup_table[r_id].items() if coeff > 0])
         return res   
-            
-    def __repr__(self):
+    
+    def to_string(self, reaction_names=False, metabolite_names=False):
         """ Print the model to a text based representation.
                 
         Returns:
             str -- model string
         """ 
         table = self.reaction_metabolite_lookup_table()
-        return '\n'.join([self.print_reaction(r_id, table) for r_id in self.reactions])
+        return '\n'.join([self.print_reaction(r_id, table, reaction_names, metabolite_names)
+                          for r_id in self.reactions])
+    
+    def __repr__(self):
+        return self.to_string()
     
     
              
@@ -340,7 +347,8 @@ class ConstraintBasedModel(StoichiometricModel):
             lb : float -- lower bound (use None to represent negative infinity)
         """
         if r_id in self.reactions:
-            self.bounds[r_id][0] = lb
+            _, ub = self.bounds[r_id]
+            self.bounds[r_id] = lb, ub
                 
     def set_upper_bound(self, r_id, ub):
         """ Define upper bound for one reaction
@@ -350,7 +358,8 @@ class ConstraintBasedModel(StoichiometricModel):
             ub : float -- upper bound (use None to represent positive infinity)
         """
         if r_id in self.reactions:
-            self.bounds[r_id][1] = ub
+            lb, _ = self.bounds[r_id]
+            self.bounds[r_id] = lb, ub
 
     def add_reaction(self, reaction, lb=None, ub=None):
         """ Add a single reaction to the model.
@@ -375,7 +384,7 @@ class ConstraintBasedModel(StoichiometricModel):
         for r_id in id_list:
             del self.bounds[r_id]
 
-    def print_reaction(self, r_id, lookup_table=None):
+    def print_reaction(self, r_id, lookup_table=None, reaction_names=False, metabolite_names=False):
         """ Print a reaction to a text based representation.
         
         Arguments:
@@ -385,7 +394,7 @@ class ConstraintBasedModel(StoichiometricModel):
         Returns:
             str -- reaction string
         """
-        res = StoichiometricModel.print_reaction(self, r_id, lookup_table)
+        res = StoichiometricModel.print_reaction(self, r_id, lookup_table, reaction_names, metabolite_names)
         lb, ub = self.bounds[r_id]
         rev = self.reactions[r_id].reversible
         if lb != None and (rev or lb != 0.0) or ub != None:
