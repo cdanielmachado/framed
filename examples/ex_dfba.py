@@ -50,7 +50,7 @@ class Ecoli(Organism):
 # The update() method is used to re-calculate the oxygen transfer rate at each time step
 class BatchBioreactor(Bioreactor):
 
-    def update(self):
+    def update(self, t):
         kLa = 7.5
         rid = self.metabolites.index('R_EX_o2_e')
         deltaO2 = kLa*(0.21 - self.S[rid])
