@@ -10,7 +10,8 @@ from framed.core.fixes import fix_bigg_model
 from framed.analysis.dfba import *
 from framed.bioreactor.bioreactor import *
 
-SMALL_TEST_MODEL = '../../../misc/ecoli_core_model.xml'
+
+SMALL_TEST_MODEL = '../../../examples/models/ecoli_core_model.xml'
 
 
 class SingleOrganismTest(unittest.TestCase):
@@ -33,9 +34,9 @@ class SingleOrganismTest(unittest.TestCase):
 
         t0 = 0
         tf = 20
-        dt = 0.1
+        dt = 1
 
-        t, y = MdFBA(self.br, t0, tf, dt, solver='lsoda')
+        t, y = MdFBA(self.br, t0, tf, dt, solver='lsoda', verbose=True)
 
     def tearDown(self):
         del self.br
@@ -60,9 +61,9 @@ class MultipleOrganismTest(unittest.TestCase):
         y0 = [1, 0.01, 0.01, 10, 0]
         t0 = 0
         tf = 20
-        dt = 0.1
+        dt = 1
 
-        t, y = dFBA(self.br, t0, tf, dt, y0)
+        t, y = dFBA(self.br, t0, tf, dt, y0, verbose=True)
 
     def tearDown(self):
         del self.br

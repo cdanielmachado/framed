@@ -10,7 +10,7 @@ from framed.bioreactor.bioreactor import *
 from framed.analysis.simulation import FBA
 from framed.core.fixes import fix_bigg_model
 
-SMALL_TEST_MODEL = '../../../misc/ecoli_core_model.xml'
+SMALL_TEST_MODEL = '../../../examples/models/ecoli_core_model.xml'
 
 class OrganismTest(unittest.TestCase):
 

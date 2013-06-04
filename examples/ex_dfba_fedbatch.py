@@ -20,6 +20,7 @@ ec_core_model = load_sbml_model(SMALL_TEST_MODEL, kind=CONSTRAINT_BASED)
 fix_bigg_model(ec_core_model)
 
 
+
 ### Defining the Ecoli class
 # In the Ecoli class, the method update(), which is an abstract method in the superclass Organism, is defined.
 # The update() method describes how Ecoli will respond to changes in metabolite concentrations in its environment.
@@ -41,7 +42,6 @@ class Ecoli(Organism):
 ### Main Program
 # creating an instance of Ecoli
 ec = Ecoli(ec_core_model)
-
 
 # creating a batch bioreactor containing Ecoli, glucose, acetate, and oxygen
 batch_bioreactor = IdealFedbatch(ec, ['R_EX_glc_e', 'R_EX_ac_e'])
