@@ -1,4 +1,4 @@
-""" This module defines the common classes used for modeling and analyzing bioreactors
+""" This module defines the classes used for modeling and analyzing bioreactors
 
 @author: Kai Zhuang
 
@@ -47,12 +47,15 @@ class Organism(object):
         else:
             self.model = model
         self.fba_constraints = fba_constraints
-        self.environment = None  # upon initiation, the organism is not placed in any environment
+        self.fba_solver = None
+        self.fba_solution = None
 
         if fba_objective:
             self.fba_objective = fba_objective
         else:
             self.fba_objective = {model.detect_biomass_reaction(): 1}
+
+        self.environment = None  # upon initiation, the organism is not placed in any environment
 
     def update(self):
         """
@@ -195,8 +198,8 @@ class Bioreactor(Environment, DynamicSystem):
     deltaS: custom defined terms to dS/dt [mmol/L/hr]
 
     """
-    def __init__(self, organisms, metabolites, flow_rate_in=0, flow_rate_out=0, volume_max=None, Xfeed=None,
-                 Sfeed=None, deltaX=None, deltaS=None, initial_conditions=[]):
+    def __init__(self, organisms, metabolites, flow_rate_in=0, flow_rate_out=0, volume_max=None, time_max=None,
+                 Xfeed=None, Sfeed=None, deltaX=None, deltaS=None, initial_conditions=[]):
         if not isinstance(organisms, collections.Iterable):
             organisms = [organisms]
         if not isinstance(metabolites, collections.Iterable):
@@ -207,13 +210,17 @@ class Bioreactor(Environment, DynamicSystem):
         self.flow_rate_in = flow_rate_in
         self.flow_rate_out = flow_rate_out
         self.volume_max = volume_max
+        self.time_max = time_max
 
         if Xfeed:
-            self.set_Xfeed(Xfeed)
+            assert len(Xfeed) == len(self.organisms), 'The length of Xfeed should equal to the number of organisms'
+            self.Xfeed = Xfeed
         else:
             self.Xfeed = numpy.zeros(len(organisms))
 
         if Sfeed:
+            assert len(Sfeed) == len(self.metabolites),  'The length of Sfeed should equal to the number of metabolites'
+            self.Sfeed = Sfeed
             self.set_Sfeed(Sfeed)
         else:
             self.Sfeed = numpy.zeros(len(metabolites))
@@ -230,14 +237,6 @@ class Bioreactor(Environment, DynamicSystem):
 
         self.initial_conditions = initial_conditions
 
-    def set_Xfeed(self, Xfeed):
-        assert len(Xfeed) == len(self.organisms), 'The length of Xfeed should equal to the number of organisms'
-        self.Xfeed = Xfeed
-
-    def set_Sfeed(self, Sfeed):
-        assert len(Sfeed) == len(self.metabolites),  'The length of Sfeed should equal to the number of metabolites'
-        self.Sfeed = Sfeed
-
     def set_initial_conditions(self, Vinit, Xinit, Sinit):
         assert type(Vinit) == type(Xinit) == type(Sinit) == list
         assert len(Vinit) == 1
@@ -245,8 +244,13 @@ class Bioreactor(Environment, DynamicSystem):
         assert len(Sinit) == len(self.metabolites), 'The length of Sinit should equal to the number of metabolites'
         self.initial_conditions = Vinit + Xinit + Sinit
 
-    def update(self):
-        pass
+    def update(self, time):
+        if self.volume_max:
+            if self.V > self.volume_max:
+                raise ValueError('liquid volume of the bioreactor exceeds volume_max.')
+        if self.time_max:
+            if time > self.time_max:
+                raise ValueError('maximum reactor run time reached.')
 
     def _ode_RHS(self, t, y):
         """
@@ -264,45 +268,48 @@ class Bioreactor(Environment, DynamicSystem):
         assert(len(y) == 1 + number_of_organisms + number_of_metabolites)
         dy = numpy.zeros(len(y))
 
-        # creating user-friendly aliases for y
+        # creating aliases for y that are visible to class methods like update()
         self.V = y[0]
         self.X = y[1:number_of_organisms + 1]
         self.S = y[number_of_organisms + 1:]
 
-        # assigning growth rates and metabolic production/consumption rates here, the rates are calculated using FBA
-        # through CobraPy's optimize method.  These rates can be calculated and assigned using other methods.
-        # For example, a Michaelis-Menten kinetic expression can be used
+        # assigning growth rates and metabolic production/consumption rates here
+            # in this method, these rates are calculated using FBA
 
         vs = numpy.zeros([number_of_organisms, number_of_metabolites])     # fluxes through metabolites
         mu = numpy.zeros([number_of_organisms])                          # growth rates of organisms
 
         for i, organism in enumerate(self.organisms):
-            organism.update()       # updates the constraints of the organism model based on environment conditions
+            organism.update()   # updating the internal states of the organism
+                                    # eg. updating the uptake constraints based on metabolite concentrations
 
-            if t == 0:
-                organism.solver = solver_instance()
-                organism.solver.build_problem(organism.model)
+            if not organism.fba_solver:  # the organism's fba_solver instance must be initialized
+                organism.fba_solver = solver_instance()
+                organism.fba_solver.build_problem(organism.model)
 
-            solution = organism.solver.solve_lp(organism.fba_objective, constraints=organism.fba_constraints)
+            organism.solution = organism.fba_solver.solve_lp(organism.fba_objective,
+                                                             constraints=organism.fba_constraints)
 
-            #solution = FBA(organism.model, solver=organism.solver, constraints=organism.fba_constraints)
-
-            if solution.status == Status.OPTIMAL:
-                mu[i] = solution.fobj
+            if organism.solution.status == Status.OPTIMAL:
+                mu[i] = organism.solution.fobj
 
                 for j, metabolite in enumerate(self.metabolites):
                     if metabolite in organism.model.reactions.keys():
-                        vs[i, j] = solution.values[metabolite]
+                        vs[i, j] = organism.solution.values[metabolite]
             else:
                 mu[i] = 0
                 #print 'no growth'
 
-        self.update()   # updating bioreactor parameters such as flow rates and feed concentration
+        # updating the internal states of the bioreactor
+            # eg. flow rates, feed concentrations, and custom defined dX/dt and dS/dt terms
+        self.update(t)
 
         # calculating the rates of change of reactor volume[L], biomass [g/L] and metabolite [mmol/L]
         dy[0] = self.flow_rate_in - self.flow_rate_out      # dV/dt [L/hr]
-        dy[1:number_of_organisms + 1] = mu * self.X + self.flow_rate_in / self.V * (self.Xfeed - self.X) + self.deltaX  # dX/dt [g/L/hr]
-        dy[number_of_organisms + 1:] = numpy.dot(self.X, vs) + self.flow_rate_in / self.V * (self.Sfeed - self.S) +self.deltaS   # dS/dt [mmol/L/hr]
+        dy[1:number_of_organisms + 1] = \
+            mu * self.X + self.flow_rate_in / self.V * (self.Xfeed - self.X) + self.deltaX  # dX/dt [g/L/hr]
+        dy[number_of_organisms + 1:] = \
+            numpy.dot(self.X, vs) + self.flow_rate_in / self.V * (self.Sfeed - self.S) + self.deltaS  # dS/dt[mmol/L/hr]
 
         return dy
 

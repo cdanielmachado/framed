@@ -104,16 +104,6 @@ class BioreactorTest(unittest.TestCase):
         assert self.br.metabolites == ['EX_glc(e)', 'EX_ac(e)', 'EX_o2(e)']
         assert len(self.br.organisms) == 2
 
-    def test_set_Xfeed(self):
-        self.br.set_Xfeed([1, 1])
-        assert(self.br.Xfeed == [1, 1])
-        self.assertRaises(AssertionError, self.br.set_Xfeed, [1, 2, 3])
-
-    def test_setSfeed(self):
-        self.br.set_Sfeed([1, 1, 1])
-        assert(self.br.Sfeed == [1, 1, 1])
-        self.assertRaises(AssertionError, self.br.set_Sfeed, [1, 2])
-
     def test_set_initial_conditions(self):
         self.br.set_initial_conditions([1], [0.1, 0.1], [10, 1, 0])
         self.assertEqual(self.br.initial_conditions, [1, 0.1, 0.1, 10, 1, 0])

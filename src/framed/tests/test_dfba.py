@@ -36,7 +36,6 @@ class SingleOrganismTest(unittest.TestCase):
         dt = 0.1
 
         t, y = MdFBA(self.br, t0, tf, dt, solver='lsoda')
-        print len(y)
 
     def tearDown(self):
         del self.br
