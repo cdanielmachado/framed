@@ -1,4 +1,4 @@
-""" This module defines the classes used for modeling and analyzing bioreactors
+""" This module defines the common classes used for modeling and analyzing bioreactors
 
 @author: Kai Zhuang
 
@@ -47,15 +47,12 @@ class Organism(object):
         else:
             self.model = model
         self.fba_constraints = fba_constraints
-        self.fba_solver = None
-        self.fba_solution = None
+        self.environment = None  # upon initiation, the organism is not placed in any environment
 
         if fba_objective:
             self.fba_objective = fba_objective
         else:
             self.fba_objective = {model.detect_biomass_reaction(): 1}
-
-        self.environment = None  # upon initiation, the organism is not placed in any environment
 
     def update(self):
         """
@@ -268,11 +265,14 @@ class Bioreactor(Environment, DynamicSystem):
         assert(len(y) == 1 + number_of_organisms + number_of_metabolites)
         dy = numpy.zeros(len(y))
 
-        # creating aliases for y that are visible to class methods like update()
+        # creating class variables V, X, S, time from y and t.
+        # making them class variables so that class methods like update() can access them
+
         self.V = y[0]
         self.X = y[1:number_of_organisms + 1]
         self.S = y[number_of_organisms + 1:]
-
+        self.time = t
+        
         # assigning growth rates and metabolic production/consumption rates here
             # in this method, these rates are calculated using FBA
 
@@ -282,20 +282,18 @@ class Bioreactor(Environment, DynamicSystem):
         for i, organism in enumerate(self.organisms):
             organism.update()   # updating the internal states of the organism
                                     # eg. updating the uptake constraints based on metabolite concentrations
+            if t == 0:
+                organism.solver = solver_instance()
+                organism.solver.build_problem(organism.model)
 
-            if not organism.fba_solver:  # the organism's fba_solver instance must be initialized
-                organism.fba_solver = solver_instance()
-                organism.fba_solver.build_problem(organism.model)
+            solution = organism.solver.solve_lp(organism.fba_objective, constraints=organism.fba_constraints)
 
-            organism.solution = organism.fba_solver.solve_lp(organism.fba_objective,
-                                                             constraints=organism.fba_constraints)
-
-            if organism.solution.status == Status.OPTIMAL:
-                mu[i] = organism.solution.fobj
+            if solution.status == Status.OPTIMAL:
+                mu[i] = solution.fobj
 
                 for j, metabolite in enumerate(self.metabolites):
                     if metabolite in organism.model.reactions.keys():
-                        vs[i, j] = organism.solution.values[metabolite]
+                        vs[i, j] = solution.values[metabolite]
             else:
                 mu[i] = 0
                 #print 'no growth'
@@ -306,10 +304,8 @@ class Bioreactor(Environment, DynamicSystem):
 
         # calculating the rates of change of reactor volume[L], biomass [g/L] and metabolite [mmol/L]
         dy[0] = self.flow_rate_in - self.flow_rate_out      # dV/dt [L/hr]
-        dy[1:number_of_organisms + 1] = \
-            mu * self.X + self.flow_rate_in / self.V * (self.Xfeed - self.X) + self.deltaX  # dX/dt [g/L/hr]
-        dy[number_of_organisms + 1:] = \
-            numpy.dot(self.X, vs) + self.flow_rate_in / self.V * (self.Sfeed - self.S) + self.deltaS  # dS/dt[mmol/L/hr]
+        dy[1:number_of_organisms + 1] = mu * self.X + self.flow_rate_in / self.V * (self.Xfeed - self.X) + self.deltaX  # dX/dt [g/L/hr]
+        dy[number_of_organisms + 1:] = numpy.dot(self.X, vs) + self.flow_rate_in / self.V * (self.Sfeed - self.S) +self.deltaS   # dS/dt [mmol/L/hr]
 
         return dy
 
