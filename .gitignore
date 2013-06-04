@@ -9,10 +9,8 @@
 
 *.log
 
-<<<<<<< HEAD
 .idea
-=======
+
 .settings/org.eclipse.ltk.core.refactoring.prefs
 
 src/framed/tests/yeast_project.py
->>>>>>> 706c621d8d0ab3edd7253dd74d9b5cb07c12ecc4

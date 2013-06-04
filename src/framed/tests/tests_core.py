@@ -18,10 +18,10 @@ from framed.design.combinatorial import combinatorial_gene_deletion
 from framed.analysis.plotting import plot_flux_cone_projection
 from framed.core.transformation import balanced_model_reduction, _disconnected_metabolites, decompose_biomass
 
-SMALL_TEST_MODEL = '../../../misc/ecoli_core_model.xml'
-LARGE_TEST_MODEL = '../../../misc/iAF1260.xml'
-TEST_MODEL_COPY = '../../../misc/model_copy.xml'
-PLAIN_TEXT_COPY = '../../../misc/model_copy.txt'
+SMALL_TEST_MODEL = '../../../examples/models/ecoli_core_model.xml'
+LARGE_TEST_MODEL = '../../../examples/models/Ec_iAF1260_genenames.xml'
+TEST_MODEL_COPY = '../../../examples/models/model_copy.xml'
+PLAIN_TEXT_COPY = '../../../examples/models/model_copy.txt'
 
 GROWTH_RATE = 0.8739
 
