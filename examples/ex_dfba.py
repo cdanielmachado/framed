@@ -1,6 +1,7 @@
 """
 Example: Dynamic Flux Balance Analysis of Diauxic Growth of E. coli in Batch Bioreactor
 
+@Author: Kai Zhuang
 """
 __author__ = 'kaizhuang'
 
@@ -13,7 +14,7 @@ from framed.analysis.dfba import *
 from framed.bioreactor.bioreactor import *
 
 ### Basic Setup
-SMALL_TEST_MODEL = '../misc/ecoli_core_model.xml'
+SMALL_TEST_MODEL = 'models/ecoli_core_model.xml'
 ec_core_model = load_sbml_model(SMALL_TEST_MODEL, kind=CONSTRAINT_BASED)
 fix_bigg_model(ec_core_model)
 
@@ -37,7 +38,6 @@ class Ecoli(Organism):
         rid = BR.metabolites.index('R_EX_ac_e')
         vlb_ac = float(-10 * BR.S[rid] / (BR.S[rid] + 1))
         self.fba_constraints['R_EX_ac_e'] = (vlb_ac, None)
-        self.fba_constraints['R_EX_o2_e'] = (-10, None)
 
         # calculating and updating the oxygen uptake constraint
         rid = BR.metabolites.index('R_EX_o2_e')
@@ -45,10 +45,10 @@ class Ecoli(Organism):
         self.fba_constraints['R_EX_o2_e'] = (vlb_o2, None)
 
 
-### Defining BatchBioreactor class
+### Defining BatchBR_w_o2 class
 # In the Ecoli class, the method update(), which is an abstract method in the superclass Bioreactor, is defined.
 # The update() method is used to re-calculate the oxygen transfer rate at each time step
-class BatchBioreactor(Bioreactor):
+class BatchBR_w_o2(IdealBatch):
 
     def update(self, t):
         kLa = 7.5
@@ -61,7 +61,7 @@ class BatchBioreactor(Bioreactor):
 ec = Ecoli(ec_core_model)
 
 # creating a batch bioreactor containing Ecoli, glucose, acetate, and oxygen
-batch_bioreactor = BatchBioreactor(ec, ['R_EX_glc_e', 'R_EX_ac_e', 'R_EX_o2_e'])
+batch_bioreactor = BatchBR_w_o2(ec, ['R_EX_glc_e', 'R_EX_ac_e', 'R_EX_o2_e'])
 
 # set initial conditions
 Vinit = [1]             # liquid volume
