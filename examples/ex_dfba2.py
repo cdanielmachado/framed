@@ -30,6 +30,7 @@ class Ecoli(Organism):
         BR = self.environment
 
         # calculating and updating the glucose uptake constraint
+<<<<<<< HEAD
         rid = BR.metabolites.index('R_EX_glc_e_')
         vlb_glc = float(-10 * BR.S[rid] / (BR.S[rid] + 1))
         self.fba_constraints['R_EX_glc_e_'] = (vlb_glc, 0)
@@ -39,6 +40,17 @@ class Ecoli(Organism):
 
         # ideal aerobic condition
         self.fba_constraints['R_EX_o2_e_'] = (-15, None)
+=======
+        rid = BR.metabolites.index('R_EX_glc_e')
+        vlb_glc = float(-10 * BR.S[rid] / (BR.S[rid] + 1))
+        self.fba_constraints['R_EX_glc_e'] = (vlb_glc, 0)
+
+        # no acetate uptake.
+        self.fba_constraints['R_EX_ac_e'] = (0, None)
+
+        # ideal aerobic condition
+        self.fba_constraints['R_EX_o2_e'] = (-15, None)
+>>>>>>> kai-branch
 
 
 ### Main Program
@@ -46,7 +58,11 @@ class Ecoli(Organism):
 ec = Ecoli(ec1260)
 
 # creating a batch bioreactor containing Ecoli, glucose, acetate, and oxygen
+<<<<<<< HEAD
 fedbatch_bioreactor = IdealFedbatch(ec, ['R_EX_glc_e_', 'R_EX_ac_e_'], Sfeed=[1000, 0], volume_max=10)
+=======
+fedbatch_bioreactor = IdealFedbatch(ec, ['R_EX_glc_e', 'R_EX_ac_e'], Sfeed=[1000, 0], volume_max=10)
+>>>>>>> kai-branch
 
 # set initial conditions
 Vinit = [1]             # liquid volume
