@@ -8,7 +8,7 @@ import unittest
 from framed.io_utils.sbml import load_sbml_model, save_sbml_model, CONSTRAINT_BASED, GPR_CONSTRAINED
 from framed.core.fixes import fix_bigg_model
 from framed.analysis.simulation import FBA
-from framed.analysis.variability import FVA, blocked_reactions
+from framed.analysis.variability import FVA
 from framed.io_utils.plaintext import read_model_from_file, write_model_to_file
 from framed.analysis.deletion import gene_deletion
 from framed.analysis.essentiality import essential_genes
@@ -16,7 +16,7 @@ from framed.solvers.solver import Status
 from framed.core.transformation import make_irreversible, simplify
 from framed.design.combinatorial import combinatorial_gene_deletion
 from framed.analysis.plotting import plot_flux_cone_projection
-from framed.core.transformation import balanced_model_reduction, _disconnected_metabolites, decompose_biomass
+from framed.core.transformation import balanced_model_reduction, decompose_biomass
 
 SMALL_TEST_MODEL = '../../../examples/models/ecoli_core_model.xml'
 LARGE_TEST_MODEL = '../../../examples/models/Ec_iAF1260_genenames.xml'

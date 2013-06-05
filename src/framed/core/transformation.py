@@ -81,40 +81,48 @@ def make_irreversible(model):
     return mapping
 
 
-def balanced_model_reduction(model, metabolites, fluxes, abstol=1e-9):
+def balanced_model_reduction(model, metabolites, fluxes, must_keep=None, max_degree=None, clean_null_fluxes=True, clean_disconnected=True, abstol=1e-9):
     
-    model.to_remove = metabolites
-        
+    if clean_null_fluxes:
+        model.remove_reactions([r_id for r_id, val in fluxes.items() if abs(val) < abstol])
+     
+    if max_degree:
+        m_r_table = model.metabolite_reaction_lookup_table()
+        metabolites = [m_id for m_id in metabolites if len(m_r_table[m_id]) <= max_degree]
+           
     for m_id in metabolites:
-        remove_balanced_metabolite(model, m_id, fluxes, abstol)
+        remove_balanced_metabolite(model, m_id, fluxes, must_keep, abstol)
  
-    disconnected = _disconnected_metabolites(model)
-    model.remove_metabolites(disconnected)
+    if clean_disconnected:
+        model.remove_metabolites(_disconnected_metabolites(model))
+
     
-def remove_balanced_metabolite(model, m_id, fluxes, abstol=1e-9):
+def remove_balanced_metabolite(model, m_id, fluxes, must_keep = None, abstol=1e-9):
     
-    m_r_table = model.metabolite_reaction_lookup_table()
-    neighbours = m_r_table[m_id]
+    neighbours = metabolite_neighbours(model, [m_id])
     
-    balance = sum([coeff * fluxes[r_id] for r_id, coeff in neighbours.items()])
-    turnover = sum([abs(coeff * fluxes[r_id]) for r_id, coeff in neighbours.items()]) / 2.0
+    balance = sum([model.stoichiometry[(m_id, r_id)] * fluxes[r_id] for r_id in neighbours])
+    turnover = sum([abs(model.stoichiometry[(m_id, r_id)] * fluxes[r_id]) for r_id in neighbours]) / 2.0
     
-#    print 'removing {}\t balance {}\t turnover {}'.format(m_id, balance, turnover)
+#   print 'removing {}\t balance {}\t turnover {}'.format(m_id, balance, turnover)
     
     assert abs(balance) < abstol
     
     if abs(turnover) > abstol:
-        
-        r_m_table = model.reaction_metabolite_lookup_table()
-        
-        new_neighbours = set([m_id2 for r_id in neighbours for m_id2 in r_m_table[r_id] if m_id2 != m_id])
+                
+        new_neighbours = reaction_neighbours(model, neighbours)
         new_coeffs = dict()
         
         for m_id2 in new_neighbours:
-            coeff = sum([r_m_table[r_id][m_id2] * fluxes[r_id] for r_id in neighbours if m_id2 in r_m_table[r_id]]) / turnover
+            coeff = sum([model.stoichiometry[(m_id2, r_id)] * fluxes[r_id] for r_id in neighbours if (m_id2, r_id) in model.stoichiometry]) / turnover
+            flow = sum([abs(model.stoichiometry[(m_id2, r_id)]) * fluxes[r_id] for r_id in neighbours if (m_id2, r_id) in model.stoichiometry]) / 2
             if abs(coeff) > abstol:
                 new_coeffs[m_id2] = coeff
-        
+            else:
+                if must_keep and m_id2 in must_keep and flow > abstol:
+#                    print 'removing {} violated {} turnover {} coeff {} flow {}'.format(m_id, m_id2, turnover, coeff, flow)
+                    return
+                
         if new_coeffs:
             new_id = 'R_' + str(uuid4())[:8]
             reversible = all([model.reactions[r_id].reversible for r_id in neighbours])
@@ -128,15 +136,30 @@ def remove_balanced_metabolite(model, m_id, fluxes, abstol=1e-9):
     
                 fluxes[new_id] = turnover
                 
-        model.remove_reactions(neighbours.keys())
+        model.remove_reactions(neighbours)
     else:
-        model.remove_reactions([r_id for r_id in neighbours.keys() if abs(fluxes[r_id]) < abstol]) 
+        model.remove_reactions([r_id for r_id in neighbours if abs(fluxes[r_id]) < abstol]) 
         
     model.remove_metabolite(m_id)
+        
+def metabolite_neighbours(model, metabolites):
+    return get_neighbours(model, metabolites, 'metabolites')
     
-#    model.to_remove.remove(m_id)   
-#    if not _verify_balance(model, model.to_remove, fluxes, abstol=1e-9):
-#        pass
+def reaction_neighbours(model, reactions):
+    return get_neighbours(model, reactions, 'reactions')
+
+def get_neighbours(model, elements, kind):
+    if kind == 'metabolites':
+        table = model.metabolite_reaction_lookup_table()
+    elif kind == 'reactions':
+        table = model.reaction_metabolite_lookup_table()
+    neighbours = []
+    for elem in elements:
+        for neighbour in table[elem].keys():
+            if neighbour not in neighbours:
+                neighbours.append(neighbour)
+    return neighbours
+
 
 def _verify_balance(model, metabolites, fluxes, abstol=1e-9):
     m_r_table = model.metabolite_reaction_lookup_table()

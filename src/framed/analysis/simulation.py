@@ -68,8 +68,8 @@ def MOMA(model, reference=None, constraints=None, solver=None):
         wt_solution = FBA(model, constraints=constraints)
         reference = wt_solution.values
     
-    quad_obj = dict([((r_id, r_id), 1) for r_id in model.reactions])
-    lin_obj = dict([(r_id, -2*x) for r_id, x in zip(model.reactions, reference.values())])
+    quad_obj = {(r_id, r_id): 1 for r_id in model.reactions}
+    lin_obj = {r_id: -2*x for r_id, x in zip(model.reactions, reference.values())}
     
     if not solver:
         solver = solver_instance()
@@ -79,5 +79,26 @@ def MOMA(model, reference=None, constraints=None, solver=None):
     
     return solution
 
+ 
+def qpFBA(model, target=None, maximize=True, constraints=None, solver=None):
+
+    if not target:
+        target = model.detect_biomass_reaction()
+
+    if not solver:
+        solver = solver_instance()
+        solver.build_problem(model)
+                    
+    pre_solution = FBA(model, target, maximize, constraints, solver)
+
+    if not constraints:
+        constraints = dict()
+        
+    constraints[target] = (pre_solution.fobj, pre_solution.fobj)
+
+    quad_obj = {(r_id, r_id): 1 for r_id in model.reactions}
     
+    solution = solver.solve_qp(quad_obj, None, None, constraints)
+
+    return solution
         
