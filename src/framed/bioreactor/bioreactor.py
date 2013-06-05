@@ -46,13 +46,16 @@ class Organism(object):
             self.model = deepcopy(model)
         else:
             self.model = model
-        self.fba_constraints = fba_constraints
-        self.environment = None  # upon initiation, the organism is not placed in any environment
 
         if fba_objective:
             self.fba_objective = fba_objective
         else:
             self.fba_objective = {model.detect_biomass_reaction(): 1}
+
+        self.fba_constraints = fba_constraints
+        self.fba_solution = []
+        
+        self.environment = None  # upon initiation, the organism is not placed in any environment
 
     def update(self):
         """
@@ -218,7 +221,6 @@ class Bioreactor(Environment, DynamicSystem):
         if Sfeed:
             assert len(Sfeed) == len(self.metabolites),  'The length of Sfeed should equal to the number of metabolites'
             self.Sfeed = Sfeed
-            self.set_Sfeed(Sfeed)
         else:
             self.Sfeed = numpy.zeros(len(metabolites))
 
@@ -286,14 +288,14 @@ class Bioreactor(Environment, DynamicSystem):
                 organism.solver = solver_instance()
                 organism.solver.build_problem(organism.model)
 
-            solution = organism.solver.solve_lp(organism.fba_objective, constraints=organism.fba_constraints)
+            organism.fba_solution = organism.solver.solve_lp(organism.fba_objective, constraints=organism.fba_constraints)
 
-            if solution.status == Status.OPTIMAL:
-                mu[i] = solution.fobj
+            if organism.fba_solution.status == Status.OPTIMAL:
+                mu[i] = organism.fba_solution.fobj
 
                 for j, metabolite in enumerate(self.metabolites):
                     if metabolite in organism.model.reactions.keys():
-                        vs[i, j] = solution.values[metabolite]
+                        vs[i, j] = organism.fba_solution.values[metabolite]
             else:
                 mu[i] = 0
                 #print 'no growth'
@@ -355,14 +357,12 @@ class IdealFedbatch(Bioreactor):
         """
         if self.volume_max and (self.V >= self.volume_max):
             self.flow_rate_in = 0
-        elif self.time_max and (time > self.time_max):
-            self.flow_rate_in = 0
         else:
             met_id = self.metabolites.index(self.substrate)
             self.flow_rate_in = 0
             for org_id, organism in enumerate(self.organisms):
                 vs = organism.fba_solution.values[self.substrate]
-                self.flow_rate_in -= vs * self.X(org_id) * self.V / (self.Sfeed[met_id] - self.S[met_id])
+                self.flow_rate_in -= vs * self.X[org_id] * self.V / (self.Sfeed[met_id] - self.S[met_id])
 
 
 
