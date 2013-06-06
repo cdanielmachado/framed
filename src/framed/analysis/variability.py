@@ -114,4 +114,3 @@ def flux_cone_projection(model, r_x, r_y, steps=10):
         ymins[i], ymaxs[i] = y_range[r_y]
     
     return xvals, ymins, ymaxs
-    
