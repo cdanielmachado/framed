@@ -189,17 +189,22 @@ class DynamicSystem(object):
 class Bioreactor(Environment, DynamicSystem):
     """
     This class describes a generic bioreactor with one influent (feed) stream and one effluent stream
-
-    :param organisms: a list of Organism objects
-    :param metabolites: a list of string objects containing exchange reactions names.  eg. 'EX_glc(e)'
-    Xfeed: concentration of organisms in the feed stream [g/L]
-    Sfeed: concentration of metabolites in the feed stream [mmol/L]
-    deltaX: custom defined terms to dX/dt [g/L/hr]
-    deltaS: custom defined terms to dS/dt [mmol/L/hr]
-
     """
-    def __init__(self, organisms, metabolites, flow_rate_in=0, flow_rate_out=0, volume_max=None, time_max=None,
+    def __init__(self, organisms, metabolites, flow_rate_in=0, flow_rate_out=0, volume_max=None,
                  Xfeed=None, Sfeed=None, deltaX=None, deltaS=None, initial_conditions=[]):
+        """
+        :param organisms: list of Organism
+        :param metabolites: list of string
+        :param flow_rate_in:
+        :param flow_rate_out:
+        :param volume_max: float -- liquid capacity of the bioreactor
+        :param Xfeed: concentration of organisms in the feed stream [g/L]
+        :param Sfeed: concentration of metabolites in the feed stream [mmol/L]
+        :param deltaX: custom defined terms to dX/dt [g/L/hr]
+        :param deltaS: list of float -- special custom defined terms to dX/dt [mmol/L/hr]
+        :param initial_conditions: list of float
+        :return:
+        """
         if not isinstance(organisms, collections.Iterable):
             organisms = [organisms]
         if not isinstance(metabolites, collections.Iterable):
@@ -210,7 +215,6 @@ class Bioreactor(Environment, DynamicSystem):
         self.flow_rate_in = flow_rate_in
         self.flow_rate_out = flow_rate_out
         self.volume_max = volume_max
-        self.time_max = time_max
 
         if Xfeed:
             assert len(Xfeed) == len(self.organisms), 'The length of Xfeed should equal to the number of organisms'
@@ -247,9 +251,6 @@ class Bioreactor(Environment, DynamicSystem):
         if self.volume_max:
             if self.V > self.volume_max:
                 raise ValueError('liquid volume of the bioreactor exceeds volume_max.')
-        if self.time_max:
-            if time > self.time_max:
-                raise ValueError('maximum reactor run time reached.')
 
     def _ode_RHS(self, t, y):
         """

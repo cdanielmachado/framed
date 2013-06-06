@@ -23,55 +23,72 @@ from base import Bioreactor
 
 
 class IdealBatch(Bioreactor):
+    """
+    This class describes an ideal batch reactor.
+        - flow_rate_in, flow_rate_out, Xfeed, Sfeed are all set to zero (no feeding in batch reactor).
+    """
 
-    def __init__(self, organisms, metabolites, volume_max=None, time_max=None, deltaX=None, deltaS=None,
-                 initial_conditions=[]):
+    def __init__(self, organisms, metabolites, volume_max=None, deltaX=None, deltaS=None, initial_conditions=[]):
         """
-        This class describes an ideal batch reactor.
-            - flow_rate_in, flow_rate_out, Xfeed, Sfeed are all set to zero (no feeding in batch reactor).
+        Arguments:
+            organisms: list of Organism
+            metabolites: list of string
+            volume_max: float -- liquid capacity of the bioreactor
+            deltaX: custom defined terms to dX/dt [g/L/hr]
+            deltaS: list of float -- special custom defined terms to dX/dt [mmol/L/hr]
+            initial_conditions: list of float
         """
-
-        super(IdealBatch, self).__init__(organisms, metabolites, volume_max=volume_max, time_max=time_max,
-                                            deltaX=deltaX, deltaS=deltaS, initial_conditions=initial_conditions)
+        super(IdealBatch, self).__init__(organisms, metabolites, volume_max=volume_max, deltaX=deltaX, deltaS=deltaS,
+                                         initial_conditions=initial_conditions)
 
 
 class IdealFedbatch(Bioreactor):
     """
-    This class describes an ideal fedbatch reactor with a single substrate.
+    This class describes an ideal fedbatch reactor with a single primary substrate.
         - The flow_rate_in is automatically adjusted using the following rules:
-            - if either volume_max or time_max is reached, flow_rate_in is set to zero.
             - otherwise, calculates flow_rate_in so that substrate concentration is maintained (d_substrate/dt = 0)
-        - The substrate can be specified in the __init__() method.
+        - The primary substrate (usually the carbon & energy source) can be specified in the __init__() method.
           If it is not specified, the first element of metabolites is assumed to be the substrate
     """
 
-    def __init__(self, organisms, metabolites, substrate=None, volume_max=None, time_max=None,  Xfeed=None, Sfeed=None,
+    def __init__(self, organisms, metabolites, Sfeed, primary_substrate=None, volume_max=None, Xfeed=None,
                  deltaX=None, deltaS=None, initial_conditions=[]):
-
-        super(IdealFedbatch, self).__init__(organisms, metabolites, volume_max=volume_max, time_max=time_max,
-                                            Xfeed=Xfeed, Sfeed=Sfeed, deltaX=deltaX, deltaS=deltaS,
-                                            initial_conditions=initial_conditions)
-
-        if substrate:
-            assert(substrate in metabolites)
-            self.substrate = substrate
+        """
+        :param organisms: list of Organism
+        :param metabolites: list of string
+        :param Sfeed: concentration of metabolites in the feed stream [mmol/L]
+        :param primary_substrate: string -- usually the carbon & energy source.
+        :param volume_max: float -- liquid capacity of the bioreactor
+        :param Xfeed: concentration of organisms in the feed stream [g/L]
+        :param deltaX: custom defined terms to dX/dt [g/L/hr]
+        :param deltaS: list of float -- special custom defined terms to dX/dt [mmol/L/hr]
+        :param initial_conditions: list of float
+        :return:
+        """
+        super(IdealFedbatch, self).__init__(organisms, metabolites, volume_max=volume_max, Xfeed=Xfeed, Sfeed=Sfeed,
+                                            deltaX=deltaX, deltaS=deltaS, initial_conditions=initial_conditions)
+        if primary_substrate:
+            assert(primary_substrate in metabolites)
+            self.primary_substrate = primary_substrate
         else:
-            self.substrate = metabolites[0]  # if the substrate is unspecified, it is assumed to be metabolites[0]
+            self.primary_substrate = metabolites[0]     # if the substrate is unspecified,
+                                                        # it is assumed to be metabolites[0]
 
     def update(self, time):
         """
-        the flow_rate_in of the fedbatch reactor is calculated here.
+        calculates the flow_rate_in of the fedbatch reactor is calculated here.
             - if liquid volume >= volume_max, then the tank is full, set flow_rate_in to zero
-            - if time > time_max, then batch time is reached, set flow_rate_in to zero
             - otherwise, calculate the flow rate so that d_substrate/dt = 0
+
+        :param time: float -- the simulation time.  can be used in subclasses to trigger time-specific events
         """
         if self.volume_max and (self.V >= self.volume_max):
             self.flow_rate_in = 0
         else:
-            met_id = self.metabolites.index(self.substrate)
+            met_id = self.metabolites.index(self.primary_substrate)
             self.flow_rate_in = 0
             for org_id, organism in enumerate(self.organisms):
-                vs = organism.fba_solution.values[self.substrate]
+                vs = organism.fba_solution.values[self.primary_substrate]
                 self.flow_rate_in -= vs * self.X[org_id] * self.V / (self.Sfeed[met_id] - self.S[met_id])
 
 
