@@ -8,22 +8,21 @@ import unittest
 from framed.io_utils.sbml import load_sbml_model, CONSTRAINT_BASED
 from framed.core.fixes import fix_bigg_model
 from framed.analysis.dfba import *
-from framed.bioreactor.bioreactor import *
+from framed.bioreactor.base import *
 
 
 SMALL_TEST_MODEL = '../../../examples/models/ecoli_core_model.xml'
-
+ec_core_model = load_sbml_model(SMALL_TEST_MODEL, kind=CONSTRAINT_BASED)
+fix_bigg_model(ec_core_model)
 
 class SingleOrganismTest(unittest.TestCase):
 
     def setUp(self):
-        self.ec_core_model = load_sbml_model(SMALL_TEST_MODEL, kind=CONSTRAINT_BASED)
-        fix_bigg_model(self.ec_core_model)
-        self.organism = Ecoli(self.ec_core_model)
+        self.organism = Ecoli(ec_core_model)
         self.br = Bioreactor([self.organism], ['R_EX_glc_e', 'R_EX_ac_e', 'R_EX_o2_e'])
 
     def test_setUp(self):
-        self.assertEqual(self.organism.model.id, self.ec_core_model.id)
+        self.assertEqual(self.organism.model.id, ec_core_model.id)
         self.assertEqual(self.organism.fba_objective, {'R_Biomass_Ecoli_core_w_GAM': 1})
 
     def test_diauxic_growth(self):
@@ -46,15 +45,13 @@ class SingleOrganismTest(unittest.TestCase):
 class MultipleOrganismTest(unittest.TestCase):
 
     def setUp(self):
-        self.ec_core_model = load_sbml_model(SMALL_TEST_MODEL, kind=CONSTRAINT_BASED)
-        fix_bigg_model(self.ec_core_model)
-        self.o1 = GlucoseUser(self.ec_core_model)
-        self.o2 = AcetateUser(self.ec_core_model)
+        self.o1 = GlucoseUser(ec_core_model)
+        self.o2 = AcetateUser(ec_core_model)
 
         self.br = Bioreactor([self.o1, self.o2], ['R_EX_glc_e', 'R_EX_ac_e'])
 
     def test_setUp(self):
-        self.assertEqual(self.o1.model.id, self.ec_core_model.id)
+        self.assertEqual(self.o1.model.id, ec_core_model.id)
         self.assertEqual(self.o1.fba_objective, {'R_Biomass_Ecoli_core_w_GAM': 1})
 
     def test_2_organisms(self):

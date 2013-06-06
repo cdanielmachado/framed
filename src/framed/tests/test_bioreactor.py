@@ -6,33 +6,34 @@ __author__ = 'kaizhuang'
 import unittest
 
 from framed.io_utils.sbml import load_sbml_model, CONSTRAINT_BASED
-from framed.bioreactor.bioreactor import *
+from framed.bioreactor.base import *
 from framed.analysis.simulation import FBA
 from framed.core.fixes import fix_bigg_model
 
 SMALL_TEST_MODEL = '../../../examples/models/ecoli_core_model.xml'
+ec_core_model = load_sbml_model(SMALL_TEST_MODEL, kind=CONSTRAINT_BASED)
+fix_bigg_model(ec_core_model)
+
 
 class OrganismTest(unittest.TestCase):
 
     def setUp(self):
-        self.ec_core_model = load_sbml_model(SMALL_TEST_MODEL, kind=CONSTRAINT_BASED)
-        fix_bigg_model(self.ec_core_model)
-        self.ec1 = Organism(self.ec_core_model)
+        self.ec1 = Organism(ec_core_model)
 
     def testInitialization(self):
-        self.assertNotEqual(self.ec_core_model, self.ec1.model)
-        self.assertEqual(self.ec_core_model.id, self.ec1.model.id)
-        self.assertListEqual(self.ec_core_model.metabolites.keys(), self.ec1.model.metabolites.keys())
-        self.assertListEqual(self.ec_core_model.reactions.keys(), self.ec1.model.reactions.keys())
-        self.assertDictEqual(self.ec_core_model.stoichiometry, self.ec1.model.stoichiometry)
-        self.assertDictEqual(self.ec_core_model.bounds, self.ec1.model.bounds)
+        self.assertNotEqual(ec_core_model, self.ec1.model)
+        self.assertEqual(ec_core_model.id, self.ec1.model.id)
+        self.assertListEqual(ec_core_model.metabolites.keys(), self.ec1.model.metabolites.keys())
+        self.assertListEqual(ec_core_model.reactions.keys(), self.ec1.model.reactions.keys())
+        self.assertDictEqual(ec_core_model.stoichiometry, self.ec1.model.stoichiometry)
+        self.assertDictEqual(ec_core_model.bounds, self.ec1.model.bounds)
         self.assertEqual(self.ec1.fba_objective, {'R_Biomass_Ecoli_core_w_GAM': 1})
 
     def testBoundChanges(self):
-        self.ec_core_model.bounds['R_EX_glc_e'] = (-15, 0)
-        self.assertNotEqual(self.ec_core_model.bounds['R_EX_glc_e'], self.ec1.model.bounds['R_EX_glc_e'])
+        ec_core_model.bounds['R_EX_glc_e'] = (-15, 0)
+        self.assertNotEqual(ec_core_model.bounds['R_EX_glc_e'], self.ec1.model.bounds['R_EX_glc_e'])
         self.ec1.model.bounds['R_EX_glc_e'] = (-15, 0)
-        self.assertEqual(self.ec_core_model.bounds['R_EX_glc_e'], self.ec1.model.bounds['R_EX_glc_e'])
+        self.assertEqual(ec_core_model.bounds['R_EX_glc_e'], self.ec1.model.bounds['R_EX_glc_e'])
 
     def testUpdate(self):
         self.assertRaises(NotImplementedError, self.ec1.update)
@@ -40,7 +41,7 @@ class OrganismTest(unittest.TestCase):
         self.assertTrue(self.ec1.update(self.ec1) == self.ec1)
 
     def testFBA(self):
-        correct_solution = FBA(self.ec_core_model)
+        correct_solution = FBA(ec_core_model)
 
         solution1 = FBA(self.ec1.model)
         self.assertTrue(solution1.status)
@@ -54,16 +55,14 @@ class OrganismTest(unittest.TestCase):
         self.assertEqual(correct_solution.fobj, solution2.fobj)
 
     def tearDown(self):
-        del self.ec_core_model
+        del self.ec1
 
 
 class EnvironmentTest(unittest.TestCase):
 
     def setUp(self):
-        self.ec_core_model = load_sbml_model(SMALL_TEST_MODEL, kind=CONSTRAINT_BASED)
-        fix_bigg_model(self.ec_core_model)
-        self.o1 = Organism(self.ec_core_model)
-        self.o2 = Organism(self.ec_core_model)
+        self.o1 = Organism(ec_core_model)
+        self.o2 = Organism(ec_core_model)
         self.env = Environment()
 
     def testInitialization(self):
@@ -84,7 +83,6 @@ class EnvironmentTest(unittest.TestCase):
         assert self.env.metabolites == ['EX_glc(e)', 'EX_ac(e)', 'EX_o2(e)']
 
     def tearDown(self):
-        del self.ec_core_model
         del self.o1
         del self.o2
         del self.env
@@ -93,10 +91,8 @@ class EnvironmentTest(unittest.TestCase):
 class BioreactorTest(unittest.TestCase):
 
     def setUp(self):
-        self.ec_core_model = load_sbml_model(SMALL_TEST_MODEL, kind=CONSTRAINT_BASED)
-        fix_bigg_model(self.ec_core_model)
-        self.o1 = Organism(self.ec_core_model)
-        self.o2 = Organism(self.ec_core_model)
+        self.o1 = Organism(ec_core_model)
+        self.o2 = Organism(ec_core_model)
         self.br = Bioreactor([self.o1, self.o2], ['EX_glc(e)', 'EX_ac(e)', 'EX_o2(e)'])
 
     def testInitialization(self):
