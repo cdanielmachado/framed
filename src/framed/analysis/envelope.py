@@ -21,47 +21,7 @@ This module implements classes and methods for analyzing the production envelope
 __author__ = 'kaizhuang'
 
 from variability import FVA
-import matplotlib.pyplot as plt
 from numpy import linspace
-
-
-class FluxEnvelope(object):
-
-    def __init__(self, rxn_x, rxn_y, xvals, ymins, ymaxs):
-        """
-        Arguments:
-            rxn_x: string -- reaction id of x
-            rxn_y: string -- reaction id of y
-            xvals: list of float -- values of reaction x
-            ymins: list of float -- minimum values of reaction y
-            ymaxs: list of float -- maximum values of reaction y
-
-        Returns:
-            None
-        """
-        self.xvals = xvals
-        self.ymins, self.ymaxs = ymins, ymaxs
-
-    def plot_envelope(self, new_figure=True, savefile=None):
-        """
-        Plots the Flux Envelope
-        Arguments:
-            new_figure: bool -- create a new figure? (Default: True)
-            savefile: str -- name of the savefile.  if None, figure is shown on screen.  (Default: None)
-
-        Returns:
-            None
-        """
-        if new_figure:
-            plt.figure()
-            plt.hold(True)
-        plt.plot(self.xvals, self.ymins)
-        plt.plot(self.xvals, self.ymaxs)
-
-        if savefile:
-            plt.savefig(savefile)
-        else:
-            plt.show()
 
 
 def flux_envelope(model, rxn_x, rxn_y, steps=10):
@@ -74,7 +34,7 @@ def flux_envelope(model, rxn_x, rxn_y, steps=10):
         steps : int -- number of steps to compute (default: 10)
 
     Returns:
-        envelope: FluxEnvelope
+        list (of float), list (of float), list (of float) -- x values, y min values, y max values
     """
 
     x_range = FVA(model, reactions=[rxn_x])
@@ -90,20 +50,19 @@ def flux_envelope(model, rxn_x, rxn_y, steps=10):
     return xvals, ymins, ymaxs
 
 
-def production_envelope(model, target, steps=10):
+def production_envelope(model, rxn_target, rxn_biomass=None, steps=10):
     """ Calculate the production envelope of the target reaction
 
     Arguments:
         model : ConstraintBasedModel -- the model
-        target: str -- the target reaction id
+        rxn_target: str -- the target reaction id
         steps: int -- number of steps along the envelope to be calculated (default: 10)
+        rxn_biomass: str -- the biomass reaction id (default: None)
 
     Returns:
         list (of float), list (of float), list (of float) -- biomass values, target minimum values, target maximum values
     """
-    r_growth = model.detect_biomass_reaction()
+    if not rxn_biomass:
+        rxn_biomass = model.detect_biomass_reaction()
 
-    return flux_envelope(model, rxn_x=r_growth, rxn_y=target, steps=steps)
-
-
-
+    return flux_envelope(model, rxn_x=rxn_biomass, rxn_y=rxn_target, steps=steps)
