@@ -10,7 +10,6 @@ import matplotlib.pyplot as plt
 
 from framed.io_utils.sbml import load_sbml_model, CONSTRAINT_BASED
 from framed.core.fixes import fix_bigg_model
-from framed.analysis.dfba import *
 from framed.bioreactor import *
 from framed.bioreactor.bioreactors import *
 

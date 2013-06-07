@@ -1,5 +1,5 @@
 """
-Unit testing module for dFBA and MdFBA.
+Unit testing module for dFBA and dFBAm.
 """
 __author__ = 'kaizhuang'
 
@@ -35,7 +35,7 @@ class SingleOrganismTest(unittest.TestCase):
         tf = 20
         dt = 1
 
-        t, y = MdFBA(self.br, t0, tf, dt, solver='lsoda', verbose=True)
+        t, y = dFBAm(self.br, t0, tf, dt, solver='lsoda', verbose=True)
 
     def tearDown(self):
         del self.br
