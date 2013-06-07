@@ -28,7 +28,7 @@ class IdealBatch(Bioreactor):
         - flow_rate_in, flow_rate_out, Xfeed, Sfeed are all set to zero (no feeding in batch reactor).
     """
 
-    def __init__(self, organisms, metabolites, volume_max=None, deltaX=None, deltaS=None, initial_conditions=[]):
+    def __init__(self, organisms, metabolites, id='IdealBatch', volume_max=None, deltaX=None, deltaS=None, initial_conditions=[]):
         """
         Arguments:
             organisms: list of Organism
@@ -38,7 +38,7 @@ class IdealBatch(Bioreactor):
             deltaS: list of float -- special custom defined terms to dX/dt [mmol/L/hr]
             initial_conditions: list of float
         """
-        super(IdealBatch, self).__init__(organisms, metabolites, volume_max=volume_max, deltaX=deltaX, deltaS=deltaS,
+        super(IdealBatch, self).__init__(organisms, metabolites, id=id, volume_max=volume_max, deltaX=deltaX, deltaS=deltaS,
                                          initial_conditions=initial_conditions)
 
 
@@ -51,7 +51,7 @@ class IdealFedbatch(Bioreactor):
           If it is not specified, the first element of metabolites is assumed to be the substrate
     """
 
-    def __init__(self, organisms, metabolites, Sfeed, primary_substrate=None, volume_max=None, Xfeed=None,
+    def __init__(self, organisms, metabolites, Sfeed, id='IdealFedbatch', primary_substrate=None, volume_max=None, Xfeed=None,
                  deltaX=None, deltaS=None, initial_conditions=[]):
         """
         :param organisms: list of Organism
@@ -65,7 +65,7 @@ class IdealFedbatch(Bioreactor):
         :param initial_conditions: list of float
         :return:
         """
-        super(IdealFedbatch, self).__init__(organisms, metabolites, volume_max=volume_max, Xfeed=Xfeed, Sfeed=Sfeed,
+        super(IdealFedbatch, self).__init__(organisms, metabolites, id=id, volume_max=volume_max, Xfeed=Xfeed, Sfeed=Sfeed,
                                             deltaX=deltaX, deltaS=deltaS, initial_conditions=initial_conditions)
         if primary_substrate:
             assert(primary_substrate in metabolites)

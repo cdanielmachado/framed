@@ -51,7 +51,14 @@ def dFBAm(bioreactor, t0, tf, dt, initial_conditions=None, solver='dopri5', verb
         y: narray -- V [L], X [g/L], S [mmol/L]
     """
     t, y = bioreactor.integrate(t0, tf, dt, initial_conditions, solver, verbose)
-    return t, y
+
+    number_of_organisms = len(bioreactor.organisms)
+
+    V = y[0]
+    X = y[1:number_of_organisms + 1]
+    S = y[number_of_organisms + 1:]
+
+    return t, V, X, S
 
 
 def dFBA(bioreactor, t0, tf, dt, initial_conditions=None, solver='dopri5', verbose=False):
@@ -59,8 +66,8 @@ def dFBA(bioreactor, t0, tf, dt, initial_conditions=None, solver='dopri5', verbo
     dFBA() is a alias for dFBAm().
     It is intended to provide legacy support for the name "dFBA"
     """
-    t, y = dFBAm(bioreactor, t0, tf, dt, initial_conditions, solver, verbose)
-    return t, y
+    t, V, X, S = dFBAm(bioreactor, t0, tf, dt, initial_conditions, solver, verbose)
+    return t, V, X, S
 
 
 def DyMMM(bioreactor, t0, tf, dt, initial_conditions=None, solver='dopri5', verbose=False):
@@ -68,5 +75,5 @@ def DyMMM(bioreactor, t0, tf, dt, initial_conditions=None, solver='dopri5', verb
     DyMMM() is a alias for dFBAm()
     It is intended to provide legacy support for the name "DyMMM"
     """
-    t, y = dFBAm(bioreactor, t0, tf, dt, initial_conditions, solver, verbose)
-    return t, y
+    t, V, X, S = dFBAm(bioreactor, t0, tf, dt, initial_conditions, solver, verbose)
+    return t, V, X, S
