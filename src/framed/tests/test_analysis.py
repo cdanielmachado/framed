@@ -1,31 +1,60 @@
 """
-Unit testing module for dFBA and dFBAm.
+Unit testing module for methods in analysis package
 """
 __author__ = 'kaizhuang'
 
 import unittest
 
-from framed.io_utils.sbml import load_sbml_model, CONSTRAINT_BASED
+from framed.io_utils.sbml import load_sbml_model, CONSTRAINT_BASED, GPR_CONSTRAINED
 from framed.core.fixes import fix_bigg_model
-from framed.analysis.dfba import *
-from framed.bioreactor.base import *
-
+from framed.analysis.envelope import flux_envelope, production_envelope
+from framed.analysis.variability import FVA
+from framed.bioreactor import *
 
 SMALL_TEST_MODEL = '../../../examples/models/ecoli_core_model.xml'
 ec_core_model = load_sbml_model(SMALL_TEST_MODEL, kind=CONSTRAINT_BASED)
 fix_bigg_model(ec_core_model)
 
-class SingleOrganismTest(unittest.TestCase):
+
+class FVATest(unittest.TestCase):
+    """ Test flux variability analysis """
+
+    def test_fva_full(self):
+        model = load_sbml_model(SMALL_TEST_MODEL, kind=GPR_CONSTRAINED)
+        fix_bigg_model(model)
+        variability = FVA(model)
+        self.assertTrue(all([lb <= ub if lb is not None and ub is not None else True
+                             for lb, ub in variability.values()]))
+        self.assertEqual(len(model.reactions), len(variability))
+
+    def test_fva_single(self):
+        model = load_sbml_model(SMALL_TEST_MODEL, kind=GPR_CONSTRAINED)
+        fix_bigg_model(model)
+        variability = FVA(model, reactions=['R_EX_ac_e'])
+        self.assertTrue(all([lb <= ub if lb is not None and ub is not None else True
+                             for lb, ub in variability.values()]))
+        self.assertEqual(1, len(variability))
+
+class EnvelopeTest(unittest.TestCase):
+    """ Test flux envelope analysis and production envelope analysis """
+
+    def test_flux_envelope(self):
+        flux_envelope(ec_core_model, 'R_EX_glc_e', 'R_EX_ac_e', steps=5)
+
+    def test_production_envelope(self):
+        xvals0, ymins0, ymaxs0 = production_envelope(ec_core_model, 'R_EX_ac_e', steps=5)
+        xvals1, ymins1, ymaxs1 = flux_envelope(ec_core_model, ec_core_model.detect_biomass_reaction(),
+                                               'R_EX_ac_e', steps=5)
+        self.assertEqual([xvals0, ymins0, ymaxs0], [xvals1, ymins1, ymaxs1])
+
+
+class dFBATest(unittest.TestCase):
 
     def setUp(self):
         self.organism = Ecoli(ec_core_model)
         self.br = Bioreactor([self.organism], ['R_EX_glc_e', 'R_EX_ac_e', 'R_EX_o2_e'])
 
-    def test_setUp(self):
-        self.assertEqual(self.organism.model.id, ec_core_model.id)
-        self.assertEqual(self.organism.fba_objective, {'R_Biomass_Ecoli_core_w_GAM': 1})
-
-    def test_diauxic_growth(self):
+    def test_dfba_1_organism(self):
         Vinit = [1]
         Xinit = [0.01]
         Sinit = [10, 0, 100]
@@ -35,14 +64,13 @@ class SingleOrganismTest(unittest.TestCase):
         tf = 20
         dt = 1
 
-        t, y = dFBAm(self.br, t0, tf, dt, solver='lsoda', verbose=True)
+        dFBAm(self.br, t0, tf, dt)
 
     def tearDown(self):
         del self.br
         del self.organism
 
-
-class MultipleOrganismTest(unittest.TestCase):
+class dFBAmTest(unittest.TestCase):
 
     def setUp(self):
         self.o1 = GlucoseUser(ec_core_model)
@@ -50,11 +78,7 @@ class MultipleOrganismTest(unittest.TestCase):
 
         self.br = Bioreactor([self.o1, self.o2], ['R_EX_glc_e', 'R_EX_ac_e'])
 
-    def test_setUp(self):
-        self.assertEqual(self.o1.model.id, ec_core_model.id)
-        self.assertEqual(self.o1.fba_objective, {'R_Biomass_Ecoli_core_w_GAM': 1})
-
-    def test_2_organisms(self):
+    def test_dfba_2_organisms(self):
         y0 = [1, 0.01, 0.01, 10, 0]
         t0 = 0
         tf = 20
@@ -125,7 +149,7 @@ class AcetateUser(Organism):
 
 
 def suite():
-    tests = [SingleOrganismTest, MultipleOrganismTest]
+    tests = [FVATest, EnvelopeTest, dFBATest]
 
     test_suite = unittest.TestSuite()
     for test in tests:

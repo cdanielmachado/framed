@@ -4,4 +4,5 @@ Package implementing features for simulating bioreactor operation.
 """
 
 from base import Organism, Bioreactor
-from analysis import *
+from ..analysis.dfba import *
+
