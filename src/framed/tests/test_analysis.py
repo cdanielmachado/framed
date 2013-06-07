@@ -83,7 +83,7 @@ class dFBAmTest(unittest.TestCase):
         tf = 20
         dt = 1
 
-        t, y = dFBA(self.br, t0, tf, dt, y0, verbose=True)
+        t, y = dFBA(self.br, t0, tf, dt, y0)
 
     def tearDown(self):
         del self.br
@@ -148,7 +148,7 @@ class AcetateUser(Organism):
 
 
 def suite():
-    tests = [FVATest, EnvelopeTest, dFBATest]
+    tests = [FVATest, EnvelopeTest, dFBATest, dFBAmTest]
 
     test_suite = unittest.TestSuite()
     for test in tests:

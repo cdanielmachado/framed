@@ -1,6 +1,6 @@
 ''' This module implements flux variability analysis methods.
 
-@author: Daniel Machado
+@author: Daniel Machado, Kai Zhuang
 
    Copyright 2013 Novo Nordisk Foundation Center for Biosustainability,
    Technical University of Denmark.
