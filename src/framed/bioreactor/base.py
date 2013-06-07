@@ -33,7 +33,7 @@ class Organism(object):
     Organism describes a generic biological organism.
     """
 
-    def __init__(self, model, fba_objective=None, fba_constraints={}, model_deepcopy=True):
+    def __init__(self, model, id=None, fba_objective=None, fba_constraints={}, model_deepcopy=True):
         """
         :param model: the mathematical model of the organism
         :param fba_objective: dict -- the FBA objective function.  (only useful if model is a FBA model)
@@ -46,6 +46,11 @@ class Organism(object):
             self.model = deepcopy(model)
         else:
             self.model = model
+
+        if id:
+            self.id = id
+        else:
+            self.id = model.id
 
         if fba_objective:
             self.fba_objective = fba_objective
@@ -190,7 +195,7 @@ class Bioreactor(Environment, DynamicSystem):
     """
     This class describes a generic bioreactor with one influent (feed) stream and one effluent stream
     """
-    def __init__(self, organisms, metabolites, flow_rate_in=0, flow_rate_out=0, volume_max=None,
+    def __init__(self, organisms, metabolites, id='Generic Bioreactor', flow_rate_in=0, flow_rate_out=0, volume_max=None,
                  Xfeed=None, Sfeed=None, deltaX=None, deltaS=None, initial_conditions=[]):
         """
         :param organisms: list of Organism
@@ -211,6 +216,8 @@ class Bioreactor(Environment, DynamicSystem):
             metabolites = [metabolites]
         self.set_organisms(organisms)
         self.set_metabolites(metabolites)
+
+        self.id = id
 
         self.flow_rate_in = flow_rate_in
         self.flow_rate_out = flow_rate_out

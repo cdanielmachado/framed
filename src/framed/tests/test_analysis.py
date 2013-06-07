@@ -63,7 +63,7 @@ class dFBATest(unittest.TestCase):
         tf = 20
         dt = 1
 
-        dFBAm(self.br, t0, tf, dt)
+        t, V, X, S = dFBAm(self.br, t0, tf, dt)
 
     def tearDown(self):
         del self.br
@@ -83,7 +83,7 @@ class dFBAmTest(unittest.TestCase):
         tf = 20
         dt = 1
 
-        t, y = dFBA(self.br, t0, tf, dt, y0)
+        t, V, X, S = dFBA(self.br, t0, tf, dt, y0)
 
     def tearDown(self):
         del self.br
