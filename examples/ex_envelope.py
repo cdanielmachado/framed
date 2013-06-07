@@ -5,7 +5,7 @@ Example: Flux Envelope Analysis
 """
 __author__ = 'kaizhuang'
 
-from framed.analysis.envelope import *
+from framed.analysis.variability import production_envelope
 from framed.io_utils.sbml import load_sbml_model, CONSTRAINT_BASED
 from framed.core.fixes import fix_bigg_model
 

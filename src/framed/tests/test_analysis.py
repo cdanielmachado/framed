@@ -7,8 +7,7 @@ import unittest
 
 from framed.io_utils.sbml import load_sbml_model, CONSTRAINT_BASED, GPR_CONSTRAINED
 from framed.core.fixes import fix_bigg_model
-from framed.analysis.envelope import flux_envelope, production_envelope
-from framed.analysis.variability import FVA
+from framed.analysis.variability import FVA, flux_envelope, production_envelope
 from framed.bioreactor import *
 
 SMALL_TEST_MODEL = '../../../examples/models/ecoli_core_model.xml'
