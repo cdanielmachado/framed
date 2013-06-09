@@ -44,7 +44,7 @@ class Ecoli(Organism):
 
 ### Main Program
 # creating an instance of Ecoli
-ec = Ecoli(ec1260)
+ec = Ecoli(ec1260, id='ecoli')
 
 # creating a batch bioreactor containing Ecoli, glucose, acetate, and oxygen
 fedbatch_bioreactor = IdealFedbatch(ec, ['R_EX_glc_e', 'R_EX_ac_e'], Sfeed=[1000, 0], volume_max=10)
@@ -62,20 +62,21 @@ tf = 20
 dt = 0.1
 
 # run dFBA simulation
-t, y = dFBA(fedbatch_bioreactor, t0, tf, dt, solver='dopri5', verbose=True)
+result = dFBA(fedbatch_bioreactor, t0, tf, dt, solver='dopri5', verbose=True)
+
 
 plt.figure(1)
 plt.subplot(221)
-plt.plot(t, y[:, 1])
+plt.plot(result['time'], result['ecoli'])
 plt.title('E. coli')
 plt.subplot(222)
-plt.plot(t, y[:, 2])
+plt.plot(result['time'], result['R_EX_glc_e'])
 plt.title('Glucose')
 plt.subplot(223)
-plt.plot(t, y[:, 3])
+plt.plot(result['time'], result['R_EX_ac_e'])
 plt.title('Acetate')
 plt.subplot(224)
-plt.plot(t, y[:, 0])
+plt.plot(result['time'], result['volume'])
 plt.title('Volume')
 plt.show()
 
