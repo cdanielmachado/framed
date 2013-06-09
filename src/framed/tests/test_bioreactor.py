@@ -93,12 +93,21 @@ class BioreactorTest(unittest.TestCase):
     def setUp(self):
         self.o1 = Organism(ec_core_model)
         self.o2 = Organism(ec_core_model)
-        self.br = Bioreactor([self.o1, self.o2], ['EX_glc(e)', 'EX_ac(e)', 'EX_o2(e)'])
+        self.br = Bioreactor([self.o1, self.o2], ['R_EX_glc_e', 'R_EX_ac_e', 'R_EX_o2_e'])
+        self.br2 = Bioreactor()
 
     def testInitialization(self):
         assert self.br.organisms == [self.o1, self.o2]
-        assert self.br.metabolites == ['EX_glc(e)', 'EX_ac(e)', 'EX_o2(e)']
+        assert self.br.metabolites == ['R_EX_glc_e', 'R_EX_ac_e', 'R_EX_o2_e']
         assert len(self.br.organisms) == 2
+
+    def test_set_organisms(self):
+        self.br2.set_organisms([self.o1, self.o2])
+        assert self.br2.organisms == self.br.organisms
+
+    def test_set_metabolites(self):
+        self.br2.set_metabolites(['R_EX_glc_e', 'R_EX_ac_e', 'R_EX_o2_e'])
+        assert self.br2.metabolites == self.br.metabolites
 
     def test_set_initial_conditions(self):
         self.br.set_initial_conditions([1], [0.1, 0.1], [10, 1, 0])
@@ -109,6 +118,8 @@ class BioreactorTest(unittest.TestCase):
         del self.br
         del self.o1
         del self.o2
+
+
 
 
 def updateOrganism(self):
