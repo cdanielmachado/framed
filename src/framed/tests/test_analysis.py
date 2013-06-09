@@ -75,7 +75,9 @@ class dFBAmTest(unittest.TestCase):
         self.o1 = GlucoseUser(ec_core_model)
         self.o2 = AcetateUser(ec_core_model)
 
-        self.br = Bioreactor([self.o1, self.o2], ['R_EX_glc_e', 'R_EX_ac_e'])
+        self.br = Bioreactor()
+        self.br.set_organisms([self.o1, self.o2])
+        self.br.set_metabolites(['R_EX_glc_e', 'R_EX_ac_e'])
 
     def test_dfba_2_organisms(self):
         y0 = [1, 0.01, 0.01, 10, 0]

@@ -28,7 +28,7 @@ class IdealBatch(Bioreactor):
         - flow_rate_in, flow_rate_out, Xfeed, Sfeed are all set to zero (no feeding in batch reactor).
     """
 
-    def __init__(self, organisms, metabolites, id='IdealBatch', volume_max=None, deltaX=None, deltaS=None, initial_conditions=[]):
+    def __init__(self, organisms=[], metabolites=[], id='IdealBatch', volume_max=None, deltaX=None, deltaS=None, initial_conditions=[]):
         """
         Arguments:
             organisms: list of Organism
@@ -51,8 +51,8 @@ class IdealFedbatch(Bioreactor):
           If it is not specified, the first element of metabolites is assumed to be the substrate
     """
 
-    def __init__(self, organisms, metabolites, Sfeed, id='IdealFedbatch', primary_substrate=None, volume_max=None, Xfeed=None,
-                 deltaX=None, deltaS=None, initial_conditions=[]):
+    def __init__(self, organisms=[], metabolites=[], id='IdealFedbatch', primary_substrate=None, volume_max=None,
+                 Xfeed=None, Sfeed=None, deltaX=None, deltaS=None, initial_conditions=[]):
         """
         :param organisms: list of Organism
         :param metabolites: list of string

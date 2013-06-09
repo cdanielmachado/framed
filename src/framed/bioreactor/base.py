@@ -195,7 +195,7 @@ class Bioreactor(Environment, DynamicSystem):
     """
     This class describes a generic bioreactor with one influent (feed) stream and one effluent stream
     """
-    def __init__(self, organisms, metabolites, id='Generic Bioreactor', flow_rate_in=0, flow_rate_out=0, volume_max=None,
+    def __init__(self, organisms=[], metabolites=[], id='Generic Bioreactor', flow_rate_in=0, flow_rate_out=0, volume_max=None,
                  Xfeed=None, Sfeed=None, deltaX=None, deltaS=None, initial_conditions=[]):
         """
         :param organisms: list of Organism
@@ -210,12 +210,19 @@ class Bioreactor(Environment, DynamicSystem):
         :param initial_conditions: list of float
         :return:
         """
-        if not isinstance(organisms, collections.Iterable):
-            organisms = [organisms]
-        if not isinstance(metabolites, collections.Iterable):
-            metabolites = [metabolites]
-        self.set_organisms(organisms)
-        self.set_metabolites(metabolites)
+        if organisms:
+            if not isinstance(organisms, collections.Iterable):
+                organisms = [organisms]
+            self.set_organisms(organisms)
+        else:
+            self.set_organisms([])
+
+        if metabolites:
+            if not isinstance(metabolites, collections.Iterable):
+                metabolites = [metabolites]
+            self.set_metabolites(metabolites)
+        else:
+            self.set_metabolites([])
 
         self.id = id
 
@@ -223,29 +230,44 @@ class Bioreactor(Environment, DynamicSystem):
         self.flow_rate_out = flow_rate_out
         self.volume_max = volume_max
 
+        self.initial_conditions = initial_conditions
+
+    def set_organisms(self, organisms, Xfeed=None, deltaX=None):
+        super(Bioreactor, self).set_organisms(organisms)
+        self.set_Xfeed(Xfeed)
+        self.set_deltaX(deltaX)
+
+    def set_metabolites(self, metabolites, Sfeed=None, deltaS=None):
+        super(Bioreactor, self).set_metabolites(metabolites)
+        self.set_Sfeed(Sfeed)
+        self.set_deltaS(deltaS)
+
+
+    def set_Xfeed(self, Xfeed):
         if Xfeed:
             assert len(Xfeed) == len(self.organisms), 'The length of Xfeed should equal to the number of organisms'
             self.Xfeed = Xfeed
         else:
-            self.Xfeed = numpy.zeros(len(organisms))
+            self.Xfeed = numpy.zeros(len(self.organisms))
 
+    def set_Sfeed(self, Sfeed):
         if Sfeed:
             assert len(Sfeed) == len(self.metabolites),  'The length of Sfeed should equal to the number of metabolites'
             self.Sfeed = Sfeed
         else:
-            self.Sfeed = numpy.zeros(len(metabolites))
+            self.Sfeed = numpy.zeros(len(self.metabolites))
 
+    def set_deltaX(self, deltaX):
         if deltaX:
             self.deltaX = deltaX
         else:
-            self.deltaX = numpy.zeros(len(organisms))
+            self.deltaX = numpy.zeros(len(self.organisms))
 
+    def set_deltaS(self, deltaS):
         if deltaS:
             self.deltaS = deltaS
         else:
-            self.deltaS = numpy.zeros(len(metabolites))
-
-        self.initial_conditions = initial_conditions
+            self.deltaS = numpy.zeros(len(self.metabolites))
 
     def set_initial_conditions(self, Vinit, Xinit, Sinit):
         assert type(Vinit) == type(Xinit) == type(Sinit) == list
@@ -273,11 +295,11 @@ class Bioreactor(Environment, DynamicSystem):
         number_of_organisms = len(self.organisms)
         number_of_metabolites = len(self.metabolites)
         assert(len(y) == 1 + number_of_organisms + number_of_metabolites)
+
         dy = numpy.zeros(len(y))
 
         # creating class variables V, X, S, time from y and t.
         # making them class variables so that class methods like update() can access them
-
         self.V = y[0]
         self.X = y[1:number_of_organisms + 1]
         self.S = y[number_of_organisms + 1:]
