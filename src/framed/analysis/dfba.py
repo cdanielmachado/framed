@@ -32,6 +32,7 @@ For DyMMM, please cite:
 
 __author__ = 'kaizhuang'
 
+from collections import OrderedDict
 
 def dFBAm(bioreactor, t0, tf, dt, initial_conditions=None, solver='dopri5', verbose=False):
     """
@@ -47,27 +48,31 @@ def dFBAm(bioreactor, t0, tf, dt, initial_conditions=None, solver='dopri5', verb
         verbose: bool -- Verbosity control.  (default: False).
 
     Returns:
-        t: narray -- time [hr]
-        y: narray -- V [L], X [g/L], S [mmol/L]
+        results: OrderedDict -- simulation results
     """
     t, y = bioreactor.integrate(t0, tf, dt, initial_conditions, solver, verbose)
 
-    number_of_organisms = len(bioreactor.organisms)
+    result = OrderedDict()
+    result['time'] = t
+    result['volume'] = y[:, 0]
+    i = 0
+    for organism in bioreactor.organisms:
+        i += 1
+        result[organism.id] = y[:, i]
 
-    V = y[0]
-    X = y[1:number_of_organisms + 1]
-    S = y[number_of_organisms + 1:]
+    for metabolite in bioreactor.metabolites:
+        i += 1
+        result[metabolite] = y[:, i]
 
-    return t, V, X, S
-
+    return result
 
 def dFBA(bioreactor, t0, tf, dt, initial_conditions=None, solver='dopri5', verbose=False):
     """
     dFBA() is a alias for dFBAm().
     It is intended to provide legacy support for the name "dFBA"
     """
-    t, V, X, S = dFBAm(bioreactor, t0, tf, dt, initial_conditions, solver, verbose)
-    return t, V, X, S
+    result = dFBAm(bioreactor, t0, tf, dt, initial_conditions, solver, verbose)
+    return result
 
 
 def DyMMM(bioreactor, t0, tf, dt, initial_conditions=None, solver='dopri5', verbose=False):
@@ -75,5 +80,5 @@ def DyMMM(bioreactor, t0, tf, dt, initial_conditions=None, solver='dopri5', verb
     DyMMM() is a alias for dFBAm()
     It is intended to provide legacy support for the name "DyMMM"
     """
-    t, V, X, S = dFBAm(bioreactor, t0, tf, dt, initial_conditions, solver, verbose)
-    return t, V, X, S
+    result = dFBAm(bioreactor, t0, tf, dt, initial_conditions, solver, verbose)
+    return result
