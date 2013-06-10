@@ -195,8 +195,8 @@ class Bioreactor(Environment, DynamicSystem):
     """
     This class describes a generic bioreactor with one influent (feed) stream and one effluent stream
     """
-    def __init__(self, organisms=[], metabolites=[], id='Generic Bioreactor', flow_rate_in=0, flow_rate_out=0, volume_max=None,
-                 Xfeed=None, Sfeed=None, deltaX=None, deltaS=None, initial_conditions=[]):
+    def __init__(self, organisms=[], metabolites=[], id='Generic Bioreactor', flow_rate_in=0, flow_rate_out=0,
+                 volume_max=None, Xfeed=None, Sfeed=None, deltaX=None, deltaS=None, initial_conditions=[]):
         """
         :param organisms: list of Organism
         :param metabolites: list of string
@@ -271,9 +271,6 @@ class Bioreactor(Environment, DynamicSystem):
 
     def set_initial_conditions(self, Vinit, Xinit, Sinit):
         assert type(Vinit) == type(Xinit) == type(Sinit) == list
-        assert len(Vinit) == 1
-        assert len(Xinit) == len(self.organisms), 'The length of Xinit should equal to the number of organisms'
-        assert len(Sinit) == len(self.metabolites), 'The length of Sinit should equal to the number of metabolites'
         self.initial_conditions = Vinit + Xinit + Sinit
 
     def update(self, time):
