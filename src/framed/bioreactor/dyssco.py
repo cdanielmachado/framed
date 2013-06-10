@@ -46,7 +46,7 @@ def make_envelope_strains(base_organism, r_substrate, r_target, N):
     strains = []
 
     # create the product envelope
-    xvals, ymins, ymaxs = production_envelope(base_model, r_target, N)
+    xvals, ymins, ymaxs = production_envelope(base_model, r_target, steps=N)
 
     # finding the maximum r_substrate uptake rate
     if base_organism.fba_constraint[r_substrate]:
@@ -94,3 +94,4 @@ def dynamic_envelope_scanning(base_organism, bioreactor, rxn_r_substrate, rxn_r_
     vSmax = base_model
 
     for biomass in xvals:
+        pass
