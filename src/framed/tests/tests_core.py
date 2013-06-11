@@ -191,15 +191,6 @@ class CombinatorialGeneDeletion(unittest.TestCase):
         print len(result)
         #print result
         self.assertTrue(result is not None)
-
-class FluxConeProjectionTest(unittest.TestCase):
-    """ Test combinatorial gene deletion with FBA. """
-    
-    def testRun(self):
-        model = load_sbml_model(SMALL_TEST_MODEL, kind=GPR_CONSTRAINED)
-        fix_bigg_model(model)
-        r_x, r_y = 'R_EX_glc_e', 'R_EX_co2_e'
-        plot_flux_cone_projection(model, r_x, r_y)
                       
 class ModelReductionTest(unittest.TestCase):
     """ Test combinatorial gene deletion with FBA. """
