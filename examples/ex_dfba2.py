@@ -49,11 +49,10 @@ ec = Ecoli(ec1260, id='ecoli')
 # creating a batch bioreactor containing Ecoli, glucose, acetate, and oxygen
 fedbatch_bioreactor = IdealFedbatch(ec, ['R_EX_glc_e', 'R_EX_ac_e'], Sfeed=[1000, 0], volume_max=10)
 
-
 # set initial conditions
 Vinit = [1]             # liquid volume
 Xinit = [0.005]          # cell concentration
-Sinit = [10, 0]      # concentrations of glucose, acetate, and oxygen
+Sinit = [10, 0]      # concentrations of glucose, acetate
 fedbatch_bioreactor.set_initial_conditions(Vinit, Xinit, Sinit)
 
 # set simulation time interval

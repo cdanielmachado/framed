@@ -232,6 +232,11 @@ class Bioreactor(Environment, DynamicSystem):
 
         self.initial_conditions = initial_conditions
 
+        self.set_Xfeed(Xfeed)
+        self.set_Sfeed(Sfeed)
+        self.set_deltaX(deltaX)
+        self.set_deltaS(deltaS)
+
     def set_organisms(self, organisms, Xfeed=None, deltaX=None):
         super(Bioreactor, self).set_organisms(organisms)
         self.set_Xfeed(Xfeed)
@@ -337,3 +342,12 @@ class Bioreactor(Environment, DynamicSystem):
         dy[number_of_organisms + 1:] = numpy.dot(self.X, vs) + self.flow_rate_in / self.V * (self.Sfeed - self.S) +self.deltaS   # dS/dt [mmol/L/hr]
 
         return dy
+
+    def calculate_yield_from_dfba(self):
+        """
+        Abstract used for calculating product yield from dFBA solution.
+        This is useful for certain analysis methods (eg. DySScO).
+
+        This should be implemented for specific bioreactors
+        """
+        raise NotImplementedError

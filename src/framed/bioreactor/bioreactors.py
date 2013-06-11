@@ -41,6 +41,17 @@ class IdealBatch(Bioreactor):
         super(IdealBatch, self).__init__(organisms, metabolites, id=id, volume_max=volume_max, deltaX=deltaX, deltaS=deltaS,
                                          initial_conditions=initial_conditions)
 
+    def calculate_yield_from_dfba(self, dfba_solution, r_substrate, r_product):
+        """
+        calculates the product yield from dFBA solution
+        """
+        Sf = dfba_solution[r_substrate][-1]
+        S0 = dfba_solution[r_substrate][0]
+        Pf = dfba_solution[r_product][-1]
+        product_yield = Pf / (S0 - Sf)
+
+        return product_yield
+
 
 class IdealFedbatch(Bioreactor):
     """
@@ -65,8 +76,8 @@ class IdealFedbatch(Bioreactor):
         :param initial_conditions: list of float
         :return:
         """
-        super(IdealFedbatch, self).__init__(organisms, metabolites, id=id, volume_max=volume_max, Xfeed=Xfeed, Sfeed=Sfeed,
-                                            deltaX=deltaX, deltaS=deltaS, initial_conditions=initial_conditions)
+        super(IdealFedbatch, self).__init__(organisms, metabolites, id=id, volume_max=volume_max, Xfeed=Xfeed,
+                                            Sfeed=Sfeed, deltaX=deltaX, deltaS=deltaS, initial_conditions=initial_conditions)
         if primary_substrate:
             assert(primary_substrate in metabolites)
             self.primary_substrate = primary_substrate
@@ -91,5 +102,19 @@ class IdealFedbatch(Bioreactor):
                 vs = organism.fba_solution.values[self.primary_substrate]
                 self.flow_rate_in -= vs * self.X[org_id] * self.V / (self.Sfeed[met_id] - self.S[met_id])
 
+    def calculate_yield_from_dfba(self, dfba_solution, r_substrate, r_product):
+        """
+        calculates the product yield from dFBA solution
+        :param dfba_solution:
+        :return:
+        """
+        Vf = dfba_solution['volume'][-1]
+        V0 = dfba_solution['volume'][0]
+        Sf = dfba_solution[r_substrate][-1]
+        S0 = dfba_solution[r_substrate][0]
+        Pf = dfba_solution[r_product][-1]
 
-
+        index = self.metabolites.index(r_substrate)
+        product_yield = Pf * Vf / (self.Sfeed[index] * (Vf - V0) + Sf * Vf - S0 * V0)
+        print 'abc'
+        return product_yield

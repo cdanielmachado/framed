@@ -22,14 +22,17 @@ titer, and productivity.
    limitations under the License.
 """
 
-from ..analysis.dfba import dFBA_combination
+from ..solvers import solver_instance
+from ..analysis.dfba import dFBA
 from ..analysis.variability import production_envelope
 from base import *
+from bioreactors import *
 
 
 def make_envelope_strains(base_organism, r_substrate, r_target, N):
     """
     Create N strains along the product envelope.
+        (Used for Steps 1 and 2 of DySScO strategy)
 
     Arguments:
         base_organism: Organism -- the host organism used to product the target product
@@ -64,6 +67,65 @@ def make_envelope_strains(base_organism, r_substrate, r_target, N):
         strains.append(strain)
 
     return strains
+
+
+def calculate_performance(strain, bioreactor, r_substrate, r_target, t0, tf, dt, initial_conditions=[],
+                          dfba_solver='dopri5', additional_yields=[], verbose=False, get_dfba_solution=False):
+    """
+    Calculate the performance of a strain in a given bioreactor using dFBA and FBA
+    """
+
+    r_biomass = strain.model.detect_biomass_reaction()
+
+    ### perform FBA simulation
+    if verbose:
+        print 'Perform FBA simulation.'
+    if hasattr(strain, 'solver'):
+        fba_solution = strain.solver.solve_lp(strain.fba_objective, constraints=strain.fba_constraints)
+    else:
+        strain.solver = solver_instance()
+        strain.solver.build_problem(strain.model)
+        fba_solution = strain.solver.solve_lp(strain.fba_objective, constraints=strain.fba_constraints)
+
+    ### perform dFBA simulation
+    bioreactor.set_organisms([strain])
+    if verbose:
+        print 'Perform dFBA simulation.'
+        dfba_solution = dFBA(bioreactor, t0, tf, dt, initial_conditions, solver=dfba_solver, verbose=verbose)
+    else:
+        dfba_solution = dFBA(bioreactor, t0, tf, dt, initial_conditions, solver=dfba_solver, verbose=verbose)
+
+    ### calculating performance metrics
+    performance = {}
+
+    # calcuating growth rate from FBA solution
+    u = fba_solution.values[r_biomass]
+
+    # calculating titer and productivity from dFBA solution
+    T = dfba_solution[r_target].max()
+    index = dfba_solution[r_target].argmax()        # the index at which the production is finished
+    P = T/dfba_solution['time'][index]
+
+    # calculate yield from dFBA solution if method is known, otherwise calculate yield using FBA
+    if hasattr(bioreactor, 'calculate_yield_from_dfba'):
+        Y = bioreactor.calculate_yield_from_dfba(dfba_solution, r_substrate, r_target)
+    else:
+        Y = - fba_solution.values[r_target] / fba_solution.values[r_substrate]
+
+    performance['growth'] = u
+    performance['titer'] = T
+    performance['productivity'] = P
+    performance['yield'] = Y
+
+    # calculate additional yields
+    for r_id in additional_yields:
+        id = 'yield_' + r_id.lstrip('R_EX_').rstrip('_e')
+        performance[id] = Y = - fba_solution.values[r_id] / fba_solution.values[r_substrate]
+
+    if get_dfba_solution:
+        return performance, dfba_solution
+    else:
+        return performance
 
 
 def dynamic_envelope_scanning(base_organism, bioreactor, r_substrate, r_target, t0, tf, dt, N=7):

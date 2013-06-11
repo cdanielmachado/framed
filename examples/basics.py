@@ -10,3 +10,6 @@ fix_bigg_model(model)
 
 solution = FBA(model)
 
+r_biomass = model.detect_biomass_reaction()
+
+print solution.values[r_biomass]
