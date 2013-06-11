@@ -25,7 +25,6 @@ titer, and productivity.
 from ..analysis.dfba import dFBA_combination
 from ..analysis.variability import production_envelope
 from base import *
-from collections import OrderedDict
 
 
 def make_envelope_strains(base_organism, r_substrate, r_target, N):

@@ -15,7 +15,6 @@ from framed.analysis.essentiality import essential_genes
 from framed.solvers.solver import Status
 from framed.core.transformation import make_irreversible, simplify
 from framed.design.combinatorial import combinatorial_gene_deletion
-from framed.analysis.plotting import plot_flux_cone_projection
 from framed.core.transformation import balanced_model_reduction, decompose_biomass
 
 SMALL_TEST_MODEL = '../../../examples/models/ecoli_core_model.xml'
@@ -224,8 +223,8 @@ class ModelReductionTest(unittest.TestCase):
 
                             
 def suite():
-    #tests = [SBMLTest, PlainTextIOTest, FBATest, FBAFromPlainTextTest, FVATest, IrreversibleModelFBATest, SimplifiedModelFBATest, TransformationCommutativityTest, GeneDeletionFBATest, GeneDeletionMOMATest, GeneEssentialityTest]
-    tests = [ModelReductionTest]
+    tests = [SBMLTest, PlainTextIOTest, FBATest, FBAFromPlainTextTest, FVATest, IrreversibleModelFBATest, SimplifiedModelFBATest, TransformationCommutativityTest, GeneDeletionFBATest, GeneDeletionMOMATest, GeneEssentialityTest]
+    #tests = [ModelReductionTest]
     
     test_suite = unittest.TestSuite()
     for test in tests:
