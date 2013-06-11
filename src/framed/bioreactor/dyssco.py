@@ -30,7 +30,7 @@ from collections import OrderedDict
 
 def make_envelope_strains(base_organism, r_substrate, r_target, N):
     """
-    Create N strains along the product envelope (DySScO Strategy)
+    Create N strains along the product envelope.
 
     Arguments:
         base_organism: Organism -- the host organism used to product the target product
@@ -49,49 +49,60 @@ def make_envelope_strains(base_organism, r_substrate, r_target, N):
     xvals, ymins, ymaxs = production_envelope(base_model, r_target, steps=N)
 
     # finding the maximum r_substrate uptake rate
-    if base_organism.fba_constraint[r_substrate]:
-        vSmax = base_organism.fba_constraint[r_substrate][0]
+    if r_substrate in base_organism.fba_constraints:
+        vSmax = base_organism.fba_constraints[r_substrate][0]
     else:
         vSmax = base_model.bounds[r_substrate][0]
 
     # create new strains along the production envelope
     for i, mu in enumerate(xvals):
+        # creating a new strain
         strain = deepcopy(base_organism)                        # create a deepcopy of the base_organism
         strain.fba_constraints[r_target] = (ymaxs[i], ymaxs[i])   # fix target production at ymax[i]
-        strain.Yp = float(ymaxs[i]/vSmax)                       # store the yield of the strain
+        strain.Y = float(-ymaxs[i]/vSmax)                       # store the yield of the strain
         strain.mu = mu                                          # store the growth rate of the strain
+        strain.id = base_id + ' mu: ' + str(round(strain.mu, 3))
         strains.append(strain)
 
     return strains
 
 
-
-
-
-
-
-def dynamic_envelope_scanning(base_organism, bioreactor, rxn_r_substrate, rxn_r_target, steps=7):
+def dynamic_envelope_scanning(base_organism, bioreactor, r_substrate, r_target, t0, tf, dt, N=7):
     """
     Performs a "dynamic scanning" of the production envelope using the following algorithm:
-        1. create the production envelope of the organisms
+        1. create N strains along the production envelope
         2. run dFBA simulations of the strains along the production envelope
         3. calculate the yield, productivity, and titer of the simulated strains
 
     Arguments:
-        base_organism: Organism -- the host organism used to product the r_target
+        base_organism: Organism -- the host organism used to product the target product
         bioreactor: Bioreactor -- the bioreactor in which the organism is cultured
-        rxn_r_target: str -- rxn id of the exchange rxn of the r_target product
+        r_substrate: str -- the rxn id of the substrate
+        r_target: str -- the rxn id of the target product
+        t0: float -- initial time for dFBA simulations
+        tf: float -- final time for dFBA simulations
+        dt: float -- time step for dFBA simulations
+        N: int -- the number of strains to be generated along the production envelope
 
     Returns:
-
+        strains: list of Organism -- N strains along the production envelope, as well as
+                                        their predicted yield(Y), titer(T), productivity(P), and growth rate (mu)
     """
-    assert len(bioreactor.organisms), 'this method is only applicable for bioreactors containing a single organism'
-    base_id = base_organism.id
-    base_model = base_organism.model
+    assert(isinstance(bioreactor, Bioreactor))
+    assert(isinstance(base_organism, Organism))
 
-    xvals, ymins, ymaxs = production_envelope(base_model, rxn_r_target, steps)
+    # create N strains along the production envelope
+    strains = make_envelope_strains(base_organism, r_substrate, r_target, N)
 
-    vSmax = base_model
+    results = dFBA_combination(strains, [bioreactor], t0, tf, dt)
 
-    for biomass in xvals:
-        pass
+    for strain in strains:
+        dfba_results = results[strain.id, bioreactor.id]
+
+        # calculating titer and productivity of the strains
+        titer = max(dfba_results[r_target])
+        productivity = titer/dfba_results['time'][-1]
+        strain.T = titer
+        strain.P = productivity
+
+    return strains
