@@ -116,5 +116,4 @@ class IdealFedbatch(Bioreactor):
 
         index = self.metabolites.index(r_substrate)
         product_yield = Pf * Vf / (self.Sfeed[index] * (Vf - V0) + Sf * Vf - S0 * V0)
-        print 'abc'
         return product_yield
