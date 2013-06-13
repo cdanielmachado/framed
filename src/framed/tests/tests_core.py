@@ -16,10 +16,9 @@ from framed.solvers.solver import Status
 from framed.core.transformation import make_irreversible, simplify
 from framed.design.combinatorial import combinatorial_gene_deletion
 from framed.analysis.plotting import plot_flux_cone_projection
-from framed.core.transformation import balanced_model_reduction, decompose_biomass
 
 SMALL_TEST_MODEL = '../../../examples/models/ecoli_core_model.xml'
-LARGE_TEST_MODEL = '../../../examples/models/Ec_iAF1260_genenames.xml'
+LARGE_TEST_MODEL = '../../../examples/models/Ec_iAF1260_gene_names.xml'
 TEST_MODEL_COPY = '../../../examples/models/model_copy.xml'
 PLAIN_TEXT_COPY = '../../../examples/models/model_copy.txt'
 
@@ -69,7 +68,7 @@ class FBATest(unittest.TestCase):
     """ Test FBA simulation. """
     
     def testRun(self):
-        model = load_sbml_model(SMALL_TEST_MODEL, kind=GPR_CONSTRAINED)
+        model = load_sbml_model(LARGE_TEST_MODEL, kind=GPR_CONSTRAINED)
         fix_bigg_model(model)
         solution = FBA(model, get_shadow_prices=True, get_reduced_costs=True)
         self.assertEqual(solution.status, Status.OPTIMAL)
@@ -193,48 +192,19 @@ class CombinatorialGeneDeletion(unittest.TestCase):
         self.assertTrue(result is not None)
 
 class FluxConeProjectionTest(unittest.TestCase):
-    """ Test combinatorial gene deletion with FBA. """
+    """ Test flux cone projection method. """
     
     def testRun(self):
-        model = load_sbml_model(SMALL_TEST_MODEL, kind=GPR_CONSTRAINED)
+        model = load_sbml_model(LARGE_TEST_MODEL, kind=GPR_CONSTRAINED)
         fix_bigg_model(model)
-        r_x, r_y = 'R_EX_glc_e', 'R_EX_co2_e'
+        r_x, r_y = 'R_EX_o2_e', 'R_EX_glc_e'
         plot_flux_cone_projection(model, r_x, r_y)
                       
-class ModelReductionTest(unittest.TestCase):
-    """ Test combinatorial gene deletion with FBA. """
-    
-    def testRun(self):
-        from copy import deepcopy
-        from framed.core.models import Metabolite
-        
-        full_model = load_sbml_model(SMALL_TEST_MODEL, kind=CONSTRAINT_BASED)
-        full_model.add_metabolite(Metabolite('X_b'))
-        full_model.stoichiometry[('X_b', full_model.detect_biomass_reaction())] = 1
-        
-        fix_bigg_model(full_model, boundary_metabolites=False)
-        model = deepcopy(full_model)
-        fix_bigg_model(model)
-        
-        to_remove = model.metabolites.keys()
-        to_remove.remove('M_glc_D_e')
-        to_remove.append('M_glc_D_e')
-                
-        decompose_biomass(model)
-        solution = FBA(model)
-
-        decompose_biomass(full_model)
-
-        balanced_model_reduction(full_model, to_remove, solution.values)
-                
-        print full_model
-
-
 
                             
 def suite():
     #tests = [SBMLTest, PlainTextIOTest, FBATest, FBAFromPlainTextTest, FVATest, IrreversibleModelFBATest, SimplifiedModelFBATest, TransformationCommutativityTest, GeneDeletionFBATest, GeneDeletionMOMATest, GeneEssentialityTest]
-    tests = [ModelReductionTest]
+    tests = [FluxConeProjectionTest]
     
     test_suite = unittest.TestSuite()
     for test in tests:

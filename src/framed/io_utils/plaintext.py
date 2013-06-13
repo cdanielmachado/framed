@@ -33,7 +33,7 @@ CONSTRAINT_BASED = 'Constraint-based'
 INSTRUCTIONS = """
 # Text based model representation
 # Format: "Reaction id : substrates --> products [lower bound, upper bound]"
-# valid identifiers can contain letters, numbers or underscore (_) but must begin with a letter
+# valid identifiers can contain letters, numbers or underscore (_) but must begin with a letter (for SBML compatibility)
 # Use --> or <-> for irreversible or reversible reactions respectively
 # bounds are optional and can be specified only in one direction, eg: [-10.0,]
 # begin with # to comment out any line

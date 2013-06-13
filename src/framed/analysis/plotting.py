@@ -20,7 +20,7 @@
 '''
 
 from variability import flux_cone_projection
-from matplotlib.pyplot import plot, xlabel, ylabel, show, savefig
+from matplotlib.pyplot import plot, xlabel, ylabel, show, savefig, xlim, ylim
 
 def plot_flux_cone_projection(model, r_x, r_y, filename=None, steps=10):
     """ Plots the flux cone projection for a pair of reactions.
@@ -37,9 +37,17 @@ def plot_flux_cone_projection(model, r_x, r_y, filename=None, steps=10):
     """
 
     xvals, ymins, ymaxs = flux_cone_projection(model, r_x, r_y, steps)
-    plot(xvals, ymins, 'k', xvals, ymaxs, 'k')
+    plot(xvals, ymins, 'b', xvals, ymaxs, 'b',
+         [xvals[0], xvals[0]], [ymins[0], ymaxs[0]], 'b',
+         [xvals[-1], xvals[-1]], [ymins[-1], ymaxs[-1]], 'b')
     xlabel(model.reactions[r_x].name)
     ylabel(model.reactions[r_y].name)
+    xmin, xmax = min(xvals), max(xvals)
+    dx = 0.1 * (xmax - xmin)
+    xlim((xmin - dx, xmax + dx))
+    ymin, ymax = min(ymins), max(ymaxs)
+    dy = 0.1 * (ymax - ymin)
+    ylim((ymin - dy, ymax + dy))
     
     if filename:
         savefig(filename)

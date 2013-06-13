@@ -134,7 +134,7 @@ def _load_gpr(sbml_model):
     rules = []
     for reaction in sbml_model.getListOfReactions():
         rule = _extract_rule(reaction)
-        new_genes = rule.replace('(', '').replace(')','').replace('and','').replace('or','').split()
+        new_genes = rule.replace('(', '').replace(')','').replace(' and ',' ').replace(' or ',' ').split()
         genes = genes | set(new_genes)
         rules.append((reaction.getId(), rule))
     genes = [Gene(gene) for gene in sorted(genes)]
