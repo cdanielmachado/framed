@@ -68,7 +68,7 @@ class FBATest(unittest.TestCase):
     """ Test FBA simulation. """
     
     def testRun(self):
-        model = load_sbml_model(LARGE_TEST_MODEL, kind=GPR_CONSTRAINED)
+        model = load_sbml_model(SMALL_TEST_MODEL, kind=GPR_CONSTRAINED)
         fix_bigg_model(model)
         solution = FBA(model, get_shadow_prices=True, get_reduced_costs=True)
         self.assertEqual(solution.status, Status.OPTIMAL)
@@ -203,8 +203,8 @@ class FluxEnvelopeTest(unittest.TestCase):
 
                             
 def suite():
-    #tests = [SBMLTest, PlainTextIOTest, FBATest, FBAFromPlainTextTest, FVATest, IrreversibleModelFBATest, SimplifiedModelFBATest, TransformationCommutativityTest, GeneDeletionFBATest, GeneDeletionMOMATest, GeneEssentialityTest]
-    tests = [FluxEnvelopeTest]
+    tests = [SBMLTest, PlainTextIOTest, FBATest, FBAFromPlainTextTest, FVATest, IrreversibleModelFBATest, SimplifiedModelFBATest, TransformationCommutativityTest, GeneDeletionFBATest, GeneDeletionMOMATest, GeneEssentialityTest]
+    #tests = [FluxEnvelopeTest]
     
     test_suite = unittest.TestSuite()
     for test in tests:
