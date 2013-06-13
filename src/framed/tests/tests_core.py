@@ -15,7 +15,7 @@ from framed.analysis.essentiality import essential_genes
 from framed.solvers.solver import Status
 from framed.core.transformation import make_irreversible, simplify
 from framed.design.combinatorial import combinatorial_gene_deletion
-from framed.analysis.plotting import plot_flux_cone_projection
+from framed.analysis.plotting import plot_flux_envelope
 
 SMALL_TEST_MODEL = '../../../examples/models/ecoli_core_model.xml'
 LARGE_TEST_MODEL = '../../../examples/models/Ec_iAF1260_gene_names.xml'
@@ -191,20 +191,20 @@ class CombinatorialGeneDeletion(unittest.TestCase):
         #print result
         self.assertTrue(result is not None)
 
-class FluxConeProjectionTest(unittest.TestCase):
-    """ Test flux cone projection method. """
+class FluxEnvelopeTest(unittest.TestCase):
+    """ Test flux envelope plotting method. """
     
     def testRun(self):
         model = load_sbml_model(LARGE_TEST_MODEL, kind=GPR_CONSTRAINED)
         fix_bigg_model(model)
         r_x, r_y = 'R_EX_o2_e', 'R_EX_glc_e'
-        plot_flux_cone_projection(model, r_x, r_y)
+        plot_flux_envelope(model, r_x, r_y)
                       
 
                             
 def suite():
     #tests = [SBMLTest, PlainTextIOTest, FBATest, FBAFromPlainTextTest, FVATest, IrreversibleModelFBATest, SimplifiedModelFBATest, TransformationCommutativityTest, GeneDeletionFBATest, GeneDeletionMOMATest, GeneEssentialityTest]
-    tests = [FluxConeProjectionTest]
+    tests = [FluxEnvelopeTest]
     
     test_suite = unittest.TestSuite()
     for test in tests:

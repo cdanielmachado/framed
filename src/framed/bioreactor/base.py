@@ -1,4 +1,4 @@
-""" This module defines the common classes used for modeling and analyzing bioreactors
+""" This module defines the base classes used for modeling and analyzing bioreactors
 
 @author: Kai Zhuang
 
@@ -33,7 +33,7 @@ class Organism(object):
     Organism describes a generic biological organism.
     """
 
-    def __init__(self, model, fba_objective=None, fba_constraints={}, model_deepcopy=True):
+    def __init__(self, model, id=None, fba_objective=None, fba_constraints={}, model_deepcopy=True):
         """
         :param model: the mathematical model of the organism
         :param fba_objective: dict -- the FBA objective function.  (only useful if model is a FBA model)
@@ -47,6 +47,11 @@ class Organism(object):
         else:
             self.model = model
 
+        if id:
+            self.id = id
+        else:
+            self.id = model.id
+
         if fba_objective:
             self.fba_objective = fba_objective
         else:
@@ -54,7 +59,7 @@ class Organism(object):
 
         self.fba_constraints = fba_constraints
         self.fba_solution = []
-        
+
         self.environment = None  # upon initiation, the organism is not placed in any environment
 
     def update(self):
@@ -189,52 +194,80 @@ class DynamicSystem(object):
 class Bioreactor(Environment, DynamicSystem):
     """
     This class describes a generic bioreactor with one influent (feed) stream and one effluent stream
-
-    :param organisms: a list of Organism objects
-    :param metabolites: a list of string objects containing exchange reactions names.  eg. 'EX_glc(e)'
-    Xfeed: concentration of organisms in the feed stream [g/L]
-    Sfeed: concentration of metabolites in the feed stream [mmol/L]
-    deltaX: custom defined terms to dX/dt [g/L/hr]
-    deltaS: custom defined terms to dS/dt [mmol/L/hr]
-
     """
-    def __init__(self, organisms, metabolites, flow_rate_in=0, flow_rate_out=0, volume_max=None, time_max=None,
+    def __init__(self, organisms=[], metabolites=[], id='Generic Bioreactor', flow_rate_in=0, flow_rate_out=0, volume_max=None,
                  Xfeed=None, Sfeed=None, deltaX=None, deltaS=None, initial_conditions=[]):
-        if not isinstance(organisms, collections.Iterable):
-            organisms = [organisms]
-        if not isinstance(metabolites, collections.Iterable):
-            metabolites = [metabolites]
-        self.set_organisms(organisms)
-        self.set_metabolites(metabolites)
+        """
+        :param organisms: list of Organism
+        :param metabolites: list of string
+        :param flow_rate_in:
+        :param flow_rate_out:
+        :param volume_max: float -- liquid capacity of the bioreactor
+        :param Xfeed: concentration of organisms in the feed stream [g/L]
+        :param Sfeed: concentration of metabolites in the feed stream [mmol/L]
+        :param deltaX: custom defined terms to dX/dt [g/L/hr]
+        :param deltaS: list of float -- special custom defined terms to dX/dt [mmol/L/hr]
+        :param initial_conditions: list of float
+        :return:
+        """
+        if organisms:
+            if not isinstance(organisms, collections.Iterable):
+                organisms = [organisms]
+            self.set_organisms(organisms)
+        else:
+            self.set_organisms([])
+
+        if metabolites:
+            if not isinstance(metabolites, collections.Iterable):
+                metabolites = [metabolites]
+            self.set_metabolites(metabolites)
+        else:
+            self.set_metabolites([])
+
+        self.id = id
 
         self.flow_rate_in = flow_rate_in
         self.flow_rate_out = flow_rate_out
         self.volume_max = volume_max
-        self.time_max = time_max
 
+        self.initial_conditions = initial_conditions
+
+    def set_organisms(self, organisms, Xfeed=None, deltaX=None):
+        super(Bioreactor, self).set_organisms(organisms)
+        self.set_Xfeed(Xfeed)
+        self.set_deltaX(deltaX)
+
+    def set_metabolites(self, metabolites, Sfeed=None, deltaS=None):
+        super(Bioreactor, self).set_metabolites(metabolites)
+        self.set_Sfeed(Sfeed)
+        self.set_deltaS(deltaS)
+
+
+    def set_Xfeed(self, Xfeed):
         if Xfeed:
             assert len(Xfeed) == len(self.organisms), 'The length of Xfeed should equal to the number of organisms'
             self.Xfeed = Xfeed
         else:
-            self.Xfeed = numpy.zeros(len(organisms))
+            self.Xfeed = numpy.zeros(len(self.organisms))
 
+    def set_Sfeed(self, Sfeed):
         if Sfeed:
             assert len(Sfeed) == len(self.metabolites),  'The length of Sfeed should equal to the number of metabolites'
             self.Sfeed = Sfeed
         else:
-            self.Sfeed = numpy.zeros(len(metabolites))
+            self.Sfeed = numpy.zeros(len(self.metabolites))
 
+    def set_deltaX(self, deltaX):
         if deltaX:
             self.deltaX = deltaX
         else:
-            self.deltaX = numpy.zeros(len(organisms))
+            self.deltaX = numpy.zeros(len(self.organisms))
 
+    def set_deltaS(self, deltaS):
         if deltaS:
             self.deltaS = deltaS
         else:
-            self.deltaS = numpy.zeros(len(metabolites))
-
-        self.initial_conditions = initial_conditions
+            self.deltaS = numpy.zeros(len(self.metabolites))
 
     def set_initial_conditions(self, Vinit, Xinit, Sinit):
         assert type(Vinit) == type(Xinit) == type(Sinit) == list
@@ -247,9 +280,6 @@ class Bioreactor(Environment, DynamicSystem):
         if self.volume_max:
             if self.V > self.volume_max:
                 raise ValueError('liquid volume of the bioreactor exceeds volume_max.')
-        if self.time_max:
-            if time > self.time_max:
-                raise ValueError('maximum reactor run time reached.')
 
     def _ode_RHS(self, t, y):
         """
@@ -265,16 +295,16 @@ class Bioreactor(Environment, DynamicSystem):
         number_of_organisms = len(self.organisms)
         number_of_metabolites = len(self.metabolites)
         assert(len(y) == 1 + number_of_organisms + number_of_metabolites)
+
         dy = numpy.zeros(len(y))
 
         # creating class variables V, X, S, time from y and t.
         # making them class variables so that class methods like update() can access them
-
         self.V = y[0]
         self.X = y[1:number_of_organisms + 1]
         self.S = y[number_of_organisms + 1:]
         self.time = t
-        
+
         # assigning growth rates and metabolic production/consumption rates here
             # in this method, these rates are calculated using FBA
 
@@ -310,59 +340,3 @@ class Bioreactor(Environment, DynamicSystem):
         dy[number_of_organisms + 1:] = numpy.dot(self.X, vs) + self.flow_rate_in / self.V * (self.Sfeed - self.S) +self.deltaS   # dS/dt [mmol/L/hr]
 
         return dy
-
-
-class IdealBatch(Bioreactor):
-
-    def __init__(self, organisms, metabolites, volume_max=None, time_max=None, deltaX=None, deltaS=None,
-                 initial_conditions=[]):
-        """
-        This class describes an ideal batch reactor.
-            - flow_rate_in, flow_rate_out, Xfeed, Sfeed are all set to zero (no feeding in batch reactor).
-        """
-
-        super(IdealBatch, self).__init__(organisms, metabolites, volume_max=volume_max, time_max=time_max,
-                                            deltaX=deltaX, deltaS=deltaS, initial_conditions=initial_conditions)
-
-
-class IdealFedbatch(Bioreactor):
-    """
-    This class describes an ideal fedbatch reactor with a single substrate.
-        - The flow_rate_in is automatically adjusted using the following rules:
-            - if either volume_max or time_max is reached, flow_rate_in is set to zero.
-            - otherwise, calculates flow_rate_in so that substrate concentration is maintained (d_substrate/dt = 0)
-        - The substrate can be specified in the __init__() method.
-          If it is not specified, the first element of metabolites is assumed to be the substrate
-    """
-
-    def __init__(self, organisms, metabolites, substrate=None, volume_max=None, time_max=None,  Xfeed=None, Sfeed=None,
-                 deltaX=None, deltaS=None, initial_conditions=[]):
-
-        super(IdealFedbatch, self).__init__(organisms, metabolites, volume_max=volume_max, time_max=time_max,
-                                            Xfeed=Xfeed, Sfeed=Sfeed, deltaX=deltaX, deltaS=deltaS,
-                                            initial_conditions=initial_conditions)
-
-        if substrate:
-            assert(substrate in metabolites)
-            self.substrate = substrate
-        else:
-            self.substrate = metabolites[0]  # if the substrate is unspecified, it is assumed to be metabolites[0]
-
-    def update(self, time):
-        """
-        the flow_rate_in of the fedbatch reactor is calculated here.
-            - if liquid volume >= volume_max, then the tank is full, set flow_rate_in to zero
-            - if time > time_max, then batch time is reached, set flow_rate_in to zero
-            - otherwise, calculate the flow rate so that d_substrate/dt = 0
-        """
-        if self.volume_max and (self.V >= self.volume_max):
-            self.flow_rate_in = 0
-        else:
-            met_id = self.metabolites.index(self.substrate)
-            self.flow_rate_in = 0
-            for org_id, organism in enumerate(self.organisms):
-                vs = organism.fba_solution.values[self.substrate]
-                self.flow_rate_in -= vs * self.X[org_id] * self.V / (self.Sfeed[met_id] - self.S[met_id])
-
-
-

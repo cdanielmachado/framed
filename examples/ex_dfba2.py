@@ -11,7 +11,8 @@ import matplotlib.pyplot as plt
 from framed.io_utils.sbml import load_sbml_model, CONSTRAINT_BASED
 from framed.core.fixes import fix_bigg_model
 from framed.analysis.dfba import *
-from framed.bioreactor.bioreactor import *
+from framed.bioreactor.bioreactors import *
+from framed.bioreactor import *
 
 
 ### Basic Setup
@@ -30,17 +31,6 @@ class Ecoli(Organism):
         BR = self.environment
 
         # calculating and updating the glucose uptake constraint
-<<<<<<< HEAD
-        rid = BR.metabolites.index('R_EX_glc_e_')
-        vlb_glc = float(-10 * BR.S[rid] / (BR.S[rid] + 1))
-        self.fba_constraints['R_EX_glc_e_'] = (vlb_glc, 0)
-
-        # no acetate uptake.
-        self.fba_constraints['R_EX_ac_e_'] = (0, None)
-
-        # ideal aerobic condition
-        self.fba_constraints['R_EX_o2_e_'] = (-15, None)
-=======
         rid = BR.metabolites.index('R_EX_glc_e')
         vlb_glc = float(-10 * BR.S[rid] / (BR.S[rid] + 1))
         self.fba_constraints['R_EX_glc_e'] = (vlb_glc, 0)
@@ -50,19 +40,15 @@ class Ecoli(Organism):
 
         # ideal aerobic condition
         self.fba_constraints['R_EX_o2_e'] = (-15, None)
->>>>>>> kai-branch
 
 
 ### Main Program
 # creating an instance of Ecoli
-ec = Ecoli(ec1260)
+ec = Ecoli(ec1260, id='ecoli')
 
 # creating a batch bioreactor containing Ecoli, glucose, acetate, and oxygen
-<<<<<<< HEAD
-fedbatch_bioreactor = IdealFedbatch(ec, ['R_EX_glc_e_', 'R_EX_ac_e_'], Sfeed=[1000, 0], volume_max=10)
-=======
 fedbatch_bioreactor = IdealFedbatch(ec, ['R_EX_glc_e', 'R_EX_ac_e'], Sfeed=[1000, 0], volume_max=10)
->>>>>>> kai-branch
+
 
 # set initial conditions
 Vinit = [1]             # liquid volume
@@ -76,20 +62,21 @@ tf = 20
 dt = 0.1
 
 # run dFBA simulation
-t, y = dFBA(fedbatch_bioreactor, t0, tf, dt, solver='dopri5', verbose=True)
+result = dFBA(fedbatch_bioreactor, t0, tf, dt, solver='dopri5', verbose=True)
+
 
 plt.figure(1)
 plt.subplot(221)
-plt.plot(t, y[:, 1])
+plt.plot(result['time'], result['ecoli'])
 plt.title('E. coli')
 plt.subplot(222)
-plt.plot(t, y[:, 2])
+plt.plot(result['time'], result['R_EX_glc_e'])
 plt.title('Glucose')
 plt.subplot(223)
-plt.plot(t, y[:, 3])
+plt.plot(result['time'], result['R_EX_ac_e'])
 plt.title('Acetate')
 plt.subplot(224)
-plt.plot(t, y[:, 0])
+plt.plot(result['time'], result['volume'])
 plt.title('Volume')
 plt.show()
 

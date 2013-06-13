@@ -1,6 +1,6 @@
 ''' This module implements flux variability analysis methods.
 
-@author: Daniel Machado
+@author: Daniel Machado, Kai Zhuang
 
    Copyright 2013 Novo Nordisk Foundation Center for Biosustainability,
    Technical University of Denmark.
@@ -25,6 +25,7 @@ from ..solvers.solver import Status
 from simulation import FBA
 from numpy import linspace
 
+
 def FVA(model, obj_percentage=0, reactions=None, constraints=None):
     """ Run Flux Variability Analysis (FVA).
     
@@ -43,7 +44,6 @@ def FVA(model, obj_percentage=0, reactions=None, constraints=None):
         if constraints == None:
             constraints = dict()
         constraints[target] = (obj_percentage*solution.fobj, None)
-
     
     if not reactions:
         reactions = model.reactions.keys()
@@ -54,7 +54,6 @@ def FVA(model, obj_percentage=0, reactions=None, constraints=None):
     variability = OrderedDict([(r_id, [None, None]) for r_id in reactions])
         
     for r_id in reactions:
-        #solution = solver.solve_lp({r_id: -1}, constraints=obj_constraint)
         solution = FBA(model, r_id, False, constraints=constraints, solver=solver)
         if solution.status == Status.OPTIMAL:
             variability[r_id][0] = -solution.fobj
@@ -62,8 +61,7 @@ def FVA(model, obj_percentage=0, reactions=None, constraints=None):
             variability[r_id][0] = None
         else:
             variability[r_id][0] = 0
-            
-#        solution = solver.solve_lp({r_id: 1}, constraints=obj_constraint)
+
         solution = FBA(model, r_id, True, constraints=constraints, solver=solver)
         if solution.status:
             variability[r_id][1] = solution.fobj
@@ -90,28 +88,45 @@ def blocked_reactions(model):
     return [r_id for r_id, (lb, ub) in variability.items() if lb == 0 and ub == 0]
 
 
-def flux_cone_projection(model, r_x, r_y, steps=10):
-    """ Calculate the flux cone projection for a pair of reactions.
-    
+def flux_envelope(model, rxn_x, rxn_y, steps=10):
+    """ Calculate the flux envelope for a pair of reactions.
+
     Arguments:
         model : ConstraintBasedModel -- the model
-        r_x : str -- reaction on x-axis
-        r_y : str -- reaction on y-axis
+        rxn_x : str -- reaction on x-axis
+        rxn_y : str -- reaction on y-axis
         steps : int -- number of steps to compute (default: 10)
-        
+
     Returns:
         list (of float), list (of float), list (of float) -- x values, y min values, y max values
     """
-    
-    x_range = FVA(model, reactions=[r_x])
-    xmin, xmax = x_range[r_x]
+
+    x_range = FVA(model, reactions=[rxn_x])
+    xmin, xmax = x_range[rxn_x]
     xvals = linspace(xmin, xmax, steps).tolist()
     ymins, ymaxs = [None]*steps, [None]*steps
 
     for i, xval in enumerate(xvals):
-        constraints = {r_x: (xval, xval)}
-        y_range = FVA(model, reactions=[r_y], constraints=constraints)
-        ymins[i], ymaxs[i] = y_range[r_y]
-    
+        constraints = {rxn_x: (xval, xval)}
+        y_range = FVA(model, reactions=[rxn_y], constraints=constraints)
+        ymins[i], ymaxs[i] = y_range[rxn_y]
+
     return xvals, ymins, ymaxs
-    
+
+
+def production_envelope(model, rxn_target, rxn_biomass=None, steps=10):
+    """ Calculate the production envelope of the target reaction
+
+    Arguments:
+        model : ConstraintBasedModel -- the model
+        rxn_target: str -- the target reaction id
+        steps: int -- number of steps along the envelope to be calculated (default: 10)
+        rxn_biomass: str -- the biomass reaction id (default: None)
+
+    Returns:
+        list (of float), list (of float), list (of float) -- biomass values, target minimum values, target maximum values
+    """
+    if not rxn_biomass:
+        rxn_biomass = model.detect_biomass_reaction()
+
+    return flux_envelope(model, rxn_x=rxn_biomass, rxn_y=rxn_target, steps=steps)
