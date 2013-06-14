@@ -15,10 +15,14 @@ from framed.analysis.essentiality import essential_genes
 from framed.solvers.solver import Status
 from framed.core.transformation import make_irreversible, simplify
 from framed.design.combinatorial import combinatorial_gene_deletion
+<<<<<<< HEAD
 from framed.core.transformation import balanced_model_reduction, decompose_biomass
+=======
+from framed.analysis.plotting import plot_flux_envelope
+>>>>>>> master
 
 SMALL_TEST_MODEL = '../../../examples/models/ecoli_core_model.xml'
-LARGE_TEST_MODEL = '../../../examples/models/Ec_iAF1260_genenames.xml'
+LARGE_TEST_MODEL = '../../../examples/models/Ec_iAF1260_gene_names.xml'
 TEST_MODEL_COPY = '../../../examples/models/model_copy.xml'
 PLAIN_TEXT_COPY = '../../../examples/models/model_copy.txt'
 
@@ -190,41 +194,22 @@ class CombinatorialGeneDeletion(unittest.TestCase):
         print len(result)
         #print result
         self.assertTrue(result is not None)
-                      
-class ModelReductionTest(unittest.TestCase):
-    """ Test combinatorial gene deletion with FBA. """
+
+
+class FluxEnvelopeTest(unittest.TestCase):
+    """ Test flux envelope plotting method. """
     
     def testRun(self):
-        from copy import deepcopy
-        from framed.core.models import Metabolite
-        
-        full_model = load_sbml_model(SMALL_TEST_MODEL, kind=CONSTRAINT_BASED)
-        full_model.add_metabolite(Metabolite('X_b'))
-        full_model.stoichiometry[('X_b', full_model.detect_biomass_reaction())] = 1
-        
-        fix_bigg_model(full_model, boundary_metabolites=False)
-        model = deepcopy(full_model)
+        model = load_sbml_model(LARGE_TEST_MODEL, kind=GPR_CONSTRAINED)
         fix_bigg_model(model)
-        
-        to_remove = model.metabolites.keys()
-        to_remove.remove('M_glc_D_e')
-        to_remove.append('M_glc_D_e')
-                
-        decompose_biomass(model)
-        solution = FBA(model)
+        r_x, r_y = 'R_EX_o2_e', 'R_EX_glc_e'
+        plot_flux_envelope(model, r_x, r_y)
 
-        decompose_biomass(full_model)
-
-        balanced_model_reduction(full_model, to_remove, solution.values)
-                
-        print full_model
-
-
+                      
 
                             
 def suite():
     tests = [SBMLTest, PlainTextIOTest, FBATest, FBAFromPlainTextTest, FVATest, IrreversibleModelFBATest, SimplifiedModelFBATest, TransformationCommutativityTest, GeneDeletionFBATest, GeneDeletionMOMATest, GeneEssentialityTest]
-    #tests = [ModelReductionTest]
     
     test_suite = unittest.TestSuite()
     for test in tests:

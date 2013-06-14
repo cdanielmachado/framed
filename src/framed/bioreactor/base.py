@@ -195,8 +195,13 @@ class Bioreactor(Environment, DynamicSystem):
     """
     This class describes a generic bioreactor with one influent (feed) stream and one effluent stream
     """
+<<<<<<< HEAD
     def __init__(self, organisms=[], metabolites=[], id='Generic Bioreactor', flow_rate_in=0, flow_rate_out=0,
                  volume_max=None, Xfeed=None, Sfeed=None, deltaX=None, deltaS=None, initial_conditions=[]):
+=======
+    def __init__(self, organisms=[], metabolites=[], id='Generic Bioreactor', flow_rate_in=0, flow_rate_out=0, volume_max=None,
+                 Xfeed=None, Sfeed=None, deltaX=None, deltaS=None, initial_conditions=[]):
+>>>>>>> master
         """
         :param organisms: list of Organism
         :param metabolites: list of string

@@ -53,6 +53,7 @@ class IdealBatch(Bioreactor_ox):
 
     def __init__(self, organisms=[], metabolites=[], id='IdealBatch', volume_max=None, deltaX=None, deltaS=None,
                  initial_conditions=[], oxygen_availability=None):
+
         """
         Arguments:
             organisms: list of Organism
@@ -62,6 +63,7 @@ class IdealBatch(Bioreactor_ox):
             deltaS: list of float -- special custom defined terms to dX/dt [mmol/L/hr]
             initial_conditions: list of float
         """
+
         super(IdealBatch, self).__init__(organisms, metabolites, id=id, volume_max=volume_max, deltaX=deltaX,
                                          deltaS=deltaS, initial_conditions=initial_conditions,
                                          oxygen_availability=oxygen_availability)
@@ -78,6 +80,7 @@ class IdealBatch(Bioreactor_ox):
         return product_yield
 
 
+
 class IdealFedbatch(Bioreactor_ox):
     """
     This class describes an ideal fedbatch reactor with a single primary substrate.
@@ -89,6 +92,7 @@ class IdealFedbatch(Bioreactor_ox):
 
     def __init__(self, organisms=[], metabolites=[], id='IdealFedbatch', primary_substrate=None, volume_max=None,
                  Xfeed=None, Sfeed=None, deltaX=None, deltaS=None, initial_conditions=[], oxygen_availability=None):
+
         """
         :param organisms: list of Organism
         :param metabolites: list of string

@@ -70,6 +70,7 @@ class dFBATest(unittest.TestCase):
         self.assertEqual(result.keys(),
                          ['time', 'volume', 'Ecoli', 'R_EX_glc_e', 'R_EX_ac_e',  'R_EX_o2_e'])
 
+
     def test_dfba_2_organisms(self):
         br = Bioreactor()
         br.set_organisms([self.ec_glc, self.ec_ac])
@@ -89,6 +90,7 @@ class dFBATest(unittest.TestCase):
 
         br1.set_initial_conditions([1], [0.01], [10, 0])
         br2.set_initial_conditions([1], [0.01], [10, 0, 10])
+
 
         t0 = 0
         tf = 20
