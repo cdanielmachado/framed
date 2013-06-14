@@ -37,11 +37,11 @@ def FVA(model, obj_percentage=0, reactions=None, constraints=None):
     Returns:
         dict (of str to (float, float)) -- flux variation ranges
     """
-        
+
     if obj_percentage > 0:
         target = model.detect_biomass_reaction()
         solution = FBA(model)
-        if constraints == None:
+        if constraints is None:
             constraints = dict()
         constraints[target] = (obj_percentage*solution.fobj, None)
     
@@ -88,7 +88,7 @@ def blocked_reactions(model):
     return [r_id for r_id, (lb, ub) in variability.items() if lb == 0 and ub == 0]
 
 
-def flux_envelope(model, r_x, r_y, steps=10):
+def flux_envelope(model, r_x, r_y, steps=10, constraints=None):
     """ Calculate the flux envelope for a pair of reactions.
 
     Arguments:
@@ -96,25 +96,29 @@ def flux_envelope(model, r_x, r_y, steps=10):
         r_x : str -- reaction on x-axis
         r_y : str -- reaction on y-axis
         steps : int -- number of steps to compute (default: 10)
+        constraints : dict -- custom constraints to the FBA problem
 
     Returns:
         list (of float), list (of float), list (of float) -- x values, y min values, y max values
     """
 
-    x_range = FVA(model, reactions=[r_x])
+    x_range = FVA(model, reactions=[r_x], constraints=constraints)
     xmin, xmax = x_range[r_x]
     xvals = linspace(xmin, xmax, steps).tolist()
     ymins, ymaxs = [None]*steps, [None]*steps
 
+    if constraints is None:
+        constraints = {}
+
     for i, xval in enumerate(xvals):
-        constraints = {r_x: (xval, xval)}
+        constraints[r_x] = (xval, xval)
         y_range = FVA(model, reactions=[r_y], constraints=constraints)
         ymins[i], ymaxs[i] = y_range[r_y]
 
     return xvals, ymins, ymaxs
 
 
-def production_envelope(model, r_target, r_biomass=None, steps=10):
+def production_envelope(model, r_target, r_biomass=None, steps=10, constraints=None):
     """ Calculate the production envelope of the target reaction
 
     Arguments:
@@ -122,6 +126,7 @@ def production_envelope(model, r_target, r_biomass=None, steps=10):
         r_target: str -- the target reaction id
         steps: int -- number of steps along the envelope to be calculated (default: 10)
         r_biomass: str -- the biomass reaction id (default: None)
+        constraints : dict -- custom constraints to the FBA problem
 
     Returns:
         list (of float), list (of float), list (of float) -- biomass values, target minimum values, target maximum values
@@ -129,4 +134,4 @@ def production_envelope(model, r_target, r_biomass=None, steps=10):
     if not r_biomass:
         r_biomass = model.detect_biomass_reaction()
 
-    return flux_envelope(model, r_x=r_biomass, r_y=r_target, steps=steps)
+    return flux_envelope(model, r_x=r_biomass, r_y=r_target, steps=steps, constraints=constraints)

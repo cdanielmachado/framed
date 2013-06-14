@@ -28,7 +28,7 @@ from ..analysis.variability import production_envelope
 from base import *
 
 
-def make_envelope_strains(base_organism, r_substrate, r_target, N):
+def make_envelope_strains(base_organism, r_substrate, r_target, N=10, constraints={}):
     """
     Create N strains along the product envelope.
         (Used for Steps 1 and 2 of DySScO strategy)
@@ -47,7 +47,7 @@ def make_envelope_strains(base_organism, r_substrate, r_target, N):
     strains = []
 
     # create the product envelope
-    xvals, ymins, ymaxs = production_envelope(base_model, r_target, steps=N)
+    xvals, ymins, ymaxs = production_envelope(base_model, r_target, steps=N, constraints=constraints)
 
     # finding the maximum r_substrate uptake rate
     if r_substrate in base_organism.fba_constraints:
