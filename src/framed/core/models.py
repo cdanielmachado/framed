@@ -508,8 +508,9 @@ class GPRConstrainedModel(ConstraintBasedModel):
         if not rule:
             rule = 'True'
         else:
+            rule = ' ' + rule.replace('(', '( ').replace(')', ' )') + ' '
             for gene in self.genes:
-                rule = rule.replace(gene, 'x[\'' + gene + '\']')
+                rule = rule.replace(' ' + gene + ' ', ' x[\'' + gene + '\'] ')
         return eval('lambda x: ' + rule)
 
     
