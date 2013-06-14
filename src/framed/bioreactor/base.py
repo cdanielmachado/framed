@@ -195,8 +195,10 @@ class Bioreactor(Environment, DynamicSystem):
     """
     This class describes a generic bioreactor with one influent (feed) stream and one effluent stream
     """
-    def __init__(self, organisms=[], metabolites=[], id='Generic Bioreactor', flow_rate_in=0, flow_rate_out=0, volume_max=None,
-                 Xfeed=None, Sfeed=None, deltaX=None, deltaS=None, initial_conditions=[]):
+
+    def __init__(self, organisms=[], metabolites=[], id='Generic Bioreactor', flow_rate_in=0, flow_rate_out=0,
+                 volume_max=None, Xfeed=None, Sfeed=None, deltaX=None, deltaS=None, initial_conditions=[]):
+
         """
         :param organisms: list of Organism
         :param metabolites: list of string
@@ -231,6 +233,11 @@ class Bioreactor(Environment, DynamicSystem):
         self.volume_max = volume_max
 
         self.initial_conditions = initial_conditions
+
+        self.set_Xfeed(Xfeed)
+        self.set_Sfeed(Sfeed)
+        self.set_deltaX(deltaX)
+        self.set_deltaS(deltaS)
 
     def set_organisms(self, organisms, Xfeed=None, deltaX=None):
         super(Bioreactor, self).set_organisms(organisms)
@@ -271,9 +278,6 @@ class Bioreactor(Environment, DynamicSystem):
 
     def set_initial_conditions(self, Vinit, Xinit, Sinit):
         assert type(Vinit) == type(Xinit) == type(Sinit) == list
-        assert len(Vinit) == 1
-        assert len(Xinit) == len(self.organisms), 'The length of Xinit should equal to the number of organisms'
-        assert len(Sinit) == len(self.metabolites), 'The length of Sinit should equal to the number of metabolites'
         self.initial_conditions = Vinit + Xinit + Sinit
 
     def update(self, time):
@@ -340,3 +344,13 @@ class Bioreactor(Environment, DynamicSystem):
         dy[number_of_organisms + 1:] = numpy.dot(self.X, vs) + self.flow_rate_in / self.V * (self.Sfeed - self.S) +self.deltaS   # dS/dt [mmol/L/hr]
 
         return dy
+
+    def calculate_yield_from_dfba(self):
+        """
+        Abstract used for calculating product yield from dFBA solution.
+        This is useful for certain analysis methods (eg. DySScO).
+
+        This should be implemented for specific bioreactors
+        """
+        raise NotImplementedError
+

@@ -34,6 +34,7 @@ class FVATest(unittest.TestCase):
                              for lb, ub in variability.values()]))
         self.assertEqual(1, len(variability))
 
+
 class EnvelopeTest(unittest.TestCase):
     """ Test flux envelope analysis and production envelope analysis """
 
@@ -50,47 +51,59 @@ class EnvelopeTest(unittest.TestCase):
 class dFBATest(unittest.TestCase):
 
     def setUp(self):
-        self.organism = Ecoli(ec_core_model)
-        self.br = Bioreactor([self.organism], ['R_EX_glc_e', 'R_EX_ac_e', 'R_EX_o2_e'])
+        self.ec = Ecoli(ec_core_model, 'Ecoli')
+        self.ec_glc = GlucoseUser(ec_core_model, 'Ecoli_glucose_user')
+        self.ec_ac = AcetateUser(ec_core_model, 'Ecoli_acetate_user')
 
     def test_dfba_1_organism(self):
+        br = Bioreactor([self.ec], ['R_EX_glc_e', 'R_EX_ac_e', 'R_EX_o2_e'])
         Vinit = [1]
         Xinit = [0.01]
         Sinit = [10, 0, 100]
-        self.br.set_initial_conditions(Vinit, Xinit, Sinit)
+        br.set_initial_conditions(Vinit, Xinit, Sinit)
 
         t0 = 0
         tf = 20
         dt = 1
 
-        result = dFBAm(self.br, t0, tf, dt)
+        result = dFBAm(br, t0, tf, dt)
+        self.assertEqual(result.keys(),
+                         ['time', 'volume', 'Ecoli', 'R_EX_glc_e', 'R_EX_ac_e',  'R_EX_o2_e'])
 
-    def tearDown(self):
-        del self.br
-        del self.organism
-
-class dFBAmTest(unittest.TestCase):
-
-    def setUp(self):
-        self.o1 = GlucoseUser(ec_core_model)
-        self.o2 = AcetateUser(ec_core_model)
-
-        self.br = Bioreactor()
-        self.br.set_organisms([self.o1, self.o2])
-        self.br.set_metabolites(['R_EX_glc_e', 'R_EX_ac_e'])
 
     def test_dfba_2_organisms(self):
+        br = Bioreactor()
+        br.set_organisms([self.ec_glc, self.ec_ac])
+        br.set_metabolites(['R_EX_glc_e', 'R_EX_ac_e'])
         y0 = [1, 0.01, 0.01, 10, 0]
         t0 = 0
         tf = 20
         dt = 1
 
-        result = dFBA(self.br, t0, tf, dt, y0)
+        result = dFBA(br, t0, tf, dt, y0)
+        self.assertEqual(result.keys(),
+                         ['time', 'volume', 'Ecoli_glucose_user', 'Ecoli_acetate_user', 'R_EX_glc_e', 'R_EX_ac_e'])
 
+    def test_dfba_combination(self):
+        br1 = Bioreactor(metabolites=['R_EX_glc_e', 'R_EX_ac_e'], id='Br1')
+        br2 = Bioreactor(metabolites=['R_EX_glc_e', 'R_EX_ac_e', 'R_EX_o2_e'], id='Br2')
+
+        br1.set_initial_conditions([1], [0.01], [10, 0])
+        br2.set_initial_conditions([1], [0.01], [10, 0, 10])
+
+
+        t0 = 0
+        tf = 20
+        dt = 1
+
+        result = dFBA_combination([self.ec_glc, self.ec_ac], [br1, br2], t0, tf, dt)
+        self.assertEqual(result.keys(), [('Ecoli_glucose_user', 'Br1'), ('Ecoli_glucose_user', 'Br2'),
+                                         ('Ecoli_acetate_user', 'Br1'), ('Ecoli_acetate_user', 'Br2')])
+    
     def tearDown(self):
-        del self.br
-        del self.o1
-        del self.o2
+        del self.ec
+        del self.ec_glc
+        del self.ec_ac
 
 
 class Ecoli(Organism):
@@ -140,7 +153,6 @@ class AcetateUser(Organism):
     def update(self):
         BR = self.environment
 
-        #rid = BR.metabolites.index('R_EX_glc_e')
         self.fba_constraints['R_EX_glc_e'] = (0, 0)
 
         rid = BR.metabolites.index('R_EX_ac_e')
@@ -150,7 +162,7 @@ class AcetateUser(Organism):
 
 
 def suite():
-    tests = [FVATest, EnvelopeTest, dFBATest, dFBAmTest]
+    tests = [FVATest, EnvelopeTest, dFBATest]
 
     test_suite = unittest.TestSuite()
     for test in tests:

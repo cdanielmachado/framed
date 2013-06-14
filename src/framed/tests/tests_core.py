@@ -17,6 +17,7 @@ from framed.core.transformation import make_irreversible, simplify
 from framed.design.combinatorial import combinatorial_gene_deletion
 from framed.analysis.plotting import plot_flux_envelope
 
+
 SMALL_TEST_MODEL = '../../../examples/models/ecoli_core_model.xml'
 LARGE_TEST_MODEL = '../../../examples/models/Ec_iAF1260_gene_names.xml'
 TEST_MODEL_COPY = '../../../examples/models/model_copy.xml'
@@ -68,7 +69,7 @@ class FBATest(unittest.TestCase):
     """ Test FBA simulation. """
     
     def testRun(self):
-        model = load_sbml_model(LARGE_TEST_MODEL, kind=GPR_CONSTRAINED)
+        model = load_sbml_model(SMALL_TEST_MODEL, kind=GPR_CONSTRAINED)
         fix_bigg_model(model)
         solution = FBA(model, get_shadow_prices=True, get_reduced_costs=True)
         self.assertEqual(solution.status, Status.OPTIMAL)
@@ -191,6 +192,7 @@ class CombinatorialGeneDeletion(unittest.TestCase):
         #print result
         self.assertTrue(result is not None)
 
+
 class FluxEnvelopeTest(unittest.TestCase):
     """ Test flux envelope plotting method. """
     
@@ -199,12 +201,12 @@ class FluxEnvelopeTest(unittest.TestCase):
         fix_bigg_model(model)
         r_x, r_y = 'R_EX_o2_e', 'R_EX_glc_e'
         plot_flux_envelope(model, r_x, r_y)
+
                       
 
                             
 def suite():
-    #tests = [SBMLTest, PlainTextIOTest, FBATest, FBAFromPlainTextTest, FVATest, IrreversibleModelFBATest, SimplifiedModelFBATest, TransformationCommutativityTest, GeneDeletionFBATest, GeneDeletionMOMATest, GeneEssentialityTest]
-    tests = [FluxEnvelopeTest]
+    tests = [SBMLTest, PlainTextIOTest, FBATest, FBAFromPlainTextTest, FVATest, IrreversibleModelFBATest, SimplifiedModelFBATest, TransformationCommutativityTest, GeneDeletionFBATest, GeneDeletionMOMATest, GeneEssentialityTest]
     
     test_suite = unittest.TestSuite()
     for test in tests:
