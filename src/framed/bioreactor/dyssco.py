@@ -117,6 +117,7 @@ def calculate_performances(strains, bioreactor, r_substrate, r_target, t0, tf, d
     else:
         return performances
 
+
 def calculate_performance(strain, bioreactor, r_substrate, r_target, t0, tf, dt, initial_conditions=[],
                           dfba_solver='dopri5', additional_yields=[], verbose=False, get_dfba_solution=False):
     """
@@ -143,7 +144,7 @@ def calculate_performance(strain, bioreactor, r_substrate, r_target, t0, tf, dt,
         dfba_solution: Dict -- contains the dFBA solutions
                             (this is returned only if get_dfba_solution is set to True)
     """
-    performance = {}
+    performance = {'strain': strain}
     r_biomass = strain.model.detect_biomass_reaction()
 
     # perform FBA simulation
@@ -171,7 +172,7 @@ def calculate_performance(strain, bioreactor, r_substrate, r_target, t0, tf, dt,
             id = 'yield_' + r_id.lstrip('R_EX_').rstrip('_e')
             performance[id] = 0
         dfba_solution = None
-
+        print 'none growth'
     # if the strain both grows and produces, perform dFBA simulation, and calculate yield, titer, productivity
     else:
         # perform dFBA simulation
@@ -213,46 +214,16 @@ def performances2metrics(performances):
     """
     get a dictionary of metrics from a list of performances
     Arguments:
-        performances: list (of Dict) -- each list entry contains a dictionary containing the performance metrics
+        performances: Dict (of Dict) -- each list entry contains a dictionary containing the performance metrics
                                         of a strain
 
     Returns:
         metrics: Dict (of list) -- the performance metrics in form of a dictionary of lists
     """
-    assert type(performances) == list
     performance_metrics = {}
     metrics = performances[0].keys()
 
-    performance_metrics['strain_id'] = performances.keys()
     for metric in metrics:
         performance_metrics[metric] = [performance[metric] for performance in performances]
 
-
-def dynamic_envelope_scanning(base_organism, bioreactor, r_substrate, r_target, t0, tf, dt, N=7):
-    """
-    Performs a "dynamic scanning" of the production envelope using the following algorithm:
-        1. create N strains along the production envelope
-        2. run dFBA simulations of the strains along the production envelope
-        3. calculate the yield, productivity, and titer of the simulated strains
-
-    Arguments:
-        base_organism: Organism -- the host organism used to product the target product
-        bioreactor: Bioreactor -- the bioreactor in which the organism is cultured
-        r_substrate: str -- the rxn id of the substrate
-        r_target: str -- the rxn id of the target product
-        t0: float -- initial time for dFBA simulations
-        tf: float -- final time for dFBA simulations
-        dt: float -- time step for dFBA simulations
-        N: int -- the number of strains to be generated along the production envelope
-
-    Returns:
-        strains: list of Organism -- N strains along the production envelope, as well as
-                                        their predicted yield(Y), titer(T), productivity(P), and growth rate (mu)
-    """
-    assert(isinstance(bioreactor, Bioreactor))
-    assert(isinstance(base_organism, Organism))
-
-    # create N strains along the production envelope
-    #strains = make_envelope_strains(base_organism, r_substrate, r_target, N)
-
-    #return strains
+    return performance_metrics

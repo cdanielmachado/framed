@@ -351,3 +351,4 @@ class Bioreactor(Environment, DynamicSystem):
         This should be implemented for specific bioreactors
         """
         raise NotImplementedError
+

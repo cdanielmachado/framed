@@ -22,13 +22,37 @@ __author__ = 'kaizhuang'
 from base import Bioreactor
 
 
-class IdealBatch(Bioreactor):
+# value definition for oxygen_availability flag
+ANAEROBIC = 0
+AEROBIC = 1
+MICROAEROBIC = 2
+
+
+class Bioreactor_ox(Bioreactor):
+    """
+    Bioreactor class with oxygen_availability flag
+    """
+    def __init__(self, organisms=[], metabolites=[], id='Generic Bioreactor', flow_rate_in=0, flow_rate_out=0,
+                 volume_max=None, Xfeed=None, Sfeed=None, deltaX=None, deltaS=None, initial_conditions=[],
+                 oxygen_availability=None):
+
+        super(Bioreactor_ox, self).__init__(organisms=organisms, metabolites=metabolites, flow_rate_in=flow_rate_in,
+                                            flow_rate_out=flow_rate_out, volume_max=volume_max, Xfeed=Xfeed,
+                                            Sfeed=Sfeed, deltaX=deltaX, deltaS=deltaS,
+                                            initial_conditions=initial_conditions)
+
+        self.oxygen_availability = oxygen_availability
+
+
+
+class IdealBatch(Bioreactor_ox):
     """
     This class describes an ideal batch reactor.
         - flow_rate_in, flow_rate_out, Xfeed, Sfeed are all set to zero (no feeding in batch reactor).
     """
 
-    def __init__(self, organisms=[], metabolites=[], id='IdealBatch', volume_max=None, deltaX=None, deltaS=None, initial_conditions=[]):
+    def __init__(self, organisms=[], metabolites=[], id='IdealBatch', volume_max=None, deltaX=None, deltaS=None,
+                 initial_conditions=[], oxygen_availability=None):
         """
         Arguments:
             organisms: list of Organism
@@ -38,8 +62,9 @@ class IdealBatch(Bioreactor):
             deltaS: list of float -- special custom defined terms to dX/dt [mmol/L/hr]
             initial_conditions: list of float
         """
-        super(IdealBatch, self).__init__(organisms, metabolites, id=id, volume_max=volume_max, deltaX=deltaX, deltaS=deltaS,
-                                         initial_conditions=initial_conditions)
+        super(IdealBatch, self).__init__(organisms, metabolites, id=id, volume_max=volume_max, deltaX=deltaX,
+                                         deltaS=deltaS, initial_conditions=initial_conditions,
+                                         oxygen_availability=oxygen_availability)
 
     def calculate_yield_from_dfba(self, dfba_solution, r_substrate, r_product):
         """
@@ -53,7 +78,7 @@ class IdealBatch(Bioreactor):
         return product_yield
 
 
-class IdealFedbatch(Bioreactor):
+class IdealFedbatch(Bioreactor_ox):
     """
     This class describes an ideal fedbatch reactor with a single primary substrate.
         - The flow_rate_in is automatically adjusted using the following rules:
@@ -63,7 +88,7 @@ class IdealFedbatch(Bioreactor):
     """
 
     def __init__(self, organisms=[], metabolites=[], id='IdealFedbatch', primary_substrate=None, volume_max=None,
-                 Xfeed=None, Sfeed=None, deltaX=None, deltaS=None, initial_conditions=[]):
+                 Xfeed=None, Sfeed=None, deltaX=None, deltaS=None, initial_conditions=[], oxygen_availability=None):
         """
         :param organisms: list of Organism
         :param metabolites: list of string
@@ -77,7 +102,10 @@ class IdealFedbatch(Bioreactor):
         :return:
         """
         super(IdealFedbatch, self).__init__(organisms, metabolites, id=id, volume_max=volume_max, Xfeed=Xfeed,
-                                            Sfeed=Sfeed, deltaX=deltaX, deltaS=deltaS, initial_conditions=initial_conditions)
+                                            Sfeed=Sfeed, deltaX=deltaX, deltaS=deltaS,
+                                            initial_conditions=initial_conditions,
+                                            oxygen_availability=oxygen_availability)
+
         if primary_substrate:
             assert(primary_substrate in metabolites)
             self.primary_substrate = primary_substrate
