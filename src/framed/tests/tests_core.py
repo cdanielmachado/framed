@@ -15,11 +15,8 @@ from framed.analysis.essentiality import essential_genes
 from framed.solvers.solver import Status
 from framed.core.transformation import make_irreversible, simplify
 from framed.design.combinatorial import combinatorial_gene_deletion
-<<<<<<< HEAD
-from framed.core.transformation import balanced_model_reduction, decompose_biomass
-=======
 from framed.analysis.plotting import plot_flux_envelope
->>>>>>> master
+
 
 SMALL_TEST_MODEL = '../../../examples/models/ecoli_core_model.xml'
 LARGE_TEST_MODEL = '../../../examples/models/Ec_iAF1260_gene_names.xml'
