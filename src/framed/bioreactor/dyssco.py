@@ -28,7 +28,7 @@ from ..analysis.variability import production_envelope
 from base import *
 
 
-def make_envelope_strains(base_organism, r_substrate, r_target, N=10, constraints={}):
+def make_envelope_strains(base_organism, r_substrate, r_target, N=10, constraints=None):
     """
     Create N strains along the product envelope.
         (Used for Steps 1 and 2 of DySScO strategy)
