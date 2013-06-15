@@ -39,9 +39,9 @@ add_reaction_from_str(ec1260, 'R_EX_1_3_pdo_e: M_1_3_pdo_e -->')
 ec = Ecoli(ec1260, id='ecoli')
 
 # make envelope strains
-strains = dyssco.make_envelope_strains(ec, 'R_EX_glc_e', 'R_EX_1_3_pdo_e', N=5)
-
-print strains
+r_substrate, r_target1, r_target2, r_oxygen = 'R_EX_glc_e', 'R_EX_1_3_pdo_e', 'R_EX_3_hp_e', 'R_EX_o2_e'
+aerobic_constraints = {r_substrate: (-10, 0), r_oxygen: (-15, None)}
+strains = dyssco.make_envelope_strains(ec, 'R_EX_glc_e', 'R_EX_1_3_pdo_e', N=5, constraints=aerobic_constraints)
 
 # define bioreactor
 br = IdealFedbatch(metabolites=['R_EX_glc_e', 'R_EX_1_3_pdo_e'], Sfeed=[1000, 0], volume_max=10)

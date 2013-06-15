@@ -38,12 +38,14 @@ def FVA(model, obj_percentage=0, reactions=None, constraints=None):
         dict (of str to (float, float)) -- flux variation ranges
     """
 
+    _constraints = {}
+    if constraints:
+        _constraints.update(constraints)
+
     if obj_percentage > 0:
         target = model.detect_biomass_reaction()
         solution = FBA(model)
-        if constraints is None:
-            constraints = dict()
-        constraints[target] = (obj_percentage*solution.fobj, None)
+        _constraints[target] = (obj_percentage*solution.fobj, None)
     
     if not reactions:
         reactions = model.reactions.keys()
@@ -54,7 +56,7 @@ def FVA(model, obj_percentage=0, reactions=None, constraints=None):
     variability = OrderedDict([(r_id, [None, None]) for r_id in reactions])
         
     for r_id in reactions:
-        solution = FBA(model, r_id, False, constraints=constraints, solver=solver)
+        solution = FBA(model, r_id, False, constraints=_constraints, solver=solver)
         if solution.status == Status.OPTIMAL:
             variability[r_id][0] = -solution.fobj
         elif solution.status == Status.UNBOUNDED:
@@ -62,7 +64,7 @@ def FVA(model, obj_percentage=0, reactions=None, constraints=None):
         else:
             variability[r_id][0] = 0
 
-        solution = FBA(model, r_id, True, constraints=constraints, solver=solver)
+        solution = FBA(model, r_id, True, constraints=_constraints, solver=solver)
         if solution.status:
             variability[r_id][1] = solution.fobj
         elif solution.status == Status.UNBOUNDED:
@@ -108,11 +110,14 @@ def flux_envelope(model, r_x, r_y, steps=10, constraints=None):
     ymins, ymaxs = [None]*steps, [None]*steps
 
     if constraints is None:
-        constraints = {}
+        _constraints = {}
+    else:
+        _constraints = {}
+        _constraints.update(constraints)
 
     for i, xval in enumerate(xvals):
-        constraints[r_x] = (xval, xval)
-        y_range = FVA(model, reactions=[r_y], constraints=constraints)
+        _constraints[r_x] = (xval, xval)
+        y_range = FVA(model, reactions=[r_y], constraints=_constraints)
         ymins[i], ymaxs[i] = y_range[r_y]
 
     return xvals, ymins, ymaxs

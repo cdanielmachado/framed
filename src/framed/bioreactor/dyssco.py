@@ -38,6 +38,7 @@ def make_envelope_strains(base_organism, r_substrate, r_target, N=10, constraint
         r_substrate: str -- the rxn id of the substrate
         r_target: str -- the rxn id of the target product
         N: int -- the number of strains to be generated along the production envelope
+        constraints: dict -- custom constraints
 
     Returns:
         strains: list of Organism -- N strains that are fixed to the production envelope
@@ -45,6 +46,10 @@ def make_envelope_strains(base_organism, r_substrate, r_target, N=10, constraint
     base_id = base_organism.id
     base_model = base_organism.model
     strains = []
+
+    # add custom constraints to base_organism
+    if constraints:
+        base_organism.fba_constraints.update(constraints)
 
     # create the product envelope
     xvals, ymins, ymaxs = production_envelope(base_model, r_target, steps=N, constraints=constraints)
@@ -147,6 +152,7 @@ def calculate_performance(strain, bioreactor, r_substrate, r_target, t0, tf, dt,
     performance = {'strain': strain}
     r_biomass = strain.model.detect_biomass_reaction()
 
+    print strain.fba_constraints
     # perform FBA simulation
     if verbose:
         print 'Perform FBA simulation.'

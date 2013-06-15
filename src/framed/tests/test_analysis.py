@@ -19,17 +19,13 @@ class FVATest(unittest.TestCase):
     """ Test flux variability analysis """
 
     def test_fva_full(self):
-        model = load_sbml_model(SMALL_TEST_MODEL, kind=GPR_CONSTRAINED)
-        fix_bigg_model(model)
-        variability = FVA(model)
+        variability = FVA(ec_core_model)
         self.assertTrue(all([lb <= ub if lb is not None and ub is not None else True
                              for lb, ub in variability.values()]))
-        self.assertEqual(len(model.reactions), len(variability))
+        self.assertEqual(len(ec_core_model.reactions), len(variability))
 
     def test_fva_single(self):
-        model = load_sbml_model(SMALL_TEST_MODEL, kind=GPR_CONSTRAINED)
-        fix_bigg_model(model)
-        variability = FVA(model, reactions=['R_EX_ac_e'])
+        variability = FVA(ec_core_model, reactions=['R_EX_ac_e'])
         self.assertTrue(all([lb <= ub if lb is not None and ub is not None else True
                              for lb, ub in variability.values()]))
         self.assertEqual(1, len(variability))
