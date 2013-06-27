@@ -68,8 +68,8 @@ def MOMA(model, reference=None, constraints=None, solver=None):
         wt_solution = FBA(model, constraints=constraints)
         reference = wt_solution.values
     
-    quad_obj = {(r_id, r_id): 1 for r_id in model.reactions}
-    lin_obj = {r_id: -2*x for r_id, x in zip(model.reactions, reference.values())}
+    quad_obj = {(r_id, r_id): 1 for r_id in reference.keys()}
+    lin_obj = {r_id: -2*x for r_id, x in reference.items()}
     
     if not solver:
         solver = solver_instance()
