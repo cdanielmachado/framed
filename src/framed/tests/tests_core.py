@@ -15,7 +15,7 @@ from framed.analysis.essentiality import essential_genes
 from framed.solvers.solver import Status
 from framed.core.transformation import make_irreversible, simplify
 from framed.design.combinatorial import combinatorial_gene_deletion
-#from framed.analysis.plotting import plot_flux_envelope
+from framed.analysis.plotting import plot_flux_envelope
 
 
 SMALL_TEST_MODEL = '../../../examples/models/ecoli_core_model.xml'
@@ -141,7 +141,7 @@ class FVATest(unittest.TestCase):
     """ Test flux variability analysis """
     
     def testRun(self):
-        model = load_sbml_model(LARGE_TEST_MODEL, kind=GPR_CONSTRAINED)
+        model = load_sbml_model(SMALL_TEST_MODEL, kind=GPR_CONSTRAINED)
         fix_bigg_model(model)
         variability = FVA(model)        
         self.assertTrue(all([lb <= ub if lb is not None and ub is not None else True
@@ -204,8 +204,8 @@ class FluxEnvelopeTest(unittest.TestCase):
 
                             
 def suite():
-    #tests = [SBMLTest, PlainTextIOTest, FBATest, FBAFromPlainTextTest, FVATest, IrreversibleModelFBATest, SimplifiedModelFBATest, TransformationCommutativityTest, GeneDeletionFBATest, GeneDeletionMOMATest, GeneEssentialityTest]
-    tests = [FVATest]
+    tests = [SBMLTest, PlainTextIOTest, FBATest, FBAFromPlainTextTest, FVATest, IrreversibleModelFBATest, SimplifiedModelFBATest, TransformationCommutativityTest, GeneDeletionFBATest, GeneDeletionMOMATest, GeneEssentialityTest]
+    #tests = [FVATest]
     
     test_suite = unittest.TestSuite()
     for test in tests:
