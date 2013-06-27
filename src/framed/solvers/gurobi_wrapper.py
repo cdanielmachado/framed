@@ -137,8 +137,13 @@ class GurobiSolver(Solver):
         if status == Status.OPTIMAL:
             fobj = problem.ObjVal
             values = OrderedDict([(r_id, problem.getVarByName(r_id).X) for r_id in self.var_ids])
-            shadow_prices = OrderedDict([(m_id, problem.getConstrByName(m_id).Pi) for m_id in self.constr_ids]) if get_shadow_prices else None
-            reduced_costs = OrderedDict([(r_id, problem.getVarByName(r_id).RC) for r_id in self.var_ids]) if get_reduced_costs else None
+            
+            #if metabolite is disconnected no constraint will exist
+            shadow_prices = OrderedDict([(m_id, problem.getConstrByName(m_id).Pi)
+                                         for m_id in self.constr_ids 
+                                         if problem.getConstrByName(m_id)]) if get_shadow_prices else None
+            reduced_costs = OrderedDict([(r_id, problem.getVarByName(r_id).RC)
+                                         for r_id in self.var_ids]) if get_reduced_costs else None
             solution = Solution(status, fobj, values, shadow_prices, reduced_costs)
         else:
             solution = Solution(status)
