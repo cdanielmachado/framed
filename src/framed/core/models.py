@@ -40,6 +40,8 @@ class Metabolite:
         self.name = name
         self.compartment = compartment
 
+    def __repr__(self):
+        return self.name if self.name else self.id
 
 class Reaction:
     """ Base class for modeling reactions. """
@@ -54,6 +56,9 @@ class Reaction:
         self.name = name
         self.reversible = reversible
 
+    def __repr__(self):
+        return self.name if self.name else self.id
+
 
 class Gene:
     """ Base class for modeling genes. """
@@ -67,6 +72,9 @@ class Gene:
         self.id = elem_id
         self.name = name
 
+    def __repr__(self):
+        return self.name if self.name else self.id
+
 class Compartment:
     """ Base class for modeling compartments. """
     
@@ -78,6 +86,9 @@ class Compartment:
         """
         self.id = elem_id
         self.name = name
+
+    def __repr__(self):
+        return self.name if self.name else self.id
             
 
 class StoichiometricModel:
@@ -267,11 +278,13 @@ class StoichiometricModel:
                 for m_id in self.metabolites]        
     
     
-    def print_reaction(self, r_id, lookup_table=None, reaction_names=False, metabolite_names=False):
+    def print_reaction(self, r_id, reaction_names=False, metabolite_names=False, lookup_table=None):
         """ Print a reaction to a text based representation.
         
         Arguments:
             r_id : str -- reaction id
+            reaction_names : bool -- print reaction names instead of ids (default: False)
+            metabolite_names : bool -- print metabolite names instead of ids (default: False)
             lookup_table : OrderedDict -- reaction metabolite lookup table (optional, for speed) 
         
         Returns:
@@ -298,7 +311,7 @@ class StoichiometricModel:
             str -- model string
         """ 
         table = self.reaction_metabolite_lookup_table()
-        return '\n'.join([self.print_reaction(r_id, table, reaction_names, metabolite_names)
+        return '\n'.join([self.print_reaction(r_id, reaction_names, metabolite_names, table)
                           for r_id in self.reactions])
     
     def __repr__(self):
@@ -371,6 +384,10 @@ class ConstraintBasedModel(StoichiometricModel):
             ub : float -- upper bound (default: None)
         """
         StoichiometricModel.add_reaction(self, reaction)
+        
+        if lb == None and not reaction.reversible:
+            lb = 0
+        
         self.bounds[reaction.id] = (lb, ub)
     
     def remove_reactions(self, id_list):
@@ -384,7 +401,7 @@ class ConstraintBasedModel(StoichiometricModel):
         for r_id in id_list:
             del self.bounds[r_id]
 
-    def print_reaction(self, r_id, lookup_table=None, reaction_names=False, metabolite_names=False):
+    def print_reaction(self, r_id, reaction_names=False, metabolite_names=False, lookup_table=None):
         """ Print a reaction to a text based representation.
         
         Arguments:
@@ -394,7 +411,7 @@ class ConstraintBasedModel(StoichiometricModel):
         Returns:
             str -- reaction string
         """
-        res = StoichiometricModel.print_reaction(self, r_id, lookup_table, reaction_names, metabolite_names)
+        res = StoichiometricModel.print_reaction(self, r_id, reaction_names, metabolite_names, lookup_table)
         lb, ub = self.bounds[r_id]
         rev = self.reactions[r_id].reversible
         if lb != None and (rev or lb != 0.0) or ub != None:
@@ -445,7 +462,7 @@ class GPRConstrainedModel(ConstraintBasedModel):
         """
         self.genes[gene.id] = gene
 
-    def add_reaction(self, reaction, lb=None, ub=None, rule=None):
+    def add_reaction(self, reaction, lb=None, ub=None, rule=''):
         """ Add a single reaction to the model.
         If a reaction with the same id exists, it will be replaced.
         

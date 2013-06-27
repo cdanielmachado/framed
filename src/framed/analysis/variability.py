@@ -54,6 +54,7 @@ def FVA(model, obj_percentage=0, reactions=None, constraints=None):
     variability = OrderedDict([(r_id, [None, None]) for r_id in reactions])
         
     for r_id in reactions:
+        
         solution = FBA(model, r_id, False, constraints=constraints, solver=solver)
         if solution.status == Status.OPTIMAL:
             variability[r_id][0] = -solution.fobj
@@ -69,7 +70,7 @@ def FVA(model, obj_percentage=0, reactions=None, constraints=None):
             variability[r_id][1] = None
         else:
             variability[r_id][1] = 0
-                
+
     return variability
 
 
