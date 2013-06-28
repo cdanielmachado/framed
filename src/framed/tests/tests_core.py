@@ -79,7 +79,7 @@ class pFBATest(unittest.TestCase):
     """ Test pFBA simulation. """
     
     def testRun(self):
-        model = load_sbml_model(SMALL_TEST_MODEL, kind=GPR_CONSTRAINED)
+        model = load_sbml_model(LARGE_TEST_MODEL, kind=GPR_CONSTRAINED)
         fix_bigg_model(model)
         solution1 = pFBA(model)
         solution2 = FBA(model)
@@ -91,6 +91,7 @@ class pFBATest(unittest.TestCase):
         norm1 = sum([abs(solution1.values[r_id]) for r_id in model.reactions])
         norm2 = sum([abs(solution2.values[r_id]) for r_id in model.reactions])
         self.assertLessEqual(norm1, norm2)
+        print norm1, norm2
         
 class FBAFromPlainTextTest(unittest.TestCase):
     """ Test FBA simulation from plain text model. """

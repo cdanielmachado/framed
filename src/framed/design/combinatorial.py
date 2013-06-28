@@ -23,7 +23,7 @@ from itertools import combinations
 from collections import OrderedDict
 from ..core.models import GPRConstrainedModel
 from ..analysis.deletion import deletion
-from ..analysis.simulation import FBA
+from ..analysis.simulation import pFBA
 from ..solvers.solver import Status
 from ..solvers import solver_instance
 from ..analysis.essentiality import essentiality
@@ -95,7 +95,7 @@ def combinatorial_deletion(model, fobj, max_dels, kind='reactions', targets=None
     solver.build_problem(model)
     
     if not reference:
-        wt_solution = FBA(model, solver=solver)
+        wt_solution = pFBA(model, solver=solver)
         reference = wt_solution.values
     
     biomass = model.detect_biomass_reaction()
