@@ -34,7 +34,7 @@ class Metabolite:
         Arguments:
             elem_id : String -- a valid unique identifier
             name : String -- common metabolite name
-            compartment : String -- compartment containing the metabolite
+            compartment : String -- id of the compartment containing the metabolite
         """
         self.id = elem_id
         self.name = name
