@@ -23,14 +23,14 @@ from itertools import combinations
 from collections import OrderedDict
 from ..core.models import GPRConstrainedModel
 from ..analysis.deletion import deletion
-from ..analysis.simulation import pFBA
+from ..analysis.simulation import pFBA, lMOMA
 from ..solvers.solver import Status
 from ..solvers import solver_instance
 from ..analysis.essentiality import essentiality
 
 
 
-def combinatorial_gene_deletion(model, objective, max_dels, targets=None, method='FBA', reference=None, min_growth=0.1, abstol=1e-3):
+def combinatorial_gene_deletion(model, objective, max_dels, targets=None, method='FBA', reference=None, min_growth=0.01, abstol=1e-3):
     """ Compute solutions for a set of combinatorial gene deletions.
     
     Arguments:
@@ -49,7 +49,7 @@ def combinatorial_gene_deletion(model, objective, max_dels, targets=None, method
     return combinatorial_deletion(model, objective, max_dels, 'genes', targets, method, reference, min_growth, abstol)
 
 
-def combinatorial_reaction_deletion(model, objective, max_dels, targets=None, method='FBA', reference=None, min_growth=0.1, abstol=1e-3):
+def combinatorial_reaction_deletion(model, objective, max_dels, targets=None, method='FBA', reference=None, min_growth=0.01, abstol=1e-3):
     """ Compute solutions for a set of combinatorial reaction deletions.
     
     Arguments:
@@ -68,7 +68,7 @@ def combinatorial_reaction_deletion(model, objective, max_dels, targets=None, me
     return combinatorial_deletion(model, objective, max_dels, 'reactions', targets, method, reference, min_growth, abstol)
 
 
-def combinatorial_deletion(model, fobj, max_dels, kind='reactions', targets=None, method='FBA', reference=None, min_growth=0.1, abstol=1e-3):
+def combinatorial_deletion(model, fobj, max_dels, kind='reactions', targets=None, method='FBA', reference=None, min_growth=0.01, abstol=1e-3):
     """ Generic interface for computing for a set of combinatorial gene or reaction deletions.
     
     Arguments:
@@ -95,7 +95,8 @@ def combinatorial_deletion(model, fobj, max_dels, kind='reactions', targets=None
     solver.build_problem(model)
     
     if not reference:
-        wt_solution = pFBA(model, solver=solver)
+        #don't reuse solver here, we don't want the temp variables from pFBA to be persistent
+        wt_solution = pFBA(model)
         reference = wt_solution.values
     
     biomass = model.detect_biomass_reaction()
@@ -111,7 +112,7 @@ def combinatorial_deletion(model, fobj, max_dels, kind='reactions', targets=None
     del_sets = [del_set for i in range(max_dels) for del_set in combinations(targets, i + 1)]
             
     solutions = dict()
-
+    
     for del_set in del_sets:
         solution = deletion(model, del_set, kind, method, reference, solver)
     
