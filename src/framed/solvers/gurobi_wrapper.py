@@ -65,7 +65,7 @@ class GurobiSolver(Solver):
         self.constr_ids = []
         
 
-    def add_variable(self, var_id, lb=None, ub=None):
+    def add_variable(self, var_id, lb=None, ub=None, force_update=True):
         """ Add a variable to the current problem.
         
         Arguments:
@@ -75,12 +75,20 @@ class GurobiSolver(Solver):
         """
         lb=lb if lb is not None else -GRB.INFINITY
         ub=ub if ub is not None else GRB.INFINITY
-        self.problem.addVar(name=var_id, lb=lb, ub=ub)
-        self.var_ids.append(var_id)
-        self.problem.update()
+ 
+        if var_id in self.var_ids:
+            if force_update:
+                var = self.problem.getVarByName(var_id)
+                var.setAttr('lb', lb)
+                var.setAttr('ub', ub)
+                self.problem.update()
+        else:
+            self.problem.addVar(name=var_id, lb=lb, ub=ub)
+            self.var_ids.append(var_id)
+            self.problem.update()
 
     
-    def add_constraint(self, constr_id, lhs, sense='=', rhs=0):
+    def add_constraint(self, constr_id, lhs, sense='=', rhs=0, force_update=True):
         """ Add a variable to the current problem.
         
         Arguments:
@@ -89,16 +97,40 @@ class GurobiSolver(Solver):
             sense : {'<', '=', '>'} -- default '='
             rhs : float -- right-hand side of equation (default: 0)
         """
-        constr = quicksum([coeff*self.problem.getVarByName(r_id) for r_id, coeff in lhs])
         
         grb_sense = {'=': GRB.EQUAL,
                      '<': GRB.LESS_EQUAL,
                      '>': GRB.GREATER_EQUAL}
 
-        self.problem.addConstr(constr, grb_sense[sense], rhs, constr_id)
-        self.constr_ids.append(constr_id)
+        if constr_id in self.constr_ids:
+            if force_update:
+                constr = self.problem.getConstrByName(constr_id)
+                expr = quicksum([coeff*self.problem.getVarByName(r_id) for r_id, coeff in lhs])
+                constr.setAttr('lhs', expr)
+                constr.setAttr('sense', grb_sense[sense])
+                constr.setAttr('lhs', rhs)
+        else:
+            expr = quicksum([coeff*self.problem.getVarByName(r_id) for r_id, coeff in lhs])
+            self.problem.addConstr(expr, grb_sense[sense], rhs, constr_id)
+            self.constr_ids.append(constr_id)
 
-                
+    def list_variables(self):
+        """ Get a list of the variable ids defined for the current problem.
+        
+        Returns:
+            list [of str] -- variable ids
+        """
+        return self.var_ids
+    
+    def list_constraints(self):
+        """ Get a list of the constraint ids defined for the current problem.
+        
+        Returns:
+            list [of str] -- constraint ids
+        """
+        return self.constr_ids
+    
+                    
     def solve_lp(self, objective, model=None, constraints=None, get_shadow_prices=False, get_reduced_costs=False):
         """ Solve an LP optimization problem.
         

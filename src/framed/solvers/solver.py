@@ -85,6 +85,22 @@ class Solver:
         """
         pass
 
+    def list_variables(self):
+        """ Get a list of the variable ids defined for the current problem.
+        
+        Returns:
+            list [of str] -- variable ids
+        """
+        pass
+    
+    def list_constraints(self):
+        """ Get a list of the constraint ids defined for the current problem.
+        
+        Returns:
+            list [of str] -- constraint ids
+        """
+        pass
+    
     def solve_lp(self, objective, model=None, constraints=None, get_shadow_prices=False, get_reduced_costs=False):
         """ Solve an LP optimization problem.
         
