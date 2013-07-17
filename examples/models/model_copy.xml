@@ -113,6 +113,9 @@
           <speciesReference species="M_nadh_c" stoichiometry="1"/>
         </listOfProducts>
         <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <cn type="integer"> 0 </cn>
+          </math>
           <listOfParameters>
             <parameter id="LOWER_BOUND" value="-1000"/>
             <parameter id="UPPER_BOUND" value="1000"/>
@@ -128,6 +131,9 @@
           <speciesReference species="M_acald_c" stoichiometry="1"/>
         </listOfProducts>
         <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <cn type="integer"> 0 </cn>
+          </math>
           <listOfParameters>
             <parameter id="LOWER_BOUND" value="-1000"/>
             <parameter id="UPPER_BOUND" value="1000"/>
@@ -145,6 +151,9 @@
           <speciesReference species="M_adp_c" stoichiometry="1"/>
         </listOfProducts>
         <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <cn type="integer"> 0 </cn>
+          </math>
           <listOfParameters>
             <parameter id="LOWER_BOUND" value="-1000"/>
             <parameter id="UPPER_BOUND" value="1000"/>
@@ -161,6 +170,9 @@
           <speciesReference species="M_h2o_c" stoichiometry="1"/>
         </listOfProducts>
         <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <cn type="integer"> 0 </cn>
+          </math>
           <listOfParameters>
             <parameter id="LOWER_BOUND" value="-1000"/>
             <parameter id="UPPER_BOUND" value="1000"/>
@@ -177,6 +189,9 @@
           <speciesReference species="M_icit_c" stoichiometry="1"/>
         </listOfProducts>
         <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <cn type="integer"> 0 </cn>
+          </math>
           <listOfParameters>
             <parameter id="LOWER_BOUND" value="-1000"/>
             <parameter id="UPPER_BOUND" value="1000"/>
@@ -194,6 +209,9 @@
           <speciesReference species="M_h_c" stoichiometry="1"/>
         </listOfProducts>
         <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <cn type="integer"> 0 </cn>
+          </math>
           <listOfParameters>
             <parameter id="LOWER_BOUND" value="-1000"/>
             <parameter id="UPPER_BOUND" value="1000"/>
@@ -210,6 +228,9 @@
           <speciesReference species="M_adp_c" stoichiometry="2"/>
         </listOfProducts>
         <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <cn type="integer"> 0 </cn>
+          </math>
           <listOfParameters>
             <parameter id="LOWER_BOUND" value="-1000"/>
             <parameter id="UPPER_BOUND" value="1000"/>
@@ -229,6 +250,9 @@
           <speciesReference species="M_succoa_c" stoichiometry="1"/>
         </listOfProducts>
         <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <cn type="integer"> 0 </cn>
+          </math>
           <listOfParameters>
             <parameter id="LOWER_BOUND" value="0"/>
             <parameter id="UPPER_BOUND" value="1000"/>
@@ -246,6 +270,9 @@
           <speciesReference species="M_h_c" stoichiometry="1"/>
         </listOfProducts>
         <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <cn type="integer"> 0 </cn>
+          </math>
           <listOfParameters>
             <parameter id="LOWER_BOUND" value="-1000"/>
             <parameter id="UPPER_BOUND" value="1000"/>
@@ -264,6 +291,9 @@
           <speciesReference species="M_nadh_c" stoichiometry="1"/>
         </listOfProducts>
         <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <cn type="integer"> 0 </cn>
+          </math>
           <listOfParameters>
             <parameter id="LOWER_BOUND" value="-1000"/>
             <parameter id="UPPER_BOUND" value="1000"/>
@@ -282,6 +312,9 @@
           <speciesReference species="M_pi_c" stoichiometry="1"/>
         </listOfProducts>
         <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <cn type="integer"> 0 </cn>
+          </math>
           <listOfParameters>
             <parameter id="LOWER_BOUND" value="8.39"/>
             <parameter id="UPPER_BOUND" value="1000"/>
@@ -301,6 +334,9 @@
           <speciesReference species="M_h_c" stoichiometry="3"/>
         </listOfProducts>
         <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <cn type="integer"> 0 </cn>
+          </math>
           <listOfParameters>
             <parameter id="LOWER_BOUND" value="-1000"/>
             <parameter id="UPPER_BOUND" value="1000"/>
@@ -337,6 +373,9 @@
           <speciesReference species="M_pi_c" stoichiometry="59.81"/>
         </listOfProducts>
         <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <cn type="integer"> 0 </cn>
+          </math>
           <listOfParameters>
             <parameter id="LOWER_BOUND" value="0"/>
             <parameter id="UPPER_BOUND" value="1000"/>
@@ -352,6 +391,9 @@
           <speciesReference species="M_co2_c" stoichiometry="1"/>
         </listOfProducts>
         <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <cn type="integer"> 0 </cn>
+          </math>
           <listOfParameters>
             <parameter id="LOWER_BOUND" value="-1000"/>
             <parameter id="UPPER_BOUND" value="1000"/>
@@ -371,6 +413,9 @@
           <speciesReference species="M_h_c" stoichiometry="1"/>
         </listOfProducts>
         <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <cn type="integer"> 0 </cn>
+          </math>
           <listOfParameters>
             <parameter id="LOWER_BOUND" value="0"/>
             <parameter id="UPPER_BOUND" value="1000"/>
@@ -390,6 +435,9 @@
           <speciesReference species="M_q8_c" stoichiometry="1"/>
         </listOfProducts>
         <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <cn type="integer"> 0 </cn>
+          </math>
           <listOfParameters>
             <parameter id="LOWER_BOUND" value="0"/>
             <parameter id="UPPER_BOUND" value="1000"/>
@@ -407,6 +455,9 @@
           <speciesReference species="M_lac_D_c" stoichiometry="1"/>
         </listOfProducts>
         <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <cn type="integer"> 0 </cn>
+          </math>
           <listOfParameters>
             <parameter id="LOWER_BOUND" value="-1000"/>
             <parameter id="UPPER_BOUND" value="1000"/>
@@ -423,6 +474,9 @@
           <speciesReference species="M_pep_c" stoichiometry="1"/>
         </listOfProducts>
         <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <cn type="integer"> 0 </cn>
+          </math>
           <listOfParameters>
             <parameter id="LOWER_BOUND" value="-1000"/>
             <parameter id="UPPER_BOUND" value="1000"/>
@@ -440,6 +494,9 @@
           <speciesReference species="M_h_c" stoichiometry="1"/>
         </listOfProducts>
         <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <cn type="integer"> 0 </cn>
+          </math>
           <listOfParameters>
             <parameter id="LOWER_BOUND" value="-1000"/>
             <parameter id="UPPER_BOUND" value="1000"/>
@@ -455,6 +512,9 @@
           <speciesReference species="M_ac_b" stoichiometry="1"/>
         </listOfProducts>
         <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <cn type="integer"> 0 </cn>
+          </math>
           <listOfParameters>
             <parameter id="LOWER_BOUND" value="0"/>
             <parameter id="UPPER_BOUND" value="1000"/>
@@ -470,6 +530,9 @@
           <speciesReference species="M_acald_b" stoichiometry="1"/>
         </listOfProducts>
         <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <cn type="integer"> 0 </cn>
+          </math>
           <listOfParameters>
             <parameter id="LOWER_BOUND" value="0"/>
             <parameter id="UPPER_BOUND" value="1000"/>
@@ -485,6 +548,9 @@
           <speciesReference species="M_akg_b" stoichiometry="1"/>
         </listOfProducts>
         <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <cn type="integer"> 0 </cn>
+          </math>
           <listOfParameters>
             <parameter id="LOWER_BOUND" value="0"/>
             <parameter id="UPPER_BOUND" value="1000"/>
@@ -500,6 +566,9 @@
           <speciesReference species="M_co2_b" stoichiometry="1"/>
         </listOfProducts>
         <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <cn type="integer"> 0 </cn>
+          </math>
           <listOfParameters>
             <parameter id="LOWER_BOUND" value="-1000"/>
             <parameter id="UPPER_BOUND" value="1000"/>
@@ -515,6 +584,9 @@
           <speciesReference species="M_etoh_b" stoichiometry="1"/>
         </listOfProducts>
         <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <cn type="integer"> 0 </cn>
+          </math>
           <listOfParameters>
             <parameter id="LOWER_BOUND" value="0"/>
             <parameter id="UPPER_BOUND" value="1000"/>
@@ -530,6 +602,9 @@
           <speciesReference species="M_for_b" stoichiometry="1"/>
         </listOfProducts>
         <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <cn type="integer"> 0 </cn>
+          </math>
           <listOfParameters>
             <parameter id="LOWER_BOUND" value="0"/>
             <parameter id="UPPER_BOUND" value="1000"/>
@@ -545,6 +620,9 @@
           <speciesReference species="M_fru_b" stoichiometry="1"/>
         </listOfProducts>
         <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <cn type="integer"> 0 </cn>
+          </math>
           <listOfParameters>
             <parameter id="LOWER_BOUND" value="0"/>
             <parameter id="UPPER_BOUND" value="1000"/>
@@ -560,6 +638,9 @@
           <speciesReference species="M_fum_b" stoichiometry="1"/>
         </listOfProducts>
         <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <cn type="integer"> 0 </cn>
+          </math>
           <listOfParameters>
             <parameter id="LOWER_BOUND" value="0"/>
             <parameter id="UPPER_BOUND" value="1000"/>
@@ -575,6 +656,9 @@
           <speciesReference species="M_glc_D_b" stoichiometry="1"/>
         </listOfProducts>
         <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <cn type="integer"> 0 </cn>
+          </math>
           <listOfParameters>
             <parameter id="LOWER_BOUND" value="-10"/>
             <parameter id="UPPER_BOUND" value="1000"/>
@@ -590,6 +674,9 @@
           <speciesReference species="M_gln_L_b" stoichiometry="1"/>
         </listOfProducts>
         <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <cn type="integer"> 0 </cn>
+          </math>
           <listOfParameters>
             <parameter id="LOWER_BOUND" value="0"/>
             <parameter id="UPPER_BOUND" value="1000"/>
@@ -605,6 +692,9 @@
           <speciesReference species="M_glu_L_b" stoichiometry="1"/>
         </listOfProducts>
         <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <cn type="integer"> 0 </cn>
+          </math>
           <listOfParameters>
             <parameter id="LOWER_BOUND" value="0"/>
             <parameter id="UPPER_BOUND" value="1000"/>
@@ -620,6 +710,9 @@
           <speciesReference species="M_h2o_b" stoichiometry="1"/>
         </listOfProducts>
         <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <cn type="integer"> 0 </cn>
+          </math>
           <listOfParameters>
             <parameter id="LOWER_BOUND" value="-1000"/>
             <parameter id="UPPER_BOUND" value="1000"/>
@@ -635,6 +728,9 @@
           <speciesReference species="M_h_b" stoichiometry="1"/>
         </listOfProducts>
         <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <cn type="integer"> 0 </cn>
+          </math>
           <listOfParameters>
             <parameter id="LOWER_BOUND" value="-1000"/>
             <parameter id="UPPER_BOUND" value="1000"/>
@@ -650,6 +746,9 @@
           <speciesReference species="M_lac_D_b" stoichiometry="1"/>
         </listOfProducts>
         <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <cn type="integer"> 0 </cn>
+          </math>
           <listOfParameters>
             <parameter id="LOWER_BOUND" value="0"/>
             <parameter id="UPPER_BOUND" value="1000"/>
@@ -665,6 +764,9 @@
           <speciesReference species="M_mal_L_b" stoichiometry="1"/>
         </listOfProducts>
         <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <cn type="integer"> 0 </cn>
+          </math>
           <listOfParameters>
             <parameter id="LOWER_BOUND" value="0"/>
             <parameter id="UPPER_BOUND" value="1000"/>
@@ -680,6 +782,9 @@
           <speciesReference species="M_nh4_b" stoichiometry="1"/>
         </listOfProducts>
         <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <cn type="integer"> 0 </cn>
+          </math>
           <listOfParameters>
             <parameter id="LOWER_BOUND" value="-1000"/>
             <parameter id="UPPER_BOUND" value="1000"/>
@@ -695,6 +800,9 @@
           <speciesReference species="M_o2_b" stoichiometry="1"/>
         </listOfProducts>
         <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <cn type="integer"> 0 </cn>
+          </math>
           <listOfParameters>
             <parameter id="LOWER_BOUND" value="-1000"/>
             <parameter id="UPPER_BOUND" value="1000"/>
@@ -710,6 +818,9 @@
           <speciesReference species="M_pi_b" stoichiometry="1"/>
         </listOfProducts>
         <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <cn type="integer"> 0 </cn>
+          </math>
           <listOfParameters>
             <parameter id="LOWER_BOUND" value="-1000"/>
             <parameter id="UPPER_BOUND" value="1000"/>
@@ -725,6 +836,9 @@
           <speciesReference species="M_pyr_b" stoichiometry="1"/>
         </listOfProducts>
         <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <cn type="integer"> 0 </cn>
+          </math>
           <listOfParameters>
             <parameter id="LOWER_BOUND" value="0"/>
             <parameter id="UPPER_BOUND" value="1000"/>
@@ -740,6 +854,9 @@
           <speciesReference species="M_succ_b" stoichiometry="1"/>
         </listOfProducts>
         <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <cn type="integer"> 0 </cn>
+          </math>
           <listOfParameters>
             <parameter id="LOWER_BOUND" value="0"/>
             <parameter id="UPPER_BOUND" value="1000"/>
@@ -756,6 +873,9 @@
           <speciesReference species="M_g3p_c" stoichiometry="1"/>
         </listOfProducts>
         <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <cn type="integer"> 0 </cn>
+          </math>
           <listOfParameters>
             <parameter id="LOWER_BOUND" value="-1000"/>
             <parameter id="UPPER_BOUND" value="1000"/>
@@ -773,6 +893,9 @@
           <speciesReference species="M_pi_c" stoichiometry="1"/>
         </listOfProducts>
         <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <cn type="integer"> 0 </cn>
+          </math>
           <listOfParameters>
             <parameter id="LOWER_BOUND" value="0"/>
             <parameter id="UPPER_BOUND" value="1000"/>
@@ -790,6 +913,9 @@
           <speciesReference species="M_h_c" stoichiometry="1"/>
         </listOfProducts>
         <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <cn type="integer"> 0 </cn>
+          </math>
           <listOfParameters>
             <parameter id="LOWER_BOUND" value="0"/>
             <parameter id="UPPER_BOUND" value="1000"/>
@@ -805,6 +931,9 @@
           <speciesReference species="M_for_e" stoichiometry="1"/>
         </listOfProducts>
         <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <cn type="integer"> 0 </cn>
+          </math>
           <listOfParameters>
             <parameter id="LOWER_BOUND" value="0"/>
             <parameter id="UPPER_BOUND" value="1000"/>
@@ -822,6 +951,9 @@
           <speciesReference species="M_succ_c" stoichiometry="1"/>
         </listOfProducts>
         <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <cn type="integer"> 0 </cn>
+          </math>
           <listOfParameters>
             <parameter id="LOWER_BOUND" value="0"/>
             <parameter id="UPPER_BOUND" value="1000"/>
@@ -839,6 +971,9 @@
           <speciesReference species="M_pyr_c" stoichiometry="1"/>
         </listOfProducts>
         <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <cn type="integer"> 0 </cn>
+          </math>
           <listOfParameters>
             <parameter id="LOWER_BOUND" value="0"/>
             <parameter id="UPPER_BOUND" value="1000"/>
@@ -855,6 +990,9 @@
           <speciesReference species="M_mal_L_c" stoichiometry="1"/>
         </listOfProducts>
         <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <cn type="integer"> 0 </cn>
+          </math>
           <listOfParameters>
             <parameter id="LOWER_BOUND" value="-1000"/>
             <parameter id="UPPER_BOUND" value="1000"/>
@@ -872,6 +1010,9 @@
           <speciesReference species="M_h_c" stoichiometry="2"/>
         </listOfProducts>
         <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <cn type="integer"> 0 </cn>
+          </math>
           <listOfParameters>
             <parameter id="LOWER_BOUND" value="0"/>
             <parameter id="UPPER_BOUND" value="1000"/>
@@ -890,6 +1031,9 @@
           <speciesReference species="M_nadph_c" stoichiometry="1"/>
         </listOfProducts>
         <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <cn type="integer"> 0 </cn>
+          </math>
           <listOfParameters>
             <parameter id="LOWER_BOUND" value="-1000"/>
             <parameter id="UPPER_BOUND" value="1000"/>
@@ -909,6 +1053,9 @@
           <speciesReference species="M_nadh_c" stoichiometry="1"/>
         </listOfProducts>
         <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <cn type="integer"> 0 </cn>
+          </math>
           <listOfParameters>
             <parameter id="LOWER_BOUND" value="-1000"/>
             <parameter id="UPPER_BOUND" value="1000"/>
@@ -926,6 +1073,9 @@
           <speciesReference species="M_pyr_c" stoichiometry="1"/>
         </listOfProducts>
         <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <cn type="integer"> 0 </cn>
+          </math>
           <listOfParameters>
             <parameter id="LOWER_BOUND" value="0"/>
             <parameter id="UPPER_BOUND" value="1000"/>
@@ -946,6 +1096,9 @@
           <speciesReference species="M_pi_c" stoichiometry="1"/>
         </listOfProducts>
         <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <cn type="integer"> 0 </cn>
+          </math>
           <listOfParameters>
             <parameter id="LOWER_BOUND" value="0"/>
             <parameter id="UPPER_BOUND" value="1000"/>
@@ -966,6 +1119,9 @@
           <speciesReference species="M_pi_c" stoichiometry="1"/>
         </listOfProducts>
         <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <cn type="integer"> 0 </cn>
+          </math>
           <listOfParameters>
             <parameter id="LOWER_BOUND" value="0"/>
             <parameter id="UPPER_BOUND" value="1000"/>
@@ -986,6 +1142,9 @@
           <speciesReference species="M_nh4_c" stoichiometry="1"/>
         </listOfProducts>
         <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <cn type="integer"> 0 </cn>
+          </math>
           <listOfParameters>
             <parameter id="LOWER_BOUND" value="-1000"/>
             <parameter id="UPPER_BOUND" value="1000"/>
@@ -1003,6 +1162,9 @@
           <speciesReference species="M_nh4_c" stoichiometry="1"/>
         </listOfProducts>
         <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <cn type="integer"> 0 </cn>
+          </math>
           <listOfParameters>
             <parameter id="LOWER_BOUND" value="0"/>
             <parameter id="UPPER_BOUND" value="1000"/>
@@ -1022,6 +1184,9 @@
           <speciesReference species="M_nadp_c" stoichiometry="1"/>
         </listOfProducts>
         <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <cn type="integer"> 0 </cn>
+          </math>
           <listOfParameters>
             <parameter id="LOWER_BOUND" value="0"/>
             <parameter id="UPPER_BOUND" value="1000"/>
@@ -1039,6 +1204,9 @@
           <speciesReference species="M_h_c" stoichiometry="1"/>
         </listOfProducts>
         <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <cn type="integer"> 0 </cn>
+          </math>
           <listOfParameters>
             <parameter id="LOWER_BOUND" value="-1000"/>
             <parameter id="UPPER_BOUND" value="1000"/>
@@ -1057,6 +1225,9 @@
           <speciesReference species="M_ru5p_D_c" stoichiometry="1"/>
         </listOfProducts>
         <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <cn type="integer"> 0 </cn>
+          </math>
           <listOfParameters>
             <parameter id="LOWER_BOUND" value="0"/>
             <parameter id="UPPER_BOUND" value="1000"/>
@@ -1072,6 +1243,9 @@
           <speciesReference species="M_h2o_c" stoichiometry="1"/>
         </listOfProducts>
         <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <cn type="integer"> 0 </cn>
+          </math>
           <listOfParameters>
             <parameter id="LOWER_BOUND" value="-1000"/>
             <parameter id="UPPER_BOUND" value="1000"/>
@@ -1090,6 +1264,9 @@
           <speciesReference species="M_nadph_c" stoichiometry="1"/>
         </listOfProducts>
         <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <cn type="integer"> 0 </cn>
+          </math>
           <listOfParameters>
             <parameter id="LOWER_BOUND" value="-1000"/>
             <parameter id="UPPER_BOUND" value="1000"/>
@@ -1106,6 +1283,9 @@
           <speciesReference species="M_succ_c" stoichiometry="1"/>
         </listOfProducts>
         <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <cn type="integer"> 0 </cn>
+          </math>
           <listOfParameters>
             <parameter id="LOWER_BOUND" value="0"/>
             <parameter id="UPPER_BOUND" value="1000"/>
@@ -1124,6 +1304,9 @@
           <speciesReference species="M_pyr_c" stoichiometry="1"/>
         </listOfProducts>
         <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <cn type="integer"> 0 </cn>
+          </math>
           <listOfParameters>
             <parameter id="LOWER_BOUND" value="-1000"/>
             <parameter id="UPPER_BOUND" value="1000"/>
@@ -1143,6 +1326,9 @@
           <speciesReference species="M_mal_L_c" stoichiometry="1"/>
         </listOfProducts>
         <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <cn type="integer"> 0 </cn>
+          </math>
           <listOfParameters>
             <parameter id="LOWER_BOUND" value="0"/>
             <parameter id="UPPER_BOUND" value="1000"/>
@@ -1160,6 +1346,9 @@
           <speciesReference species="M_mal_L_c" stoichiometry="1"/>
         </listOfProducts>
         <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <cn type="integer"> 0 </cn>
+          </math>
           <listOfParameters>
             <parameter id="LOWER_BOUND" value="0"/>
             <parameter id="UPPER_BOUND" value="1000"/>
@@ -1178,6 +1367,9 @@
           <speciesReference species="M_oaa_c" stoichiometry="1"/>
         </listOfProducts>
         <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <cn type="integer"> 0 </cn>
+          </math>
           <listOfParameters>
             <parameter id="LOWER_BOUND" value="-1000"/>
             <parameter id="UPPER_BOUND" value="1000"/>
@@ -1196,6 +1388,9 @@
           <speciesReference species="M_pyr_c" stoichiometry="1"/>
         </listOfProducts>
         <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <cn type="integer"> 0 </cn>
+          </math>
           <listOfParameters>
             <parameter id="LOWER_BOUND" value="0"/>
             <parameter id="UPPER_BOUND" value="1000"/>
@@ -1214,6 +1409,9 @@
           <speciesReference species="M_pyr_c" stoichiometry="1"/>
         </listOfProducts>
         <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <cn type="integer"> 0 </cn>
+          </math>
           <listOfParameters>
             <parameter id="LOWER_BOUND" value="0"/>
             <parameter id="UPPER_BOUND" value="1000"/>
@@ -1233,6 +1431,9 @@
           <speciesReference species="M_q8h2_c" stoichiometry="1"/>
         </listOfProducts>
         <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <cn type="integer"> 0 </cn>
+          </math>
           <listOfParameters>
             <parameter id="LOWER_BOUND" value="0"/>
             <parameter id="UPPER_BOUND" value="1000"/>
@@ -1250,6 +1451,9 @@
           <speciesReference species="M_nadp_c" stoichiometry="1"/>
         </listOfProducts>
         <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <cn type="integer"> 0 </cn>
+          </math>
           <listOfParameters>
             <parameter id="LOWER_BOUND" value="0"/>
             <parameter id="UPPER_BOUND" value="1000"/>
@@ -1265,6 +1469,9 @@
           <speciesReference species="M_nh4_c" stoichiometry="1"/>
         </listOfProducts>
         <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <cn type="integer"> 0 </cn>
+          </math>
           <listOfParameters>
             <parameter id="LOWER_BOUND" value="-1000"/>
             <parameter id="UPPER_BOUND" value="1000"/>
@@ -1280,6 +1487,9 @@
           <speciesReference species="M_o2_c" stoichiometry="1"/>
         </listOfProducts>
         <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <cn type="integer"> 0 </cn>
+          </math>
           <listOfParameters>
             <parameter id="LOWER_BOUND" value="-1000"/>
             <parameter id="UPPER_BOUND" value="1000"/>
@@ -1299,6 +1509,9 @@
           <speciesReference species="M_nadh_c" stoichiometry="1"/>
         </listOfProducts>
         <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <cn type="integer"> 0 </cn>
+          </math>
           <listOfParameters>
             <parameter id="LOWER_BOUND" value="0"/>
             <parameter id="UPPER_BOUND" value="1000"/>
@@ -1317,6 +1530,9 @@
           <speciesReference species="M_h_c" stoichiometry="1"/>
         </listOfProducts>
         <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <cn type="integer"> 0 </cn>
+          </math>
           <listOfParameters>
             <parameter id="LOWER_BOUND" value="0"/>
             <parameter id="UPPER_BOUND" value="1000"/>
@@ -1334,6 +1550,9 @@
           <speciesReference species="M_for_c" stoichiometry="1"/>
         </listOfProducts>
         <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <cn type="integer"> 0 </cn>
+          </math>
           <listOfParameters>
             <parameter id="LOWER_BOUND" value="0"/>
             <parameter id="UPPER_BOUND" value="1000"/>
@@ -1349,6 +1568,9 @@
           <speciesReference species="M_f6p_c" stoichiometry="1"/>
         </listOfProducts>
         <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <cn type="integer"> 0 </cn>
+          </math>
           <listOfParameters>
             <parameter id="LOWER_BOUND" value="-1000"/>
             <parameter id="UPPER_BOUND" value="1000"/>
@@ -1366,6 +1588,9 @@
           <speciesReference species="M_adp_c" stoichiometry="1"/>
         </listOfProducts>
         <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <cn type="integer"> 0 </cn>
+          </math>
           <listOfParameters>
             <parameter id="LOWER_BOUND" value="-1000"/>
             <parameter id="UPPER_BOUND" value="1000"/>
@@ -1383,6 +1608,9 @@
           <speciesReference species="M_h_c" stoichiometry="1"/>
         </listOfProducts>
         <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <cn type="integer"> 0 </cn>
+          </math>
           <listOfParameters>
             <parameter id="LOWER_BOUND" value="0"/>
             <parameter id="UPPER_BOUND" value="1000"/>
@@ -1398,6 +1626,9 @@
           <speciesReference species="M_3pg_c" stoichiometry="1"/>
         </listOfProducts>
         <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <cn type="integer"> 0 </cn>
+          </math>
           <listOfParameters>
             <parameter id="LOWER_BOUND" value="-1000"/>
             <parameter id="UPPER_BOUND" value="1000"/>
@@ -1415,6 +1646,9 @@
           <speciesReference species="M_pi_c" stoichiometry="1"/>
         </listOfProducts>
         <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <cn type="integer"> 0 </cn>
+          </math>
           <listOfParameters>
             <parameter id="LOWER_BOUND" value="-1000"/>
             <parameter id="UPPER_BOUND" value="1000"/>
@@ -1434,6 +1668,9 @@
           <speciesReference species="M_pi_c" stoichiometry="1"/>
         </listOfProducts>
         <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <cn type="integer"> 0 </cn>
+          </math>
           <listOfParameters>
             <parameter id="LOWER_BOUND" value="0"/>
             <parameter id="UPPER_BOUND" value="1000"/>
@@ -1452,6 +1689,9 @@
           <speciesReference species="M_pep_c" stoichiometry="1"/>
         </listOfProducts>
         <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <cn type="integer"> 0 </cn>
+          </math>
           <listOfParameters>
             <parameter id="LOWER_BOUND" value="0"/>
             <parameter id="UPPER_BOUND" value="1000"/>
@@ -1472,6 +1712,9 @@
           <speciesReference species="M_pi_c" stoichiometry="1"/>
         </listOfProducts>
         <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <cn type="integer"> 0 </cn>
+          </math>
           <listOfParameters>
             <parameter id="LOWER_BOUND" value="0"/>
             <parameter id="UPPER_BOUND" value="1000"/>
@@ -1489,6 +1732,9 @@
           <speciesReference species="M_coa_c" stoichiometry="1"/>
         </listOfProducts>
         <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <cn type="integer"> 0 </cn>
+          </math>
           <listOfParameters>
             <parameter id="LOWER_BOUND" value="-1000"/>
             <parameter id="UPPER_BOUND" value="1000"/>
@@ -1507,6 +1753,9 @@
           <speciesReference species="M_pyr_c" stoichiometry="1"/>
         </listOfProducts>
         <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <cn type="integer"> 0 </cn>
+          </math>
           <listOfParameters>
             <parameter id="LOWER_BOUND" value="0"/>
             <parameter id="UPPER_BOUND" value="1000"/>
@@ -1524,6 +1773,9 @@
           <speciesReference species="M_pyr_c" stoichiometry="1"/>
         </listOfProducts>
         <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <cn type="integer"> 0 </cn>
+          </math>
           <listOfParameters>
             <parameter id="LOWER_BOUND" value="-1000"/>
             <parameter id="UPPER_BOUND" value="1000"/>
@@ -1539,6 +1791,9 @@
           <speciesReference species="M_xu5p_D_c" stoichiometry="1"/>
         </listOfProducts>
         <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <cn type="integer"> 0 </cn>
+          </math>
           <listOfParameters>
             <parameter id="LOWER_BOUND" value="-1000"/>
             <parameter id="UPPER_BOUND" value="1000"/>
@@ -1554,6 +1809,9 @@
           <speciesReference species="M_ru5p_D_c" stoichiometry="1"/>
         </listOfProducts>
         <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <cn type="integer"> 0 </cn>
+          </math>
           <listOfParameters>
             <parameter id="LOWER_BOUND" value="-1000"/>
             <parameter id="UPPER_BOUND" value="1000"/>
@@ -1571,6 +1829,9 @@
           <speciesReference species="M_succ_c" stoichiometry="1"/>
         </listOfProducts>
         <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <cn type="integer"> 0 </cn>
+          </math>
           <listOfParameters>
             <parameter id="LOWER_BOUND" value="0"/>
             <parameter id="UPPER_BOUND" value="1000"/>
@@ -1588,6 +1849,9 @@
           <speciesReference species="M_succ_e" stoichiometry="1"/>
         </listOfProducts>
         <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <cn type="integer"> 0 </cn>
+          </math>
           <listOfParameters>
             <parameter id="LOWER_BOUND" value="0"/>
             <parameter id="UPPER_BOUND" value="1000"/>
@@ -1605,6 +1869,9 @@
           <speciesReference species="M_q8h2_c" stoichiometry="1"/>
         </listOfProducts>
         <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <cn type="integer"> 0 </cn>
+          </math>
           <listOfParameters>
             <parameter id="LOWER_BOUND" value="0"/>
             <parameter id="UPPER_BOUND" value="1000"/>
@@ -1624,6 +1891,9 @@
           <speciesReference species="M_succoa_c" stoichiometry="1"/>
         </listOfProducts>
         <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <cn type="integer"> 0 </cn>
+          </math>
           <listOfParameters>
             <parameter id="LOWER_BOUND" value="-1000"/>
             <parameter id="UPPER_BOUND" value="1000"/>
@@ -1641,6 +1911,9 @@
           <speciesReference species="M_f6p_c" stoichiometry="1"/>
         </listOfProducts>
         <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <cn type="integer"> 0 </cn>
+          </math>
           <listOfParameters>
             <parameter id="LOWER_BOUND" value="-1000"/>
             <parameter id="UPPER_BOUND" value="1000"/>
@@ -1660,6 +1933,9 @@
           <speciesReference species="M_nadph_c" stoichiometry="1"/>
         </listOfProducts>
         <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <cn type="integer"> 0 </cn>
+          </math>
           <listOfParameters>
             <parameter id="LOWER_BOUND" value="0"/>
             <parameter id="UPPER_BOUND" value="1000"/>
@@ -1677,6 +1953,9 @@
           <speciesReference species="M_s7p_c" stoichiometry="1"/>
         </listOfProducts>
         <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <cn type="integer"> 0 </cn>
+          </math>
           <listOfParameters>
             <parameter id="LOWER_BOUND" value="-1000"/>
             <parameter id="UPPER_BOUND" value="1000"/>
@@ -1694,6 +1973,9 @@
           <speciesReference species="M_g3p_c" stoichiometry="1"/>
         </listOfProducts>
         <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <cn type="integer"> 0 </cn>
+          </math>
           <listOfParameters>
             <parameter id="LOWER_BOUND" value="-1000"/>
             <parameter id="UPPER_BOUND" value="1000"/>
@@ -1709,6 +1991,9 @@
           <speciesReference species="M_g3p_c" stoichiometry="1"/>
         </listOfProducts>
         <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <cn type="integer"> 0 </cn>
+          </math>
           <listOfParameters>
             <parameter id="LOWER_BOUND" value="-1000"/>
             <parameter id="UPPER_BOUND" value="1000"/>

@@ -204,17 +204,19 @@ def _save_stoichiometry(model, sbml_model):
 
 def _save_bounds(model, sbml_model):
     for r_id in model.reactions:
-        sbml_reaction = sbml_model.getReaction(r_id)        
-        kineticLaw = sbml_reaction.createKineticLaw()
         lb, ub = model.bounds[r_id]
-        if lb is not None:
-            lbParameter = kineticLaw.createParameter()
-            lbParameter.setId(LB_TAG)
-            lbParameter.setValue(lb)
-        if ub is not None:
-            ubParameter = kineticLaw.createParameter()
-            ubParameter.setId(UB_TAG)
-            ubParameter.setValue(ub) 
+        if lb is not None or ub is not None:
+            sbml_reaction = sbml_model.getReaction(r_id)        
+            kineticLaw = sbml_reaction.createKineticLaw()
+            kineticLaw.setFormula('0')
+            if lb is not None:
+                lbParameter = kineticLaw.createParameter()
+                lbParameter.setId(LB_TAG)
+                lbParameter.setValue(lb)
+            if ub is not None:
+                ubParameter = kineticLaw.createParameter()
+                ubParameter.setId(UB_TAG)
+                ubParameter.setValue(ub) 
 
 def _save_gpr(model, sbml_model):
     for r_id in model.reactions:

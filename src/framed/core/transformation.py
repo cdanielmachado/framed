@@ -30,13 +30,15 @@ def simplify(model):
         model : ConstraintBasedModel
         
     Returns:
-        list (of str): list of removed reactions
+        (list (of str), list (of str)) : lists of removed reactions and metabolites
     """
 
     blocked = blocked_reactions(model)
     model.remove_reactions(blocked)
+    disconnected = _disconnected_metabolites(model)
+    model.remove_metabolites(disconnected)
     
-    return blocked
+    return blocked, disconnected
 
 
 def make_irreversible(model):
@@ -78,3 +80,8 @@ def make_irreversible(model):
             model.remove_reaction(r_id)
             
     return mapping
+
+
+def _disconnected_metabolites(model):
+    m_r_table = model.metabolite_reaction_lookup_table()
+    return [m_id for m_id, edges in m_r_table.items() if not edges]

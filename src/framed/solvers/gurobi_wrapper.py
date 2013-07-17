@@ -45,27 +45,92 @@ class GurobiSolver(Solver):
             model : ConstraintBasedModel
         """
          
-        problem = GurobiModel()
+        self.empty_problem()        
         
-        #create variables
-        lpvars = {r_id: problem.addVar(name=r_id,
-                                       lb=lb if lb is not None else -GRB.INFINITY,
-                                       ub=ub if ub is not None else GRB.INFINITY)
-                  for r_id, (lb, ub) in model.bounds.items()}
+        for r_id, (lb, ub) in model.bounds.items():
+            self.add_variable(r_id, lb, ub)
         
-        problem.update() #confirm if really necessary
-        
-        #create constraints
         table = model.metabolite_reaction_lookup_table()
         for m_id in model.metabolites:
-            constr = quicksum([coeff*lpvars[r_id] for r_id, coeff in table[m_id].items()])
-            problem.addConstr(constr == 0, m_id)
+            self.add_constraint(m_id, table[m_id].items())
 
-        self.problem = problem
-        self.var_ids = model.reactions.keys()
-        self.constr_ids = model.metabolites.keys()
 
-                
+    def empty_problem(self):
+        """ Create an empty problem structure.
+        To be used for manually instantiate a problem.
+        For automatic instantiation use the build_problem interface method. """
+        
+        self.problem = GurobiModel()
+        self.var_ids = []
+        self.constr_ids = []
+        
+
+    def add_variable(self, var_id, lb=None, ub=None, force_update=True):
+        """ Add a variable to the current problem.
+        
+        Arguments:
+            var_id : str -- variable identifier
+            lb : float -- lower bound
+            ub : float -- upper bound
+        """
+        lb=lb if lb is not None else -GRB.INFINITY
+        ub=ub if ub is not None else GRB.INFINITY
+ 
+        if var_id in self.var_ids:
+            if force_update:
+                var = self.problem.getVarByName(var_id)
+                var.setAttr('lb', lb)
+                var.setAttr('ub', ub)
+                self.problem.update()
+        else:
+            self.problem.addVar(name=var_id, lb=lb, ub=ub)
+            self.var_ids.append(var_id)
+            self.problem.update()
+
+    
+    def add_constraint(self, constr_id, lhs, sense='=', rhs=0, force_update=True):
+        """ Add a variable to the current problem.
+        
+        Arguments:
+            constr_id : str -- constraint identifier
+            lhs : list [of (str, float)] -- variables and respective coefficients
+            sense : {'<', '=', '>'} -- default '='
+            rhs : float -- right-hand side of equation (default: 0)
+        """
+        
+        grb_sense = {'=': GRB.EQUAL,
+                     '<': GRB.LESS_EQUAL,
+                     '>': GRB.GREATER_EQUAL}
+
+        if constr_id in self.constr_ids:
+            if force_update:
+                constr = self.problem.getConstrByName(constr_id)
+                expr = quicksum([coeff*self.problem.getVarByName(r_id) for r_id, coeff in lhs])
+                constr.setAttr('lhs', expr)
+                constr.setAttr('sense', grb_sense[sense])
+                constr.setAttr('lhs', rhs)
+        else:
+            expr = quicksum([coeff*self.problem.getVarByName(r_id) for r_id, coeff in lhs])
+            self.problem.addConstr(expr, grb_sense[sense], rhs, constr_id)
+            self.constr_ids.append(constr_id)
+
+    def list_variables(self):
+        """ Get a list of the variable ids defined for the current problem.
+        
+        Returns:
+            list [of str] -- variable ids
+        """
+        return self.var_ids
+    
+    def list_constraints(self):
+        """ Get a list of the constraint ids defined for the current problem.
+        
+        Returns:
+            list [of str] -- constraint ids
+        """
+        return self.constr_ids
+    
+                    
     def solve_lp(self, objective, model=None, constraints=None, get_shadow_prices=False, get_reduced_costs=False):
         """ Solve an LP optimization problem.
         
@@ -137,8 +202,15 @@ class GurobiSolver(Solver):
         if status == Status.OPTIMAL:
             fobj = problem.ObjVal
             values = OrderedDict([(r_id, problem.getVarByName(r_id).X) for r_id in self.var_ids])
-            shadow_prices = OrderedDict([(m_id, problem.getConstrByName(m_id).Pi) for m_id in self.constr_ids]) if get_shadow_prices else None
-            reduced_costs = OrderedDict([(r_id, problem.getVarByName(r_id).RC) for r_id in self.var_ids]) if get_reduced_costs else None
+            
+            #if metabolite is disconnected no constraint will exist
+            shadow_prices = OrderedDict([(m_id, problem.getConstrByName(m_id).Pi)
+                                         for m_id in self.constr_ids 
+                                         if problem.getConstrByName(m_id)]) if get_shadow_prices else None
+            
+            reduced_costs = OrderedDict([(r_id, problem.getVarByName(r_id).RC)
+                                         for r_id in self.var_ids]) if get_reduced_costs else None
+            
             solution = Solution(status, fobj, values, shadow_prices, reduced_costs)
         else:
             solution = Solution(status)

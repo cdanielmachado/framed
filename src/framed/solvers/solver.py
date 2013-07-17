@@ -57,7 +57,50 @@ class Solver:
             model : ConstraintBasedModel
         """
         pass
+    
+    def empty_problem(self):
+        """ Create an empty problem structure.
+        To be used for manually instantiate a problem.
+        For automatic instantiation use the build_problem interface method. """
+        pass
+    
+    def add_variable(self, var_id, lb=None, ub=None):
+        """ Add a variable to the current problem.
         
+        Arguments:
+            var_id : str -- variable identifier
+            lb : float -- lower bound
+            ub : float -- upper bound
+        """
+        pass
+    
+    def add_constraint(self, constr_id, lhs, sense='=', rhs=0):
+        """ Add a variable to the current problem.
+        
+        Arguments:
+            constr_id : str -- constraint identifier
+            lhs : list [of (str, float)] -- variables and respective coefficients
+            sense : {'<', '=', '>'} -- default '='
+            rhs : float -- right-hand side of equation (default: 0)
+        """
+        pass
+
+    def list_variables(self):
+        """ Get a list of the variable ids defined for the current problem.
+        
+        Returns:
+            list [of str] -- variable ids
+        """
+        pass
+    
+    def list_constraints(self):
+        """ Get a list of the constraint ids defined for the current problem.
+        
+        Returns:
+            list [of str] -- constraint ids
+        """
+        pass
+    
     def solve_lp(self, objective, model=None, constraints=None, get_shadow_prices=False, get_reduced_costs=False):
         """ Solve an LP optimization problem.
         
@@ -92,4 +135,5 @@ class Solver:
         """
 
         # An exception is raised if the subclass does not implement this method.
-        raise Exception('Not implemented for this solver.')    
+        raise Exception('Not implemented for this solver.')
+    

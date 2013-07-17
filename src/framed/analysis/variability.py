@@ -71,7 +71,7 @@ def FVA(model, obj_percentage=0, reactions=None, constraints=None):
             variability[r_id][1] = None
         else:
             variability[r_id][1] = 0
-                
+
     return variability
 
 
