@@ -20,6 +20,7 @@
 '''
 
 from ..solvers import solver_instance
+from ..solvers.solver import Status
 
 def FBA(model, target=None, maximize=True, constraints=None, solver=None, get_shadow_prices=False, get_reduced_costs=False):
     """ Run a Flux Balance Analysis (FBA) simulation:
@@ -72,13 +73,15 @@ def pFBA(model, target=None, maximize=True, constraints=None, solver=None):
         solver = solver_instance()
         solver.build_problem(model)
     
-    for r_id, reaction in model.reactions.items():
-        if reaction.reversible:
-            pos, neg = r_id + '+', r_id + '-'
-            solver.add_variable(pos, 0, None)
-            solver.add_variable(neg, 0, None)
-            solver.add_constraint('c' + pos, [(r_id, -1), (pos, 1)], '>', 0)
-            solver.add_constraint('c' + neg, [(r_id, 1), (neg, 1)], '>', 0)                    
+    if not hasattr(solver, 'pFBA_flag'): #for speed (about 3x faster)
+        solver.pFBA_flag = True
+        for r_id, reaction in model.reactions.items():
+            if reaction.reversible:
+                pos, neg = r_id + '+', r_id + '-'
+                solver.add_variable(pos, 0, None, force_update=False)
+                solver.add_variable(neg, 0, None, force_update=False)
+                solver.add_constraint('c' + pos, [(r_id, -1), (pos, 1)], '>', 0, force_update=False)
+                solver.add_constraint('c' + neg, [(r_id, 1), (neg, 1)], '>', 0, force_update=False)                    
 #                solver.add_constraint('c' + r_id, [(r_id, 1), (pos, -1), (neg, 1)], '=', 0)                    
 
     pre_solution = FBA(model, target, maximize, constraints, solver)
@@ -98,7 +101,15 @@ def pFBA(model, target=None, maximize=True, constraints=None, solver=None):
             objective[r_id] = -1
     
     solution = solver.solve_lp(objective, constraints=constraints)
-    
+
+    #post process
+    if solution.status == Status.OPTIMAL:
+        for r_id, reaction in model.reactions.items():
+            if reaction.reversible:
+                pos, neg = r_id + '+', r_id + '-'
+                del solution.values[pos]
+                del solution.values[neg]
+                
     return solution    
 
  
@@ -185,20 +196,30 @@ def lMOMA(model, reference=None, constraints=None, solver=None):
     if not solver:
         solver = solver_instance()
         solver.build_problem(model)
-
-    for r_id in model.reactions.keys():
-        d_pos, d_neg = r_id + '_d+', r_id + '_d-'
-        solver.add_variable(d_pos, 0, None)
-        solver.add_variable(d_neg, 0, None)
-        solver.add_constraint('c' + d_pos, [(r_id, -1), (d_pos, 1)], '>', -reference[r_id])
-        solver.add_constraint('c' + d_neg, [(r_id, 1), (d_neg, 1)], '>', reference[r_id])  
+    
+    if not hasattr(solver, 'lMOMA_flag'): #for speed (about 3x faster)
+        solver.lMOMA_flag = True
+        for r_id in model.reactions.keys():
+            d_pos, d_neg = r_id + '_d+', r_id + '_d-'
+            solver.add_variable(d_pos, 0, None)
+            solver.add_variable(d_neg, 0, None)
+            solver.add_constraint('c' + d_pos, [(r_id, -1), (d_pos, 1)], '>', -reference[r_id])
+            solver.add_constraint('c' + d_neg, [(r_id, 1), (d_neg, 1)], '>', reference[r_id])  
     
     objective = dict()
     for r_id in model.reactions.keys():
-        d_pos, d_neg = r_id + '+', r_id + '-'
+        d_pos, d_neg = r_id + '_d+', r_id + '_d-'
         objective[d_pos] = -1
         objective[d_neg] = -1
     
     solution = solver.solve_lp(objective, constraints=constraints)    
+
+    #post process
+    if solution.status == Status.OPTIMAL:
+        for r_id in model.reactions.keys():
+            d_pos, d_neg = r_id + '_d+', r_id + '_d-'
+            del solution.values[d_pos] 
+            del solution.values[d_neg] 
+    
     return solution
         
