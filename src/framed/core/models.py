@@ -106,6 +106,13 @@ class StoichiometricModel:
         self.reactions = OrderedDict()
         self.compartments = OrderedDict()
         self.stoichiometry = OrderedDict()
+        self._clear_temp()
+        
+    def _clear_temp(self):
+        self._m_r_lookup = None
+        self._r_m_lookup = None
+        self._s_matrix = None
+        
         
     def add_metabolites(self, metabolites):
         """ Add a list of metabolites to the model.
@@ -126,6 +133,7 @@ class StoichiometricModel:
         """
         if metabolite.compartment in self.compartments or not metabolite.compartment:
             self.metabolites[metabolite.id] = metabolite
+            self._clear_temp()
 
     def add_reactions(self, reactions):
         """ Add a list of reactions to the model.
@@ -135,6 +143,7 @@ class StoichiometricModel:
         """
         for reaction in reactions:
             self.add_reaction(reaction)
+            self._clear_temp()
 
     def add_reaction(self, reaction):
         """ Add a single reaction to the model.
@@ -144,6 +153,7 @@ class StoichiometricModel:
             reaction : Reaction
         """
         self.reactions[reaction.id] = reaction
+        self._clear_temp()
     
     def add_compartments(self, compartments):
         """ Add a list of compartments to the model.
@@ -175,6 +185,7 @@ class StoichiometricModel:
         for m_id, r_id, coeff in stoichiometry:
             if m_id in self.metabolites and r_id in self.reactions:
                 self.stoichiometry[(m_id, r_id)] = coeff
+        self._clear_temp()
     
     def remove_metabolites(self, id_list):
         """ Remove a list of metabolites from the model.
@@ -189,6 +200,7 @@ class StoichiometricModel:
         for (m2_id, r_id) in self.stoichiometry:
             if m2_id in id_list:
                 del self.stoichiometry[(m2_id, r_id)]
+        self._clear_temp()
     
     def remove_metabolite(self, m_id):
         """ Remove a single metabolite from the model.
@@ -212,6 +224,7 @@ class StoichiometricModel:
         for (m_id, r2_id) in self.stoichiometry:
             if r2_id in id_list:
                 del self.stoichiometry[(m_id, r2_id)]
+        self._clear_temp()
     
     def remove_reaction(self, r_id):
         """ Remove a single reaction from the model.
@@ -237,7 +250,59 @@ class StoichiometricModel:
             if delete_metabolites:
                 self.remove_metabolites([m_id for m_id, metabolite in self.metabolites.items() 
                                          if metabolite.compartment == c_id]) 
+
+
+    def get_reaction_substrates(self, r_id):
+        """ Return the list of substrates for one reaction 
         
+        Arguments:
+            r_id: str -- reaction id
+
+        Returns:
+            list [of str] -- substrates list
+        """
+        table = self.reaction_metabolite_lookup_table()
+        return [m_id for m_id, coeff in table[r_id].items() if coeff < 0]
+        
+
+    def get_reaction_products(self, r_id):
+        """ Return the list of products for one reaction 
+        
+        Arguments:
+            r_id: str -- reaction id
+
+        Returns:
+            list [of str] -- products list
+        """
+        table = self.reaction_metabolite_lookup_table()
+        return [m_id for m_id, coeff in table[r_id].items() if coeff > 0]
+
+
+    def get_metabolite_inputs(self, m_id):
+        """ Return the list of input reactions for one metabolite 
+        
+        Arguments:
+            m_id: str -- metabolite id
+
+        Returns:
+            list [of str] -- input reactions list
+        """
+        table = self.metabolite_reaction_lookup_table()
+        return [r_id for r_id, coeff in table[m_id].items() if coeff > 0]
+
+
+    def get_metabolite_outputs(self, m_id):
+        """ Return the list of output reactions for one metabolite 
+        
+        Arguments:
+            m_id: str -- metabolite id
+
+        Returns:
+            list [of str] -- output reactions list
+        """
+        table = self.metabolite_reaction_lookup_table()
+        return [r_id for r_id, coeff in table[m_id].items() if coeff < 0]
+    
 
     def metabolite_reaction_lookup_table(self):
         """ Return the network topology as a nested map: metabolite id -> reaction id -> coefficient 
@@ -245,12 +310,14 @@ class StoichiometricModel:
         Returns:
             OrderedDict (of str to OrderedDict of str to float) -- lookup table
         """
-        table = OrderedDict([(m_id, OrderedDict()) for m_id in self.metabolites])
-    
-        for (m_id, r_id), coeff in self.stoichiometry.items():
-            table[m_id][r_id] = coeff
         
-        return table
+        if not self._m_r_lookup:
+            self._m_r_lookup = OrderedDict([(m_id, OrderedDict()) for m_id in self.metabolites])
+        
+            for (m_id, r_id), coeff in self.stoichiometry.items():
+                self._m_r_lookup[m_id][r_id] = coeff
+        
+        return self._m_r_lookup
  
    
     def reaction_metabolite_lookup_table(self):
@@ -259,12 +326,14 @@ class StoichiometricModel:
         Returns:
             OrderedDict (of str to OrderedDict of str to float) -- lookup table
         """
-        table = OrderedDict([(r_id, OrderedDict()) for r_id in self.reactions])
-    
-        for (m_id, r_id), coeff in self.stoichiometry.items():
-            table[r_id][m_id] = coeff
         
-        return table
+        if not self._r_m_lookup:
+            self._r_m_lookup = OrderedDict([(r_id, OrderedDict()) for r_id in self.reactions])
+        
+            for (m_id, r_id), coeff in self.stoichiometry.items():
+                self._r_m_lookup[r_id][m_id] = coeff
+        
+        return self._r_m_lookup
  
     
     def stoichiometric_matrix(self):
@@ -273,35 +342,38 @@ class StoichiometricModel:
         Returns:
             list (of list of float) -- stoichiometric matrix
         """
-        return [[self.stoichiometry[(m_id, r_id)] if (m_id, r_id) in self.stoichiometry else 0
-                 for r_id in self.reactions]
-                for m_id in self.metabolites]        
+        
+        if not self._s_matrix:
+            self._s_matrix =  [[self.stoichiometry[(m_id, r_id)] if (m_id, r_id) in self.stoichiometry else 0
+                                for r_id in self.reactions]
+                               for m_id in self.metabolites]
+        
+        return self._s_matrix
     
     
-    def print_reaction(self, r_id, reaction_names=False, metabolite_names=False, lookup_table=None):
+    def print_reaction(self, r_id, reaction_names=False, metabolite_names=False):
         """ Print a reaction to a text based representation.
         
         Arguments:
             r_id : str -- reaction id
             reaction_names : bool -- print reaction names instead of ids (default: False)
             metabolite_names : bool -- print metabolite names instead of ids (default: False)
-            lookup_table : OrderedDict -- reaction metabolite lookup table (optional, for speed) 
         
         Returns:
             str -- reaction string
         """
-        if not lookup_table: 
-            lookup_table = self.reaction_metabolite_lookup_table()
+        
+        table = self.reaction_metabolite_lookup_table()
         
         r_repr = self.reactions[r_id].name if reaction_names else r_id
         m_repr = lambda m_id: self.metabolites[m_id].name if metabolite_names else m_id
         
         res = r_repr + ': '
         res += ' + '.join([m_repr(m_id) if coeff == -1.0 else str(-coeff) + ' ' + m_repr(m_id)
-                         for m_id, coeff in lookup_table[r_id].items() if coeff < 0])
+                         for m_id, coeff in table[r_id].items() if coeff < 0])
         res += ' <-> ' if self.reactions[r_id].reversible else ' --> '
         res += ' + '.join([m_repr(m_id) if coeff == 1.0 else str(coeff) + ' ' + m_repr(m_id)
-                         for m_id, coeff in lookup_table[r_id].items() if coeff > 0])
+                         for m_id, coeff in table[r_id].items() if coeff > 0])
         return res   
     
     def to_string(self, reaction_names=False, metabolite_names=False):
@@ -310,8 +382,7 @@ class StoichiometricModel:
         Returns:
             str -- model string
         """ 
-        table = self.reaction_metabolite_lookup_table()
-        return '\n'.join([self.print_reaction(r_id, reaction_names, metabolite_names, table)
+        return '\n'.join([self.print_reaction(r_id, reaction_names, metabolite_names)
                           for r_id in self.reactions])
     
     def __repr__(self):
@@ -331,6 +402,7 @@ class ConstraintBasedModel(StoichiometricModel):
         """
         StoichiometricModel.__init__(self, model_id)
         self.bounds = OrderedDict()
+        self.biomass_reaction = None
     
     def set_bounds(self, bounds_list):
         """ Define flux bounds for a set of reactions
@@ -401,17 +473,16 @@ class ConstraintBasedModel(StoichiometricModel):
         for r_id in id_list:
             del self.bounds[r_id]
 
-    def print_reaction(self, r_id, reaction_names=False, metabolite_names=False, lookup_table=None):
+    def print_reaction(self, r_id, reaction_names=False, metabolite_names=False):
         """ Print a reaction to a text based representation.
         
         Arguments:
             r_id : str -- reaction id
-            lookup_table : OrderedDict -- reaction metabolite lookup table (optional, for speed) 
         
         Returns:
             str -- reaction string
         """
-        res = StoichiometricModel.print_reaction(self, r_id, reaction_names, metabolite_names, lookup_table)
+        res = StoichiometricModel.print_reaction(self, r_id, reaction_names, metabolite_names)
         lb, ub = self.bounds[r_id]
         rev = self.reactions[r_id].reversible
         if lb != None and (rev or lb != 0.0) or ub != None:
@@ -425,8 +496,19 @@ class ConstraintBasedModel(StoichiometricModel):
         Returns:
             str -- first reaction id that matches (or else None)
         """
-        matches = [r_id for r_id in self.reactions if 'biomass' in r_id.lower()]
-        return matches[0] if matches else None
+        
+        if not self.biomass_reaction:
+            matches = [r_id for r_id in self.reactions if 'biomass' in r_id.lower()]
+        
+            if matches:
+                self.biomass_reaction = matches[0]
+            else:
+                print 'No biomass reaction detected.'
+    
+            if len(matches) > 1:
+                print 'Multiple biomass reactions detected (first selected):', " ".join(matches)
+                
+        return self.biomass_reaction
 
 
 class GPRConstrainedModel(ConstraintBasedModel):
