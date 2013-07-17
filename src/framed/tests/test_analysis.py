@@ -19,17 +19,13 @@ class FVATest(unittest.TestCase):
     """ Test flux variability analysis """
 
     def test_fva_full(self):
-        model = load_sbml_model(SMALL_TEST_MODEL, kind=GPR_CONSTRAINED)
-        fix_bigg_model(model)
-        variability = FVA(model)
+        variability = FVA(ec_core_model)
         self.assertTrue(all([lb <= ub if lb is not None and ub is not None else True
                              for lb, ub in variability.values()]))
-        self.assertEqual(len(model.reactions), len(variability))
+        self.assertEqual(len(ec_core_model.reactions), len(variability))
 
     def test_fva_single(self):
-        model = load_sbml_model(SMALL_TEST_MODEL, kind=GPR_CONSTRAINED)
-        fix_bigg_model(model)
-        variability = FVA(model, reactions=['R_EX_ac_e'])
+        variability = FVA(ec_core_model, reactions=['R_EX_ac_e'])
         self.assertTrue(all([lb <= ub if lb is not None and ub is not None else True
                              for lb, ub in variability.values()]))
         self.assertEqual(1, len(variability))
@@ -42,10 +38,30 @@ class EnvelopeTest(unittest.TestCase):
         flux_envelope(ec_core_model, 'R_EX_glc_e', 'R_EX_ac_e', steps=5)
 
     def test_production_envelope(self):
-        xvals0, ymins0, ymaxs0 = production_envelope(ec_core_model, 'R_EX_ac_e', steps=5)
-        xvals1, ymins1, ymaxs1 = flux_envelope(ec_core_model, ec_core_model.detect_biomass_reaction(),
-                                               'R_EX_ac_e', steps=5)
-        self.assertEqual([xvals0, ymins0, ymaxs0], [xvals1, ymins1, ymaxs1])
+        r_target = 'R_EX_ac_e'
+        r_biomass = ec_core_model.detect_biomass_reaction()
+
+        xvals0, ymins0, ymaxs0 = production_envelope(ec_core_model, r_target, steps=5)
+        xvals1, ymins1, ymaxs1 = flux_envelope(ec_core_model, r_x=r_biomass, r_y=r_target, steps=5)
+
+        self.assertEqual(xvals0, xvals1)
+        self.assertEqual(ymins0, ymins1)
+        self.assertEqual(ymaxs0, ymaxs1)
+
+    def test_production_envelope_with_constraints(self):
+        r_target = 'R_EX_ac_e'
+        r_biomass = ec_core_model.detect_biomass_reaction()
+
+        xvals0, ymins0, ymaxs0 = production_envelope(ec_core_model, r_target, steps=5, constraints={'R_EX_o2_e': (0, 0)})
+
+        ec_core_model.bounds['R_EX_o2_e'] = (0, 0)
+        xvals1, ymins1, ymaxs1 = production_envelope(ec_core_model, r_target, steps=5)
+
+        self.assertEqual(xvals0, xvals1)
+        self.assertEqual(ymins0, ymins1)
+        self.assertEqual(ymaxs0, ymaxs1)
+
+
 
 
 class dFBATest(unittest.TestCase):

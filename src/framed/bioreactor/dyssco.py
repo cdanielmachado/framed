@@ -28,7 +28,7 @@ from ..analysis.variability import production_envelope
 from base import *
 
 
-def make_envelope_strains(base_organism, r_substrate, r_target, N):
+def make_envelope_strains(base_organism, r_substrate, r_target, N=10, constraints=None):
     """
     Create N strains along the product envelope.
         (Used for Steps 1 and 2 of DySScO strategy)
@@ -38,6 +38,7 @@ def make_envelope_strains(base_organism, r_substrate, r_target, N):
         r_substrate: str -- the rxn id of the substrate
         r_target: str -- the rxn id of the target product
         N: int -- the number of strains to be generated along the production envelope
+        constraints: dict -- custom constraints
 
     Returns:
         strains: list of Organism -- N strains that are fixed to the production envelope
@@ -46,8 +47,12 @@ def make_envelope_strains(base_organism, r_substrate, r_target, N):
     base_model = base_organism.model
     strains = []
 
+    # add custom constraints to base_organism
+    if constraints:
+        base_organism.fba_constraints.update(constraints)
+
     # create the product envelope
-    xvals, ymins, ymaxs = production_envelope(base_model, r_target, steps=N)
+    xvals, ymins, ymaxs = production_envelope(base_model, r_target, steps=N, constraints=constraints)
 
     # finding the maximum r_substrate uptake rate
     if r_substrate in base_organism.fba_constraints:
@@ -147,6 +152,7 @@ def calculate_performance(strain, bioreactor, r_substrate, r_target, t0, tf, dt,
     performance = {'strain': strain}
     r_biomass = strain.model.detect_biomass_reaction()
 
+    print strain.fba_constraints
     # perform FBA simulation
     if verbose:
         print 'Perform FBA simulation.'
