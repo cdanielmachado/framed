@@ -276,8 +276,21 @@ class StoichiometricModel:
         """
         table = self.reaction_metabolite_lookup_table()
         return [m_id for m_id, coeff in table[r_id].items() if coeff > 0]
+        
 
+    def get_reaction_neighbours(self, r_id):
+        """ Return the list of metabolites connected to a reaction 
+        
+        Arguments:
+            r_id: str -- reaction id
 
+        Returns:
+            list [of str] -- metabolites list
+        """
+        table = self.reaction_metabolite_lookup_table()
+        return [m_id for m_id, coeff in table[r_id].items() if coeff != 0]
+    
+    
     def get_metabolite_inputs(self, m_id):
         """ Return the list of input reactions for one metabolite 
         
@@ -304,6 +317,19 @@ class StoichiometricModel:
         return [r_id for r_id, coeff in table[m_id].items() if coeff < 0]
     
 
+    def get_metabolite_neighbours(self, m_id):
+        """ Return the list of reactions connected to a metabolite 
+        
+        Arguments:
+            m_id: str -- metabolite id
+
+        Returns:
+            list [of str] -- reactions list
+        """
+        table = self.metabolite_reaction_lookup_table()
+        return [r_id for r_id, coeff in table[m_id].items() if coeff != 0]
+    
+    
     def metabolite_reaction_lookup_table(self):
         """ Return the network topology as a nested map: metabolite id -> reaction id -> coefficient 
         
