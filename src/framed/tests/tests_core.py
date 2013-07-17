@@ -33,6 +33,10 @@ MOMA_GENE_KO = ['b0721']
 MOMA_GROWTH_RATE = 0.5745
 MOMA_SUCC_EX = 4.467
 
+LMOMA_GENE_KO = ['b0721']
+LMOMA_GROWTH_RATE = 0.5066
+LMOMA_SUCC_EX = 5.311
+
 ESSENTIAL_GENES = ['b0720', 'b1136', 'b1779', 'b2415', 'b2416', 'b2779', 'b2926']
 
 
@@ -79,7 +83,7 @@ class pFBATest(unittest.TestCase):
     """ Test pFBA simulation. """
     
     def testRun(self):
-        model = load_sbml_model(LARGE_TEST_MODEL, kind=GPR_CONSTRAINED)
+        model = load_sbml_model(SMALL_TEST_MODEL, kind=GPR_CONSTRAINED)
         fix_bigg_model(model)
         solution1 = pFBA(model)
         solution2 = FBA(model)
@@ -91,7 +95,6 @@ class pFBATest(unittest.TestCase):
         norm1 = sum([abs(solution1.values[r_id]) for r_id in model.reactions])
         norm2 = sum([abs(solution2.values[r_id]) for r_id in model.reactions])
         self.assertLessEqual(norm1, norm2)
-        print norm1, norm2
         
 class FBAFromPlainTextTest(unittest.TestCase):
     """ Test FBA simulation from plain text model. """
@@ -187,7 +190,18 @@ class GeneDeletionMOMATest(unittest.TestCase):
         self.assertEqual(solution.status, Status.OPTIMAL)
         self.assertAlmostEqual(solution.values[model.detect_biomass_reaction()], MOMA_GROWTH_RATE, 3)
         self.assertAlmostEqual(solution.values['R_EX_succ_e'], MOMA_SUCC_EX, 3)
-                
+
+class GeneDeletionLMOMATest(unittest.TestCase):
+    """ Test gene deletion with MOMA. """
+    
+    def testRun(self):
+        model = load_sbml_model(SMALL_TEST_MODEL, kind=GPR_CONSTRAINED)
+        fix_bigg_model(model)
+        solution = gene_deletion(model, LMOMA_GENE_KO, 'lMOMA')
+        self.assertEqual(solution.status, Status.OPTIMAL)
+        self.assertAlmostEqual(solution.values[model.detect_biomass_reaction()], LMOMA_GROWTH_RATE, 3)
+        self.assertAlmostEqual(solution.values['R_EX_succ_e'], LMOMA_SUCC_EX, 3)
+                        
 class GeneEssentialityTest(unittest.TestCase):
     """ Test gene essentiality. """
     
@@ -215,15 +229,15 @@ class FluxEnvelopeTest(unittest.TestCase):
     """ Test flux envelope plotting method. """
     
     def testRun(self):
-        model = load_sbml_model(LARGE_TEST_MODEL, kind=GPR_CONSTRAINED)
+        model = load_sbml_model(SMALL_TEST_MODEL, kind=GPR_CONSTRAINED)
         fix_bigg_model(model)
         r_x, r_y = 'R_EX_o2_e', 'R_EX_glc_e'
         plot_flux_envelope(model, r_x, r_y)
 
                             
 def suite():
-    #tests = [SBMLTest, PlainTextIOTest, FBATest, pFBATest, FBAFromPlainTextTest, FVATest, IrreversibleModelFBATest, SimplifiedModelFBATest, TransformationCommutativityTest, GeneDeletionFBATest, GeneDeletionMOMATest, GeneEssentialityTest]
-    tests = [pFBATest]
+    tests = [SBMLTest, PlainTextIOTest, FBATest, pFBATest, FBAFromPlainTextTest, FVATest, IrreversibleModelFBATest, SimplifiedModelFBATest, TransformationCommutativityTest, GeneDeletionFBATest, GeneDeletionMOMATest, GeneEssentialityTest]
+    #tests = [GeneDeletionLMOMATest]
     
     test_suite = unittest.TestSuite()
     for test in tests:

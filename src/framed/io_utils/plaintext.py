@@ -161,5 +161,5 @@ def write_model_to_file(model, filename):
         with open(filename, 'w') as stream:
             stream.write(INSTRUCTIONS)
             stream.write(repr(model))
-    except:
-        pass
+    except Exception as e:
+        print e
