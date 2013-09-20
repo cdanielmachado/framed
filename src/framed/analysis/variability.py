@@ -63,7 +63,8 @@ def FVA(model, obj_percentage=0, reactions=None, constraints=None):
             variability[r_id][0] = None
         else:
             variability[r_id][0] = 0
-
+    
+    for r_id in reactions:
         solution = FBA(model, r_id, True, constraints=_constraints, solver=solver)
         if solution.status:
             variability[r_id][1] = solution.fobj
