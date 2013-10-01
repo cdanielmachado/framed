@@ -20,9 +20,10 @@ Implementation of a Gurobi based solver interface.
    
 '''
 
+import tempfile
 from collections import OrderedDict
 from .solver import Solver, Solution, Status
-from gurobipy import setParam, Model as GurobiModel, GRB, quicksum
+from gurobipy import setParam, Model as GurobiModel, GRB, quicksum, read
 
 setParam("OutputFlag", 0)
 
@@ -36,7 +37,23 @@ class GurobiSolver(Solver):
     
     def __init__(self):
         Solver.__init__(self)
+        self.var_ids = None
+        self.constr_ids = None
 
+    def __getstate__(self):
+        tmp_file = tempfile.mktemp(suffix=".lp")
+        self.problem.update()
+        self.problem.write(tmp_file)
+        cplex_form = open(tmp_file).read()
+        repr_dict = {'var_ids': self.var_ids, 'constr_ids': self.constr_ids, 'cplex_form': cplex_form}
+        return repr_dict
+
+    def __setstate__(self, repr_dict):
+        tmp_file = tempfile.mktemp(suffix=".lp")
+        open(tmp_file, 'w').write(repr_dict['cplex_form'])
+        self.problem = read(tmp_file)
+        self.var_ids = repr_dict['var_ids']
+        self.constr_ids = repr_dict['constr_ids']
         
     def build_problem(self, model):
         """ Create and store solver-specific internal structure for the given model.

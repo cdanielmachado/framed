@@ -50,6 +50,15 @@ class Solver:
     def __init__(self):
         self.problem = None
 
+    def __repr__(self):
+        pass
+
+    def __getstate__(self):
+        pass
+
+    def __setstate__(self):
+        pass
+
     def build_problem(self, model):
         """ Create and store solver-specific internal structure for the given model.
         
