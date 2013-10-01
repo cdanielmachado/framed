@@ -22,7 +22,7 @@ TODO: Import/export of bounds and GPR follows the BiGG model format, consider ch
 """
 from ..core.models import StoichiometricModel, ConstraintBasedModel, GPRConstrainedModel, Metabolite, Reaction, Gene, Compartment
 
-from libsbml import SBMLReader, SBMLWriter, SBMLDocument 
+from libsbml import SBMLReader, SBMLWriter, SBMLDocument, XMLNode
 
 
 STOICHIOMETRIC = 'Stoichiometric'
@@ -221,5 +221,9 @@ def _save_bounds(model, sbml_model):
 def _save_gpr(model, sbml_model):
     for r_id in model.reactions:
         sbml_reaction = sbml_model.getReaction(r_id)   
-        sbml_reaction.appendNotes(GPR_TAG + ' ' + model.rules[r_id])
+        #sbml_reaction.appendNotes(GPR_TAG + ' ' + model.rules[r_id])
+        note = XMLNode.convertStringToXMLNode('<html><p>' + GPR_TAG + ' ' + model.rules[r_id] + '</p></html>')
+        note.getNamespaces().add('http://www.w3.org/1999/xhtml')
+        sbml_reaction.setNotes(note)
+
         

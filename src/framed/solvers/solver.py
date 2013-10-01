@@ -41,6 +41,31 @@ class Solution:
         self.shadow_prices = shadow_prices
         self.reduced_costs = reduced_costs
 
+    def __repr__(self):
+        status_codes = {Status.OPTIMAL: 'Optimal',
+                        Status.UNKNOWN: 'Unknown',
+                        Status.UNBOUNDED: 'Unbounded',
+                        Status.UNFEASIBLE: 'Infeasible'}
+
+        return 'Status: {}\nObjective: {}\n'.format(status_codes[self.status], self.fobj)
+
+    def print_values(self, zeros=False, pattern=None):
+        """ Print solution results.
+
+        Arguments:
+            zeros : bool - show zero values (default: False)
+            pattern: str - show only reactions that contain pattern (optional)
+        """
+
+        values = self.values.items()
+
+        if not zeros:
+            values = filter(lambda (id, val): val, values)
+
+        if pattern:
+            values = filter(lambda (id, val): pattern in id, values)
+
+        return '\n'.join(['{}\t{}'.format(id, val) for (id, val) in values])
 
 class Solver:
     """ Abstract class representing a generic solver.
