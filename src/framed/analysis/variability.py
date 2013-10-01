@@ -66,7 +66,7 @@ def FVA(model, obj_percentage=0, reactions=None, constraints=None):
     
     for r_id in reactions:
         solution = FBA(model, r_id, True, constraints=_constraints, solver=solver)
-        if solution.status:
+        if solution.status == Status.OPTIMAL:
             variability[r_id][1] = solution.fobj
         elif solution.status == Status.UNBOUNDED:
             variability[r_id][1] = None
