@@ -21,7 +21,6 @@ Implementation of a Gurobi based solver interface.
 '''
 
 import tempfile
-from copy import deepcopy
 from collections import OrderedDict
 from .solver import Solver, Solution, Status
 from gurobipy import setParam, Model as GurobiModel, GRB, quicksum, read
@@ -46,8 +45,6 @@ class GurobiSolver(Solver):
         self.problem.update()
         self.problem.write(tmp_file)
         cplex_form = open(tmp_file).read()
-        # repr_dict = deepcopy(self.__dict__)
-        # repr_dict['problem'] = cplex_form
         repr_dict = {'var_ids': self.var_ids, 'constr_ids': self.constr_ids, 'cplex_form': cplex_form}
         return repr_dict
 
