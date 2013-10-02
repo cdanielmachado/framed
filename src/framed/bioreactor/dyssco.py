@@ -161,7 +161,6 @@ def calculate_performance(strain, bioreactor, r_substrate, r_target, t0, tf, dt,
         performance['productivity'] = 0
         performance['yield'] = - v_target/v_substrate
 
-
         for r_id in additional_yields:
             id = 'yield_' + r_id.lstrip('R_EX_').rstrip('_e')
             performance[id] = - fba_solution.values[r_id] / v_substrate
@@ -221,22 +220,3 @@ def calculate_performance(strain, bioreactor, r_substrate, r_target, t0, tf, dt,
         performance['dfba_solution'] = dfba_solution
 
     return performance
-
-
-def performances2metrics(performances):
-    """
-    get a dictionary of metrics from a list of performances
-    Arguments:
-        performances: Dict (of Dict) -- each list entry contains a dictionary containing the performance metrics
-                                        of a strain
-
-    Returns:
-        metrics: Dict (of list) -- the performance metrics in form of a dictionary of lists
-    """
-    performance_metrics = {}
-    metrics = performances[0].keys()
-
-    for metric in metrics:
-        performance_metrics[metric] = [performance[metric] for performance in performances]
-
-    return performance_metrics
