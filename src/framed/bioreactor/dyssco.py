@@ -72,8 +72,12 @@ def make_envelope_strains(base_organism, r_substrate, r_target, N=10, constraint
 
 
 def calculate_performances(strains, bioreactor, r_substrate, r_target, t0, tf, dt, initial_conditions=[],
+<<<<<<< HEAD
                           dfba_solver='dopri5', additional_yields=[], verbose=False, get_dfba_solution=False,
                           func_dfba2yield=None):
+=======
+                          dfba_solver='dopri5', additional_yields=[], verbose=False, save_dfba_solution=False):
+>>>>>>> master
     """
     calculates the performances of a list of strains in a given bioreactor
 
@@ -96,23 +100,38 @@ def calculate_performances(strains, bioreactor, r_substrate, r_target, t0, tf, d
     Returns:
         performances: list (of Dict) -- a list of dictionaries, each entry contains the calculated performance metrics
         of a strain
+<<<<<<< HEAD
+=======
+
+    Conditional Returns:
+        dfba_solutions: list (of Dict) -- a list of dictionaries containing the dFBA solutions
+                                         (this is returned only if save_dfba_solution is set to True)
+>>>>>>> master
     """
 
     performances = []
-    dfba_solutions = []
 
     for strain in strains:
         performance = calculate_performance(strain, bioreactor, r_substrate, r_target, t0, tf, dt,
+<<<<<<< HEAD
                                                 initial_conditions, dfba_solver, additional_yields, verbose,
                                                 get_dfba_solution, func_dfba2yield)
+=======
+                                                               initial_conditions, dfba_solver, additional_yields,
+                                                               verbose, save_dfba_solution)
+>>>>>>> master
         performances.append(performance)
 
     return performances
 
 
 def calculate_performance(strain, bioreactor, r_substrate, r_target, t0, tf, dt, initial_conditions=[],
+<<<<<<< HEAD
                           dfba_solver='vode', additional_yields=[], verbose=False, get_dfba_solution=False,
                           func_dfba2yield=None):
+=======
+                          dfba_solver='dopri5', additional_yields=[], verbose=False, save_dfba_solution=False):
+>>>>>>> master
     """
     calculates the performances of a list of strains in a given bioreactor
 
@@ -134,10 +153,22 @@ def calculate_performance(strain, bioreactor, r_substrate, r_target, t0, tf, dt,
 
     Returns:
         performance: Dict -- contains the calculated performance metrics of a strain
+<<<<<<< HEAD
     """
     performance = {'strain_id': strain.id}
     r_biomass = strain.model.detect_biomass_reaction()
 
+=======
+
+    Conditional Returns:
+        dfba_solution: Dict -- contains the dFBA solutions
+                            (this is returned only if save_dfba_solution is set to True)
+    """
+    performance = {'strain': strain.id}
+    r_biomass = strain.model.detect_biomass_reaction()
+
+    #print strain.fba_constraints
+>>>>>>> master
     # perform FBA simulation
     if verbose:
         print 'Performing FBA simulation.'
@@ -153,6 +184,7 @@ def calculate_performance(strain, bioreactor, r_substrate, r_target, t0, tf, dt,
     v_target = fba_solution.values[r_target]
     v_substrate = fba_solution.values[r_substrate]
 
+<<<<<<< HEAD
     # if the strain does not grow, set growth, titer, productivity to zero, and calculate yield from FBA
     if v_biomass <= 10**-6:
         performance['growth'] = 0
@@ -178,14 +210,26 @@ def calculate_performance(strain, bioreactor, r_substrate, r_target, t0, tf, dt,
         performance['productivity'] = 0
         performance['yield'] = 0
 
+=======
+    # if the strain does not grow or does not produce target product, set yield, titer, productivity to zero
+    if (v_biomass <= 0) or (v_target <= 0):
+        performance['growth_rate'] = v_biomass
+        performance['product_titer'] = 0
+        performance['productivity'] = 0
+        performance['product_yield'] = abs(v_target / v_substrate)
+        performance['biomass_yield'] = abs(v_biomass / v_substrate)
+>>>>>>> master
         for r_id in additional_yields:
             id = 'yield_' + r_id.lstrip('R_EX_').rstrip('_e')
             performance[id] = 0
         dfba_solution = None
 
+<<<<<<< HEAD
         if verbose:
             print 'none producing'
 
+=======
+>>>>>>> master
     # if the strain both grows and produces, perform dFBA simulation, and calculate yield, titer, productivity
     else:
         # perform dFBA simulation
@@ -201,6 +245,7 @@ def calculate_performance(strain, bioreactor, r_substrate, r_target, t0, tf, dt,
         P = T/dfba_solution['time'][index]
 
         # calculate yield from dFBA solution if the method is known, otherwise calculate yield using FBA
+<<<<<<< HEAD
         if func_dfba2yield is None:
             Y = - v_target / v_substrate
         else:
@@ -209,14 +254,26 @@ def calculate_performance(strain, bioreactor, r_substrate, r_target, t0, tf, dt,
         performance['growth'] = v_biomass
         performance['yield_biomass'] = - v_biomass/v_substrate
         performance['titer'] = T
+=======
+        if hasattr(bioreactor, 'calculate_yield_from_dfba'):
+            Y = bioreactor.calculate_yield_from_dfba(dfba_solution, r_substrate, r_target)
+        else:
+            Y = abs(v_target / v_substrate)
+
+
+        performance['growth_rate'] = v_biomass
+        performance['product_titer'] = T
+>>>>>>> master
         performance['productivity'] = P
-        performance['yield'] = Y
+        performance['product_yield'] = Y
+        performance['biomass_yield'] = abs(v_biomass / v_substrate)
 
         # calculate additional yields
         for r_id in additional_yields:
             id = 'yield_' + r_id.lstrip('R_EX_').rstrip('_e')
-            performance[id] = - fba_solution.values[r_id] / v_substrate
+            performance[id] = abs(fba_solution.values[r_id] / v_substrate)
 
+<<<<<<< HEAD
     if get_dfba_solution:
         performance['dfba_solution'] = dfba_solution
 
@@ -235,8 +292,12 @@ def performances2metrics(performances):
     """
     performance_metrics = {}
     metrics = performances[0].keys()
+=======
+    if save_dfba_solution:
+        performance['dfba_solution'] = dfba_solution
+    else:
+        performance['dfba_solution'] = None
+>>>>>>> master
 
-    for metric in metrics:
-        performance_metrics[metric] = [performance[metric] for performance in performances]
+    return performance
 
-    return performance_metrics

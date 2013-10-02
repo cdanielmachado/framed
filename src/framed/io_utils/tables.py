@@ -35,24 +35,30 @@ def read_csv_table(filename, row_names=False, column_names=False, datatype=str, 
         [row names,] [column names,] data -- the data and optionally row and column names
     """  
     
+    def cast(x):
+        try:
+            return datatype(x)
+        except:
+            return None
+    
     with open(filename) as f:
         r = reader(f, delimiter=delimiter)
         table = [line for line in r]
     if row_names and column_names:
         rows = [line[0] for line in table[1:]]
         columns = table[0][1:]
-        data = [map(datatype, line[1:]) for line in table[1:]]
+        data = [map(cast, line[1:]) for line in table[1:]]
         return rows, columns, data
     elif row_names:
         rows = [line[0] for line in table]
-        data = [map(datatype, line[1:]) for line in table]
+        data = [map(cast, line[1:]) for line in table]
         return rows, data
     elif column_names:
         columns = table[0]
-        data = [map(datatype, line) for line in table[1:]]
+        data = [map(cast, line) for line in table[1:]]
         return columns, data
     else:
-        data = [map(datatype, line) for line in table]
+        data = [map(cast, line) for line in table]
         return data
 
 def write_csv_table(filename, data, row_names=None, column_names=None, delimiter=','):
