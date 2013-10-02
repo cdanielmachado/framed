@@ -34,13 +34,13 @@ class Metabolite:
         Arguments:
             elem_id : String -- a valid unique identifier
             name : String -- common metabolite name
-            compartment : String -- id of the compartment containing the metabolite
+            compartment : String -- compartment containing the metabolite
         """
         self.id = elem_id
         self.name = name
         self.compartment = compartment
 
-    def __repr__(self):
+    def __str__(self):
         return self.name if self.name else self.id
 
 class Reaction:
@@ -56,7 +56,7 @@ class Reaction:
         self.name = name
         self.reversible = reversible
 
-    def __repr__(self):
+    def __str__(self):
         return self.name if self.name else self.id
 
 
@@ -72,7 +72,7 @@ class Gene:
         self.id = elem_id
         self.name = name
 
-    def __repr__(self):
+    def __str__(self):
         return self.name if self.name else self.id
 
 class Compartment:
@@ -87,7 +87,7 @@ class Compartment:
         self.id = elem_id
         self.name = name
 
-    def __repr__(self):
+    def __str__(self):
         return self.name if self.name else self.id
             
 
@@ -411,7 +411,7 @@ class StoichiometricModel:
         return '\n'.join([self.print_reaction(r_id, reaction_names, metabolite_names)
                           for r_id in self.reactions])
     
-    def __repr__(self):
+    def __str__(self):
         return self.to_string()
     
     

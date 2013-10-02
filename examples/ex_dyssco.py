@@ -52,9 +52,8 @@ br.set_initial_conditions(Vinit, Xinit, Sinit)
 
 #calculating performances
 
-performances = dyssco.calculate_performances(strains, br, 'R_EX_glc_e', 'R_EX_1_3_pdo_e', 0, 20, 1, verbose=True,
-                                             additional_yields=['R_EX_co2_e', 'R_EX_nh4_e'], get_dfba_solution=True,
-                                             dfba_solver='vode')
+performances = dyssco.calculate_performances(strains, br, 'R_EX_glc_e', 'R_EX_1_3_pdo_e', 0, 20, 0.1, verbose=True,
+                                             additional_yields=['R_EX_co2_e', 'R_EX_nh4_e'])
 
 
 metrics = dyssco.performances2metrics(performances)
