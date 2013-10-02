@@ -99,7 +99,6 @@ def calculate_performances(strains, bioreactor, r_substrate, r_target, t0, tf, d
     """
 
     performances = []
-    dfba_solutions = []
 
     for strain in strains:
         performance = calculate_performance(strain, bioreactor, r_substrate, r_target, t0, tf, dt,
@@ -155,11 +154,11 @@ def calculate_performance(strain, bioreactor, r_substrate, r_target, t0, tf, dt,
 
     # if the strain does not grow, set growth, titer, productivity to zero, and calculate yield from FBA
     if v_biomass <= 10**-6:
-        performance['growth'] = 0
-        performance['yield_biomass'] = 0
-        performance['titer'] = 0
+        performance['growth_rate'] = 0
+        performance['biomass_yield'] = 0
+        performance['product_titer'] = 0
         performance['productivity'] = 0
-        performance['yield'] = - v_target/v_substrate
+        performance['product_yield'] = - v_target/v_substrate
 
         for r_id in additional_yields:
             id = 'yield_' + r_id.lstrip('R_EX_').rstrip('_e')
@@ -171,11 +170,11 @@ def calculate_performance(strain, bioreactor, r_substrate, r_target, t0, tf, dt,
 
     # if the strain grows but does not produce, set yield, titer, productivity to zero, and calculate growth from FBA
     elif v_target <= 10**-6:
-        performance['growth'] = v_biomass
-        performance['yield_biomass'] = - v_biomass/v_substrate
-        performance['titer'] = 0
+        performance['growth_rate'] = v_biomass
+        performance['biomass_yield'] = - v_biomass/v_substrate
+        performance['product_titer'] = 0
         performance['productivity'] = 0
-        performance['yield'] = 0
+        performance['product_yield'] = 0
 
         for r_id in additional_yields:
             id = 'yield_' + r_id.lstrip('R_EX_').rstrip('_e')
@@ -205,11 +204,11 @@ def calculate_performance(strain, bioreactor, r_substrate, r_target, t0, tf, dt,
         else:
             Y = func_dfba2yield(dfba_solution)
 
-        performance['growth'] = v_biomass
-        performance['yield_biomass'] = - v_biomass/v_substrate
-        performance['titer'] = T
+        performance['growth_rate'] = v_biomass
+        performance['biomass_yield'] = - v_biomass/v_substrate
+        performance['product_titer'] = T
         performance['productivity'] = P
-        performance['yield'] = Y
+        performance['product_yield'] = Y
 
         # calculate additional yields
         for r_id in additional_yields:
