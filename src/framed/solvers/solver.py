@@ -49,23 +49,63 @@ class Solution:
 
         return 'Status: {}\nObjective: {}\n'.format(status_codes[self.status], self.fobj)
 
-    def print_values(self, zeros=False, pattern=None):
-        """ Print solution results.
+    
+    def show_values(self, zeros=False, pattern=None):
+        """ Show solution results.
 
         Arguments:
             zeros : bool - show zero values (default: False)
             pattern: str - show only reactions that contain pattern (optional)
+            
+        Returns:
+            str : printed table with variable values (and reduced costs if calculated) 
         """
-
+        
+        if not self.values:
+            return None
+        
         values = self.values.items()
 
         if not zeros:
-            values = filter(lambda (id, val): val, values)
+            values = filter(lambda (r_id, val): val, values)
 
         if pattern:
-            values = filter(lambda (id, val): pattern in id, values)
+            values = filter(lambda (r_id, val): pattern in r_id, values)
+            
+        if self.reduced_costs:
+            entries = ['{}\t{}\t({})'.format(r_id, val, self.reduced_costs[r_id]) for (r_id, val) in values]
+        else:
+            entries = ['{}\t{}'.format(r_id, val) for (r_id, val) in values]
 
-        return '\n'.join(['{}\t{}'.format(id, val) for (id, val) in values])
+        return '\n'.join(entries)
+
+    
+    def show_shadow_prices(self, zeros=False, pattern=None):
+        """ Show shadow prices results.
+
+        Arguments:
+            zeros : bool - show zero values (default: False)
+            pattern: str - show only metabolites that contain pattern (optional)
+        
+        Returns:
+            str : printed table with shadow prices 
+        """
+        
+        if not self.shadow_prices:
+            return None
+        
+        values = self.shadow_prices.items()
+
+        if not zeros:
+            values = filter(lambda (m_id, val): val, values)
+
+        if pattern:
+            values = filter(lambda (m_id, val): pattern in m_id, values)
+            
+        entries = ['{}\t{}'.format(m_id, val) for (m_id, val) in values]
+
+        return '\n'.join(entries)    
+
 
 class Solver:
     """ Abstract class representing a generic solver.
