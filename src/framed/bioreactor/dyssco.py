@@ -72,7 +72,7 @@ def make_envelope_strains(base_organism, r_substrate, r_target, N=10, constraint
 
 
 def calculate_performances(strains, bioreactor, r_substrate, r_target, t0, tf, dt, initial_conditions=[],
-                          dfba_solver='dopri5', additional_yields=[], verbose=False, get_dfba_solution=False,
+                          dfba_solver='dopri5', additional_yields=[], verbose=False, save_dfba_solution=False,
                           func_dfba2yield=None):
     """
     calculates the performances of a list of strains in a given bioreactor
@@ -90,7 +90,7 @@ def calculate_performances(strains, bioreactor, r_substrate, r_target, t0, tf, d
         additional_yields: list (of str) -- the reaction ids of the additional yields (yields other than target yield)
                                             to be calculated.
         verbose: bool -- Verbosity control.  (default: False).
-        get_dfba_solution: bool -- controls whether dfba solutions are returned (default: False)
+        save_dfba_solution: bool -- controls whether dfba solutions are returned (default: False)
         func_dfba2yield: function -- if None, yield is calculated from FBA solutions.
                                      if a function is passed in, yield is calculated from dFBA solutions.
     Returns:
@@ -103,14 +103,14 @@ def calculate_performances(strains, bioreactor, r_substrate, r_target, t0, tf, d
     for strain in strains:
         performance = calculate_performance(strain, bioreactor, r_substrate, r_target, t0, tf, dt,
                                                 initial_conditions, dfba_solver, additional_yields, verbose,
-                                                get_dfba_solution, func_dfba2yield)
+                                                save_dfba_solution, func_dfba2yield)
         performances.append(performance)
 
     return performances
 
 
 def calculate_performance(strain, bioreactor, r_substrate, r_target, t0, tf, dt, initial_conditions=[],
-                          dfba_solver='vode', additional_yields=[], verbose=False, get_dfba_solution=False,
+                          dfba_solver='vode', additional_yields=[], verbose=False, save_dfba_solution=False,
                           func_dfba2yield=None):
     """
     calculates the performances of a list of strains in a given bioreactor
@@ -128,7 +128,7 @@ def calculate_performance(strain, bioreactor, r_substrate, r_target, t0, tf, dt,
         additional_yields: list (of str) -- the reaction ids of the additional yields (yields other than target yield)
                                             to be calculated.
         verbose: bool -- Verbosity control.  (default: False).
-        get_dfba_solution: bool -- controls whether dfba solutions are returned (default: False)
+        save_dfba_solution: bool -- controls whether dfba solutions are returned (default: False)
         func_dfba2yield: function -- a function used to calculate yield from dfba solutions
 
     Returns:
@@ -215,7 +215,7 @@ def calculate_performance(strain, bioreactor, r_substrate, r_target, t0, tf, dt,
             id = 'yield_' + r_id.lstrip('R_EX_').rstrip('_e')
             performance[id] = - fba_solution.values[r_id] / v_substrate
 
-    if get_dfba_solution:
+    if save_dfba_solution:
         performance['dfba_solution'] = dfba_solution
 
     return performance
