@@ -160,6 +160,6 @@ def write_model_to_file(model, filename):
     try:
         with open(filename, 'w') as stream:
             stream.write(INSTRUCTIONS)
-            stream.write(str(model))
+            stream.write(repr(model))
     except Exception as e:
         print e
