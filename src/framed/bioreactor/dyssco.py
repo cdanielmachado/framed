@@ -74,7 +74,7 @@ def make_envelope_strains(base_organism, r_substrate, r_target, N=10, constraint
 
 
 def calculate_performances(strains, bioreactor, r_substrate, r_target, t0, tf, dt, initial_conditions=[],
-                          dfba_solver='dopri5', additional_yields=[], verbose=False, get_dfba_solution=False):
+                          dfba_solver='dopri5', additional_yields=[], verbose=False, save_dfba_solution=False):
     """
     calculates the performances of a list of strains in a given bioreactor
 
@@ -98,33 +98,22 @@ def calculate_performances(strains, bioreactor, r_substrate, r_target, t0, tf, d
 
     Conditional Returns:
         dfba_solutions: list (of Dict) -- a list of dictionaries containing the dFBA solutions
-                                         (this is returned only if get_dfba_solution is set to True)
+                                         (this is returned only if save_dfba_solution is set to True)
     """
 
     performances = []
-    dfba_solutions = []
 
     for strain in strains:
-        if get_dfba_solution:
-            performance, dfba_solution = calculate_performance(strain, bioreactor, r_substrate, r_target, t0, tf, dt,
+        performance = calculate_performance(strain, bioreactor, r_substrate, r_target, t0, tf, dt,
                                                                initial_conditions, dfba_solver, additional_yields,
-                                                               verbose, get_dfba_solution)
-            performances.append(performance)
-            dfba_solutions.append(dfba_solution)
-        else:
-            performance = calculate_performance(strain, bioreactor, r_substrate, r_target, t0, tf, dt,
-                                                initial_conditions, dfba_solver, additional_yields, verbose,
-                                                get_dfba_solution)
-            performances.append(performance)
+                                                               verbose, save_dfba_solution)
+        performances.append(performance)
 
-    if get_dfba_solution:
-        return performances, dfba_solutions
-    else:
-        return performances
+    return performances
 
 
 def calculate_performance(strain, bioreactor, r_substrate, r_target, t0, tf, dt, initial_conditions=[],
-                          dfba_solver='dopri5', additional_yields=[], verbose=False, get_dfba_solution=False):
+                          dfba_solver='dopri5', additional_yields=[], verbose=False, save_dfba_solution=False):
     """
     calculates the performances of a list of strains in a given bioreactor
 
@@ -147,12 +136,12 @@ def calculate_performance(strain, bioreactor, r_substrate, r_target, t0, tf, dt,
 
     Conditional Returns:
         dfba_solution: Dict -- contains the dFBA solutions
-                            (this is returned only if get_dfba_solution is set to True)
+                            (this is returned only if save_dfba_solution is set to True)
     """
-    performance = {'strain': strain}
+    performance = {'strain': strain.id}
     r_biomass = strain.model.detect_biomass_reaction()
 
-    print strain.fba_constraints
+    #print strain.fba_constraints
     # perform FBA simulation
     if verbose:
         print 'Perform FBA simulation.'
@@ -170,15 +159,16 @@ def calculate_performance(strain, bioreactor, r_substrate, r_target, t0, tf, dt,
 
     # if the strain does not grow or does not produce target product, set yield, titer, productivity to zero
     if (v_biomass <= 0) or (v_target <= 0):
-        performance['growth'] = v_biomass
-        performance['titer'] = 0
+        performance['growth_rate'] = v_biomass
+        performance['product_titer'] = 0
         performance['productivity'] = 0
-        performance['yield'] = 0
+        performance['product_yield'] = abs(v_target / v_substrate)
+        performance['biomass_yield'] = abs(v_biomass / v_substrate)
         for r_id in additional_yields:
             id = 'yield_' + r_id.lstrip('R_EX_').rstrip('_e')
             performance[id] = 0
         dfba_solution = None
-        print 'none growth'
+
     # if the strain both grows and produces, perform dFBA simulation, and calculate yield, titer, productivity
     else:
         # perform dFBA simulation
@@ -198,38 +188,24 @@ def calculate_performance(strain, bioreactor, r_substrate, r_target, t0, tf, dt,
         if hasattr(bioreactor, 'calculate_yield_from_dfba'):
             Y = bioreactor.calculate_yield_from_dfba(dfba_solution, r_substrate, r_target)
         else:
-            Y = - v_target / v_substrate
+            Y = abs(v_target / v_substrate)
 
-        performance['growth'] = v_biomass
-        performance['titer'] = T
+
+        performance['growth_rate'] = v_biomass
+        performance['product_titer'] = T
         performance['productivity'] = P
-        performance['yield'] = Y
+        performance['product_yield'] = Y
+        performance['biomass_yield'] = abs(v_biomass / v_substrate)
 
         # calculate additional yields
         for r_id in additional_yields:
             id = 'yield_' + r_id.lstrip('R_EX_').rstrip('_e')
-            performance[id] = - fba_solution.values[r_id] / v_substrate
+            performance[id] = abs(fba_solution.values[r_id] / v_substrate)
 
-    if get_dfba_solution:
-        return performance, dfba_solution
+    if save_dfba_solution:
+        performance['dfba_solution'] = dfba_solution
     else:
-        return performance
+        performance['dfba_solution'] = None
 
+    return performance
 
-def performances2metrics(performances):
-    """
-    get a dictionary of metrics from a list of performances
-    Arguments:
-        performances: Dict (of Dict) -- each list entry contains a dictionary containing the performance metrics
-                                        of a strain
-
-    Returns:
-        metrics: Dict (of list) -- the performance metrics in form of a dictionary of lists
-    """
-    performance_metrics = {}
-    metrics = performances[0].keys()
-
-    for metric in metrics:
-        performance_metrics[metric] = [performance[metric] for performance in performances]
-
-    return performance_metrics
