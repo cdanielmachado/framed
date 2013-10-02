@@ -41,7 +41,7 @@ class Solution:
         self.shadow_prices = shadow_prices
         self.reduced_costs = reduced_costs
 
-    def __repr__(self):
+    def __str__(self):
         status_codes = {Status.OPTIMAL: 'Optimal',
                         Status.UNKNOWN: 'Unknown',
                         Status.UNBOUNDED: 'Unbounded',
