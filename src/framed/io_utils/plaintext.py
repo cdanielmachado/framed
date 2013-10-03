@@ -46,16 +46,17 @@ float_re = '-?\d+(?:\.\d+)?'
 
 compound = '(?:' + pos_float_re + '\s+)?' + id_re
 expression = compound + '(?:\s*\+\s*' + compound + ')*'
-bounds = '\[\s*(?P<lb>' + float_re + ')?\s*,\s*(?P<ub>' + float_re + ')?\s*\]' 
+bounds = '\[\s*(?P<lb>' + float_re + ')?\s*,\s*(?P<ub>' + float_re + ')?\s*\]'
 reaction = '^(?P<reaction_id>' + id_re + ')\s*:' + \
            '\s*(?P<substrates>' + expression + ')?' + \
            '\s*(?P<direction>-->|<->)' + \
            '\s*(?P<products>' + expression + ')?' + \
            '\s*(?P<bounds>' + bounds + ')?$'
-           
+
 regex_compound = compile('(?P<coeff>' + pos_float_re + '\s+)?(?P<met_id>' + id_re + ')')
 regex_bounds = compile(bounds)
 regex_reaction = compile(reaction)
+
 
 def read_model_from_file(filename, kind=STOICHIOMETRIC):
     """ Reads a model from a file.
@@ -66,45 +67,45 @@ def read_model_from_file(filename, kind=STOICHIOMETRIC):
 
     Returns:
         StoichiometricModel -- Stoichiometric model or respective subclass
-    """   
-    
+    """
+
     try:
         with open(filename, 'r') as stream:
             model_id = splitext(basename(filename))[0]
-            
+
             if kind == STOICHIOMETRIC:
                 model = StoichiometricModel(model_id)
             elif kind == CONSTRAINT_BASED:
                 model = ConstraintBasedModel(model_id)
             else:
                 model = None
-            
+
             if model:
                 for line in stream:
                     line = line.strip()
                     if line != '' and line[0] != '#':
                         add_reaction_from_str(model, line)
-    
+
     except Exception as e:
         print e
         model = None
-    
+
     return model
-                          
-               
+
+
 def add_reaction_from_str(model, reaction_str):
     """ Parse a reaction from a string and add it to the model.
     
     Arguments:
         model : StoichiometricModel -- model
         reaction_str: str -- string representation a the reaction
-    """   
-        
+    """
+
     match = regex_reaction.match(reaction_str)
-    
+
     if match:
         reaction_id = match.group('reaction_id')
-        reversible = match.group('direction') == '<->'                        
+        reversible = match.group('direction') == '<->'
         substrates = match.group('substrates')
         products = match.group('products')
         if substrates or products:
@@ -119,14 +120,13 @@ def add_reaction_from_str(model, reaction_str):
             _parse_coefficients(substrates, model, reaction_id, sense=-1)
         if products:
             _parse_coefficients(products, model, reaction_id, sense=1)
-        
+
 
     else:
         raise Exception('Unable to parse: ' + reaction_str)
 
 
 def _parse_coefficients(expression, model, reaction_id, sense):
-    
     terms = expression.split('+')
     for term in terms:
         match = regex_compound.match(term.strip())
@@ -134,7 +134,7 @@ def _parse_coefficients(expression, model, reaction_id, sense):
         met_id = match.group('met_id')
         if met_id not in model.metabolites:
             model.add_metabolite(Metabolite(met_id, met_id))
-        model.add_stoichiometry([(met_id, reaction_id, coeff*sense)])
+        model.add_stoichiometry([(met_id, reaction_id, coeff * sense)])
 
 
 def _parse_bounds(expression, reversible):
@@ -156,7 +156,7 @@ def write_model_to_file(model, filename):
     Arguments:
         model: StoichiometricModel -- Stoichiometric model (or subclass)
         filename : str -- file path
-    """   
+    """
     try:
         with open(filename, 'w') as stream:
             stream.write(INSTRUCTIONS)

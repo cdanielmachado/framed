@@ -65,7 +65,7 @@ def make_envelope_strains(base_organism, r_substrate, r_target, N=10, constraint
         # creating a new strain
         strain = deepcopy(base_organism)                        # create a deepcopy of the base_organism
         strain.fba_constraints[r_target] = (ymaxs[i], ymaxs[i])   # fix target production at ymax[i]
-        strain.Y = float(-ymaxs[i]/vSmax)                       # store the yield of the strain
+        strain.Y = float(-ymaxs[i] / vSmax)                       # store the yield of the strain
         strain.mu = mu                                          # store the growth rate of the strain
         strain.id = base_id + ' mu: ' + str(round(strain.mu, 3))
         strains.append(strain)
@@ -74,7 +74,7 @@ def make_envelope_strains(base_organism, r_substrate, r_target, N=10, constraint
 
 
 def calculate_performances(strains, bioreactor, r_substrate, r_target, t0, tf, dt, initial_conditions=[],
-                          dfba_solver='dopri5', additional_yields=[], verbose=False, get_dfba_solution=False):
+                           dfba_solver='dopri5', additional_yields=[], verbose=False, get_dfba_solution=False):
     """
     calculates the performances of a list of strains in a given bioreactor
 
@@ -192,7 +192,7 @@ def calculate_performance(strain, bioreactor, r_substrate, r_target, t0, tf, dt,
         # calculating titer and productivity from dFBA solution
         T = dfba_solution[r_target].max()
         index = dfba_solution[r_target].argmax()        # the index at which the production is finished
-        P = T/dfba_solution['time'][index]
+        P = T / dfba_solution['time'][index]
 
         # calculate yield from dFBA solution if the method is known, otherwise calculate yield using FBA
         if hasattr(bioreactor, 'calculate_yield_from_dfba'):

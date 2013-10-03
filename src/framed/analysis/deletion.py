@@ -36,14 +36,14 @@ def gene_deletion(model, genes, method='FBA', reference=None, solver=None, compu
     Returns:
         Solution -- solution
     """
-    
+
     inactive_reactions = deleted_genes_to_reactions(model, genes)
-    
+
     if inactive_reactions or compute_silent_deletions:
         solution = reaction_deletion(model, inactive_reactions, method, reference, solver)
     else:
         solution = None
-    
+
     return solution
 
 
@@ -62,7 +62,7 @@ def deleted_genes_to_reactions(model, genes):
     inactive_reactions = set(model.reactions) - set(active_reactions)
 
     return inactive_reactions
-    
+
 
 def reaction_deletion(model, reactions, method='FBA', reference=None, solver=None):
     """ Simulate the deletion of a set of reactions.
@@ -77,19 +77,19 @@ def reaction_deletion(model, reactions, method='FBA', reference=None, solver=Non
     Returns:
         Solution -- solution
     """
-        
+
     if (method == 'MOMA' or method == 'lMOMA') and not reference:
         wt_solution = FBA(model, solver=solver)
         reference = wt_solution.values
-        
+
     constraints = {r_id: (0, 0) for r_id in reactions}
-    
+
     if method == 'FBA':
-        solution = FBA(model, constraints=constraints, solver=solver)        
+        solution = FBA(model, constraints=constraints, solver=solver)
     elif method == 'pFBA':
-        solution = pFBA(model, constraints=constraints, solver=solver)        
+        solution = pFBA(model, constraints=constraints, solver=solver)
     elif method == 'qpFBA':
-        solution =  qpFBA(model, constraints=constraints, solver=solver)        
+        solution = qpFBA(model, constraints=constraints, solver=solver)
     elif method == 'MOMA':
         solution = MOMA(model, reference, constraints=constraints, solver=solver)
     elif method == 'lMOMA':
@@ -112,10 +112,10 @@ def deletion(model, elements, kind='reactions', method='FBA', reference=None, so
     Returns:
         Solution -- solution
     """
-    
-    if kind == 'genes':    
+
+    if kind == 'genes':
         solution = gene_deletion(model, elements, method, reference, solver)
     else:
         solution = reaction_deletion(model, elements, method, reference, solver)
-        
+
     return solution

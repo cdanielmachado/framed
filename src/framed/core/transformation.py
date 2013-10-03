@@ -23,6 +23,7 @@ Module for model transformation operations.
 from models import Reaction, ConstraintBasedModel, GPRConstrainedModel
 from ..analysis.variability import blocked_reactions
 
+
 def simplify(model):
     """ Removes all blocked reactions in a constraint based model
     
@@ -37,7 +38,7 @@ def simplify(model):
     model.remove_reactions(blocked)
     disconnected = _disconnected_metabolites(model)
     model.remove_metabolites(disconnected)
-    
+
     return blocked, disconnected
 
 
@@ -51,10 +52,10 @@ def make_irreversible(model):
     Returns:
         dictionary (str to (str, str)): mapping of old reaction ids to splitted reaction ids
     """
-    
+
     mapping = dict()
     table = model.reaction_metabolite_lookup_table()
-    
+
     for r_id, reaction in model.reactions.items():
         if reaction.reversible:
             fwd_id = reaction.id + '_f'
@@ -63,22 +64,22 @@ def make_irreversible(model):
 
             model.add_reaction(Reaction(fwd_id, reaction.name, False))
             model.add_reaction(Reaction(bwd_id, reaction.name, False))
-            
+
             for m_id, coeff in table[r_id].items():
                 model.stoichiometry[(m_id, fwd_id)] = coeff
                 model.stoichiometry[(m_id, bwd_id)] = -coeff
-            
+
             if isinstance(model, ConstraintBasedModel):
                 lb, ub = model.bounds[r_id]
                 model.set_flux_bounds(fwd_id, 0, ub)
                 model.set_flux_bounds(bwd_id, 0, -lb if lb != None else None)
-            
+
             if isinstance(model, GPRConstrainedModel):
                 model.set_rule(fwd_id, model.rules[r_id])
                 model.set_rule(bwd_id, model.rules[r_id])
-            
+
             model.remove_reaction(r_id)
-            
+
     return mapping
 
 

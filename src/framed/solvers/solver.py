@@ -32,8 +32,8 @@ class Status:
 class Solution:
     """ Stores the results of an optimization.
     Invoke without arguments to create an empty Solution representing a failed optimization.
-    """ 
-    
+    """
+
     def __init__(self, status=Status.UNKNOWN, fobj=None, values=None, shadow_prices=None, reduced_costs=None):
         self.status = status
         self.fobj = fobj
@@ -49,7 +49,7 @@ class Solution:
 
         return 'Status: {}\nObjective: {}\n'.format(status_codes[self.status], self.fobj)
 
-    
+
     def show_values(self, zeros=False, pattern=None):
         """ Show solution results.
 
@@ -60,10 +60,10 @@ class Solution:
         Returns:
             str : printed table with variable values (and reduced costs if calculated) 
         """
-        
+
         if not self.values:
             return None
-        
+
         values = self.values.items()
 
         if not zeros:
@@ -71,7 +71,7 @@ class Solution:
 
         if pattern:
             values = filter(lambda (r_id, val): pattern in r_id, values)
-            
+
         if self.reduced_costs:
             entries = ['{}\t{}\t({})'.format(r_id, val, self.reduced_costs[r_id]) for (r_id, val) in values]
         else:
@@ -79,7 +79,7 @@ class Solution:
 
         return '\n'.join(entries)
 
-    
+
     def show_shadow_prices(self, zeros=False, pattern=None):
         """ Show shadow prices results.
 
@@ -90,10 +90,10 @@ class Solution:
         Returns:
             str : printed table with shadow prices 
         """
-        
+
         if not self.shadow_prices:
             return None
-        
+
         values = self.shadow_prices.items()
 
         if not zeros:
@@ -101,17 +101,17 @@ class Solution:
 
         if pattern:
             values = filter(lambda (m_id, val): pattern in m_id, values)
-            
+
         entries = ['{}\t{}'.format(m_id, val) for (m_id, val) in values]
 
-        return '\n'.join(entries)    
+        return '\n'.join(entries)
 
 
 class Solver:
     """ Abstract class representing a generic solver.
     All solver interfaces should implement the basic methods.
     """
-    
+
     def __init__(self):
         self.problem = None
 
@@ -131,13 +131,13 @@ class Solver:
             model : ConstraintBasedModel
         """
         pass
-    
+
     def empty_problem(self):
         """ Create an empty problem structure.
         To be used for manually instantiate a problem.
         For automatic instantiation use the build_problem interface method. """
         pass
-    
+
     def add_variable(self, var_id, lb=None, ub=None):
         """ Add a variable to the current problem.
         
@@ -147,7 +147,7 @@ class Solver:
             ub : float -- upper bound
         """
         pass
-    
+
     def add_constraint(self, constr_id, lhs, sense='=', rhs=0):
         """ Add a variable to the current problem.
         
@@ -166,7 +166,7 @@ class Solver:
             list [of str] -- variable ids
         """
         pass
-    
+
     def list_constraints(self):
         """ Get a list of the constraint ids defined for the current problem.
         
@@ -174,7 +174,7 @@ class Solver:
             list [of str] -- constraint ids
         """
         pass
-    
+
     def solve_lp(self, objective, model=None, constraints=None, get_shadow_prices=False, get_reduced_costs=False):
         """ Solve an LP optimization problem.
         
@@ -189,11 +189,12 @@ class Solver:
         Returns:
             Solution
         """
-        
+
         # An exception is raised if the subclass does not implement this method.
         raise Exception('Not implemented for this solver.')
-    
-    def solve_qp(self, quad_obj, lin_obj, model=None, constraints=None, get_shadow_prices=False, get_reduced_costs=False):
+
+    def solve_qp(self, quad_obj, lin_obj, model=None, constraints=None, get_shadow_prices=False,
+                 get_reduced_costs=False):
         """ Solve an LP optimization problem.
         
         Arguments:

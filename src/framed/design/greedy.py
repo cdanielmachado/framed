@@ -27,7 +27,9 @@ from ..solvers.solver import Status
 from ..solvers import solver_instance
 from ..analysis.essentiality import essentiality
 
-def greedy_deletion(model, fobj, max_dels, kind='reactions', targets=None, method='FBA', reference=None, min_growth=0.1, pop_size=10, abstol=1e-3):
+
+def greedy_deletion(model, fobj, max_dels, kind='reactions', targets=None, method='FBA', reference=None, min_growth=0.1,
+                    pop_size=10, abstol=1e-3):
     """ Generic interface for finding an optimal set of gene or reaction deletions using a greedy approach.
     
     Arguments:
@@ -42,28 +44,28 @@ def greedy_deletion(model, fobj, max_dels, kind='reactions', targets=None, metho
 
     Returns:
         list (of (list of str, float)) -- valid solutions
-    """    
-        
+    """
+
     if kind == 'genes' and isinstance(model, GPRConstrainedModel):
         targets = model.genes if not targets else targets
     else:
         kind = 'reactions'
         targets = model.reactions if not targets else targets
-        
+
     solver = solver_instance()
     solver.build_problem(model)
-    
+
     if not reference:
         wt_solution = FBA(model, solver=solver)
         reference = wt_solution.values
-    
+
     biomass = model.detect_biomass_reaction()
     wt_growth = reference[biomass]
     wt_fval = fobj(reference)
 
     essential = essentiality(model, kind, min_growth)
     targets = [target for target in targets if target not in essential]
-    
+
     candidates = [{target} for target in targets]
     solutions = []
     visited = []
@@ -74,15 +76,16 @@ def greedy_deletion(model, fobj, max_dels, kind='reactions', targets=None, metho
             solution = deletion(model, del_set, kind, method, reference, solver)
             if solution and solution.status == Status.OPTIMAL:
                 fval = fobj(solution.values)
-                if fval > wt_fval + abstol and solution.values[biomass] >= min_growth * wt_growth and not _redundant(del_set, fval, solutions, abstol):
+                if fval > wt_fval + abstol and solution.values[biomass] >= min_growth * wt_growth and not _redundant(
+                        del_set, fval, solutions, abstol):
                     solutions.append((del_set, fval))
         solutions.sort(key=lambda (_, fval): fval, reverse=True)
         candidates = [del_set | {target} for del_set, _ in solutions[:pop_size] for target in targets
                       if len(del_set | {target}) <= max_dels and (del_set | {target}) not in visited]
-#        print 'solutions: ', len(solutions)
-#        print 'new candidates: ', len(candidates)
-#        print 'best so far: ', solutions[0]
-    
+    #        print 'solutions: ', len(solutions)
+    #        print 'new candidates: ', len(candidates)
+    #        print 'best so far: ', solutions[0]
+
     return solutions
 
 

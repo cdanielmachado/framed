@@ -29,7 +29,6 @@ import matplotlib.pyplot as plt
 
 
 class PhenotypePhasePlane(object):
-
     def __init__(self, rxn_x, rxn_y, rxn_x_range, rxn_y_range):
         self.rxn_x = rxn_x
         self.rxn_y = rxn_y
@@ -60,10 +59,10 @@ class PhenotypePhasePlane(object):
         y = self.y_range
 
         if 'EX_' in self.rxn_x:
-            x = x*-1
+            x = x * -1
 
         if 'EX_' in self.rxn_y:
-            y = y*-1
+            y = y * -1
 
         plt.pcolormesh(x, y, numpy.transpose(f))
         plt.colorbar()
@@ -84,10 +83,10 @@ class PhenotypePhasePlane(object):
         y = self.y_range
 
         if 'EX_' in self.rxn_x:
-            x = x*-1
+            x = x * -1
 
         if 'EX_' in self.rxn_y:
-            y = y*-1
+            y = y * -1
 
         plt.pcolormesh(x, y, numpy.transpose(sp_x))
         plt.colorbar()
@@ -108,15 +107,16 @@ class PhenotypePhasePlane(object):
         y = self.y_range
 
         if 'EX_' in self.rxn_x:
-            x = x*-1
+            x = x * -1
 
         if 'EX_' in self.rxn_y:
-            y = y*-1
+            y = y * -1
 
         plt.pcolormesh(x, y, numpy.transpose(sp_y))
         plt.colorbar()
         if show_plot:
             plt.show()
+
 
 def PhPP(model, rxn_x, rxn_y, rxn_x_range, rxn_y_range, target=None, maximize=True):
     """
