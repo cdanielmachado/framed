@@ -209,10 +209,10 @@ def calculate_performance(strain, bioreactor, r_substrate, r_target, t0, tf, dt,
             performance['product_titer'] = dfba_solution[r_target].max()
 
         try:
-            performance['product_yield'] = bioreactor.calculate_yield_from_dfba()
+            performance['productivity'] = bioreactor.calculate_productivity_from_dfba()
         except NotImplementedError:
-            index = dfba_solution[r_target].argmax() # the index at which the production is finished
-            performance['product_yield'] = T/dfba_solution['time'][index]
+            index = dfba_solution[r_target].argmax()  # the index at which the production is finished
+            performance['productivity'] = performance['titer']/dfba_solution['time'][index]
 
         performance['growth_rate'] = v_biomass
         performance['biomass_yield'] = - v_biomass/v_substrate
