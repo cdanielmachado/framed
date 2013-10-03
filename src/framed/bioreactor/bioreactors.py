@@ -20,7 +20,7 @@
 __author__ = 'kaizhuang'
 
 from base import Bioreactor
-
+from ..solvers.solver import Status
 
 # value definition for oxygen_availability flag
 ANAEROBIC = 0
@@ -131,21 +131,23 @@ class IdealFedbatch(Bioreactor_ox):
             met_id = self.metabolites.index(self.primary_substrate)
             self.flow_rate_in = 0
             for org_id, organism in enumerate(self.organisms):
-                vs = organism.fba_solution.values[self.primary_substrate]
-                self.flow_rate_in -= vs * self.X[org_id] * self.V / (self.Sfeed[met_id] - self.S[met_id])
+                if organism.fba_solution.status == Status.OPTIMAL:
+                    vs = organism.fba_solution.values[self.primary_substrate]
+                    self.flow_rate_in -= vs * self.X[org_id] * self.V / (self.Sfeed[met_id] - self.S[met_id])
 
-    def calculate_yield_from_dfba(self, dfba_solution, r_substrate, r_product):
-        """
-        calculates the product yield from dFBA solution
-        :param dfba_solution:
-        :return:
-        """
-        Vf = dfba_solution['volume'][-1]
-        V0 = dfba_solution['volume'][0]
-        Sf = dfba_solution[r_substrate][-1]
-        S0 = dfba_solution[r_substrate][0]
-        Pf = dfba_solution[r_product][-1]
 
-        index = self.metabolites.index(r_substrate)
-        product_yield = Pf * Vf / (self.Sfeed[index] * (Vf - V0) + Sf * Vf - S0 * V0)
-        return product_yield
+    #def calculate_yield_from_dfba(self, dfba_solution, r_substrate, r_product):
+    #    """
+    #    calculates the product yield from dFBA solution
+    #    :param dfba_solution:
+    #    :return:
+    #    """
+    #    Vf = dfba_solution['volume'][-1]
+    #    V0 = dfba_solution['volume'][0]
+    #    Sf = dfba_solution[r_substrate][-1]
+    #    S0 = dfba_solution[r_substrate][0]
+    #    Pf = dfba_solution[r_product][-1]
+
+    #   index = self.metabolites.index(r_substrate)
+    #   product_yield = Pf * Vf / (self.Sfeed[index] * (Vf - V0) + Sf * Vf - S0 * V0)
+    #   return product_yield
