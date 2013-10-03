@@ -333,6 +333,9 @@ class Bioreactor(Environment, DynamicSystem):
             else:
                 mu[i] = 0
                 #print 'no growth'
+                for j, metabolite in enumerate(self.metabolites):
+                    if metabolite in organism.model.reactions.keys():
+                        vs[i, j] = 0
 
         # updating the internal states of the bioreactor
             # eg. flow rates, feed concentrations, and custom defined dX/dt and dS/dt terms
