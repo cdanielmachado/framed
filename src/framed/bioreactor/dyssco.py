@@ -103,7 +103,7 @@ def calculate_performances(strains, bioreactor, r_substrate, r_target, t0, tf, d
     for strain in strains:
         performance = calculate_performance(strain, bioreactor, r_substrate, r_target, t0, tf, dt,
                                                 initial_conditions, dfba_solver, additional_yields, verbose,
-                                                save_dfba_solution, func_dfba2yield)
+                                                save_dfba_solution)
         performances.append(performance)
 
     return performances
