@@ -354,3 +354,20 @@ class Bioreactor(Environment, DynamicSystem):
         """
         raise NotImplementedError
 
+    def calculate_titer_from_dfba(self):
+        """
+        Abstract used for calculating product titer from dFBA solution.
+        This is useful for certain analysis methods (eg. DySScO).
+
+        This should be implemented for specific bioreactors
+        """
+        raise NotImplementedError
+
+    def calculate_productivity_from_dfba(self):
+        """
+        Abstract used for calculating productivity from dFBA solution.
+        This is useful for certain analysis methods (eg. DySScO).
+
+        This should be implemented for specific bioreactors
+        """
+        raise NotImplementedError
