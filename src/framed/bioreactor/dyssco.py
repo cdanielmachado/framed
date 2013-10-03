@@ -26,6 +26,7 @@ from ..solvers import solver_instance
 from ..analysis.dfba import dFBA
 from ..analysis.variability import production_envelope
 from base import *
+import numpy
 
 
 def make_envelope_strains(base_organism, r_substrate, r_target, N=10, constraints=None):
@@ -211,7 +212,8 @@ def calculate_performance(strain, bioreactor, r_substrate, r_target, t0, tf, dt,
         try:
             performance['productivity'] = bioreactor.calculate_productivity_from_dfba()
         except NotImplementedError:
-            index = dfba_solution[r_target].argmax()  # the index at which the production is finished
+             # the index at which the production is finished.  round off to 4 decimal places
+            index = numpy.around(dfba_solution[r_target]).argmax()
             performance['productivity'] = performance['product_titer']/dfba_solution['time'][index]
 
         performance['growth_rate'] = v_biomass
