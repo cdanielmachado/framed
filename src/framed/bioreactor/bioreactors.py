@@ -32,17 +32,16 @@ class Bioreactor_ox(Bioreactor):
     """
     Bioreactor class with oxygen_availability flag
     """
+
     def __init__(self, organisms=[], metabolites=[], id='Generic Bioreactor', flow_rate_in=0, flow_rate_out=0,
                  volume_max=None, Xfeed=None, Sfeed=None, deltaX=None, deltaS=None, initial_conditions=[],
                  oxygen_availability=None):
-
         super(Bioreactor_ox, self).__init__(organisms=organisms, metabolites=metabolites, flow_rate_in=flow_rate_in,
                                             flow_rate_out=flow_rate_out, volume_max=volume_max, Xfeed=Xfeed,
                                             Sfeed=Sfeed, deltaX=deltaX, deltaS=deltaS,
                                             initial_conditions=initial_conditions)
 
         self.oxygen_availability = oxygen_availability
-
 
 
 class IdealBatch(Bioreactor_ox):
@@ -53,7 +52,6 @@ class IdealBatch(Bioreactor_ox):
 
     def __init__(self, organisms=[], metabolites=[], id='IdealBatch', volume_max=None, deltaX=None, deltaS=None,
                  initial_conditions=[], oxygen_availability=None):
-
         """
         Arguments:
             organisms: list of Organism
@@ -78,7 +76,6 @@ class IdealBatch(Bioreactor_ox):
         product_yield = Pf / (S0 - Sf)
 
         return product_yield
-
 
 
 class IdealFedbatch(Bioreactor_ox):
@@ -111,11 +108,11 @@ class IdealFedbatch(Bioreactor_ox):
                                             oxygen_availability=oxygen_availability)
 
         if primary_substrate:
-            assert(primary_substrate in metabolites)
+            assert (primary_substrate in metabolites)
             self.primary_substrate = primary_substrate
         else:
             self.primary_substrate = metabolites[0]     # if the substrate is unspecified,
-                                                        # it is assumed to be metabolites[0]
+            # it is assumed to be metabolites[0]
 
     def update(self, time):
         """

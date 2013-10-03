@@ -52,7 +52,8 @@ class EnvelopeTest(unittest.TestCase):
         r_target = 'R_EX_ac_e'
         r_biomass = ec_core_model.detect_biomass_reaction()
 
-        xvals0, ymins0, ymaxs0 = production_envelope(ec_core_model, r_target, steps=5, constraints={'R_EX_o2_e': (0, 0)})
+        xvals0, ymins0, ymaxs0 = production_envelope(ec_core_model, r_target, steps=5,
+                                                     constraints={'R_EX_o2_e': (0, 0)})
 
         ec_core_model.bounds['R_EX_o2_e'] = (0, 0)
         xvals1, ymins1, ymaxs1 = production_envelope(ec_core_model, r_target, steps=5)
@@ -62,10 +63,7 @@ class EnvelopeTest(unittest.TestCase):
         self.assertEqual(ymaxs0, ymaxs1)
 
 
-
-
 class dFBATest(unittest.TestCase):
-
     def setUp(self):
         self.ec = Ecoli(ec_core_model, 'Ecoli')
         self.ec_glc = GlucoseUser(ec_core_model, 'Ecoli_glucose_user')
@@ -84,7 +82,7 @@ class dFBATest(unittest.TestCase):
 
         result = dFBAm(br, t0, tf, dt)
         self.assertEqual(result.keys(),
-                         ['time', 'volume', 'Ecoli', 'R_EX_glc_e', 'R_EX_ac_e',  'R_EX_o2_e'])
+                         ['time', 'volume', 'Ecoli', 'R_EX_glc_e', 'R_EX_ac_e', 'R_EX_o2_e'])
 
 
     def test_dfba_2_organisms(self):
@@ -107,7 +105,6 @@ class dFBATest(unittest.TestCase):
         br1.set_initial_conditions([1], [0.01], [10, 0])
         br2.set_initial_conditions([1], [0.01], [10, 0, 10])
 
-
         t0 = 0
         tf = 20
         dt = 1
@@ -115,7 +112,7 @@ class dFBATest(unittest.TestCase):
         result = dFBA_combination([self.ec_glc, self.ec_ac], [br1, br2], t0, tf, dt)
         self.assertEqual(result.keys(), [('Ecoli_glucose_user', 'Br1'), ('Ecoli_glucose_user', 'Br2'),
                                          ('Ecoli_acetate_user', 'Br1'), ('Ecoli_acetate_user', 'Br2')])
-    
+
     def tearDown(self):
         del self.ec
         del self.ec_glc
@@ -166,6 +163,7 @@ class AcetateUser(Organism):
     """
     Fixture class for testing dynamic simulations
     """
+
     def update(self):
         BR = self.environment
 
@@ -184,6 +182,7 @@ def suite():
     for test in tests:
         test_suite.addTest(unittest.makeSuite(test))
     return test_suite
+
 
 if __name__ == "__main__":
     runner = unittest.TextTestRunner(verbosity=2)

@@ -16,7 +16,6 @@ fix_bigg_model(ec_core_model)
 
 
 class OrganismTest(unittest.TestCase):
-
     def setUp(self):
         self.ec1 = Organism(ec_core_model)
 
@@ -59,7 +58,6 @@ class OrganismTest(unittest.TestCase):
 
 
 class EnvironmentTest(unittest.TestCase):
-
     def setUp(self):
         self.o1 = Organism(ec_core_model)
         self.o2 = Organism(ec_core_model)
@@ -89,7 +87,6 @@ class EnvironmentTest(unittest.TestCase):
 
 
 class BioreactorTest(unittest.TestCase):
-
     def setUp(self):
         self.o1 = Organism(ec_core_model)
         self.o2 = Organism(ec_core_model)
@@ -118,8 +115,6 @@ class BioreactorTest(unittest.TestCase):
         del self.br
         del self.o1
         del self.o2
-
-
 
 
 def updateOrganism(self):

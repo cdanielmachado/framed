@@ -196,7 +196,7 @@ def calculate_performance(strain, bioreactor, r_substrate, r_target, t0, tf, dt,
         # calculating titer and productivity from dFBA solution
         T = dfba_solution[r_target].max()
         index = dfba_solution[r_target].argmax()        # the index at which the production is finished
-        P = T/dfba_solution['time'][index]
+        P = T / dfba_solution['time'][index]
 
         # calculate yield from dFBA solution if the method is known, otherwise calculate yield using FBA
         if func_dfba2yield is None:

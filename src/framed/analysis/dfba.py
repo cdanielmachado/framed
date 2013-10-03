@@ -34,6 +34,7 @@ __author__ = 'kaizhuang'
 
 from collections import OrderedDict
 
+
 def dFBAm(bioreactor, t0, tf, dt, initial_conditions=None, solver='dopri5', verbose=False):
     """
     Dynamic Flux Balance Analysis with Multi-organism support
@@ -66,6 +67,7 @@ def dFBAm(bioreactor, t0, tf, dt, initial_conditions=None, solver='dopri5', verb
 
     return result
 
+
 def dFBA(bioreactor, t0, tf, dt, initial_conditions=None, solver='dopri5', verbose=False):
     """
     dFBA() is a alias for dFBAm().
@@ -83,6 +85,7 @@ def DyMMM(bioreactor, t0, tf, dt, initial_conditions=None, solver='dopri5', verb
     result = dFBAm(bioreactor, t0, tf, dt, initial_conditions, solver, verbose)
 
     return result
+
 
 def dFBA_combination(organisms, bioreactors, t0, tf, dt, initial_conditions=None, solver='dopri5', verbose=False):
     """
