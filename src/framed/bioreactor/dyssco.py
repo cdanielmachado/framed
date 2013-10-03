@@ -216,8 +216,6 @@ def calculate_performance(strain, bioreactor, r_substrate, r_target, t0, tf, dt,
 
         performance['growth_rate'] = v_biomass
         performance['biomass_yield'] = - v_biomass/v_substrate
-        performance['product_titer'] = T
-        performance['productivity'] = P
 
         # calculate additional yields
         for r_id in additional_yields:
