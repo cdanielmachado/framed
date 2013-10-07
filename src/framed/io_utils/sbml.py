@@ -125,8 +125,13 @@ def _load_bounds(sbml_model):
 
 
 def _get_flux_bound(reaction, tag):
-    parameter = reaction.getKineticLaw().getParameter(tag)
-    return parameter.getValue() if parameter else None
+    bound = None
+    kinetic_law = reaction.getKineticLaw()
+    if kinetic_law:
+        parameter = kinetic_law.getParameter(tag)
+        if parameter:
+            bound = parameter.getValue()
+    return bound
 
 
 def _load_gprconstrained_model(sbml_model):
