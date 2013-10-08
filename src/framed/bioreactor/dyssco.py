@@ -26,6 +26,7 @@ from ..solvers import solver_instance
 from ..analysis.dfba import dFBA
 from ..analysis.variability import production_envelope
 from base import *
+import numpy
 
 
 def make_envelope_strains(base_organism, r_substrate, r_target, N=10, constraints=None):
@@ -72,7 +73,7 @@ def make_envelope_strains(base_organism, r_substrate, r_target, N=10, constraint
 
 
 def calculate_performances(strains, bioreactor, r_substrate, r_target, t0, tf, dt, initial_conditions=[],
-                          dfba_solver='dopri5', additional_yields=[], verbose=False, get_dfba_solution=False,
+                          dfba_solver='dopri5', additional_yields=[], verbose=False, save_dfba_solution=False,
                           func_dfba2yield=None):
     """
     calculates the performances of a list of strains in a given bioreactor
@@ -90,7 +91,7 @@ def calculate_performances(strains, bioreactor, r_substrate, r_target, t0, tf, d
         additional_yields: list (of str) -- the reaction ids of the additional yields (yields other than target yield)
                                             to be calculated.
         verbose: bool -- Verbosity control.  (default: False).
-        get_dfba_solution: bool -- controls whether dfba solutions are returned (default: False)
+        save_dfba_solution: bool -- controls whether dfba solutions are returned (default: False)
         func_dfba2yield: function -- if None, yield is calculated from FBA solutions.
                                      if a function is passed in, yield is calculated from dFBA solutions.
     Returns:
@@ -103,15 +104,14 @@ def calculate_performances(strains, bioreactor, r_substrate, r_target, t0, tf, d
     for strain in strains:
         performance = calculate_performance(strain, bioreactor, r_substrate, r_target, t0, tf, dt,
                                                 initial_conditions, dfba_solver, additional_yields, verbose,
-                                                get_dfba_solution, func_dfba2yield)
+                                                save_dfba_solution)
         performances.append(performance)
 
     return performances
 
 
 def calculate_performance(strain, bioreactor, r_substrate, r_target, t0, tf, dt, initial_conditions=[],
-                          dfba_solver='vode', additional_yields=[], verbose=False, get_dfba_solution=False,
-                          func_dfba2yield=None):
+                          dfba_solver='vode', additional_yields=[], verbose=False, save_dfba_solution=False):
     """
     calculates the performances of a list of strains in a given bioreactor
 
@@ -128,8 +128,7 @@ def calculate_performance(strain, bioreactor, r_substrate, r_target, t0, tf, dt,
         additional_yields: list (of str) -- the reaction ids of the additional yields (yields other than target yield)
                                             to be calculated.
         verbose: bool -- Verbosity control.  (default: False).
-        get_dfba_solution: bool -- controls whether dfba solutions are returned (default: False)
-        func_dfba2yield: function -- a function used to calculate yield from dfba solutions
+        save_dfba_solution: bool -- controls whether dfba solutions are returned (default: False)
 
     Returns:
         performance: Dict -- contains the calculated performance metrics of a strain
@@ -161,8 +160,8 @@ def calculate_performance(strain, bioreactor, r_substrate, r_target, t0, tf, dt,
         performance['product_yield'] = - v_target/v_substrate
 
         for r_id in additional_yields:
-            id = 'yield_' + r_id.lstrip('R_EX_').rstrip('_e')
-            performance[id] = - fba_solution.values[r_id] / v_substrate
+            pid = 'yield_' + r_id.lstrip('R_EX_').rstrip('_e')
+            performance[pid] = - fba_solution.values[r_id] / v_substrate
         dfba_solution = None
 
         if verbose:
@@ -177,8 +176,8 @@ def calculate_performance(strain, bioreactor, r_substrate, r_target, t0, tf, dt,
         performance['product_yield'] = 0
 
         for r_id in additional_yields:
-            id = 'yield_' + r_id.lstrip('R_EX_').rstrip('_e')
-            performance[id] = 0
+            pid = 'yield_' + r_id.lstrip('R_EX_').rstrip('_e')
+            performance[pid] = 0
         dfba_solution = None
 
         if verbose:
@@ -193,29 +192,38 @@ def calculate_performance(strain, bioreactor, r_substrate, r_target, t0, tf, dt,
             print 'Performing dFBA simulation.'
         dfba_solution = dFBA(bioreactor, t0, tf, dt, initial_conditions, solver=dfba_solver, verbose=verbose)
 
-        # calculating titer and productivity from dFBA solution
-        T = dfba_solution[r_target].max()
-        index = dfba_solution[r_target].argmax()        # the index at which the production is finished
-        P = T / dfba_solution['time'][index]
+        # calculate yield using dFBA solution if the method is known,
+        # otherwise calculate yield using FBA solution
+        try:
+            performance['product_yield'] = bioreactor.calculate_yield_from_dfba()
+        except NotImplementedError:
+            performance['product_yield'] = - v_target / v_substrate
 
-        # calculate yield from dFBA solution if the method is known, otherwise calculate yield using FBA
-        if func_dfba2yield is None:
-            Y = - v_target / v_substrate
-        else:
-            Y = func_dfba2yield(dfba_solution)
+        # calculate titer and productivity using dFBA solution.
+            # if specific calculation functions exist for the bioreactor, use them
+            # otherwise, assume ideal fedbatch reactor.
+
+        try:
+            performance['product_titer'] = bioreactor.calculate_titer_from_dfba()
+        except NotImplementedError:
+            performance['product_titer'] = dfba_solution[r_target].max()
+
+        try:
+            performance['productivity'] = bioreactor.calculate_productivity_from_dfba()
+        except NotImplementedError:
+             # the index at which the production is finished.  round off to 4 decimal places
+            index = numpy.around(dfba_solution[r_target]).argmax()
+            performance['productivity'] = performance['product_titer']/dfba_solution['time'][index]
 
         performance['growth_rate'] = v_biomass
         performance['biomass_yield'] = - v_biomass/v_substrate
-        performance['product_titer'] = T
-        performance['productivity'] = P
-        performance['product_yield'] = Y
 
         # calculate additional yields
         for r_id in additional_yields:
             id = 'yield_' + r_id.lstrip('R_EX_').rstrip('_e')
             performance[id] = - fba_solution.values[r_id] / v_substrate
 
-    if get_dfba_solution:
+    if save_dfba_solution:
         performance['dfba_solution'] = dfba_solution
 
     return performance

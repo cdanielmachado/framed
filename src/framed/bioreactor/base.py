@@ -334,6 +334,9 @@ class Bioreactor(Environment, DynamicSystem):
             else:
                 mu[i] = 0
                 #print 'no growth'
+                for j, metabolite in enumerate(self.metabolites):
+                    if metabolite in organism.model.reactions.keys():
+                        vs[i, j] = 0
 
                 # updating the internal states of the bioreactor
                 # eg. flow rates, feed concentrations, and custom defined dX/dt and dS/dt terms
@@ -357,3 +360,20 @@ class Bioreactor(Environment, DynamicSystem):
         """
         raise NotImplementedError
 
+    def calculate_titer_from_dfba(self):
+        """
+        Abstract used for calculating product titer from dFBA solution.
+        This is useful for certain analysis methods (eg. DySScO).
+
+        This should be implemented for specific bioreactors
+        """
+        raise NotImplementedError
+
+    def calculate_productivity_from_dfba(self):
+        """
+        Abstract used for calculating productivity from dFBA solution.
+        This is useful for certain analysis methods (eg. DySScO).
+
+        This should be implemented for specific bioreactors
+        """
+        raise NotImplementedError
