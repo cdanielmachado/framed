@@ -45,16 +45,16 @@ def FVA(model, obj_percentage=0, reactions=None, constraints=None):
     if obj_percentage > 0:
         target = model.detect_biomass_reaction()
         solution = FBA(model)
-        _constraints[target] = (obj_percentage*solution.fobj, None)
-    
+        _constraints[target] = (obj_percentage * solution.fobj, None)
+
     if not reactions:
         reactions = model.reactions.keys()
-    
+
     solver = solver_instance()
     solver.build_problem(model)
 
     variability = OrderedDict([(r_id, [None, None]) for r_id in reactions])
-        
+
     for r_id in reactions:
         solution = FBA(model, r_id, False, constraints=_constraints, solver=solver)
         if solution.status == Status.OPTIMAL:
@@ -63,7 +63,7 @@ def FVA(model, obj_percentage=0, reactions=None, constraints=None):
             variability[r_id][0] = None
         else:
             variability[r_id][0] = 0
-    
+
     for r_id in reactions:
         solution = FBA(model, r_id, True, constraints=_constraints, solver=solver)
         if solution.status == Status.OPTIMAL:
@@ -87,7 +87,7 @@ def blocked_reactions(model):
     """
 
     variability = FVA(model)
-    
+
     return [r_id for r_id, (lb, ub) in variability.items() if lb == 0 and ub == 0]
 
 
@@ -108,7 +108,7 @@ def flux_envelope(model, r_x, r_y, steps=10, constraints=None):
     x_range = FVA(model, reactions=[r_x], constraints=constraints)
     xmin, xmax = x_range[r_x]
     xvals = linspace(xmin, xmax, steps).tolist()
-    ymins, ymaxs = [None]*steps, [None]*steps
+    ymins, ymaxs = [None] * steps, [None] * steps
 
     if constraints is None:
         _constraints = {}

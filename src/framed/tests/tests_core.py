@@ -1,8 +1,8 @@
-'''
+"""
 Unit testing module for core features.
 
 @author: Daniel Machado
-'''
+"""
 import unittest
 
 from framed.io_utils.sbml import load_sbml_model, save_sbml_model, CONSTRAINT_BASED, GPR_CONSTRAINED
@@ -14,8 +14,6 @@ from framed.analysis.deletion import gene_deletion
 from framed.analysis.essentiality import essential_genes
 from framed.solvers.solver import Status
 from framed.core.transformation import make_irreversible, simplify
-from framed.design.combinatorial import combinatorial_gene_deletion
-from framed.analysis.plotting import plot_flux_envelope
 
 
 SMALL_TEST_MODEL = '../../../examples/models/ecoli_core_model.xml'
@@ -42,7 +40,7 @@ ESSENTIAL_GENES = ['b0720', 'b1136', 'b1779', 'b2415', 'b2416', 'b2779', 'b2926'
 
 class SBMLTest(unittest.TestCase):
     """ Test SBML import and export. """
-        
+
     def testRun(self):
         model = load_sbml_model(SMALL_TEST_MODEL, kind=GPR_CONSTRAINED)
         save_sbml_model(model, TEST_MODEL_COPY)
@@ -55,9 +53,10 @@ class SBMLTest(unittest.TestCase):
         self.assertListEqual(model.genes.keys(), model_copy.genes.keys())
         self.assertDictEqual(model.rules, model_copy.rules)
 
+
 class PlainTextIOTest(unittest.TestCase):
     """ Test plain text import and export. """
-        
+
     def testRun(self):
         model = load_sbml_model(SMALL_TEST_MODEL, kind=CONSTRAINT_BASED)
         write_model_to_file(model, PLAIN_TEXT_COPY)
@@ -68,10 +67,11 @@ class PlainTextIOTest(unittest.TestCase):
         self.assertDictEqual(dict(model.stoichiometry),
                              dict(model_copy.stoichiometry))
         self.assertDictEqual(model.bounds, model_copy.bounds)
-        
+
+
 class FBATest(unittest.TestCase):
     """ Test FBA simulation. """
-    
+
     def testRun(self):
         model = load_sbml_model(SMALL_TEST_MODEL, kind=GPR_CONSTRAINED)
         fix_bigg_model(model)
@@ -79,9 +79,10 @@ class FBATest(unittest.TestCase):
         self.assertEqual(solution.status, Status.OPTIMAL)
         self.assertAlmostEqual(solution.fobj, GROWTH_RATE, places=2)
 
+
 class pFBATest(unittest.TestCase):
     """ Test pFBA simulation. """
-    
+
     def testRun(self):
         model = load_sbml_model(SMALL_TEST_MODEL, kind=GPR_CONSTRAINED)
         fix_bigg_model(model)
@@ -95,10 +96,11 @@ class pFBATest(unittest.TestCase):
         norm1 = sum([abs(solution1.values[r_id]) for r_id in model.reactions])
         norm2 = sum([abs(solution2.values[r_id]) for r_id in model.reactions])
         self.assertLessEqual(norm1, norm2)
-        
+
+
 class FBAFromPlainTextTest(unittest.TestCase):
     """ Test FBA simulation from plain text model. """
-    
+
     def testRun(self):
         model = load_sbml_model(SMALL_TEST_MODEL, kind=CONSTRAINT_BASED)
         fix_bigg_model(model)
@@ -108,10 +110,10 @@ class FBAFromPlainTextTest(unittest.TestCase):
         self.assertEqual(solution.status, Status.OPTIMAL)
         self.assertAlmostEqual(solution.fobj, GROWTH_RATE, places=2)
 
-        
+
 class IrreversibleModelFBATest(unittest.TestCase):
     """ Test FBA simulation after reversible decomposition. """
-    
+
     def testRun(self):
         model = load_sbml_model(SMALL_TEST_MODEL, kind=GPR_CONSTRAINED)
         fix_bigg_model(model)
@@ -124,7 +126,7 @@ class IrreversibleModelFBATest(unittest.TestCase):
 
 class SimplifiedModelFBATest(unittest.TestCase):
     """ Test FBA simulation after model simplification. """
-    
+
     def testRun(self):
         model = load_sbml_model(SMALL_TEST_MODEL, kind=GPR_CONSTRAINED)
         fix_bigg_model(model)
@@ -143,7 +145,7 @@ class TransformationCommutativityTest(unittest.TestCase):
         simplify(model)
         make_irreversible(model)
         simplify(model) #remove directionally blocked reactions
-        
+
         model2 = load_sbml_model(SMALL_TEST_MODEL, kind=GPR_CONSTRAINED)
         fix_bigg_model(model2)
         make_irreversible(model2)
@@ -156,22 +158,22 @@ class TransformationCommutativityTest(unittest.TestCase):
         self.assertDictEqual(model.bounds, model2.bounds)
         self.assertListEqual(model.genes.keys(), model2.genes.keys())
         self.assertDictEqual(model.rules, model2.rules)
-                        
-                
+
+
 class FVATest(unittest.TestCase):
     """ Test flux variability analysis """
-    
+
     def testRun(self):
         model = load_sbml_model(SMALL_TEST_MODEL, kind=GPR_CONSTRAINED)
         fix_bigg_model(model)
-        variability = FVA(model)        
+        variability = FVA(model)
         self.assertTrue(all([lb <= ub if lb is not None and ub is not None else True
                              for lb, ub in variability.values()]))
 
 
 class GeneDeletionFBATest(unittest.TestCase):
     """ Test gene deletion with FBA. """
-    
+
     def testRun(self):
         model = load_sbml_model(SMALL_TEST_MODEL, kind=GPR_CONSTRAINED)
         fix_bigg_model(model)
@@ -180,9 +182,10 @@ class GeneDeletionFBATest(unittest.TestCase):
         self.assertAlmostEqual(solution.values[model.detect_biomass_reaction()], DOUBLE_KO_GROWTH_RATE, 3)
         self.assertAlmostEqual(solution.values['R_EX_succ_e'], DOUBLE_KO_SUCC_EX, 3)
 
+
 class GeneDeletionMOMATest(unittest.TestCase):
     """ Test gene deletion with MOMA. """
-    
+
     def testRun(self):
         model = load_sbml_model(SMALL_TEST_MODEL, kind=GPR_CONSTRAINED)
         fix_bigg_model(model)
@@ -191,9 +194,10 @@ class GeneDeletionMOMATest(unittest.TestCase):
         self.assertAlmostEqual(solution.values[model.detect_biomass_reaction()], MOMA_GROWTH_RATE, 3)
         self.assertAlmostEqual(solution.values['R_EX_succ_e'], MOMA_SUCC_EX, 3)
 
+
 class GeneDeletionLMOMATest(unittest.TestCase):
     """ Test gene deletion with MOMA. """
-    
+
     def testRun(self):
         model = load_sbml_model(SMALL_TEST_MODEL, kind=GPR_CONSTRAINED)
         fix_bigg_model(model)
@@ -201,49 +205,53 @@ class GeneDeletionLMOMATest(unittest.TestCase):
         self.assertEqual(solution.status, Status.OPTIMAL)
         self.assertAlmostEqual(solution.values[model.detect_biomass_reaction()], LMOMA_GROWTH_RATE, 3)
         self.assertAlmostEqual(solution.values['R_EX_succ_e'], LMOMA_SUCC_EX, 3)
-                        
+
+
 class GeneEssentialityTest(unittest.TestCase):
     """ Test gene essentiality. """
-    
+
     def testRun(self):
         model = load_sbml_model(SMALL_TEST_MODEL, kind=GPR_CONSTRAINED)
         fix_bigg_model(model)
         essential = essential_genes(model)
         self.assertListEqual(essential, ESSENTIAL_GENES)
-        
+
+
 class CombinatorialGeneDeletion(unittest.TestCase):
     """ Test combinatorial gene deletion with FBA. """
-    
-    def testRun(self):
-        model = load_sbml_model(SMALL_TEST_MODEL, kind=GPR_CONSTRAINED)
-        fix_bigg_model(model)
-        objective = {'R_EX_succ_e': 1}
-        max_dels = 2
-        result = combinatorial_gene_deletion(model, objective, max_dels)
-        print len(result)
-        #print result
-        self.assertTrue(result is not None)
+
+#    def testRun(self):
+#        model = load_sbml_model(SMALL_TEST_MODEL, kind=GPR_CONSTRAINED)
+#        fix_bigg_model(model)
+#        objective = {'R_EX_succ_e': 1}
+#        max_dels = 2
+#        result = combinatorial_gene_deletion(model, objective, max_dels)
+#        print len(result)
+#        #print result
+#        self.assertTrue(result is not None)
+#
+#
+#class FluxEnvelopeTest(unittest.TestCase):
+#    """ Test flux envelope plotting method. """
+#
+#    def testRun(self):
+#        model = load_sbml_model(SMALL_TEST_MODEL, kind=GPR_CONSTRAINED)
+#        fix_bigg_model(model)
+#        r_x, r_y = 'R_EX_o2_e', 'R_EX_glc_e'
+#        plot_flux_envelope(model, r_x, r_y)
 
 
-class FluxEnvelopeTest(unittest.TestCase):
-    """ Test flux envelope plotting method. """
-    
-    def testRun(self):
-        model = load_sbml_model(SMALL_TEST_MODEL, kind=GPR_CONSTRAINED)
-        fix_bigg_model(model)
-        r_x, r_y = 'R_EX_o2_e', 'R_EX_glc_e'
-        plot_flux_envelope(model, r_x, r_y)
-
-                            
 def suite():
-    tests = [SBMLTest, PlainTextIOTest, FBATest, pFBATest, FBAFromPlainTextTest, FVATest, IrreversibleModelFBATest, SimplifiedModelFBATest, TransformationCommutativityTest, GeneDeletionFBATest, GeneDeletionMOMATest, GeneEssentialityTest]
+    tests = [SBMLTest, PlainTextIOTest, FBATest, pFBATest, FBAFromPlainTextTest, FVATest, IrreversibleModelFBATest,
+             SimplifiedModelFBATest, TransformationCommutativityTest, GeneDeletionFBATest, GeneDeletionMOMATest,
+             GeneEssentialityTest]
     #tests = [GeneDeletionLMOMATest]
-    
+
     test_suite = unittest.TestSuite()
     for test in tests:
         test_suite.addTest(unittest.makeSuite(test))
     return test_suite
-        
+
 
 if __name__ == "__main__":
     runner = unittest.TextTestRunner(verbosity=2)

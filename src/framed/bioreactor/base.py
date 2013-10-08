@@ -19,7 +19,6 @@
 """
 __author__ = 'kaizhuang'
 
-
 from copy import deepcopy
 from ..solvers import solver_instance
 from ..solvers.solver import Status
@@ -122,6 +121,7 @@ class DynamicSystem(object):
     """
     This class describes a generic dynamic system
     """
+
     def ode_RHS(self, y, t):
         """
         this is the Right Hand Side of the system of ODE that describe the dynamic multi-species system
@@ -259,7 +259,7 @@ class Bioreactor(Environment, DynamicSystem):
 
     def set_Sfeed(self, Sfeed):
         if Sfeed:
-            assert len(Sfeed) == len(self.metabolites),  'The length of Sfeed should equal to the number of metabolites'
+            assert len(Sfeed) == len(self.metabolites), 'The length of Sfeed should equal to the number of metabolites'
             self.Sfeed = Sfeed
         else:
             self.Sfeed = numpy.zeros(len(self.metabolites))
@@ -298,7 +298,7 @@ class Bioreactor(Environment, DynamicSystem):
         """
         number_of_organisms = len(self.organisms)
         number_of_metabolites = len(self.metabolites)
-        assert(len(y) == 1 + number_of_organisms + number_of_metabolites)
+        assert (len(y) == 1 + number_of_organisms + number_of_metabolites)
 
         dy = numpy.zeros(len(y))
 
@@ -310,19 +310,20 @@ class Bioreactor(Environment, DynamicSystem):
         self.time = t
 
         # assigning growth rates and metabolic production/consumption rates here
-            # in this method, these rates are calculated using FBA
+        # in this method, these rates are calculated using FBA
 
         vs = numpy.zeros([number_of_organisms, number_of_metabolites])     # fluxes through metabolites
         mu = numpy.zeros([number_of_organisms])                          # growth rates of organisms
 
         for i, organism in enumerate(self.organisms):
             organism.update()   # updating the internal states of the organism
-                                    # eg. updating the uptake constraints based on metabolite concentrations
+            # eg. updating the uptake constraints based on metabolite concentrations
             if t == 0:
                 organism.solver = solver_instance()
                 organism.solver.build_problem(organism.model)
 
-            organism.fba_solution = organism.solver.solve_lp(organism.fba_objective, constraints=organism.fba_constraints)
+            organism.fba_solution = organism.solver.solve_lp(organism.fba_objective,
+                                                             constraints=organism.fba_constraints)
 
             if organism.fba_solution.status == Status.OPTIMAL:
                 mu[i] = organism.fba_solution.fobj
@@ -337,14 +338,16 @@ class Bioreactor(Environment, DynamicSystem):
                     if metabolite in organism.model.reactions.keys():
                         vs[i, j] = 0
 
-        # updating the internal states of the bioreactor
-            # eg. flow rates, feed concentrations, and custom defined dX/dt and dS/dt terms
+                # updating the internal states of the bioreactor
+                # eg. flow rates, feed concentrations, and custom defined dX/dt and dS/dt terms
         self.update(t)
 
         # calculating the rates of change of reactor volume[L], biomass [g/L] and metabolite [mmol/L]
         dy[0] = self.flow_rate_in - self.flow_rate_out      # dV/dt [L/hr]
-        dy[1:number_of_organisms + 1] = mu * self.X + self.flow_rate_in / self.V * (self.Xfeed - self.X) + self.deltaX  # dX/dt [g/L/hr]
-        dy[number_of_organisms + 1:] = numpy.dot(self.X, vs) + self.flow_rate_in / self.V * (self.Sfeed - self.S) +self.deltaS   # dS/dt [mmol/L/hr]
+        dy[1:number_of_organisms + 1] = mu * self.X + self.flow_rate_in / self.V * (
+        self.Xfeed - self.X) + self.deltaX  # dX/dt [g/L/hr]
+        dy[number_of_organisms + 1:] = numpy.dot(self.X, vs) + self.flow_rate_in / self.V * (
+        self.Sfeed - self.S) + self.deltaS   # dS/dt [mmol/L/hr]
 
         return dy
 

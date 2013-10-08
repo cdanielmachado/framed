@@ -29,14 +29,14 @@ LARGE_TEST_MODEL = '../../../examples/models/Ec_iAF1260_gene_names.xml'
 
 
 def benchmark(method, model):
-    print 'benchmarking', method, 
+    print 'benchmarking', method,
     tstart = time()
     fobj = lambda v: v['R_EX_succ_e']
     max_dels = 1
     combinatorial_gene_deletion(model, fobj, max_dels, method=method)
     tend = time()
-    print 'took', tend-tstart
-    
+    print 'took', tend - tstart
+
 
 def main():
     model = load_sbml_model(SMALL_TEST_MODEL, GPR_CONSTRAINED)
@@ -46,6 +46,7 @@ def main():
     benchmark('qpFBA', model)
     benchmark('MOMA', model)
     benchmark('lMOMA', model)
+
 
 if __name__ == '__main__':
     main()

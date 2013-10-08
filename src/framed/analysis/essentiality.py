@@ -37,7 +37,7 @@ def essential_genes(model, min_growth=0.01, constraints=None):
 
     Returns:
         list (of str) -- essential genes
-    """    
+    """
     return essentiality(model, 'genes', min_growth, constraints)
 
 
@@ -51,8 +51,8 @@ def essential_reactions(model, min_growth=0.01, constraints=None):
 
     Returns:
         list (of str) -- essential reactions
-    """    
-    
+    """
+
     return essentiality(model, 'reactions', min_growth, constraints)
 
 
@@ -67,24 +67,24 @@ def essentiality(model, kind='reactions', min_growth=0.01, constraints=None):
 
     Returns:
         list (of str) -- essential elements
-    """    
-    
+    """
+
     solver = solver_instance()
     solver.build_problem(model)
-    
+
     wt_solution = FBA(model, constraints=constraints, solver=solver)
     wt_growth = wt_solution.fobj
-    
+
     if kind == 'genes' and isinstance(model, GPRConstrainedModel):
         elements = model.genes
     else:
         kind = 'reactions'
         elements = model.reactions
-        
+
     essential = []
-    
+
     for elem in elements:
-        if kind == 'genes':    
+        if kind == 'genes':
             solution = gene_deletion(model, [elem], solver=solver)
         else:
             solution = reaction_deletion(model, [elem], solver=solver)
@@ -93,5 +93,5 @@ def essentiality(model, kind='reactions', min_growth=0.01, constraints=None):
                          and solution.fobj < min_growth * wt_growth
                          or solution.status == Status.UNFEASIBLE):
             essential.append(elem)
-            
+
     return essential

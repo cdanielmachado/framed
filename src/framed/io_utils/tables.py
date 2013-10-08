@@ -21,6 +21,7 @@
 
 from csv import reader, writer
 
+
 def read_csv_table(filename, row_names=False, column_names=False, datatype=str, delimiter=','):
     """ Reads a table from a csv file.
     
@@ -33,14 +34,14 @@ def read_csv_table(filename, row_names=False, column_names=False, datatype=str, 
 
     Returns:
         [row names,] [column names,] data -- the data and optionally row and column names
-    """  
-    
+    """
+
     def cast(x):
         try:
             return datatype(x)
         except:
             return None
-    
+
     with open(filename) as f:
         r = reader(f, delimiter=delimiter)
         table = [line for line in r]
@@ -61,6 +62,7 @@ def read_csv_table(filename, row_names=False, column_names=False, datatype=str, 
         data = [map(cast, line) for line in table]
         return data
 
+
 def write_csv_table(filename, data, row_names=None, column_names=None, delimiter=','):
     """ Reads a table from a csv file.
     
@@ -70,7 +72,7 @@ def write_csv_table(filename, data, row_names=None, column_names=None, delimiter
         row_names : list of str -- row names (optional)
         column_names : list of str -- column names (optional)
         delimiter : str -- delimiter character (default: ',')
-    """  
+    """
     with open(filename, 'w') as f:
         w = writer(f, delimiter=delimiter)
         if column_names:

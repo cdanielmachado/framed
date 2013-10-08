@@ -21,6 +21,7 @@ Fixes to clean up common models from different sources/groups.
 '''
 from framed.core.models import GPRConstrainedModel
 
+
 def fix_bigg_model(model, boundary_metabolites=True, reversibility=True, bounds=True, bigg_ids=True):
     """ Fix models from BiGG.
     
@@ -37,38 +38,39 @@ def fix_bigg_model(model, boundary_metabolites=True, reversibility=True, bounds=
     if bounds:
         clean_bounds(model)
     if bigg_ids:
-        clean_bigg_ids(model)    
+        clean_bigg_ids(model)
 
 
 def remove_boundary_metabolites(model):
     """ Remove remove boundary metabolites (ending with '_b'). """
-    
+
     drains = filter(lambda m_id: m_id.endswith('_b'), model.metabolites)
     model.remove_metabolites(drains)
-    
+
+
 def fix_reversibility(model):
     """ Make reaction reversibility consistent with the bounds. """
-    
+
     for r_id, (lb, _) in model.bounds.items():
         model.reactions[r_id].reversibility = True if lb is None else lb < 0
 
+
 def clean_bounds(model, threshold=1000):
     """ Remove artificially large bounds (unbounded = no bounds). """
-    
+
     for r_id, (lb, ub) in model.bounds.items():
         model.bounds[r_id] = (lb if lb > -threshold else None, ub if ub < threshold else None)
 
 
 def clean_bigg_ids(model):
-    
-    clean = lambda x: x.replace('_LPAREN_','_').replace('_RPAREN_','_').replace('_DASH_','_').rstrip('_')
-    
+    clean = lambda x: x.replace('_LPAREN_', '_').replace('_RPAREN_', '_').replace('_DASH_', '_').rstrip('_')
+
     def key_replace(ord_dict, key, new_key):
         item = ord_dict[key]
         del ord_dict[key]
         ord_dict[new_key] = item
-        
-    
+
+
     for m_id, metabolite in model.metabolites.items():
         metabolite.id = clean(m_id)
         key_replace(model.metabolites, m_id, metabolite.id)
@@ -77,11 +79,11 @@ def clean_bigg_ids(model):
         reaction.id = clean(r_id)
         key_replace(model.reactions, r_id, reaction.id)
         key_replace(model.bounds, r_id, reaction.id)
-        
+
         if isinstance(model, GPRConstrainedModel):
             key_replace(model.rules, r_id, reaction.id)
             key_replace(model.rule_functions, r_id, reaction.id)
-        
+
     for (m_id, r_id) in model.stoichiometry.keys():
         key_replace(model.stoichiometry, (m_id, r_id), (clean(m_id), clean(r_id)))
         
