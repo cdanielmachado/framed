@@ -192,7 +192,6 @@ def calculate_performance(strain, bioreactor, r_substrate, r_target, t0, tf, dt,
             print 'Performing dFBA simulation.'
         dfba_solution = dFBA(bioreactor, t0, tf, dt, initial_conditions, solver=dfba_solver, verbose=verbose)
 
-
         # calculate yield using dFBA solution if the method is known,
         # otherwise calculate yield using FBA solution
         try:
