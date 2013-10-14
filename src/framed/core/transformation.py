@@ -90,13 +90,17 @@ def add_ratio_constraint(model, r_id_num, r_id_den, ratio):
         model : StoichiometricModel
         r_id_num : str -- id of the numerator
         r_id_num : str -- id of the denominator
-        ratio : floar -- ratio value
+        ratio : float -- ratio value
 
+    Returns:
+        str : identifier of the pseudo-metabolite
     """
 
-    m_id = 'ratio_{}_{}'.format(r_id_num, r_id_den)
-    model.add_metabolite(Metabolite(m_id))
-    model.add_stoichiometry([(m_id, r_id_num, 1), (m_id, r_id_den, -ratio)])
+    if r_id_num in model.reactions and r_id_den in model.reactions:
+        m_id = 'ratio_{}_{}'.format(r_id_num, r_id_den)
+        model.add_metabolite(Metabolite(m_id))
+        model.add_stoichiometry([(m_id, r_id_num, 1), (m_id, r_id_den, -ratio)])
+        return m_id
 
 
 def _disconnected_metabolites(model):
