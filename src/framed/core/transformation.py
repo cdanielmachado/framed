@@ -20,7 +20,7 @@ Module for model transformation operations.
    
 '''
 
-from models import Reaction, ConstraintBasedModel, GPRConstrainedModel
+from models import Metabolite, Reaction, ConstraintBasedModel, GPRConstrainedModel
 from ..analysis.variability import blocked_reactions
 
 
@@ -81,6 +81,22 @@ def make_irreversible(model):
             model.remove_reaction(r_id)
 
     return mapping
+
+
+def add_ratio_constraint(model, r_id_num, r_id_den, ratio):
+    """ Add a flux ratio constraint to a model.
+
+    Arguments:
+        model : StoichiometricModel
+        r_id_num : str -- id of the numerator
+        r_id_num : str -- id of the denominator
+        ratio : floar -- ratio value
+
+    """
+
+    m_id = 'ratio_{}_{}'.format(r_id_num, r_id_den)
+    model.add_metabolite(Metabolite(m_id))
+    model.add_stoichiometry([(m_id, r_id_num, 1), (m_id, r_id_den, -ratio)])
 
 
 def _disconnected_metabolites(model):
