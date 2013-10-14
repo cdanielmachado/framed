@@ -13,7 +13,7 @@ from framed.io_utils.plaintext import read_model_from_file, write_model_to_file
 from framed.analysis.deletion import gene_deletion
 from framed.analysis.essentiality import essential_genes
 from framed.solvers.solver import Status
-from framed.core.transformation import make_irreversible, simplify
+from framed.core.transformation import make_irreversible, simplify, add_ratio_constraint
 
 
 SMALL_TEST_MODEL = '../../../examples/models/ecoli_core_model.xml'
@@ -79,6 +79,19 @@ class FBATest(unittest.TestCase):
         self.assertEqual(solution.status, Status.OPTIMAL)
         self.assertAlmostEqual(solution.fobj, GROWTH_RATE, places=2)
 
+class FBAwithRatioTest(unittest.TestCase):
+    """ Test FBA with ratio constraints simulation. """
+
+    def testRun(self):
+        model = load_sbml_model(SMALL_TEST_MODEL, kind=GPR_CONSTRAINED)
+        fix_bigg_model(model)
+        r_id1 = 'R_PGI'
+        r_id2 = 'R_G6PDH2r'
+        ratio = 2.0
+        add_ratio_constraint(model, r_id1, r_id2, ratio)
+        solution = FBA(model, get_shadow_prices=True, get_reduced_costs=True)
+        self.assertEqual(solution.status, Status.OPTIMAL)
+        self.assertEqual(solution.values[r_id1] / solution.values[r_id2], ratio)
 
 class pFBATest(unittest.TestCase):
     """ Test pFBA simulation. """
