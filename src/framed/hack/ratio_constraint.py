@@ -30,7 +30,7 @@ def remove_ratio_constraint(model, m_id):
         model : StoichiometricModel
         m_id : id of the pseudo-metabolite used to establish the ratio constraint
     """
-    model.remove_metabolites(m_id)
+    model.remove_metabolite(m_id)
 
 
 def list_pseudo_metabolites(model):
