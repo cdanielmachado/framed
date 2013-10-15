@@ -100,7 +100,8 @@ def add_ratio_constraint(model, r_id_num, r_id_den, ratio):
 
         if not hasattr(model, 'ratio_constraints'):
             model.ratio_constraints = []
-        model.ratio_constraints.append(m_id)
+        if m_id not in model.ratio_constraints:
+            model.ratio_constraints.append(m_id)
 
 
 def remove_ratio_constraint(model, m_id):
@@ -111,7 +112,7 @@ def remove_ratio_constraint(model, m_id):
         m_id : id of the pseudo-metabolite used to establish the ratio constraint
     """
     model.remove_metabolites(m_id)
-
+    model.ratio_constraints.remove(m_id)
 
 def _disconnected_metabolites(model):
     m_r_table = model.metabolite_reaction_lookup_table()
