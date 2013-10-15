@@ -91,28 +91,17 @@ def add_ratio_constraint(model, r_id_num, r_id_den, ratio):
         r_id_num : str -- id of the numerator
         r_id_num : str -- id of the denominator
         ratio : float -- ratio value
+
+    Returns:
+        str : identifier of the pseudo-metabolite
     """
 
     if r_id_num in model.reactions and r_id_den in model.reactions:
         m_id = 'ratio_{}_{}'.format(r_id_num, r_id_den)
         model.add_metabolite(Metabolite(m_id))
         model.add_stoichiometry([(m_id, r_id_num, 1), (m_id, r_id_den, -ratio)])
+        return m_id
 
-        if not hasattr(model, 'ratio_constraints'):
-            model.ratio_constraints = []
-        if m_id not in model.ratio_constraints:
-            model.ratio_constraints.append(m_id)
-
-
-def remove_ratio_constraint(model, m_id):
-    """ Remove a flux ratio constraint from a model
-
-    Arguments:
-        model : StoichiometricModel
-        m_id : id of the pseudo-metabolite used to establish the ratio constraint
-    """
-    model.remove_metabolites(m_id)
-    model.ratio_constraints.remove(m_id)
 
 def _disconnected_metabolites(model):
     m_r_table = model.metabolite_reaction_lookup_table()
