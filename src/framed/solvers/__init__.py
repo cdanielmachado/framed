@@ -32,6 +32,13 @@ except:
     pass
 
 try:
+    from .glpk_wrapper import glpkSolver
+
+    solvers['glpk'] = glpkSolver
+except:
+    pass
+
+try:
     from .gurobi_wrapper import GurobiSolver
 
     solvers['gurobi'] = GurobiSolver
@@ -62,5 +69,5 @@ def solver_instance():
     Returns:
         Solver
     """
-
+    
     return solvers[default_solver]()
