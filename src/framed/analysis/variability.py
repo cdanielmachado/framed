@@ -141,3 +141,44 @@ def production_envelope(model, r_target, r_biomass=None, steps=10, constraints=N
         r_biomass = model.detect_biomass_reaction()
 
     return flux_envelope(model, r_x=r_biomass, r_y=r_target, steps=steps, constraints=constraints)
+
+
+def flux_envelope_3d(model, r_x, r_y, r_z, steps=10, constraints=None):
+    """ Calculate the flux envelope for a triplet of reactions.
+
+    Arguments:
+        model : ConstraintBasedModel -- the model
+        r_x : str -- reaction on x-axis
+        r_y : str -- reaction on y-axis
+        r_z : str -- reaction on z-axis
+        steps : int -- number of steps to compute along both x and y axis (default: 10)
+        constraints : dict -- custom constraints to the FBA problem
+
+    Returns:
+        list (of float), list (of float), list (of float), list (of float) -- z min values, z max values, x coordinates, y coordinates
+    """
+
+    xvals, ymins, ymaxs = flux_envelope(model, r_x, r_y, steps, constraints)
+
+    yvals=[None]*steps
+    zmins, zmaxs = [None] * steps, [None] * steps
+    x_coors, y_coors = [None] * steps, [None] * steps
+
+    for i, xval in enumerate(xvals):
+
+        zmins[i], zmaxs[i] = [None] * steps, [None] * steps
+        x_coors[i], y_coors[i] = [None] * steps, [None] * steps
+
+        yvals[i] = linspace(ymins[i], ymaxs[i], steps).tolist()
+
+        for j, yval in enumerate(yvals[i]):
+            x_coors[i][j] = xval
+            y_coors[i][j] = yval
+            x_constraint = {r_x: (xval, xval)}
+            y_constraint = {r_y: (yval, yval)}
+            constraints.update(x_constraint)
+            constraints.update(y_constraint)
+            z_range = FVA(model, reactions=[r_z], constraints=constraints)
+
+            zmins[i][j], zmaxs[i][j] = z_range[r_z]
+    return zmins, zmaxs, x_coors, y_coors
