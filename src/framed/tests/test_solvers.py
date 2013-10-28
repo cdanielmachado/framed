@@ -7,10 +7,10 @@ import unittest
 import pickle
 
 from framed.io_utils.sbml import load_sbml_model, CONSTRAINT_BASED
-from framed.solvers.gurobi_wrapper import GurobiSolver
-from framed.solvers import solver_instance
+from framed.solvers import *
 from framed.analysis.simulation import FBA
 from framed.core.fixes import fix_bigg_model
+from test_glpk_alone import *
 
 SMALL_TEST_MODEL = '../../../examples/models/ecoli_core_model.xml'
 
@@ -26,11 +26,40 @@ class SolverPickleTest(unittest.TestCase):
         self.solver = solver_instance()
         self.solver.build_problem(self.model)
         solver_from_pickle = pickle.loads(pickle.dumps(self.solver))
+        FBA(self.model, solver=self.solver)
         self.assertEqual(FBA(self.model, solver=self.solver).status, FBA(self.model, solver=solver_from_pickle).status)
 
 
+# added by Marta to test glpk 
+class SolverGLPKTest(unittest.TestCase):
+    
+    def setUp(self):
+        self.model = load_sbml_model(SMALL_TEST_MODEL, kind=CONSTRAINT_BASED)
+        fix_bigg_model(self.model)
+    
+    
+    def test_glpk_alone(self):
+        result = solve_lp_prob_glpk()
+        self.assertEqual(result[0], 1.25)
+        self.assertEqual(result[1], 45)
+        self.assertEqual(result[2], 6.25)
+
+
+    def test_glpk_against_gurobi(self):
+        set_default_solver(solvername = "gurobi")
+        self.solver_one = solver_instance()
+        self.solver_one.build_problem(self.model)
+        sol_one = FBA(self.model, solver=self.solver_one)
+        
+        set_default_solver(solvername = "glpk")
+        self.solver_two = solver_instance()
+        self.solver_two.build_problem(self.model)
+        sol_two = FBA (self.model, solver=self.solver_two)
+
+        self.assertAlmostEqual(sol_one.fobj, sol_two.fobj, places = 5)
+
 def suite():
-    tests = [SolverPickleTest]
+    tests = [SolverPickleTest, SolverGLPKTest]
     test_suite = unittest.TestSuite()
     for test in tests:
         test_suite.addTest(unittest.makeSuite(test))

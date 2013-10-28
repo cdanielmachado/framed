@@ -40,6 +40,7 @@ class GurobiSolver(Solver):
         self.var_ids = None
         self.constr_ids = None
 
+
     def __getstate__(self):
         tmp_file = tempfile.mktemp(suffix=".lp")
         self.problem.update()
@@ -48,12 +49,14 @@ class GurobiSolver(Solver):
         repr_dict = {'var_ids': self.var_ids, 'constr_ids': self.constr_ids, 'cplex_form': cplex_form}
         return repr_dict
 
+
     def __setstate__(self, repr_dict):
         tmp_file = tempfile.mktemp(suffix=".lp")
         open(tmp_file, 'w').write(repr_dict['cplex_form'])
         self.problem = read(tmp_file)
         self.var_ids = repr_dict['var_ids']
         self.constr_ids = repr_dict['constr_ids']
+
 
     def build_problem(self, model):
         """ Create and store solver-specific internal structure for the given model.
@@ -71,7 +74,7 @@ class GurobiSolver(Solver):
         for m_id in model.metabolites:
             self.add_constraint(m_id, table[m_id].items())
 
-
+        
     def empty_problem(self):
         """ Create an empty problem structure.
         To be used for manually instantiate a problem.
@@ -126,10 +129,13 @@ class GurobiSolver(Solver):
                 constr.setAttr('lhs', expr)
                 constr.setAttr('sense', grb_sense[sense])
                 constr.setAttr('lhs', rhs)
+                self.problem.update()
         else:
             expr = quicksum([coeff * self.problem.getVarByName(r_id) for r_id, coeff in lhs])
             self.problem.addConstr(expr, grb_sense[sense], rhs, constr_id)
             self.constr_ids.append(constr_id)
+            self.problem.update()
+
 
     def list_variables(self):
         """ Get a list of the variable ids defined for the current problem.
@@ -148,7 +154,7 @@ class GurobiSolver(Solver):
         return self.constr_ids
 
 
-    def solve_lp(self, objective, model=None, constraints=None, get_shadow_prices=False, get_reduced_costs=False):
+    def solve_lp(self, objective, model=None, constraints=None, get_shadow_prices=False, get_reduced_costs=False, presolve = False):
         """ Solve an LP optimization problem.
         
         Arguments:
@@ -158,17 +164,17 @@ class GurobiSolver(Solver):
             constraints : dict (of str to (float, float)) -- environmental or additional constraints (optional)
             get_shadow_prices : bool -- return shadow price information if available (optional, default: False)
             get_reduced_costs : bool -- return reduced costs information if available (optional, default: False)
-            
+            presolve : bool -- uses gurobi presolver level 1  (default: False)
         Returns:
             Solution
         """
 
         return self._generic_solve(None, objective, GRB.MAXIMIZE, model, constraints, get_shadow_prices,
-                                   get_reduced_costs)
+                                   get_reduced_costs, presolve)
 
 
     def solve_qp(self, quad_obj, lin_obj, model=None, constraints=None, get_shadow_prices=False,
-                 get_reduced_costs=False):
+                 get_reduced_costs=False, presolve = False):
         """ Solve an LP optimization problem.
         
         Arguments:
@@ -178,17 +184,18 @@ class GurobiSolver(Solver):
             constraints : dict (of str to (float, float)) -- overriding constraints (optional)
             get_shadow_prices : bool -- return shadow price information if available (default: False)
             get_reduced_costs : bool -- return reduced costs information if available (default: False)
+            presolve : bool -- uses gurobi presolver level 1  (default: False)
         
         Returns:
             Solution
         """
 
-        return self._generic_solve(quad_obj, lin_obj, GRB.MINIMIZE, model, constraints, get_shadow_prices,
-                                   get_reduced_costs)
+        return self._generic_solve(quad_obj, lin_obj, GRB.MAXIMIZE, model, constraints, get_shadow_prices,
+                                   get_reduced_costs, presolve)
 
 
     def _generic_solve(self, quad_obj, lin_obj, sense, model=None, constraints=None, get_shadow_prices=False,
-                       get_reduced_costs=False):
+                       get_reduced_costs=False, presolve = False):
 
         if model:
             self.build_problem(model)
@@ -210,13 +217,20 @@ class GurobiSolver(Solver):
         #create objective function
         quad_obj_expr = [q * problem.getVarByName(r_id1) * problem.getVarByName(r_id2)
                          for (r_id1, r_id2), q in quad_obj.items() if q] if quad_obj else []
+
         lin_obj_expr = [f * problem.getVarByName(r_id)
                         for r_id, f in lin_obj.items() if f] if lin_obj else []
-        obj_expr = quicksum(quad_obj_expr + lin_obj_expr)
-        problem.setObjective(obj_expr, sense)
 
+        obj_expr = quicksum(quad_obj_expr + lin_obj_expr)
+        
+        problem.setObjective(obj_expr, sense)
+        
+        if presolve:
+            problem.setParam("Presolve", 1)
+            
         #run the optimization
         problem.optimize()
+        
         status = status_mapping[problem.status] if problem.status in status_mapping else Status.UNKNOWN
 
         if status == Status.OPTIMAL:

@@ -20,23 +20,50 @@ Implementation of a Gurobi based solver interface.
    
 '''
 
+import tempfile
+import os
 from collections import OrderedDict
 from .solver import Solver, Solution, Status
 from glpk.glpkpi import *
 from warnings import warn
 
-status_mapping = {GLP.OPT: Status.OPTIMAL,
-                  GLP.UNBND: Status.UNBOUNDED,
-                  GLP.INFEAS: Status.UNFEASIBLE}
+
+status_mapping = {GLP_OPT: Status.OPTIMAL,
+                  GLP_UNBND: Status.UNBOUNDED,
+                  GLP_INFEAS: Status.UNFEASIBLE}
                   
 
 class glpkSolver(Solver):
     """ Implements the solver interface using python-GLPK. """
-  
+
     def __init__(self):
         Solver.__init__(self)
         self.var_ids = None
         self.constr_ids = None
+        # so that GLPK does not print an output message on solving the problem
+        self.smcp = glp_smcp()
+        glp_init_smcp(self.smcp)
+        self.smcp.msg_lev = GLP_MSG_OFF
+        self.smcp.presolve = GLP_OFF
+
+
+    def __getstate__(self): 
+       tmp_file = tempfile.mktemp(suffix=".lp")
+       glp_write_lp(self.problem, None, tmp_file)
+       cplex_form = glp_create_prob()
+       glp_create_index(cplex_form)
+       glp_read_lp(cplex_form, None, tmp_file)
+       repr_dict = {'var_ids': self.var_ids, 'constr_ids': self.constr_ids, 'cplex_form': cplex_form}
+       return repr_dict
+
+
+    def __setstate__(self, repr_dict):
+        tmp_file = tempfile.mktemp(suffix=".lp")
+        open(tmp_file, 'w').write(repr_dict['cplex_form'])
+        glp_read_lp(self.problem, None, tmp_file)
+        self.var_ids = repr_dict['var_ids']
+        self.constr_ids = repr_dict['constr_ids']
+
 
     def build_problem(self, model):
         """ Create and store solver-specific internal structure for the given model.
@@ -61,6 +88,7 @@ class glpkSolver(Solver):
         For automatic instantiation use the build_problem interface method. """
 
         self.problem = glp_create_prob()
+        glp_create_index(self.problem)
         self.var_ids = []
         self.constr_ids = []
 
@@ -73,23 +101,24 @@ class glpkSolver(Solver):
             lb : float -- lower bound
             ub : float -- upper bound
         """
-        
-        lb = lb if lb is not None else float("-inf")
-        ub = ub if ub is not None else float("inf")
-        
+
+        lb = lb if lb is not None else -10e6
+        ub = ub if ub is not None else 10e6
+
         if var_id in self.var_ids:
             if force_update:
-              indCol = glp_find_col(self.problem, var_id)
-              glp_set_col_bnds(self.problem, indCol, GLP_DB, lb, ub)
+                ind_col = glp_find_col(self.problem, var_id)
+                glp_set_col_bnds(self.problem, ind_col, GLP_DB, lb, ub)
+
         else:
             glp_add_cols(self.problem, 1)
-            indCol = glp_get_num_cols()
-            glp_set_col_name(self.problem, indCol, var_id)
-            glp_set_col_bnds(self.problem, indCol, GLP_DB, lb, ub)
+            ind_col = glp_get_num_cols(self.problem)
+            glp_set_col_name(self.problem, ind_col, var_id)
+            glp_set_col_bnds(self.problem, ind_col, GLP_DB, lb, ub)
             self.var_ids.append(var_id)
 
 
-    def add_constraint(self, constr_id, lhs, sense='=', rhs=0, force_update=True)
+    def add_constraint(self, constr_id, lhs, sense='=', rhs=0, force_update=True):
         """ Add a variable to the current problem.
         
         Arguments:
@@ -100,53 +129,57 @@ class glpkSolver(Solver):
         """
 
         if constr_id in self.constr_ids:
-            if force_update = True:
+            if force_update == True:
+                ind_row = glp_find_row(self.problem, constr_id)
+                n_vars = glp_get_num_cols(self.problem)
+                coef_ind = intArray(n_vars + 1)
+                coef_val = doubleArray(n_vars + 1)
                 
-                indRow = glp_find_row(self.problem, constr_id)
-                nVars = len(lhs)
-                coefInd = intArray(nVars)
-                coefVal = intArray(nVars)
-                
-                i = 0 
+                for i in range(0, n_vars + 1):
+                    coef_ind[i] = i
+                    coef_val[i] = 0.
+
                 for r_id, coeff in lhs:
-                    coefInd[i] = glp_find_col(self.problem, r_id)
-                    coefVal[i] = coeff
-                    i += 1
+                    coef_ind_col = glp_find_col(self.problem, r_id) 
+                    coef_val[coef_ind_col] = coeff
                 
-                glpk_set_row_name(prob, indRow, constr_id)
-                glp_set_mat_row(self.problem, indRow, nVars, coefInd, coefVal)
+                glp_set_mat_row(self.problem, ind_row, n_vars, coef_ind, coef_val)
                 
                 if (sense == '>'):
-                  glp_set_row_bnds(self.problem, indRow, GLP.UP, float("-inf"), rhs)
+                    glp_set_row_bnds(self.problem, ind_row, GLP_LO, rhs, 10e6)
                 elif (sense == '<'):
-                  glp_set_row_bnds(self.problem, indRow, GLP.LO, rhs, float("inf"))
+                    glp_set_row_bnds(self.problem, ind_row, GLP_UP, -10e6, rhs)
                 elif (sense == '='):
-                  glp_set_row_bnds(self.problem, indRow, GLP.LO, rhs, rhs)
+                    glp_set_row_bnds(self.problem, ind_row, GLP_FX, rhs, rhs)
                 
         else:
-            glpk_add_rows(self.problem, 1)
-            indRow = glp_get_num_rows()
-            nVars = len(lhs)
-            coefInd = intArray(nVars)
-            coefVal = intArray(nVars)
+            glp_add_rows(self.problem, 1)
+            ind_row = glp_get_num_rows(self.problem)
+            n_vars = glp_get_num_cols(self.problem)
+            coef_ind = intArray(n_vars + 1)
+            coef_val = doubleArray(n_vars + 1)
             
-            i = 0 
+            for i in range(0, n_vars + 1):
+                coef_ind[i] = i
+                coef_val[i] = 0.
+
             for r_id, coeff in lhs:
-                coefInd[i] = glp_find_col(self.problem, r_id)
-                coefVal[i] = coeff
-                i += 1
+                coef_ind_col = glp_find_col(self.problem, r_id) 
+                coef_val[coef_ind_col] = coeff
             
-            glpk_set_row_name(prob, indRow, constr_id)
-            glp_set_mat_row(self.problem, indRow, nVars, coefInd, coefVal)
+            glp_set_row_name(self.problem, ind_row, constr_id)
+            glp_set_mat_row(self.problem, ind_row, n_vars, coef_ind, coef_val)
             
             if (sense == '>'):
-              glp_set_row_bnds(self.problem, indRow, GLP.UP, float("-inf"), rhs)
+                glp_set_row_bnds(self.problem, ind_row, GLP_LO, rhs, 10e6)
             elif (sense == '<'):
-              glp_set_row_bnds(self.problem, indRow, GLP.LO, rhs, float("inf"))
+                glp_set_row_bnds(self.problem, ind_row, GLP_UP, -10e6, rhs)
             elif (sense == '='):
-              glp_set_row_bnds(self.problem, indRow, GLP.LO, rhs, rhs)
-                
-                
+                glp_set_row_bnds(self.problem, ind_row, GLP_FX, rhs, rhs)
+            
+            self.constr_ids.append(constr_id)
+
+
     def list_variables(self):
         """ Get a list of the variable ids defined for the current problem.
         
@@ -154,6 +187,7 @@ class glpkSolver(Solver):
             list [of str] -- variable ids
         """
         return self.var_ids
+
 
     def list_constraints(self):
         """ Get a list of the constraint ids defined for the current problem.
@@ -164,7 +198,7 @@ class glpkSolver(Solver):
         return self.constr_ids
 
 
-    def solve_lp(self, objective, model=None, constraints=None, get_shadow_prices=False, get_reduced_costs=False):
+    def solve_lp(self, objective, model=None, constraints=None, get_shadow_prices=False, get_reduced_costs=False, presolve = False):
         """ Solve an LP optimization problem.
         
         Arguments:
@@ -174,17 +208,17 @@ class glpkSolver(Solver):
             constraints : dict (of str to (float, float)) -- environmental or additional constraints (optional)
             get_shadow_prices : bool -- return shadow price information if available (optional, default: False)
             get_reduced_costs : bool -- return reduced costs information if available (optional, default: False)
-            
+            presolve : bool -- uses glpk presolver on simplex method  (default: False)
         Returns:
             Solution
         """
 
         return self._generic_solve(None, objective, GLP_MAX, model, constraints, get_shadow_prices,
-                                   get_reduced_costs)
+                                   get_reduced_costs, presolve)
 
 
     def solve_qp(self, quad_obj, lin_obj, model=None, constraints=None, get_shadow_prices=False,
-                 get_reduced_costs=False):
+                 get_reduced_costs=False, presolve=False):
         """ Solve an LP optimization problem.
         
         Arguments:
@@ -194,7 +228,7 @@ class glpkSolver(Solver):
             constraints : dict (of str to (float, float)) -- overriding constraints (optional)
             get_shadow_prices : bool -- return shadow price information if available (default: False)
             get_reduced_costs : bool -- return reduced costs information if available (default: False)
-        
+            presolve : bool -- uses glpk presolver on simplex method  (default: False)
         Returns:
             Solution
         """
@@ -204,7 +238,7 @@ class glpkSolver(Solver):
 
 
     def _generic_solve(self, quad_obj, lin_obj, sense, model=None, constraints=None, get_shadow_prices=False,
-                       get_reduced_costs=False):
+                       get_reduced_costs=False, presolve=False):
 
         if model:
             self.build_problem(model)
@@ -217,56 +251,62 @@ class glpkSolver(Solver):
         if constraints:
             old_constraints = {}
             for r_id, (lb, ub) in constraints.items():
-                indCol = glp_find_col(self.problem, r_id)
-                old_constraints[r_id] = (glpk_get_col_lb(self.problem, indCol), glpk_get_col_ub(self.problem, indCol))
-                glp_set_col_bnds(self.problem, 
-                                 indCol,
-                                 glp_get_col_type(self.problem, indCol), 
-                                 lb if lb is not None else float("-inf"), 
-                                 ub if ub is not None else float("inf"))
+                ind_col = glp_find_col(problem, r_id)
+                old_constraints[r_id] = (glp_get_col_lb(problem, ind_col), glp_get_col_ub(problem, ind_col))
+                glp_set_col_bnds(problem,
+                                 ind_col,
+                                 glp_get_col_type(problem, ind_col),
+                                 lb if lb is not None else -10e6,
+                                 ub if ub is not None else 10e6)
 
         if lin_obj:
-            for r_id, f in lin_obj.items() if f:
-                indCol = glp_find_col(self.problem, r_id)
-                glp_set_obj_coef(prob, indCol, f)
-        
+            for r_id, f in lin_obj.items():
+                if f:
+                    ind_col = glp_find_col(problem, r_id)
+                    glp_set_obj_coef(problem, ind_col, f)
+
         if quad_obj:
             warn('GLPK does not solve quadratic programming problems')
 
-        #run the optimization
-        glp_simplex(self.problem, None)
-        
 
-        problemStatus = glp_get_status(self.problem)
+        glp_set_obj_dir(problem, sense)
+
+        # enable presolver if user wants it
+        if presolve:
+            self.smcp.presolve = GLP_ON
+
+        # run the optimization
+        glp_simplex(problem, self.smcp)
+
+        problemStatus = glp_get_status(problem)
         status = status_mapping[problemStatus] if problemStatus in status_mapping else Status.UNKNOWN
 
         if status == Status.OPTIMAL:
-            fobj = glp_get_obj_val(self.problem)
-            values = OrderedDict([(r_id, glp_get_col_prim(self.problem, glp_find_col(self.problem, r_id)) for r_id in self.var_ids])
+            fobj = glp_get_obj_val(problem)
+            values = OrderedDict([(r_id, glp_get_col_prim(problem, glp_find_col(problem, r_id))) for r_id in self.var_ids])
 
-            #if metabolite is disconnected no constraint will exist
-            shadow_prices = OrderedDict([(m_id, glp_get_row_dual(self.problem, glp_find_row(m_id))
+            # if metabolite is disconnected no constraint will exist
+            shadow_prices = OrderedDict([(m_id, glp_get_row_dual(problem, glp_find_row(m_id)))
                                          for m_id in self.constr_ids
                                          if glp_find_row(m_id)]) if get_shadow_prices else None
 
-            reduced_costs = OrderedDict([(r_id, glp_get_col_dual(self.problem, glp_find_col(r_id))
+            reduced_costs = OrderedDict([(r_id, glp_get_col_dual(problem, glp_find_col(r_id)))
                                          for r_id in self.var_ids]) if get_reduced_costs else None
 
             solution = Solution(status, fobj, values, shadow_prices, reduced_costs)
         else:
             solution = Solution(status)
 
-        #reset old constraints because temporary constraints should not be persistent
+        # reset old constraints because temporary constraints should not be persistent
         if constraints:
             for r_id, (lb, ub) in old_constraints.items():
-                indCol = glp_find_col(r_id)
-                glp_set_row_bnds(self.problem, 
-                                 indCol,
-                                 glp_get_colw_type(self.problem, indCol), 
-                                 lb if lb is not None else float("-inf"), 
-                                 ub if ub is not None else float("inf"))
+                ind_col = glp_find_col(r_id)
+                glp_set_row_bnds(problem,
+                                 ind_col,
+                                 glp_get_col_type(problem, ind_col),
+                                 lb if lb is not None else 10e6,
+                                 ub if ub is not None else -10e6)
 
 
         return solution
-        
-        
+
