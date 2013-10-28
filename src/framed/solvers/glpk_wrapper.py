@@ -37,6 +37,7 @@ status_mapping = {GLP_OPT: Status.OPTIMAL,
 
 
 class GlpkSolver(Solver):
+
     """ Implements the solver interface using python-GLPK. """
 
     def __init__(self):
@@ -48,20 +49,23 @@ class GlpkSolver(Solver):
         glp_init_smcp(self.smcp)
         self.smcp.msg_lev = GLP_MSG_OFF
         self.smcp.presolve = GLP_OFF
+        glp_term_out(GLP_OFF)
 
-    def __getstate__(self): 
+    def __getstate__(self):
         tmp_file = tempfile.mktemp(suffix=".lp")
         glp_write_lp(self.problem, None, tmp_file)
-        cplex_form = glp_create_prob()
-        glp_create_index(cplex_form)
-        glp_read_lp(cplex_form, None, tmp_file)
-        repr_dict = {'var_ids': self.var_ids, 'constr_ids': self.constr_ids, 'cplex_form': cplex_form}
+        cplex_form = open(tmp_file).read()
+        repr_dict = {'var_ids': self.var_ids, 'constr_ids':
+                     self.constr_ids, 'cplex_form': cplex_form}
         return repr_dict
 
     def __setstate__(self, repr_dict):
+        self.__init__()
         tmp_file = tempfile.mktemp(suffix=".lp")
         open(tmp_file, 'w').write(repr_dict['cplex_form'])
+        self.empty_problem()
         glp_read_lp(self.problem, None, tmp_file)
+        glp_create_index(self.problem)
         self.var_ids = repr_dict['var_ids']
         self.constr_ids = repr_dict['constr_ids']
 
@@ -137,10 +141,11 @@ class GlpkSolver(Solver):
                     coef_val[i] = 0.
 
                 for r_id, coeff in lhs:
-                    coef_ind_col = glp_find_col(self.problem, r_id) 
+                    coef_ind_col = glp_find_col(self.problem, r_id)
                     coef_val[coef_ind_col] = coeff
 
-                glp_set_mat_row(self.problem, ind_row, n_vars, coef_ind, coef_val)
+                glp_set_mat_row(
+                    self.problem, ind_row, n_vars, coef_ind, coef_val)
 
                 if (sense == '>'):
                     glp_set_row_bnds(self.problem, ind_row, GLP_LO, rhs, 10e6)
@@ -161,7 +166,7 @@ class GlpkSolver(Solver):
                 coef_val[i] = 0.
 
             for r_id, coeff in lhs:
-                coef_ind_col = glp_find_col(self.problem, r_id) 
+                coef_ind_col = glp_find_col(self.problem, r_id)
                 coef_val[coef_ind_col] = coeff
 
             glp_set_row_name(self.problem, ind_row, constr_id)
@@ -207,11 +212,13 @@ class GlpkSolver(Solver):
             Solution
         """
 
-        return self._generic_solve(None, objective, GLP_MAX, model, constraints, get_shadow_prices,
-                                   get_reduced_costs, presolve)
+        return self._generic_solve(
+            None, objective, GLP_MAX, model, constraints, get_shadow_prices,
+            get_reduced_costs, presolve)
 
-    def solve_qp(self, quad_obj, lin_obj, model=None, constraints=None, get_shadow_prices=False,
-                 get_reduced_costs=False, presolve=False):
+    def solve_qp(
+        self, quad_obj, lin_obj, model=None, constraints=None, get_shadow_prices=False,
+            get_reduced_costs=False, presolve=False):
         """ Solve an LP optimization problem.
 
         Arguments:
@@ -226,11 +233,13 @@ class GlpkSolver(Solver):
             Solution
         """
 
-        # An exception is raised if the user attempts to solve a quadratic program with GLPK
+        # An exception is raised if the user attempts to solve a quadratic
+        # program with GLPK
         raise Exception('GLPK does not solve quadratic programming problems')
 
-    def _generic_solve(self, quad_obj, lin_obj, sense, model=None, constraints=None, get_shadow_prices=False,
-                       get_reduced_costs=False, presolve=False):
+    def _generic_solve(
+        self, quad_obj, lin_obj, sense, model=None, constraints=None, get_shadow_prices=False,
+            get_reduced_costs=False, presolve=False):
 
         if model:
             self.build_problem(model)
@@ -238,13 +247,15 @@ class GlpkSolver(Solver):
         if self.problem:
             problem = self.problem
         else:
-            raise Exception('A model must be given if solver is used for the first time.')
+            raise Exception(
+                'A model must be given if solver is used for the first time.')
 
         if constraints:
             old_constraints = {}
             for r_id, (lb, ub) in constraints.items():
                 ind_col = glp_find_col(problem, r_id)
-                old_constraints[r_id] = (glp_get_col_lb(problem, ind_col), glp_get_col_ub(problem, ind_col))
+                old_constraints[r_id] = (
+                    glp_get_col_lb(problem, ind_col), glp_get_col_ub(problem, ind_col))
                 glp_set_col_bnds(problem,
                                  ind_col,
                                  glp_get_col_type(problem, ind_col),
@@ -270,11 +281,13 @@ class GlpkSolver(Solver):
         glp_simplex(problem, self.smcp)
 
         problemStatus = glp_get_status(problem)
-        status = status_mapping[problemStatus] if problemStatus in status_mapping else Status.UNKNOWN
+        status = status_mapping[
+            problemStatus] if problemStatus in status_mapping else Status.UNKNOWN
 
         if status == Status.OPTIMAL:
             fobj = glp_get_obj_val(problem)
-            values = OrderedDict([(r_id, glp_get_col_prim(problem, glp_find_col(problem, r_id))) for r_id in self.var_ids])
+            values = OrderedDict([(r_id, glp_get_col_prim(problem, glp_find_col(problem, r_id)))
+                                 for r_id in self.var_ids])
 
             # if metabolite is disconnected no constraint will exist
             shadow_prices = OrderedDict([(m_id, glp_get_row_dual(problem, glp_find_row(m_id)))
@@ -284,11 +297,13 @@ class GlpkSolver(Solver):
             reduced_costs = OrderedDict([(r_id, glp_get_col_dual(problem, glp_find_col(r_id)))
                                          for r_id in self.var_ids]) if get_reduced_costs else None
 
-            solution = Solution(status, fobj, values, shadow_prices, reduced_costs)
+            solution = Solution(
+                status, fobj, values, shadow_prices, reduced_costs)
         else:
             solution = Solution(status)
 
-        # reset old constraints because temporary constraints should not be persistent
+        # reset old constraints because temporary constraints should not be
+        # persistent
         if constraints:
             for r_id, (lb, ub) in old_constraints.items():
                 ind_col = glp_find_col(r_id)
