@@ -18,6 +18,9 @@ Implementation of a Gurobi based solver interface.
    See the License for the specific language governing permissions and
    limitations under the License.
    
+   
+   Note: to use this wrapper you need python-glpk, the instructions to 
+   install it on Mac OS can be found on the framed/misc folder
 '''
 
 import tempfile
@@ -31,9 +34,9 @@ from warnings import warn
 status_mapping = {GLP_OPT: Status.OPTIMAL,
                   GLP_UNBND: Status.UNBOUNDED,
                   GLP_INFEAS: Status.UNFEASIBLE}
-                  
 
-class glpkSolver(Solver):
+
+class GlpkSolver(Solver):
     """ Implements the solver interface using python-GLPK. """
 
     def __init__(self):
@@ -46,16 +49,14 @@ class glpkSolver(Solver):
         self.smcp.msg_lev = GLP_MSG_OFF
         self.smcp.presolve = GLP_OFF
 
-
     def __getstate__(self): 
-       tmp_file = tempfile.mktemp(suffix=".lp")
-       glp_write_lp(self.problem, None, tmp_file)
-       cplex_form = glp_create_prob()
-       glp_create_index(cplex_form)
-       glp_read_lp(cplex_form, None, tmp_file)
-       repr_dict = {'var_ids': self.var_ids, 'constr_ids': self.constr_ids, 'cplex_form': cplex_form}
-       return repr_dict
-
+        tmp_file = tempfile.mktemp(suffix=".lp")
+        glp_write_lp(self.problem, None, tmp_file)
+        cplex_form = glp_create_prob()
+        glp_create_index(cplex_form)
+        glp_read_lp(cplex_form, None, tmp_file)
+        repr_dict = {'var_ids': self.var_ids, 'constr_ids': self.constr_ids, 'cplex_form': cplex_form}
+        return repr_dict
 
     def __setstate__(self, repr_dict):
         tmp_file = tempfile.mktemp(suffix=".lp")
@@ -64,23 +65,21 @@ class glpkSolver(Solver):
         self.var_ids = repr_dict['var_ids']
         self.constr_ids = repr_dict['constr_ids']
 
-
     def build_problem(self, model):
         """ Create and store solver-specific internal structure for the given model.
-        
+
         Arguments:
             model : ConstraintBasedModel
         """
 
         self.empty_problem()
-        
+
         for r_id, (lb, ub) in model.bounds.items():
             self.add_variable(r_id, lb, ub)
 
         table = model.metabolite_reaction_lookup_table()
         for m_id in model.metabolites:
             self.add_constraint(m_id, table[m_id].items())
-
 
     def empty_problem(self):
         """ Create an empty problem structure.
@@ -92,10 +91,9 @@ class glpkSolver(Solver):
         self.var_ids = []
         self.constr_ids = []
 
-
     def add_variable(self, var_id, lb=None, ub=None, force_update=True):
         """ Add a variable to the current problem.
-        
+
         Arguments:
             var_id : str -- variable identifier
             lb : float -- lower bound
@@ -117,10 +115,9 @@ class glpkSolver(Solver):
             glp_set_col_bnds(self.problem, ind_col, GLP_DB, lb, ub)
             self.var_ids.append(var_id)
 
-
     def add_constraint(self, constr_id, lhs, sense='=', rhs=0, force_update=True):
         """ Add a variable to the current problem.
-        
+
         Arguments:
             constr_id : str -- constraint identifier
             lhs : list [of (str, float)] -- variables and respective coefficients
@@ -134,7 +131,7 @@ class glpkSolver(Solver):
                 n_vars = glp_get_num_cols(self.problem)
                 coef_ind = intArray(n_vars + 1)
                 coef_val = doubleArray(n_vars + 1)
-                
+
                 for i in range(0, n_vars + 1):
                     coef_ind[i] = i
                     coef_val[i] = 0.
@@ -142,23 +139,23 @@ class glpkSolver(Solver):
                 for r_id, coeff in lhs:
                     coef_ind_col = glp_find_col(self.problem, r_id) 
                     coef_val[coef_ind_col] = coeff
-                
+
                 glp_set_mat_row(self.problem, ind_row, n_vars, coef_ind, coef_val)
-                
+
                 if (sense == '>'):
                     glp_set_row_bnds(self.problem, ind_row, GLP_LO, rhs, 10e6)
                 elif (sense == '<'):
                     glp_set_row_bnds(self.problem, ind_row, GLP_UP, -10e6, rhs)
                 elif (sense == '='):
                     glp_set_row_bnds(self.problem, ind_row, GLP_FX, rhs, rhs)
-                
+
         else:
             glp_add_rows(self.problem, 1)
             ind_row = glp_get_num_rows(self.problem)
             n_vars = glp_get_num_cols(self.problem)
             coef_ind = intArray(n_vars + 1)
             coef_val = doubleArray(n_vars + 1)
-            
+
             for i in range(0, n_vars + 1):
                 coef_ind[i] = i
                 coef_val[i] = 0.
@@ -166,41 +163,38 @@ class glpkSolver(Solver):
             for r_id, coeff in lhs:
                 coef_ind_col = glp_find_col(self.problem, r_id) 
                 coef_val[coef_ind_col] = coeff
-            
+
             glp_set_row_name(self.problem, ind_row, constr_id)
             glp_set_mat_row(self.problem, ind_row, n_vars, coef_ind, coef_val)
-            
+
             if (sense == '>'):
                 glp_set_row_bnds(self.problem, ind_row, GLP_LO, rhs, 10e6)
             elif (sense == '<'):
                 glp_set_row_bnds(self.problem, ind_row, GLP_UP, -10e6, rhs)
             elif (sense == '='):
                 glp_set_row_bnds(self.problem, ind_row, GLP_FX, rhs, rhs)
-            
-            self.constr_ids.append(constr_id)
 
+            self.constr_ids.append(constr_id)
 
     def list_variables(self):
         """ Get a list of the variable ids defined for the current problem.
-        
+
         Returns:
             list [of str] -- variable ids
         """
         return self.var_ids
 
-
     def list_constraints(self):
         """ Get a list of the constraint ids defined for the current problem.
-        
+
         Returns:
             list [of str] -- constraint ids
         """
         return self.constr_ids
 
-
-    def solve_lp(self, objective, model=None, constraints=None, get_shadow_prices=False, get_reduced_costs=False, presolve = False):
+    def solve_lp(self, objective, model=None, constraints=None, get_shadow_prices=False, get_reduced_costs=False, presolve=False):
         """ Solve an LP optimization problem.
-        
+
         Arguments:
             objective : dict (of str to float) -- reaction ids in the objective function and respective
                         coefficients, the sense is maximization by default
@@ -216,11 +210,10 @@ class glpkSolver(Solver):
         return self._generic_solve(None, objective, GLP_MAX, model, constraints, get_shadow_prices,
                                    get_reduced_costs, presolve)
 
-
     def solve_qp(self, quad_obj, lin_obj, model=None, constraints=None, get_shadow_prices=False,
                  get_reduced_costs=False, presolve=False):
         """ Solve an LP optimization problem.
-        
+
         Arguments:
             quad_obj : dict (of (str, str) to float) -- map reaction pairs to respective coefficients
             lin_obj : dict (of str to float) -- map single reaction ids to respective linear coefficients
@@ -235,7 +228,6 @@ class glpkSolver(Solver):
 
         # An exception is raised if the user attempts to solve a quadratic program with GLPK
         raise Exception('GLPK does not solve quadratic programming problems')
-
 
     def _generic_solve(self, quad_obj, lin_obj, sense, model=None, constraints=None, get_shadow_prices=False,
                        get_reduced_costs=False, presolve=False):
@@ -267,7 +259,6 @@ class glpkSolver(Solver):
 
         if quad_obj:
             warn('GLPK does not solve quadratic programming problems')
-
 
         glp_set_obj_dir(problem, sense)
 
@@ -307,6 +298,4 @@ class glpkSolver(Solver):
                                  lb if lb is not None else 10e6,
                                  ub if ub is not None else -10e6)
 
-
         return solution
-
