@@ -17,7 +17,7 @@ Implementation of a Gurobi based solver interface.
    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
    See the License for the specific language governing permissions and
    limitations under the License.
-   
+
 '''
 
 import tempfile
@@ -57,7 +57,7 @@ class GurobiSolver(Solver):
 
     def build_problem(self, model):
         """ Create and store solver-specific internal structure for the given model.
-        
+
         Arguments:
             model : ConstraintBasedModel
         """
@@ -71,7 +71,6 @@ class GurobiSolver(Solver):
         for m_id in model.metabolites:
             self.add_constraint(m_id, table[m_id].items())
 
-
     def empty_problem(self):
         """ Create an empty problem structure.
         To be used for manually instantiate a problem.
@@ -81,10 +80,8 @@ class GurobiSolver(Solver):
         self.var_ids = []
         self.constr_ids = []
 
-
     def add_variable(self, var_id, lb=None, ub=None, force_update=True):
         """ Add a variable to the current problem.
-        
         Arguments:
             var_id : str -- variable identifier
             lb : float -- lower bound
@@ -104,10 +101,9 @@ class GurobiSolver(Solver):
             self.var_ids.append(var_id)
             self.problem.update()
 
-
     def add_constraint(self, constr_id, lhs, sense='=', rhs=0, force_update=True):
         """ Add a variable to the current problem.
-        
+
         Arguments:
             constr_id : str -- constraint identifier
             lhs : list [of (str, float)] -- variables and respective coefficients
@@ -126,14 +122,16 @@ class GurobiSolver(Solver):
                 constr.setAttr('lhs', expr)
                 constr.setAttr('sense', grb_sense[sense])
                 constr.setAttr('lhs', rhs)
+                self.problem.update()
         else:
             expr = quicksum([coeff * self.problem.getVarByName(r_id) for r_id, coeff in lhs])
             self.problem.addConstr(expr, grb_sense[sense], rhs, constr_id)
             self.constr_ids.append(constr_id)
+            self.problem.update()
 
     def list_variables(self):
         """ Get a list of the variable ids defined for the current problem.
-        
+
         Returns:
             list [of str] -- variable ids
         """
@@ -141,16 +139,15 @@ class GurobiSolver(Solver):
 
     def list_constraints(self):
         """ Get a list of the constraint ids defined for the current problem.
-        
+
         Returns:
             list [of str] -- constraint ids
         """
         return self.constr_ids
 
-
-    def solve_lp(self, objective, model=None, constraints=None, get_shadow_prices=False, get_reduced_costs=False):
+    def solve_lp(self, objective, model=None, constraints=None, get_shadow_prices=False, get_reduced_costs=False, presolve=False):
         """ Solve an LP optimization problem.
-        
+
         Arguments:
             objective : dict (of str to float) -- reaction ids in the objective function and respective
                         coefficients, the sense is maximization by default
@@ -158,19 +155,18 @@ class GurobiSolver(Solver):
             constraints : dict (of str to (float, float)) -- environmental or additional constraints (optional)
             get_shadow_prices : bool -- return shadow price information if available (optional, default: False)
             get_reduced_costs : bool -- return reduced costs information if available (optional, default: False)
-            
+            presolve : bool -- uses gurobi presolver level 1  (default: False)
         Returns:
             Solution
         """
 
         return self._generic_solve(None, objective, GRB.MAXIMIZE, model, constraints, get_shadow_prices,
-                                   get_reduced_costs)
-
+                                   get_reduced_costs, presolve)
 
     def solve_qp(self, quad_obj, lin_obj, model=None, constraints=None, get_shadow_prices=False,
-                 get_reduced_costs=False):
+                 get_reduced_costs=False, presolve=False):
         """ Solve an LP optimization problem.
-        
+
         Arguments:
             quad_obj : dict (of (str, str) to float) -- map reaction pairs to respective coefficients
             lin_obj : dict (of str to float) -- map single reaction ids to respective linear coefficients
@@ -178,17 +174,17 @@ class GurobiSolver(Solver):
             constraints : dict (of str to (float, float)) -- overriding constraints (optional)
             get_shadow_prices : bool -- return shadow price information if available (default: False)
             get_reduced_costs : bool -- return reduced costs information if available (default: False)
-        
+            presolve : bool -- uses gurobi presolver level 1  (default: False)
+
         Returns:
             Solution
         """
 
-        return self._generic_solve(quad_obj, lin_obj, GRB.MINIMIZE, model, constraints, get_shadow_prices,
-                                   get_reduced_costs)
-
+        return self._generic_solve(quad_obj, lin_obj, GRB.MAXIMIZE, model, constraints, get_shadow_prices,
+                                   get_reduced_costs, presolve)
 
     def _generic_solve(self, quad_obj, lin_obj, sense, model=None, constraints=None, get_shadow_prices=False,
-                       get_reduced_costs=False):
+                       get_reduced_costs=False, presolve=False):
 
         if model:
             self.build_problem(model)
@@ -210,13 +206,20 @@ class GurobiSolver(Solver):
         #create objective function
         quad_obj_expr = [q * problem.getVarByName(r_id1) * problem.getVarByName(r_id2)
                          for (r_id1, r_id2), q in quad_obj.items() if q] if quad_obj else []
+
         lin_obj_expr = [f * problem.getVarByName(r_id)
                         for r_id, f in lin_obj.items() if f] if lin_obj else []
+
         obj_expr = quicksum(quad_obj_expr + lin_obj_expr)
+
         problem.setObjective(obj_expr, sense)
+
+        if presolve:
+            problem.setParam("Presolve", 1)
 
         #run the optimization
         problem.optimize()
+
         status = status_mapping[problem.status] if problem.status in status_mapping else Status.UNKNOWN
 
         if status == Status.OPTIMAL:
