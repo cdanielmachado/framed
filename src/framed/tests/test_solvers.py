@@ -23,10 +23,19 @@ class SolverPickleTest(unittest.TestCase):
         fix_bigg_model(self.model)
 
     def test_gurobi_solver_pickle(self):
+        set_default_solver(solvername="gurobi")
         self.solver = solver_instance()
         self.solver.build_problem(self.model)
         solver_from_pickle = pickle.loads(pickle.dumps(self.solver))
         FBA(self.model, solver=self.solver)
+        self.assertEqual(FBA(self.model, solver=self.solver).status,
+                         FBA(self.model, solver=solver_from_pickle).status)
+
+    def test_glpk_solver_pickle(self):
+        set_default_solver(solvername="glpk")
+        self.solver = solver_instance()
+        self.solver.build_problem(self.model)
+        solver_from_pickle = pickle.loads(pickle.dumps(self.solver))
         self.assertEqual(FBA(self.model, solver=self.solver).status,
                          FBA(self.model, solver=solver_from_pickle).status)
 
