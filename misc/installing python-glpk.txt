@@ -1,0 +1,49 @@
+Instructions on how to install python-glpk.
+
+------------------------------------------------------
+Installing python-glpk on Mac OS:
+------------------------------------------------------
+
+If you have glpk 4.45 installed, follow the instructions below to install python-glpk. 
+If you have another glpk version these instructions may not work.
+
+1- Download python-glpk-0.4.43 and extract it
+
+2- cd to src/
+
+3- in swig/Makefile, replace first line by PYVERS := 'python2.7'
+
+4- sudo port install swig
+
+5- sudo port install swig-python
+
+6- run make; there will be a warning 314, proceeded by two "sed…", and Error 1 and Error 2. Ignore them as explained here
+
+7-run "cp swig/glpkpi.py python/glpkpi.py"
+
+8- change setup.py to make GLPK_LIB_DIR  and GLPK_INC_DIR point to the GLPK (in my case /opt/local/lib and /opt/local/include respectively).
+
+9- run python setup.py install
+
+10- pip install ply
+
+11- cd ../examples
+
+12- python tests.py
+
+
+------------------------------------------------------
+Installing python-glpk on Linux:
+------------------------------------------------------
+
+The following instructions were tested only on Linux Mint 15, with glpk 4.45, python-glpk-0.0.45, and swig 2.0.8. Thus, these instructions are not guaranteed to work with other software versions.
+
+1- Install swig from apt-get or synaptic
+
+1- Download python-glpk-0.4.43 or python-glpk-0.0.45 and extract it
+
+2- cd to src/
+
+3- sudo make
+
+4- sudo python setup.py install

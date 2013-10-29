@@ -17,7 +17,7 @@ Package implementing interfaces to common solvers.
    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
    See the License for the specific language governing permissions and
    limitations under the License.
-   
+
 """
 
 from warnings import warn
@@ -32,15 +32,15 @@ except:
     pass
 
 try:
-    from .glpk_wrapper import glpkSolver
-    
-    solvers['glpk'] = glpkSolver
+    from .glpk_wrapper import GlpkSolver
+
+    solvers['glpk'] = GlpkSolver
 except:
     pass
 
 try:
     from .gurobi_wrapper import GurobiSolver
-    
+
     solvers['gurobi'] = GurobiSolver
 except:
     pass
@@ -50,7 +50,7 @@ default_solver = 'gurobi'
 
 def set_default_solver(solvername):
     """ Sets default solver.
-    
+
     Arguments:
         solvername : str -- solver name (currently available: gurobi, pulp)
     """
@@ -65,9 +65,9 @@ def set_default_solver(solvername):
 
 def solver_instance():
     """ Returns a new instance of the currently selected solver.
-    
+
     Returns:
         Solver
     """
-    
+
     return solvers[default_solver]()
