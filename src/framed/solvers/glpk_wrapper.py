@@ -33,7 +33,15 @@ from warnings import warn
 
 status_mapping = {GLP_OPT: Status.OPTIMAL,
                   GLP_UNBND: Status.UNBOUNDED,
-                  GLP_INFEAS: Status.UNFEASIBLE}
+                  GLP_INFEAS: Status.UNFEASIBLE,
+                  }
+
+print "GLP_OPT", GLP_OPT
+print "GLP_FEAS", GLP_FEAS
+print "GLP_INFEAS", GLP_INFEAS
+print "GLP_NOFEAS", GLP_NOFEAS 
+print "GLP_UNBND", GLP_UNBND  
+print "GLP_UNDEF", GLP_UNDEF
 
 
 class GlpkSolver(Solver):
@@ -261,6 +269,7 @@ class GlpkSolver(Solver):
                                  glp_get_col_type(problem, ind_col),
                                  lb if lb is not None else -10e6,
                                  ub if ub is not None else 10e6)
+            print old_constraints
 
         if lin_obj:
             for r_id, f in lin_obj.items():
@@ -283,6 +292,7 @@ class GlpkSolver(Solver):
         problemStatus = glp_get_status(problem)
         status = status_mapping[
             problemStatus] if problemStatus in status_mapping else Status.UNKNOWN
+        print status, Status.OPTIMAL
 
         if status == Status.OPTIMAL:
             fobj = glp_get_obj_val(problem)
@@ -307,7 +317,7 @@ class GlpkSolver(Solver):
         if constraints:
             for r_id, (lb, ub) in old_constraints.items():
                 ind_col = glp_find_col(problem, r_id)
-                glp_set_row_bnds(problem,
+                glp_set_col_bnds(problem,
                                  ind_col,
                                  glp_get_col_type(problem, ind_col),
                                  lb if lb is not None else 10e6,
