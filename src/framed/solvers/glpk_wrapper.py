@@ -32,16 +32,11 @@ from warnings import warn
 
 
 status_mapping = {GLP_OPT: Status.OPTIMAL,
+                  GLP_FEAS: Status.FEASIBLE,
                   GLP_UNBND: Status.UNBOUNDED,
                   GLP_INFEAS: Status.UNFEASIBLE,
-                  }
-
-print "GLP_OPT", GLP_OPT
-print "GLP_FEAS", GLP_FEAS
-print "GLP_INFEAS", GLP_INFEAS
-print "GLP_NOFEAS", GLP_NOFEAS 
-print "GLP_UNBND", GLP_UNBND  
-print "GLP_UNDEF", GLP_UNDEF
+                  GLP_NOFEAS: Status.UNFEASIBLE,
+                  GLP_UNDEF: Status.UNDEFINED}
 
 
 class GlpkSolver(Solver):
@@ -124,7 +119,10 @@ class GlpkSolver(Solver):
             glp_add_cols(self.problem, 1)
             ind_col = glp_get_num_cols(self.problem)
             glp_set_col_name(self.problem, ind_col, var_id)
-            glp_set_col_bnds(self.problem, ind_col, GLP_DB, lb, ub)
+            if (ub == lb):
+                glp_set_col_bnds(self.problem, ind_col, GLP_FX, lb, ub)
+            elif (lb != ub):
+                glp_set_col_bnds(self.problem, ind_col, GLP_DB, lb, ub)
             self.var_ids.append(var_id)
 
     def add_constraint(self, constr_id, lhs, sense='=', rhs=0, force_update=True):
@@ -262,14 +260,15 @@ class GlpkSolver(Solver):
             old_constraints = {}
             for r_id, (lb, ub) in constraints.items():
                 ind_col = glp_find_col(problem, r_id)
-                old_constraints[r_id] = (
-                    glp_get_col_lb(problem, ind_col), glp_get_col_ub(problem, ind_col))
-                glp_set_col_bnds(problem,
-                                 ind_col,
-                                 glp_get_col_type(problem, ind_col),
-                                 lb if lb is not None else -10e6,
-                                 ub if ub is not None else 10e6)
-            print old_constraints
+                old_constraints[r_id] = (glp_get_col_lb(problem, ind_col), glp_get_col_ub(problem, ind_col))
+
+                lb = lb if lb is not None else -10e6
+                ub = ub if ub is not None else 10e6
+
+                if (ub == lb):
+                    glp_set_col_bnds(problem, ind_col, GLP_FX, lb, ub)
+                elif (lb != ub):
+                    glp_set_col_bnds(problem, ind_col, GLP_DB, lb, ub)
 
         if lin_obj:
             for r_id, f in lin_obj.items():
@@ -280,19 +279,21 @@ class GlpkSolver(Solver):
         if quad_obj:
             warn('GLPK does not solve quadratic programming problems')
 
+        glp_write_lp(problem, None, "new contraints.lp")
+
         glp_set_obj_dir(problem, sense)
 
         # enable presolver if user wants it
-        if presolve:
-            self.smcp.presolve = GLP_ON
+        if not constraints:
+            glp_write_lp(problem, None, "bla.lp")
 
         # run the optimization
         glp_simplex(problem, self.smcp)
 
         problemStatus = glp_get_status(problem)
+
         status = status_mapping[
             problemStatus] if problemStatus in status_mapping else Status.UNKNOWN
-        print status, Status.OPTIMAL
 
         if status == Status.OPTIMAL:
             fobj = glp_get_obj_val(problem)
@@ -300,11 +301,11 @@ class GlpkSolver(Solver):
                                  for r_id in self.var_ids])
 
             # if metabolite is disconnected no constraint will exist
-            shadow_prices = OrderedDict([(m_id, glp_get_row_dual(problem, glp_find_row(problem, m_id)))
+            shadow_prices = OrderedDict([(m_id, glp_get_row_dual(problem, glp_find_row(m_id)))
                                          for m_id in self.constr_ids
-                                         if glp_find_row(problem, m_id)]) if get_shadow_prices else None
+                                         if glp_find_row(m_id)]) if get_shadow_prices else None
 
-            reduced_costs = OrderedDict([(r_id, glp_get_col_dual(problem, glp_find_col(problem, r_id)))
+            reduced_costs = OrderedDict([(r_id, glp_get_col_dual(problem, glp_find_col(r_id)))
                                          for r_id in self.var_ids]) if get_reduced_costs else None
 
             solution = Solution(
@@ -312,15 +313,19 @@ class GlpkSolver(Solver):
         else:
             solution = Solution(status)
 
-        # reset old constraints because temporary constraints should not be
-        # persistent
+        #reset old constraints because temporary constraints should not be
+        #persistent
         if constraints:
-            for r_id, (lb, ub) in old_constraints.items():
+            for r_id, (lb, ub) in old_constraints.items(): 
                 ind_col = glp_find_col(problem, r_id)
-                glp_set_col_bnds(problem,
-                                 ind_col,
-                                 glp_get_col_type(problem, ind_col),
-                                 lb if lb is not None else 10e6,
-                                 ub if ub is not None else -10e6)
+
+                lb = lb if lb is not None else -10e6
+                ub = ub if ub is not None else 10e6
+
+                if (ub == lb):
+                    glp_set_col_bnds(problem, ind_col, GLP_FX, lb, ub)
+                elif (lb != ub):
+                    glp_set_col_bnds(problem, ind_col, GLP_DB, lb, ub)
+
 
         return solution

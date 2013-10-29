@@ -23,10 +23,12 @@ Abstract classes for solver specific implementations.
 #CONSTANTS
 class Status:
     """ Enumeration of possible solution status. """
+    FEASIBLE = 2
     OPTIMAL = 1
     UNKNOWN = 0
     UNBOUNDED = -1
     UNFEASIBLE = -2
+    UNDEFINED = -3
 
 
 class Solution:
@@ -45,7 +47,9 @@ class Solution:
         status_codes = {Status.OPTIMAL: 'Optimal',
                         Status.UNKNOWN: 'Unknown',
                         Status.UNBOUNDED: 'Unbounded',
-                        Status.UNFEASIBLE: 'Infeasible'}
+                        Status.UNFEASIBLE: 'Infeasible',
+                        Status.FEASIBLE: 'Feasible',
+                        Status.UNDEFINED: 'Undefined'}
 
         return 'Status: {}\nObjective: {}\n'.format(status_codes[self.status], self.fobj)
 
