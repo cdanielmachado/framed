@@ -290,11 +290,11 @@ class GlpkSolver(Solver):
                                  for r_id in self.var_ids])
 
             # if metabolite is disconnected no constraint will exist
-            shadow_prices = OrderedDict([(m_id, glp_get_row_dual(problem, glp_find_row(m_id)))
+            shadow_prices = OrderedDict([(m_id, glp_get_row_dual(problem, glp_find_row(problem, m_id)))
                                          for m_id in self.constr_ids
-                                         if glp_find_row(m_id)]) if get_shadow_prices else None
+                                         if glp_find_row(problem, m_id)]) if get_shadow_prices else None
 
-            reduced_costs = OrderedDict([(r_id, glp_get_col_dual(problem, glp_find_col(r_id)))
+            reduced_costs = OrderedDict([(r_id, glp_get_col_dual(problem, glp_find_col(problem, r_id)))
                                          for r_id in self.var_ids]) if get_reduced_costs else None
 
             solution = Solution(
@@ -306,7 +306,7 @@ class GlpkSolver(Solver):
         # persistent
         if constraints:
             for r_id, (lb, ub) in old_constraints.items():
-                ind_col = glp_find_col(r_id)
+                ind_col = glp_find_col(problem, r_id)
                 glp_set_row_bnds(problem,
                                  ind_col,
                                  glp_get_col_type(problem, ind_col),
