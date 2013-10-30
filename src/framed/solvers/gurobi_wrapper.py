@@ -29,7 +29,7 @@ setParam("OutputFlag", 0)
 
 status_mapping = {GRB.OPTIMAL: Status.OPTIMAL,
                   GRB.UNBOUNDED: Status.UNBOUNDED,
-                  GRB.INFEASIBLE: Status.UNFEASIBLE}
+                  GRB.INFEASIBLE: Status.INFEASIBLE}
 
 
 class GurobiSolver(Solver):

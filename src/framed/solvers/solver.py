@@ -26,7 +26,13 @@ class Status:
     OPTIMAL = 1
     UNKNOWN = 0
     UNBOUNDED = -1
-    UNFEASIBLE = -2
+    INFEASIBLE = -2
+
+class VarType:
+    """ Enumeration of possible variable types. """
+    BINARY = 1
+    INTEGER = 2
+    CONTINUOUS = 3
 
 
 class Solution:
@@ -45,7 +51,7 @@ class Solution:
         status_codes = {Status.OPTIMAL: 'Optimal',
                         Status.UNKNOWN: 'Unknown',
                         Status.UNBOUNDED: 'Unbounded',
-                        Status.UNFEASIBLE: 'Infeasible'}
+                        Status.INFEASIBLE: 'Infeasible'}
 
         return 'Status: {}\nObjective: {}\n'.format(status_codes[self.status], self.fobj)
 
@@ -138,17 +144,19 @@ class Solver:
         For automatic instantiation use the build_problem interface method. """
         pass
 
-    def add_variable(self, var_id, lb=None, ub=None):
+    def add_variable(self, var_id, lb=None, ub=None, vartype=VarType.CONTINUOUS, persistent=True):
         """ Add a variable to the current problem.
         
         Arguments:
             var_id : str -- variable identifier
             lb : float -- lower bound
             ub : float -- upper bound
+            vartype : VarType -- variable type (default: CONTINUOUS)
+            persistent : bool -- if the variable should be reused for multiple calls
         """
         pass
 
-    def add_constraint(self, constr_id, lhs, sense='=', rhs=0):
+    def add_constraint(self, constr_id, lhs, sense='=', rhs=0, persistent=True):
         """ Add a variable to the current problem.
         
         Arguments:
@@ -158,7 +166,24 @@ class Solver:
             rhs : float -- right-hand side of equation (default: 0)
         """
         pass
-
+    
+    def remove_variable(self, var_id):
+        """ Remove a variable from the current problem.
+        
+        Arguments:
+            var_id : str -- variable identifier
+        """
+        pass
+    
+    def remove_constraint(self, constr_id):
+        """ Remove a constraint from the current problem.
+        
+        Arguments:
+            constr_id : str -- constraint identifier
+        """
+        pass
+        
+            
     def list_variables(self):
         """ Get a list of the variable ids defined for the current problem.
         
@@ -174,7 +199,17 @@ class Solver:
             list [of str] -- constraint ids
         """
         pass
-
+    
+    def clean_up(self, clean_variables=True, clean_constraints=True):
+        """ Clean up all non persistent elements in the problem.
+        
+        Arguments:
+            clean_variables : bool -- remove non persistent variables (default: True)
+            clean_constraints : bool -- remove non persistent constraints (default: True)
+        """
+        pass
+    
+    
     def solve_lp(self, objective, model=None, constraints=None, get_shadow_prices=False, get_reduced_costs=False):
         """ Solve an LP optimization problem.
         

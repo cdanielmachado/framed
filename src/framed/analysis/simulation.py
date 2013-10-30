@@ -62,7 +62,6 @@ def pFBA(model, target=None, maximize=True, constraints=None, solver=None):
         maximize : bool (True) -- sense of optimization (maximize by default)
         constraints: dict (of str to float) -- environmental or additional constraints (optional)
         solver : Solver -- solver instance instantiated with the model, for speed (optional)
-        reuse_temp_vars : bool -- solver instance instantiated with the model, for speed (optional)
        
     Returns:
         Solution -- solution
@@ -80,11 +79,10 @@ def pFBA(model, target=None, maximize=True, constraints=None, solver=None):
         for r_id, reaction in model.reactions.items():
             if reaction.reversible:
                 pos, neg = r_id + '+', r_id + '-'
-                solver.add_variable(pos, 0, None, force_update=False)
-                solver.add_variable(neg, 0, None, force_update=False)
-                solver.add_constraint('c' + pos, [(r_id, -1), (pos, 1)], '>', 0, force_update=False)
-                solver.add_constraint('c' + neg, [(r_id, 1), (neg, 1)], '>', 0, force_update=False)
-            #                solver.add_constraint('c' + r_id, [(r_id, 1), (pos, -1), (neg, 1)], '=', 0)
+                solver.add_variable(pos, 0, None)
+                solver.add_variable(neg, 0, None)
+                solver.add_constraint('c' + pos, [(r_id, -1), (pos, 1)], '>', 0)
+                solver.add_constraint('c' + neg, [(r_id, 1), (neg, 1)], '>', 0)
 
     pre_solution = FBA(model, target, maximize, constraints, solver)
 
