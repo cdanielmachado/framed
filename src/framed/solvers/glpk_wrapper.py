@@ -313,6 +313,11 @@ class GlpkSolver(Solver):
         else:
             solution = Solution(status)
 
+        #reset objective function
+        num_cols = glp_get_num_cols(problem)
+        for ind_col in range(0, num_cols):
+            glp_set_obj_coef(problem, ind_col, 0)
+
         #reset old constraints because temporary constraints should not be
         #persistent
         if constraints:
