@@ -35,6 +35,10 @@ LMOMA_GENE_KO = ['b0721']
 LMOMA_GROWTH_RATE = 0.5066
 LMOMA_SUCC_EX = 5.311
 
+ROOM_GENE_KO = ['b0721']
+ROOM_GROWTH_RATE = 0.3606
+ROOM_SUCC_EX = 6.131
+
 ESSENTIAL_GENES = ['b0720', 'b1136', 'b1779', 'b2415', 'b2416', 'b2779', 'b2926']
 
 
@@ -108,7 +112,7 @@ class pFBATest(unittest.TestCase):
         self.assertAlmostEqual(growth1, growth2, places=4)
         norm1 = sum([abs(solution1.values[r_id]) for r_id in model.reactions])
         norm2 = sum([abs(solution2.values[r_id]) for r_id in model.reactions])
-        self.assertLessEqual(norm1, norm2)
+        self.assertLessEqual(norm1, norm2 + 1e-6)
 
 class qpFBATest(unittest.TestCase):
     """ Test qpFBA simulation. """
@@ -125,7 +129,7 @@ class qpFBATest(unittest.TestCase):
         self.assertAlmostEqual(growth1, growth2, places=4)
         norm1 = sum([abs(solution1.values[r_id]) for r_id in model.reactions])
         norm2 = sum([abs(solution2.values[r_id]) for r_id in model.reactions])
-        self.assertLessEqual(norm1, norm2)
+        self.assertLessEqual(norm1, norm2 + 1e-6)
 
 class FBAFromPlainTextTest(unittest.TestCase):
     """ Test FBA simulation from plain text model. """
@@ -235,6 +239,17 @@ class GeneDeletionLMOMATest(unittest.TestCase):
         self.assertAlmostEqual(solution.values[model.detect_biomass_reaction()], LMOMA_GROWTH_RATE, 3)
         self.assertAlmostEqual(solution.values['R_EX_succ_e'], LMOMA_SUCC_EX, 3)
 
+class GeneDeletionROOMTest(unittest.TestCase):
+    """ Test gene deletion with ROOM. """
+
+    def testRun(self):
+        model = load_sbml_model(SMALL_TEST_MODEL, kind=GPR_CONSTRAINED)
+        fix_bigg_model(model)
+        solution = gene_deletion(model, ROOM_GENE_KO, 'ROOM')
+        self.assertEqual(solution.status, Status.OPTIMAL)
+        self.assertAlmostEqual(solution.values[model.detect_biomass_reaction()], ROOM_GROWTH_RATE, 3)
+        self.assertAlmostEqual(solution.values['R_EX_succ_e'], ROOM_SUCC_EX, 3)
+
 
 class GeneEssentialityTest(unittest.TestCase):
     """ Test gene essentiality. """
@@ -271,10 +286,10 @@ class CombinatorialGeneDeletion(unittest.TestCase):
 
 
 def suite():
-    #tests = [SBMLTest, PlainTextIOTest, FBATest, pFBATest, FBAFromPlainTextTest, FVATest, IrreversibleModelFBATest,
-    #         SimplifiedModelFBATest, TransformationCommutativityTest, GeneDeletionFBATest, GeneDeletionMOMATest,
-    #         GeneEssentialityTest, GeneDeletionLMOMATest]
-    tests = [qpFBATest]
+    tests = [SBMLTest, PlainTextIOTest, FBATest, pFBATest, qpFBATest, FBAFromPlainTextTest, FVATest, IrreversibleModelFBATest,
+             SimplifiedModelFBATest, TransformationCommutativityTest, GeneDeletionFBATest, GeneDeletionMOMATest,
+             GeneEssentialityTest, GeneDeletionLMOMATest, GeneDeletionROOMTest]
+    #tests = [GeneDeletionROOMTest]
 
     test_suite = unittest.TestSuite()
     for test in tests:

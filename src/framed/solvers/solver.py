@@ -127,8 +127,8 @@ class Solver:
         self.problem = None
         self.var_ids = []
         self.constr_ids = []
-        self.temp_vars = {}
-        self.temp_constrs = {}
+        self.temp_vars = set()
+        self.temp_constrs = set()
 
     def __repr__(self):
         pass

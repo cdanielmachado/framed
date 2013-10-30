@@ -105,16 +105,12 @@ class GurobiSolver(Solver):
 
         if constr_id in self.constr_ids:
             constr = self.problem.getConstrByName(constr_id)
-            expr = quicksum([coeff * self.problem.getVarByName(r_id) for r_id, coeff in lhs])
-            constr.setAttr('lhs', expr)
-            constr.setAttr('sense', grb_sense[sense])
-            constr.setAttr('lhs', rhs)
-            self.problem.update()
-        else:
-            expr = quicksum([coeff * self.problem.getVarByName(r_id) for r_id, coeff in lhs])
-            self.problem.addConstr(expr, grb_sense[sense], rhs, constr_id)
-            self.constr_ids.append(constr_id)
-            self.problem.update()
+            self.problem.remove(constr)
+
+        expr = quicksum([coeff * self.problem.getVarByName(r_id) for r_id, coeff in lhs])
+        self.problem.addConstr(expr, grb_sense[sense], rhs, constr_id)
+        self.constr_ids.append(constr_id)
+        self.problem.update()
             
         if not persistent:
             self.temp_constrs.add(constr_id)

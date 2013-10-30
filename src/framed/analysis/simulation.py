@@ -20,7 +20,7 @@
 '''
 
 from ..solvers import solver_instance
-from ..solvers.solver import Status
+from ..solvers.solver import Status, VarType
 
 
 def FBA(model, target=None, maximize=True, constraints=None, solver=None, get_shadow_prices=False,
@@ -162,7 +162,7 @@ def MOMA(model, reference=None, constraints=None, solver=None):
     """
 
     if not reference:
-        wt_solution = pFBA(model, constraints=constraints)
+        wt_solution = pFBA(model)
         reference = wt_solution.values
 
     quad_obj = {(r_id, r_id): 1 for r_id in reference.keys()}
@@ -191,7 +191,7 @@ def lMOMA(model, reference=None, constraints=None, solver=None):
     """
 
     if not reference:
-        wt_solution = pFBA(model, constraints=constraints)
+        wt_solution = pFBA(model)
         reference = wt_solution.values
 
     if not solver:
@@ -223,4 +223,55 @@ def lMOMA(model, reference=None, constraints=None, solver=None):
             del solution.values[d_neg]
 
     return solution
+
+
+def ROOM(model, reference=None, constraints=None, solver=None, delta=0.03, epsilon=0.001):
+    """ Run a Regulatory On/Off Minimization (ROOM) simulation:
+    
+    Arguments:
+        model : ConstraintBasedModel -- a constraint-based model
+        reference : dict (of str to float) -- reference flux distribution (optional)
+        constraints: dict (of str to float) -- environmental or additional constraints (optional)
+        solver : Solver -- solver instance instantiated with the model, for speed (optional)
+        delta : float -- relative tolerance (default: 0.03)
+        epsilon : float -- absolute tolerance (default: 0.001)
+       
+    Returns:
+        Solution -- solution
+    """
+
+    U = 1e6;
+    L = -1e6;
+    
+    if not reference:
+        wt_solution = pFBA(model)
+        reference = wt_solution.values
+
+    if not solver:
+        solver = solver_instance()
+        solver.build_problem(model)
+
+    objective = dict()
+    if not hasattr(solver, 'ROOM_flag'): #for speed (a LOT faster)
+        solver.ROOM_flag = True
+        for r_id in model.reactions.keys():
+            y_i = 'y_' + r_id
+            solver.add_variable(y_i, 0, 1, vartype=VarType.BINARY, persistent=False)
+            objective[y_i] = -1
+            w_i = reference[r_id]
+            w_u = w_i + delta*abs(w_i) + epsilon
+            w_l = w_i - delta*abs(w_i) - epsilon
+            solver.add_constraint('c' + r_id + '_u', [(r_id, 1), (y_i, (w_u - U))], '<', w_u, persistent=False)
+            solver.add_constraint('c' + r_id + '_l', [(r_id, 1), (y_i, (w_l - L))], '>', w_l, persistent=False)
         
+
+    solution = solver.solve_lp(objective, constraints=constraints)
+    
+    #post process
+    if solution.status == Status.OPTIMAL:
+        for r_id in model.reactions.keys():
+            y_i = 'y_' + r_id
+            del solution.values[y_i]
+
+    return solution
+                
