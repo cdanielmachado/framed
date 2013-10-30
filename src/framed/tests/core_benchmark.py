@@ -44,9 +44,10 @@ def main():
     fix_bigg_model(model)
     benchmark('FBA', model)
     benchmark('pFBA', model)
-#    benchmark('qpFBA', model)
-#    benchmark('MOMA', model)
-#    benchmark('lMOMA', model)
+    benchmark('qpFBA', model)
+    benchmark('MOMA', model)
+    benchmark('lMOMA', model)
+    benchmark('ROOM', model)
 
 
 if __name__ == '__main__':

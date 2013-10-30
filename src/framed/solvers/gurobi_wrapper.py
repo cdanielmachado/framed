@@ -22,7 +22,7 @@ Implementation of a Gurobi based solver interface.
 
 import tempfile
 from collections import OrderedDict
-from .solver import Solver, Solution, Status
+from .solver import Solver, Solution, Status, VarType
 from gurobipy import setParam, Model as GurobiModel, GRB, quicksum, read
 
 setParam("OutputFlag", 0)
@@ -37,8 +37,9 @@ class GurobiSolver(Solver):
 
     def __init__(self):
         Solver.__init__(self)
-        self.var_ids = None
-        self.constr_ids = None
+        self.problem = GurobiModel()
+        self.set_presolve()
+
 
     def __getstate__(self):
         tmp_file = tempfile.mktemp(suffix=".lp")
@@ -55,60 +56,47 @@ class GurobiSolver(Solver):
         self.var_ids = repr_dict['var_ids']
         self.constr_ids = repr_dict['constr_ids']
 
-    def build_problem(self, model):
-        """ Create and store solver-specific internal structure for the given model.
 
-        Arguments:
-            model : ConstraintBasedModel
-        """
-
-        self.empty_problem()
-
-        for r_id, (lb, ub) in model.bounds.items():
-            self.add_variable(r_id, lb, ub)
-
-        table = model.metabolite_reaction_lookup_table()
-        for m_id in model.metabolites:
-            self.add_constraint(m_id, table[m_id].items())
-
-    def empty_problem(self):
-        """ Create an empty problem structure.
-        To be used for manually instantiate a problem.
-        For automatic instantiation use the build_problem interface method. """
-
-        self.problem = GurobiModel()
-        self.var_ids = []
-        self.constr_ids = []
-
-    def add_variable(self, var_id, lb=None, ub=None, force_update=True):
+    def add_variable(self, var_id, lb=None, ub=None, vartype=VarType.CONTINUOUS, persistent=True):
         """ Add a variable to the current problem.
+        
         Arguments:
             var_id : str -- variable identifier
             lb : float -- lower bound
             ub : float -- upper bound
+            vartype : VarType -- variable type (default: CONTINUOUS)
+            persistent : bool -- if the variable should be reused for multiple calls
         """
         lb = lb if lb is not None else -GRB.INFINITY
         ub = ub if ub is not None else GRB.INFINITY
+        
+        map_types = {VarType.BINARY: GRB.BINARY,
+                     VarType.INTEGER: GRB.INTEGER,
+                     VarType.CONTINUOUS: GRB.CONTINUOUS}
 
         if var_id in self.var_ids:
-            if force_update:
-                var = self.problem.getVarByName(var_id)
-                var.setAttr('lb', lb)
-                var.setAttr('ub', ub)
-                self.problem.update()
+            var = self.problem.getVarByName(var_id)
+            var.setAttr('lb', lb)
+            var.setAttr('ub', ub)
+            var.setAttr('vtype', map_types[vartype])
+            self.problem.update()
         else:
-            self.problem.addVar(name=var_id, lb=lb, ub=ub)
+            self.problem.addVar(name=var_id, lb=lb, ub=ub, vtype=map_types[vartype])
             self.var_ids.append(var_id)
             self.problem.update()
+            
+        if not persistent:
+            self.temp_vars.add(var_id)
 
-    def add_constraint(self, constr_id, lhs, sense='=', rhs=0, force_update=True):
+    def add_constraint(self, constr_id, lhs, sense='=', rhs=0, persistent=True):
         """ Add a variable to the current problem.
-
+        
         Arguments:
             constr_id : str -- constraint identifier
             lhs : list [of (str, float)] -- variables and respective coefficients
             sense : {'<', '=', '>'} -- default '='
             rhs : float -- right-hand side of equation (default: 0)
+            persistent : bool -- if the variable should be reused for multiple calls
         """
 
         grb_sense = {'=': GRB.EQUAL,
@@ -116,36 +104,45 @@ class GurobiSolver(Solver):
                      '>': GRB.GREATER_EQUAL}
 
         if constr_id in self.constr_ids:
-            if force_update:
-                constr = self.problem.getConstrByName(constr_id)
-                expr = quicksum([coeff * self.problem.getVarByName(r_id) for r_id, coeff in lhs])
-                constr.setAttr('lhs', expr)
-                constr.setAttr('sense', grb_sense[sense])
-                constr.setAttr('lhs', rhs)
-                self.problem.update()
-        else:
-            expr = quicksum([coeff * self.problem.getVarByName(r_id) for r_id, coeff in lhs])
-            self.problem.addConstr(expr, grb_sense[sense], rhs, constr_id)
-            self.constr_ids.append(constr_id)
-            self.problem.update()
+            constr = self.problem.getConstrByName(constr_id)
+            self.problem.remove(constr)
 
-    def list_variables(self):
-        """ Get a list of the variable ids defined for the current problem.
+        expr = quicksum([coeff * self.problem.getVarByName(r_id) for r_id, coeff in lhs])
+        self.problem.addConstr(expr, grb_sense[sense], rhs, constr_id)
+        self.constr_ids.append(constr_id)
+        self.problem.update()
+            
+        if not persistent:
+            self.temp_constrs.add(constr_id)
 
-        Returns:
-            list [of str] -- variable ids
+    def remove_variable(self, var_id):
+        """ Remove a variable from the current problem.
+        
+        Arguments:
+            var_id : str -- variable identifier
         """
-        return self.var_ids
-
-    def list_constraints(self):
-        """ Get a list of the constraint ids defined for the current problem.
-
-        Returns:
-            list [of str] -- constraint ids
+        if var_id in self.var_ids:
+            self.problem.remove(self.problem.getVarByName(var_id))
+    
+    def remove_constraint(self, constr_id):
+        """ Remove a constraint from the current problem.
+        
+        Arguments:
+            constr_id : str -- constraint identifier
         """
-        return self.constr_ids
+        if constr_id in self.constr_ids:
+            self.problem.remove(self.problem.getConstrByName(constr_id))
+    
+    def set_presolve(self, active=False):
+        """ Set gurobi presolver on or off
+        
+        Arguments:
+            active : bool -- uses gurobi presolver level 1  (default: False)
+        """
+        self.presolve = active;
 
-    def solve_lp(self, objective, model=None, constraints=None, get_shadow_prices=False, get_reduced_costs=False, presolve=False):
+        
+    def solve_lp(self, objective, model=None, constraints=None, get_shadow_prices=False, get_reduced_costs=False):
         """ Solve an LP optimization problem.
 
         Arguments:
@@ -155,16 +152,15 @@ class GurobiSolver(Solver):
             constraints : dict (of str to (float, float)) -- environmental or additional constraints (optional)
             get_shadow_prices : bool -- return shadow price information if available (optional, default: False)
             get_reduced_costs : bool -- return reduced costs information if available (optional, default: False)
-            presolve : bool -- uses gurobi presolver level 1  (default: False)
         Returns:
             Solution
         """
 
         return self._generic_solve(None, objective, GRB.MAXIMIZE, model, constraints, get_shadow_prices,
-                                   get_reduced_costs, presolve)
+                                   get_reduced_costs)
 
     def solve_qp(self, quad_obj, lin_obj, model=None, constraints=None, get_shadow_prices=False,
-                 get_reduced_costs=False, presolve=False):
+                 get_reduced_costs=False):
         """ Solve an LP optimization problem.
 
         Arguments:
@@ -174,25 +170,22 @@ class GurobiSolver(Solver):
             constraints : dict (of str to (float, float)) -- overriding constraints (optional)
             get_shadow_prices : bool -- return shadow price information if available (default: False)
             get_reduced_costs : bool -- return reduced costs information if available (default: False)
-            presolve : bool -- uses gurobi presolver level 1  (default: False)
 
         Returns:
             Solution
         """
 
+
         return self._generic_solve(quad_obj, lin_obj, GRB.MINIMIZE, model, constraints, get_shadow_prices,
-                                   get_reduced_costs, presolve)
+                                   get_reduced_costs)
 
     def _generic_solve(self, quad_obj, lin_obj, sense, model=None, constraints=None, get_shadow_prices=False,
-                       get_reduced_costs=False, presolve=False):
+                       get_reduced_costs=False):
 
         if model:
             self.build_problem(model)
 
-        if self.problem:
-            problem = self.problem
-        else:
-            raise Exception('A model must be given if solver is used for the first time.')
+        problem = self.problem
 
         if constraints:
             old_constraints = {}
@@ -214,13 +207,17 @@ class GurobiSolver(Solver):
 
         problem.setObjective(obj_expr, sense)
 
-        if presolve:
+        if self.presolve:
             problem.setParam("Presolve", 1)
 
+ #       if quad_obj:
+ #           self.problem.write("out.lp")
+        
         #run the optimization
         problem.optimize()
 
         status = status_mapping[problem.status] if problem.status in status_mapping else Status.UNKNOWN
+        message = str(problem.status)
 
         if status == Status.OPTIMAL:
             fobj = problem.ObjVal
@@ -234,9 +231,9 @@ class GurobiSolver(Solver):
             reduced_costs = OrderedDict([(r_id, problem.getVarByName(r_id).RC)
                                          for r_id in self.var_ids]) if get_reduced_costs else None
 
-            solution = Solution(status, fobj, values, shadow_prices, reduced_costs)
+            solution = Solution(status, message, fobj, values, shadow_prices, reduced_costs)
         else:
-            solution = Solution(status)
+            solution = Solution(status, message)
 
         #reset old constraints because temporary constraints should not be persistent
         if constraints:
