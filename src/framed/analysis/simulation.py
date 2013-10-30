@@ -74,17 +74,18 @@ def pFBA(model, target=None, maximize=True, constraints=None, solver=None):
         solver = solver_instance()
         solver.build_problem(model)
 
+    pre_solution = FBA(model, target, maximize, constraints, solver)
+
     if not hasattr(solver, 'pFBA_flag'): #for speed (about 3x faster)
         solver.pFBA_flag = True
         for r_id, reaction in model.reactions.items():
             if reaction.reversible:
                 pos, neg = r_id + '+', r_id + '-'
-                solver.add_variable(pos, 0, None)
-                solver.add_variable(neg, 0, None)
-                solver.add_constraint('c' + pos, [(r_id, -1), (pos, 1)], '>', 0)
-                solver.add_constraint('c' + neg, [(r_id, 1), (neg, 1)], '>', 0)
+                solver.add_variable(pos, 0, None, persistent=False)
+                solver.add_variable(neg, 0, None, persistent=False)
+                solver.add_constraint('c' + pos, [(r_id, -1), (pos, 1)], '>', 0, persistent=False)
+                solver.add_constraint('c' + neg, [(r_id, 1), (neg, 1)], '>', 0, persistent=False)
 
-    pre_solution = FBA(model, target, maximize, constraints, solver)
 
     if not constraints:
         constraints = dict()
@@ -201,10 +202,10 @@ def lMOMA(model, reference=None, constraints=None, solver=None):
         solver.lMOMA_flag = True
         for r_id in model.reactions.keys():
             d_pos, d_neg = r_id + '_d+', r_id + '_d-'
-            solver.add_variable(d_pos, 0, None)
-            solver.add_variable(d_neg, 0, None)
-            solver.add_constraint('c' + d_pos, [(r_id, -1), (d_pos, 1)], '>', -reference[r_id])
-            solver.add_constraint('c' + d_neg, [(r_id, 1), (d_neg, 1)], '>', reference[r_id])
+            solver.add_variable(d_pos, 0, None, persistent=False)
+            solver.add_variable(d_neg, 0, None, persistent=False)
+            solver.add_constraint('c' + d_pos, [(r_id, -1), (d_pos, 1)], '>', -reference[r_id], persistent=False)
+            solver.add_constraint('c' + d_neg, [(r_id, 1), (d_neg, 1)], '>', reference[r_id], persistent=False)
 
     objective = dict()
     for r_id in model.reactions.keys():
