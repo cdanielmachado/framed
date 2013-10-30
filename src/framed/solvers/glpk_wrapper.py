@@ -50,7 +50,6 @@ class GlpkSolver(Solver):
         # so that GLPK does not print an output message on solving the problem
         self.smcp = glp_smcp()
         glp_init_smcp(self.smcp)
-        self.smcp.msg_lev = GLP_MSG_OFF
         self.smcp.presolve = GLP_OFF
         glp_term_out(GLP_OFF)
 
@@ -279,13 +278,10 @@ class GlpkSolver(Solver):
         if quad_obj:
             warn('GLPK does not solve quadratic programming problems')
 
-        glp_write_lp(problem, None, "new contraints.lp")
+        if presolve:
+            self.smcp.presolve = GLP_ON
 
         glp_set_obj_dir(problem, sense)
-
-        # enable presolver if user wants it
-        if not constraints:
-            glp_write_lp(problem, None, "bla.lp")
 
         # run the optimization
         glp_simplex(problem, self.smcp)
