@@ -32,8 +32,11 @@ from warnings import warn
 
 
 status_mapping = {GLP_OPT: Status.OPTIMAL,
+                  GLP_FEAS: Status.FEASIBLE,
                   GLP_UNBND: Status.UNBOUNDED,
-                  GLP_INFEAS: Status.UNFEASIBLE}
+                  GLP_INFEAS: Status.UNFEASIBLE,
+                  GLP_NOFEAS: Status.UNFEASIBLE,
+                  GLP_UNDEF: Status.UNDEFINED}
 
 
 class GlpkSolver(Solver):
@@ -47,7 +50,6 @@ class GlpkSolver(Solver):
         # so that GLPK does not print an output message on solving the problem
         self.smcp = glp_smcp()
         glp_init_smcp(self.smcp)
-        self.smcp.msg_lev = GLP_MSG_OFF
         self.smcp.presolve = GLP_OFF
         glp_term_out(GLP_OFF)
 
@@ -116,7 +118,10 @@ class GlpkSolver(Solver):
             glp_add_cols(self.problem, 1)
             ind_col = glp_get_num_cols(self.problem)
             glp_set_col_name(self.problem, ind_col, var_id)
-            glp_set_col_bnds(self.problem, ind_col, GLP_DB, lb, ub)
+            if (ub == lb):
+                glp_set_col_bnds(self.problem, ind_col, GLP_FX, lb, ub)
+            elif (lb != ub):
+                glp_set_col_bnds(self.problem, ind_col, GLP_DB, lb, ub)
             self.var_ids.append(var_id)
 
     def add_constraint(self, constr_id, lhs, sense='=', rhs=0, force_update=True):
@@ -254,13 +259,15 @@ class GlpkSolver(Solver):
             old_constraints = {}
             for r_id, (lb, ub) in constraints.items():
                 ind_col = glp_find_col(problem, r_id)
-                old_constraints[r_id] = (
-                    glp_get_col_lb(problem, ind_col), glp_get_col_ub(problem, ind_col))
-                glp_set_col_bnds(problem,
-                                 ind_col,
-                                 glp_get_col_type(problem, ind_col),
-                                 lb if lb is not None else -10e6,
-                                 ub if ub is not None else 10e6)
+                old_constraints[r_id] = (glp_get_col_lb(problem, ind_col), glp_get_col_ub(problem, ind_col))
+
+                lb = lb if lb is not None else -10e6
+                ub = ub if ub is not None else 10e6
+
+                if (ub == lb):
+                    glp_set_col_bnds(problem, ind_col, GLP_FX, lb, ub)
+                elif (lb != ub):
+                    glp_set_col_bnds(problem, ind_col, GLP_DB, lb, ub)
 
         if lin_obj:
             for r_id, f in lin_obj.items():
@@ -271,16 +278,16 @@ class GlpkSolver(Solver):
         if quad_obj:
             warn('GLPK does not solve quadratic programming problems')
 
-        glp_set_obj_dir(problem, sense)
-
-        # enable presolver if user wants it
         if presolve:
             self.smcp.presolve = GLP_ON
+
+        glp_set_obj_dir(problem, sense)
 
         # run the optimization
         glp_simplex(problem, self.smcp)
 
         problemStatus = glp_get_status(problem)
+
         status = status_mapping[
             problemStatus] if problemStatus in status_mapping else Status.UNKNOWN
 
@@ -302,15 +309,24 @@ class GlpkSolver(Solver):
         else:
             solution = Solution(status)
 
-        # reset old constraints because temporary constraints should not be
-        # persistent
+        #reset objective function
+        num_cols = glp_get_num_cols(problem)
+        for ind_col in range(0, num_cols+1):
+            glp_set_obj_coef(problem, ind_col, 0)
+
+        #reset old constraints because temporary constraints should not be
+        #persistent
         if constraints:
-            for r_id, (lb, ub) in old_constraints.items():
-                ind_col = glp_find_col(r_id)
-                glp_set_row_bnds(problem,
-                                 ind_col,
-                                 glp_get_col_type(problem, ind_col),
-                                 lb if lb is not None else 10e6,
-                                 ub if ub is not None else -10e6)
+            for r_id, (lb, ub) in old_constraints.items(): 
+                ind_col = glp_find_col(problem, r_id)
+
+                lb = lb if lb is not None else -10e6
+                ub = ub if ub is not None else 10e6
+
+                if (ub == lb):
+                    glp_set_col_bnds(problem, ind_col, GLP_FX, lb, ub)
+                elif (lb != ub):
+                    glp_set_col_bnds(problem, ind_col, GLP_DB, lb, ub)
+
 
         return solution

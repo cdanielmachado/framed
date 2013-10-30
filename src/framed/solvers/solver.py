@@ -25,15 +25,15 @@ class Status:
     """ Enumeration of possible solution status. """
     OPTIMAL = 1
     UNKNOWN = 0
-    UNBOUNDED = -1
-    INFEASIBLE = -2
+    SUBOPTIMAL = -1
+    UNBOUNDED = -2
+    INFEASIBLE = -3
 
 class VarType:
     """ Enumeration of possible variable types. """
     BINARY = 1
     INTEGER = 2
     CONTINUOUS = 3
-
 
 class Solution:
     """ Stores the results of an optimization.
@@ -50,8 +50,10 @@ class Solution:
     def __str__(self):
         status_codes = {Status.OPTIMAL: 'Optimal',
                         Status.UNKNOWN: 'Unknown',
+                        Status.SUBOPTIMAL: 'Suboptimal',
                         Status.UNBOUNDED: 'Unbounded',
-                        Status.INFEASIBLE: 'Infeasible'}
+                        Status.INFEASIBLE: 'Infeasible',
+                        Status.FEASIBLE: 'Feasible'}
 
         return 'Status: {}\nObjective: {}\n'.format(status_codes[self.status], self.fobj)
 
