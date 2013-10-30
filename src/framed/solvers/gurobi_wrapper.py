@@ -180,7 +180,7 @@ class GurobiSolver(Solver):
             Solution
         """
 
-        return self._generic_solve(quad_obj, lin_obj, GRB.MAXIMIZE, model, constraints, get_shadow_prices,
+        return self._generic_solve(quad_obj, lin_obj, GRB.MINIMIZE, model, constraints, get_shadow_prices,
                                    get_reduced_costs, presolve)
 
     def _generic_solve(self, quad_obj, lin_obj, sense, model=None, constraints=None, get_shadow_prices=False,
