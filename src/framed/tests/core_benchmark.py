@@ -40,12 +40,14 @@ def benchmark(method, model):
 
 def main():
     model = load_sbml_model(SMALL_TEST_MODEL, GPR_CONSTRAINED)
+    #model = load_sbml_model(LARGE_TEST_MODEL, GPR_CONSTRAINED)
     fix_bigg_model(model)
     benchmark('FBA', model)
     benchmark('pFBA', model)
     benchmark('qpFBA', model)
     benchmark('MOMA', model)
     benchmark('lMOMA', model)
+    benchmark('ROOM', model)
 
 
 if __name__ == '__main__':

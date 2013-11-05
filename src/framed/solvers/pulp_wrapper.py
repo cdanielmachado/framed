@@ -41,7 +41,7 @@ if not SELECTED_SOLVER:
 
 status_mapping = {LpStatusOptimal: Status.OPTIMAL,
                   LpStatusUnbounded: Status.UNBOUNDED,
-                  LpStatusInfeasible: Status.UNFEASIBLE}
+                  LpStatusInfeasible: Status.INFEASIBLE}
 
 
 class PuLPSolver(Solver):

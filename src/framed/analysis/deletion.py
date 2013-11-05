@@ -19,7 +19,7 @@
    
 '''
 
-from simulation import FBA, pFBA, qpFBA, MOMA, lMOMA
+from simulation import FBA, pFBA, qpFBA, MOMA, lMOMA, ROOM
 
 
 def gene_deletion(model, genes, method='FBA', reference=None, solver=None, compute_silent_deletions=False):
@@ -78,10 +78,6 @@ def reaction_deletion(model, reactions, method='FBA', reference=None, solver=Non
         Solution -- solution
     """
 
-    if (method == 'MOMA' or method == 'lMOMA') and not reference:
-        wt_solution = FBA(model, solver=solver)
-        reference = wt_solution.values
-
     constraints = {r_id: (0, 0) for r_id in reactions}
 
     if method == 'FBA':
@@ -94,6 +90,8 @@ def reaction_deletion(model, reactions, method='FBA', reference=None, solver=Non
         solution = MOMA(model, reference, constraints=constraints, solver=solver)
     elif method == 'lMOMA':
         solution = lMOMA(model, reference, constraints=constraints, solver=solver)
+    elif method == 'ROOM':
+        solution = ROOM(model, reference, constraints=constraints, solver=solver)
 
     return solution
 

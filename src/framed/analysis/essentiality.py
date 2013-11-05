@@ -91,7 +91,7 @@ def essentiality(model, kind='reactions', min_growth=0.01, constraints=None):
 
         if solution and (solution.status == Status.OPTIMAL
                          and solution.fobj < min_growth * wt_growth
-                         or solution.status == Status.UNFEASIBLE):
+                         or solution.status == Status.INFEASIBLE):
             essential.append(elem)
 
     return essential

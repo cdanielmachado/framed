@@ -25,8 +25,16 @@ class Status:
     """ Enumeration of possible solution status. """
     OPTIMAL = 1
     UNKNOWN = 0
-    UNBOUNDED = -1
-    UNFEASIBLE = -2
+    SUBOPTIMAL = -1
+    UNBOUNDED = -2
+    INFEASIBLE = -3
+
+
+class VarType:
+    """ Enumeration of possible variable types. """
+    BINARY = 1
+    INTEGER = 2
+    CONTINUOUS = 3
 
 
 class Solution:
@@ -34,8 +42,9 @@ class Solution:
     Invoke without arguments to create an empty Solution representing a failed optimization.
     """
 
-    def __init__(self, status=Status.UNKNOWN, fobj=None, values=None, shadow_prices=None, reduced_costs=None):
+    def __init__(self, status=Status.UNKNOWN, message=None, fobj=None, values=None, shadow_prices=None, reduced_costs=None):
         self.status = status
+        self.message = message
         self.fobj = fobj
         self.values = values
         self.shadow_prices = shadow_prices
@@ -44,10 +53,12 @@ class Solution:
     def __str__(self):
         status_codes = {Status.OPTIMAL: 'Optimal',
                         Status.UNKNOWN: 'Unknown',
+                        Status.SUBOPTIMAL: 'Suboptimal',
                         Status.UNBOUNDED: 'Unbounded',
-                        Status.UNFEASIBLE: 'Infeasible'}
+                        Status.INFEASIBLE: 'Infeasible',
+                        Status.FEASIBLE: 'Feasible'}
 
-        return 'Status: {}\nObjective: {}\n'.format(status_codes[self.status], self.fobj)
+        return 'Objective: {}\nStatus: {}\nMessage {}\n'.format(self.fobj, status_codes[self.status], self.message)
 
 
     def show_values(self, zeros=False, pattern=None):
@@ -114,6 +125,10 @@ class Solver:
 
     def __init__(self):
         self.problem = None
+        self.var_ids = []
+        self.constr_ids = []
+        self.temp_vars = set()
+        self.temp_constrs = set()
 
     def __repr__(self):
         pass
@@ -124,31 +139,20 @@ class Solver:
     def __setstate__(self):
         pass
 
-    def build_problem(self, model):
-        """ Create and store solver-specific internal structure for the given model.
-        
-        Arguments:
-            model : ConstraintBasedModel
-        """
-        pass
 
-    def empty_problem(self):
-        """ Create an empty problem structure.
-        To be used for manually instantiate a problem.
-        For automatic instantiation use the build_problem interface method. """
-        pass
-
-    def add_variable(self, var_id, lb=None, ub=None):
+    def add_variable(self, var_id, lb=None, ub=None, vartype=VarType.CONTINUOUS, persistent=True):
         """ Add a variable to the current problem.
         
         Arguments:
             var_id : str -- variable identifier
             lb : float -- lower bound
             ub : float -- upper bound
+            vartype : VarType -- variable type (default: CONTINUOUS)
+            persistent : bool -- if the variable should be reused for multiple calls
         """
         pass
 
-    def add_constraint(self, constr_id, lhs, sense='=', rhs=0):
+    def add_constraint(self, constr_id, lhs, sense='=', rhs=0, persistent=True):
         """ Add a variable to the current problem.
         
         Arguments:
@@ -156,25 +160,73 @@ class Solver:
             lhs : list [of (str, float)] -- variables and respective coefficients
             sense : {'<', '=', '>'} -- default '='
             rhs : float -- right-hand side of equation (default: 0)
+            persistent : bool -- if the variable should be reused for multiple calls
         """
         pass
-
+    
+    def remove_variable(self, var_id):
+        """ Remove a variable from the current problem.
+        
+        Arguments:
+            var_id : str -- variable identifier
+        """
+        pass
+    
+    def remove_constraint(self, constr_id):
+        """ Remove a constraint from the current problem.
+        
+        Arguments:
+            constr_id : str -- constraint identifier
+        """
+        pass
+        
+            
     def list_variables(self):
         """ Get a list of the variable ids defined for the current problem.
-        
+
         Returns:
             list [of str] -- variable ids
         """
-        pass
+        return self.var_ids
 
     def list_constraints(self):
         """ Get a list of the constraint ids defined for the current problem.
-        
+
         Returns:
             list [of str] -- constraint ids
         """
-        pass
+        return self.constr_ids
+    
+    def clean_up(self, clean_variables=True, clean_constraints=True):
+        """ Clean up all non persistent elements in the problem.
+        
+        Arguments:
+            clean_variables : bool -- remove non persistent variables (default: True)
+            clean_constraints : bool -- remove non persistent constraints (default: True)
+        """
+        if clean_variables:
+            for var_id in self.temp_vars:
+                self.remove_variable(var_id)
+        
+        if clean_constraints:
+            for constr_id in self.temp_constrs:
+                self.remove_constraint(constr_id)
+                
+    
+    def build_problem(self, model):
+        """ Create problem structure for a given model.
 
+        Arguments:
+            model : ConstraintBasedModel
+        """
+
+        for r_id, (lb, ub) in model.bounds.items():
+            self.add_variable(r_id, lb, ub)
+
+        table = model.metabolite_reaction_lookup_table()
+        for m_id in model.metabolites:
+            self.add_constraint(m_id, table[m_id].items())
+            
     def solve_lp(self, objective, model=None, constraints=None, get_shadow_prices=False, get_reduced_costs=False):
         """ Solve an LP optimization problem.
         
