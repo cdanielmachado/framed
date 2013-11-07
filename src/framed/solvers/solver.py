@@ -55,8 +55,7 @@ class Solution:
                         Status.UNKNOWN: 'Unknown',
                         Status.SUBOPTIMAL: 'Suboptimal',
                         Status.UNBOUNDED: 'Unbounded',
-                        Status.INFEASIBLE: 'Infeasible',
-                        Status.FEASIBLE: 'Feasible'}
+                        Status.INFEASIBLE: 'Infeasible'}
 
         return 'Objective: {}\nStatus: {}\nMessage {}\n'.format(self.fobj, status_codes[self.status], self.message)
 
