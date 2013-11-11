@@ -1,3 +1,8 @@
+build
+
+.setup.py.swp
+
+docopt.egg-info
 
 .DS_Store
 
