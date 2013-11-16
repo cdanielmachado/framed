@@ -23,15 +23,15 @@ from ..solvers import solver_instance
 from ..solvers.solver import Status, VarType
 
 
-def FBA(model, target=None, maximize=True, constraints=None, solver=None, get_shadow_prices=False,
+def FBA(model, objective=None, maximize=True, constraints=None, solver=None, get_shadow_prices=False,
         get_reduced_costs=False):
     """ Run a Flux Balance Analysis (FBA) simulation:
     
     Arguments:
         model : ConstraintBasedModel -- a constraint-based model
-        target : String (None) -- target reaction (automatically detects biomass reaction if none given)
+        objective : dict (of str to float) -- objective coefficients (optional)
         maximize : bool (True) -- sense of optimization (maximize by default)
-        constraints: dict (of str to float) -- environmental or additional constraints (optional)
+        constraints: dict (of str to (float, float)) -- environmental or additional constraints (optional)
         solver : Solver -- solver instance instantiated with the model, for speed (optional)
         get_shadow_prices : Bool -- retrieve shadow prices (default: False)
         get_reduced_costs : Bool -- retrieve reduced costs (default: False)
@@ -40,10 +40,11 @@ def FBA(model, target=None, maximize=True, constraints=None, solver=None, get_sh
         Solution -- solution
     """
 
-    if not target:
-        target = model.detect_biomass_reaction()
-    direction = 1 if maximize else -1
-    objective = {target: direction}
+    if not objective:
+        objective = model.objective
+        
+    if not maximize:
+        objective = {r_id : -1 * coeff for r_id, coeff in objective.items()}
 
     if not solver:
         solver = solver_instance()
@@ -53,29 +54,36 @@ def FBA(model, target=None, maximize=True, constraints=None, solver=None, get_sh
     return solution
 
 
-def pFBA(model, target=None, maximize=True, constraints=None, solver=None):
+def pFBA(model, objective=None, maximize=True, constraints=None, solver=None):
     """ Run a parsimonious Flux Balance Analysis (pFBA) simulation:
     
     Arguments:
         model : ConstraintBasedModel -- a constraint-based model
-        target : String (None) -- target reaction (automatically detects biomass reaction if none given)
+        objective : dict (of str to float) -- objective coefficients (optional)
         maximize : bool (True) -- sense of optimization (maximize by default)
-        constraints: dict (of str to float) -- environmental or additional constraints (optional)
+        constraints: dict (of str to (float, float)) -- environmental or additional constraints (optional)
         solver : Solver -- solver instance instantiated with the model, for speed (optional)
        
     Returns:
         Solution -- solution
     """
 
-    if not target:
-        target = model.detect_biomass_reaction()
-
     if not solver:
         solver = solver_instance()
         solver.build_problem(model)
 
-    pre_solution = FBA(model, target, maximize, constraints, solver)
+    if not objective:
+        objective = model.objective
 
+    pre_solution = FBA(model, objective, maximize, constraints, solver)
+    
+    if maximize:
+        obj_value = pre_solution.fobj
+    else:
+        obj_value = -1 * pre_solution.fobj
+        
+    solver.add_constraint('obj', objective.items(), '=', obj_value)
+       
     if not hasattr(solver, 'pFBA_flag'): #for speed (about 3x faster)
         solver.pFBA_flag = True
         for r_id, reaction in model.reactions.items():
@@ -90,8 +98,6 @@ def pFBA(model, target=None, maximize=True, constraints=None, solver=None):
     if not constraints:
         constraints = dict()
 
-    constraints[target] = (pre_solution.fobj, pre_solution.fobj)
-
     objective = dict()
     for r_id, reaction in model.reactions.items():
         if reaction.reversible:
@@ -104,6 +110,9 @@ def pFBA(model, target=None, maximize=True, constraints=None, solver=None):
     solution = solver.solve_lp(objective, constraints=constraints)
 
     #post process
+    
+    solver.remove_constraint('obj')
+                      
     if solution.status == Status.OPTIMAL:
         for r_id, reaction in model.reactions.items():
             if reaction.reversible:
@@ -114,36 +123,42 @@ def pFBA(model, target=None, maximize=True, constraints=None, solver=None):
     return solution
 
 
-def qpFBA(model, target=None, maximize=True, constraints=None, solver=None):
+def qpFBA(model, objective=None, maximize=True, constraints=None, solver=None):
     """ Run a (quadratic version of) parsimonious Flux Balance Analysis (pFBA) simulation:
     
     Arguments:
         model : ConstraintBasedModel -- a constraint-based model
-        target : String (None) -- target reaction (automatically detects biomass reaction if none given)
+        objective : dict (of str to float) -- objective coefficients (optional)
         maximize : bool (True) -- sense of optimization (maximize by default)
-        constraints: dict (of str to float) -- environmental or additional constraints (optional)
+        constraints: dict (of str to (float, float)) -- environmental or additional constraints (optional)
         solver : Solver -- solver instance instantiated with the model, for speed (optional)
        
     Returns:
         Solution -- solution
     """
-    if not target:
-        target = model.detect_biomass_reaction()
 
     if not solver:
         solver = solver_instance()
         solver.build_problem(model)
 
-    pre_solution = FBA(model, target, maximize, constraints, solver)
+    if not objective:
+        objective = model.objective
+        
+    pre_solution = FBA(model, objective, maximize, constraints, solver)
 
     if not constraints:
         constraints = dict()
 
-    constraints[target] = (pre_solution.fobj, pre_solution.fobj)
-
+    if maximize:
+        obj_value = pre_solution.fobj
+    else:
+        obj_value = -1 * pre_solution.fobj
+        
+    solver.add_constraint('obj', objective.items(), '=', obj_value)
     quad_obj = {(r_id, r_id): 1 for r_id in model.reactions}
-
+    
     solution = solver.solve_qp(quad_obj, None, constraints=constraints)
+    solver.remove_constraint('obj')
 
     return solution
 
@@ -154,7 +169,7 @@ def MOMA(model, reference=None, constraints=None, solver=None):
     Arguments:
         model : ConstraintBasedModel -- a constraint-based model
         reference : dict (of str to float) -- reference flux distribution (optional)
-        constraints: dict (of str to float) -- environmental or additional constraints (optional)
+        constraints: dict (of str to (float, float)) -- environmental or additional constraints (optional)
         solver : Solver -- solver instance instantiated with the model, for speed (optional)
        
     Returns:
@@ -183,7 +198,7 @@ def lMOMA(model, reference=None, constraints=None, solver=None):
     Arguments:
         model : ConstraintBasedModel -- a constraint-based model
         reference : dict (of str to float) -- reference flux distribution (optional)
-        constraints: dict (of str to float) -- environmental or additional constraints (optional)
+        constraints: dict (of str to (float, float)) -- environmental or additional constraints (optional)
         solver : Solver -- solver instance instantiated with the model, for speed (optional)
        
     Returns:
@@ -231,7 +246,7 @@ def ROOM(model, reference=None, constraints=None, solver=None, delta=0.03, epsil
     Arguments:
         model : ConstraintBasedModel -- a constraint-based model
         reference : dict (of str to float) -- reference flux distribution (optional)
-        constraints: dict (of str to float) -- environmental or additional constraints (optional)
+        constraints: dict (of str to (float, float)) -- environmental or additional constraints (optional)
         solver : Solver -- solver instance instantiated with the model, for speed (optional)
         delta : float -- relative tolerance (default: 0.03)
         epsilon : float -- absolute tolerance (default: 0.001)
