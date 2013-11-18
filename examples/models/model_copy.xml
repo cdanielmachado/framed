@@ -123,6 +123,7 @@
           <listOfParameters>
             <parameter id="LOWER_BOUND" value="-1000"/>
             <parameter id="UPPER_BOUND" value="1000"/>
+            <parameter id="OBJECTIVE_COEFFICIENT" value="0"/>
           </listOfParameters>
         </kineticLaw>
       </reaction>
@@ -145,6 +146,7 @@
           <listOfParameters>
             <parameter id="LOWER_BOUND" value="-1000"/>
             <parameter id="UPPER_BOUND" value="1000"/>
+            <parameter id="OBJECTIVE_COEFFICIENT" value="0"/>
           </listOfParameters>
         </kineticLaw>
       </reaction>
@@ -169,6 +171,7 @@
           <listOfParameters>
             <parameter id="LOWER_BOUND" value="-1000"/>
             <parameter id="UPPER_BOUND" value="1000"/>
+            <parameter id="OBJECTIVE_COEFFICIENT" value="0"/>
           </listOfParameters>
         </kineticLaw>
       </reaction>
@@ -192,6 +195,7 @@
           <listOfParameters>
             <parameter id="LOWER_BOUND" value="-1000"/>
             <parameter id="UPPER_BOUND" value="1000"/>
+            <parameter id="OBJECTIVE_COEFFICIENT" value="0"/>
           </listOfParameters>
         </kineticLaw>
       </reaction>
@@ -215,6 +219,7 @@
           <listOfParameters>
             <parameter id="LOWER_BOUND" value="-1000"/>
             <parameter id="UPPER_BOUND" value="1000"/>
+            <parameter id="OBJECTIVE_COEFFICIENT" value="0"/>
           </listOfParameters>
         </kineticLaw>
       </reaction>
@@ -239,6 +244,7 @@
           <listOfParameters>
             <parameter id="LOWER_BOUND" value="-1000"/>
             <parameter id="UPPER_BOUND" value="1000"/>
+            <parameter id="OBJECTIVE_COEFFICIENT" value="0"/>
           </listOfParameters>
         </kineticLaw>
       </reaction>
@@ -262,6 +268,7 @@
           <listOfParameters>
             <parameter id="LOWER_BOUND" value="-1000"/>
             <parameter id="UPPER_BOUND" value="1000"/>
+            <parameter id="OBJECTIVE_COEFFICIENT" value="0"/>
           </listOfParameters>
         </kineticLaw>
       </reaction>
@@ -288,6 +295,7 @@
           <listOfParameters>
             <parameter id="LOWER_BOUND" value="0"/>
             <parameter id="UPPER_BOUND" value="1000"/>
+            <parameter id="OBJECTIVE_COEFFICIENT" value="0"/>
           </listOfParameters>
         </kineticLaw>
       </reaction>
@@ -312,6 +320,7 @@
           <listOfParameters>
             <parameter id="LOWER_BOUND" value="-1000"/>
             <parameter id="UPPER_BOUND" value="1000"/>
+            <parameter id="OBJECTIVE_COEFFICIENT" value="0"/>
           </listOfParameters>
         </kineticLaw>
       </reaction>
@@ -337,6 +346,7 @@
           <listOfParameters>
             <parameter id="LOWER_BOUND" value="-1000"/>
             <parameter id="UPPER_BOUND" value="1000"/>
+            <parameter id="OBJECTIVE_COEFFICIENT" value="0"/>
           </listOfParameters>
         </kineticLaw>
       </reaction>
@@ -362,6 +372,7 @@
           <listOfParameters>
             <parameter id="LOWER_BOUND" value="8.39"/>
             <parameter id="UPPER_BOUND" value="1000"/>
+            <parameter id="OBJECTIVE_COEFFICIENT" value="0"/>
           </listOfParameters>
         </kineticLaw>
       </reaction>
@@ -388,6 +399,7 @@
           <listOfParameters>
             <parameter id="LOWER_BOUND" value="-1000"/>
             <parameter id="UPPER_BOUND" value="1000"/>
+            <parameter id="OBJECTIVE_COEFFICIENT" value="0"/>
           </listOfParameters>
         </kineticLaw>
       </reaction>
@@ -431,6 +443,7 @@
           <listOfParameters>
             <parameter id="LOWER_BOUND" value="0"/>
             <parameter id="UPPER_BOUND" value="1000"/>
+            <parameter id="OBJECTIVE_COEFFICIENT" value="1"/>
           </listOfParameters>
         </kineticLaw>
       </reaction>
@@ -453,6 +466,7 @@
           <listOfParameters>
             <parameter id="LOWER_BOUND" value="-1000"/>
             <parameter id="UPPER_BOUND" value="1000"/>
+            <parameter id="OBJECTIVE_COEFFICIENT" value="0"/>
           </listOfParameters>
         </kineticLaw>
       </reaction>
@@ -479,6 +493,7 @@
           <listOfParameters>
             <parameter id="LOWER_BOUND" value="0"/>
             <parameter id="UPPER_BOUND" value="1000"/>
+            <parameter id="OBJECTIVE_COEFFICIENT" value="0"/>
           </listOfParameters>
         </kineticLaw>
       </reaction>
@@ -505,6 +520,7 @@
           <listOfParameters>
             <parameter id="LOWER_BOUND" value="0"/>
             <parameter id="UPPER_BOUND" value="1000"/>
+            <parameter id="OBJECTIVE_COEFFICIENT" value="0"/>
           </listOfParameters>
         </kineticLaw>
       </reaction>
@@ -529,6 +545,7 @@
           <listOfParameters>
             <parameter id="LOWER_BOUND" value="-1000"/>
             <parameter id="UPPER_BOUND" value="1000"/>
+            <parameter id="OBJECTIVE_COEFFICIENT" value="0"/>
           </listOfParameters>
         </kineticLaw>
       </reaction>
@@ -552,6 +569,7 @@
           <listOfParameters>
             <parameter id="LOWER_BOUND" value="-1000"/>
             <parameter id="UPPER_BOUND" value="1000"/>
+            <parameter id="OBJECTIVE_COEFFICIENT" value="0"/>
           </listOfParameters>
         </kineticLaw>
       </reaction>
@@ -576,6 +594,7 @@
           <listOfParameters>
             <parameter id="LOWER_BOUND" value="-1000"/>
             <parameter id="UPPER_BOUND" value="1000"/>
+            <parameter id="OBJECTIVE_COEFFICIENT" value="0"/>
           </listOfParameters>
         </kineticLaw>
       </reaction>
@@ -598,6 +617,7 @@
           <listOfParameters>
             <parameter id="LOWER_BOUND" value="0"/>
             <parameter id="UPPER_BOUND" value="1000"/>
+            <parameter id="OBJECTIVE_COEFFICIENT" value="0"/>
           </listOfParameters>
         </kineticLaw>
       </reaction>
@@ -620,6 +640,7 @@
           <listOfParameters>
             <parameter id="LOWER_BOUND" value="0"/>
             <parameter id="UPPER_BOUND" value="1000"/>
+            <parameter id="OBJECTIVE_COEFFICIENT" value="0"/>
           </listOfParameters>
         </kineticLaw>
       </reaction>
@@ -642,6 +663,7 @@
           <listOfParameters>
             <parameter id="LOWER_BOUND" value="0"/>
             <parameter id="UPPER_BOUND" value="1000"/>
+            <parameter id="OBJECTIVE_COEFFICIENT" value="0"/>
           </listOfParameters>
         </kineticLaw>
       </reaction>
@@ -664,6 +686,7 @@
           <listOfParameters>
             <parameter id="LOWER_BOUND" value="-1000"/>
             <parameter id="UPPER_BOUND" value="1000"/>
+            <parameter id="OBJECTIVE_COEFFICIENT" value="0"/>
           </listOfParameters>
         </kineticLaw>
       </reaction>
@@ -686,6 +709,7 @@
           <listOfParameters>
             <parameter id="LOWER_BOUND" value="0"/>
             <parameter id="UPPER_BOUND" value="1000"/>
+            <parameter id="OBJECTIVE_COEFFICIENT" value="0"/>
           </listOfParameters>
         </kineticLaw>
       </reaction>
@@ -708,6 +732,7 @@
           <listOfParameters>
             <parameter id="LOWER_BOUND" value="0"/>
             <parameter id="UPPER_BOUND" value="1000"/>
+            <parameter id="OBJECTIVE_COEFFICIENT" value="0"/>
           </listOfParameters>
         </kineticLaw>
       </reaction>
@@ -730,6 +755,7 @@
           <listOfParameters>
             <parameter id="LOWER_BOUND" value="0"/>
             <parameter id="UPPER_BOUND" value="1000"/>
+            <parameter id="OBJECTIVE_COEFFICIENT" value="0"/>
           </listOfParameters>
         </kineticLaw>
       </reaction>
@@ -752,6 +778,7 @@
           <listOfParameters>
             <parameter id="LOWER_BOUND" value="0"/>
             <parameter id="UPPER_BOUND" value="1000"/>
+            <parameter id="OBJECTIVE_COEFFICIENT" value="0"/>
           </listOfParameters>
         </kineticLaw>
       </reaction>
@@ -774,6 +801,7 @@
           <listOfParameters>
             <parameter id="LOWER_BOUND" value="-10"/>
             <parameter id="UPPER_BOUND" value="1000"/>
+            <parameter id="OBJECTIVE_COEFFICIENT" value="0"/>
           </listOfParameters>
         </kineticLaw>
       </reaction>
@@ -796,6 +824,7 @@
           <listOfParameters>
             <parameter id="LOWER_BOUND" value="0"/>
             <parameter id="UPPER_BOUND" value="1000"/>
+            <parameter id="OBJECTIVE_COEFFICIENT" value="0"/>
           </listOfParameters>
         </kineticLaw>
       </reaction>
@@ -818,6 +847,7 @@
           <listOfParameters>
             <parameter id="LOWER_BOUND" value="0"/>
             <parameter id="UPPER_BOUND" value="1000"/>
+            <parameter id="OBJECTIVE_COEFFICIENT" value="0"/>
           </listOfParameters>
         </kineticLaw>
       </reaction>
@@ -840,6 +870,7 @@
           <listOfParameters>
             <parameter id="LOWER_BOUND" value="-1000"/>
             <parameter id="UPPER_BOUND" value="1000"/>
+            <parameter id="OBJECTIVE_COEFFICIENT" value="0"/>
           </listOfParameters>
         </kineticLaw>
       </reaction>
@@ -862,6 +893,7 @@
           <listOfParameters>
             <parameter id="LOWER_BOUND" value="-1000"/>
             <parameter id="UPPER_BOUND" value="1000"/>
+            <parameter id="OBJECTIVE_COEFFICIENT" value="0"/>
           </listOfParameters>
         </kineticLaw>
       </reaction>
@@ -884,6 +916,7 @@
           <listOfParameters>
             <parameter id="LOWER_BOUND" value="0"/>
             <parameter id="UPPER_BOUND" value="1000"/>
+            <parameter id="OBJECTIVE_COEFFICIENT" value="0"/>
           </listOfParameters>
         </kineticLaw>
       </reaction>
@@ -906,6 +939,7 @@
           <listOfParameters>
             <parameter id="LOWER_BOUND" value="0"/>
             <parameter id="UPPER_BOUND" value="1000"/>
+            <parameter id="OBJECTIVE_COEFFICIENT" value="0"/>
           </listOfParameters>
         </kineticLaw>
       </reaction>
@@ -928,6 +962,7 @@
           <listOfParameters>
             <parameter id="LOWER_BOUND" value="-1000"/>
             <parameter id="UPPER_BOUND" value="1000"/>
+            <parameter id="OBJECTIVE_COEFFICIENT" value="0"/>
           </listOfParameters>
         </kineticLaw>
       </reaction>
@@ -950,6 +985,7 @@
           <listOfParameters>
             <parameter id="LOWER_BOUND" value="-1000"/>
             <parameter id="UPPER_BOUND" value="1000"/>
+            <parameter id="OBJECTIVE_COEFFICIENT" value="0"/>
           </listOfParameters>
         </kineticLaw>
       </reaction>
@@ -972,6 +1008,7 @@
           <listOfParameters>
             <parameter id="LOWER_BOUND" value="-1000"/>
             <parameter id="UPPER_BOUND" value="1000"/>
+            <parameter id="OBJECTIVE_COEFFICIENT" value="0"/>
           </listOfParameters>
         </kineticLaw>
       </reaction>
@@ -994,6 +1031,7 @@
           <listOfParameters>
             <parameter id="LOWER_BOUND" value="0"/>
             <parameter id="UPPER_BOUND" value="1000"/>
+            <parameter id="OBJECTIVE_COEFFICIENT" value="0"/>
           </listOfParameters>
         </kineticLaw>
       </reaction>
@@ -1016,6 +1054,7 @@
           <listOfParameters>
             <parameter id="LOWER_BOUND" value="0"/>
             <parameter id="UPPER_BOUND" value="1000"/>
+            <parameter id="OBJECTIVE_COEFFICIENT" value="0"/>
           </listOfParameters>
         </kineticLaw>
       </reaction>
@@ -1039,6 +1078,7 @@
           <listOfParameters>
             <parameter id="LOWER_BOUND" value="-1000"/>
             <parameter id="UPPER_BOUND" value="1000"/>
+            <parameter id="OBJECTIVE_COEFFICIENT" value="0"/>
           </listOfParameters>
         </kineticLaw>
       </reaction>
@@ -1063,6 +1103,7 @@
           <listOfParameters>
             <parameter id="LOWER_BOUND" value="0"/>
             <parameter id="UPPER_BOUND" value="1000"/>
+            <parameter id="OBJECTIVE_COEFFICIENT" value="0"/>
           </listOfParameters>
         </kineticLaw>
       </reaction>
@@ -1087,6 +1128,7 @@
           <listOfParameters>
             <parameter id="LOWER_BOUND" value="0"/>
             <parameter id="UPPER_BOUND" value="1000"/>
+            <parameter id="OBJECTIVE_COEFFICIENT" value="0"/>
           </listOfParameters>
         </kineticLaw>
       </reaction>
@@ -1109,6 +1151,7 @@
           <listOfParameters>
             <parameter id="LOWER_BOUND" value="0"/>
             <parameter id="UPPER_BOUND" value="1000"/>
+            <parameter id="OBJECTIVE_COEFFICIENT" value="0"/>
           </listOfParameters>
         </kineticLaw>
       </reaction>
@@ -1133,6 +1176,7 @@
           <listOfParameters>
             <parameter id="LOWER_BOUND" value="0"/>
             <parameter id="UPPER_BOUND" value="1000"/>
+            <parameter id="OBJECTIVE_COEFFICIENT" value="0"/>
           </listOfParameters>
         </kineticLaw>
       </reaction>
@@ -1157,6 +1201,7 @@
           <listOfParameters>
             <parameter id="LOWER_BOUND" value="0"/>
             <parameter id="UPPER_BOUND" value="1000"/>
+            <parameter id="OBJECTIVE_COEFFICIENT" value="0"/>
           </listOfParameters>
         </kineticLaw>
       </reaction>
@@ -1180,6 +1225,7 @@
           <listOfParameters>
             <parameter id="LOWER_BOUND" value="-1000"/>
             <parameter id="UPPER_BOUND" value="1000"/>
+            <parameter id="OBJECTIVE_COEFFICIENT" value="0"/>
           </listOfParameters>
         </kineticLaw>
       </reaction>
@@ -1204,6 +1250,7 @@
           <listOfParameters>
             <parameter id="LOWER_BOUND" value="0"/>
             <parameter id="UPPER_BOUND" value="1000"/>
+            <parameter id="OBJECTIVE_COEFFICIENT" value="0"/>
           </listOfParameters>
         </kineticLaw>
       </reaction>
@@ -1229,6 +1276,7 @@
           <listOfParameters>
             <parameter id="LOWER_BOUND" value="-1000"/>
             <parameter id="UPPER_BOUND" value="1000"/>
+            <parameter id="OBJECTIVE_COEFFICIENT" value="0"/>
           </listOfParameters>
         </kineticLaw>
       </reaction>
@@ -1255,6 +1303,7 @@
           <listOfParameters>
             <parameter id="LOWER_BOUND" value="-1000"/>
             <parameter id="UPPER_BOUND" value="1000"/>
+            <parameter id="OBJECTIVE_COEFFICIENT" value="0"/>
           </listOfParameters>
         </kineticLaw>
       </reaction>
@@ -1279,6 +1328,7 @@
           <listOfParameters>
             <parameter id="LOWER_BOUND" value="0"/>
             <parameter id="UPPER_BOUND" value="1000"/>
+            <parameter id="OBJECTIVE_COEFFICIENT" value="0"/>
           </listOfParameters>
         </kineticLaw>
       </reaction>
@@ -1306,6 +1356,7 @@
           <listOfParameters>
             <parameter id="LOWER_BOUND" value="0"/>
             <parameter id="UPPER_BOUND" value="1000"/>
+            <parameter id="OBJECTIVE_COEFFICIENT" value="0"/>
           </listOfParameters>
         </kineticLaw>
       </reaction>
@@ -1333,6 +1384,7 @@
           <listOfParameters>
             <parameter id="LOWER_BOUND" value="0"/>
             <parameter id="UPPER_BOUND" value="1000"/>
+            <parameter id="OBJECTIVE_COEFFICIENT" value="0"/>
           </listOfParameters>
         </kineticLaw>
       </reaction>
@@ -1360,6 +1412,7 @@
           <listOfParameters>
             <parameter id="LOWER_BOUND" value="-1000"/>
             <parameter id="UPPER_BOUND" value="1000"/>
+            <parameter id="OBJECTIVE_COEFFICIENT" value="0"/>
           </listOfParameters>
         </kineticLaw>
       </reaction>
@@ -1384,6 +1437,7 @@
           <listOfParameters>
             <parameter id="LOWER_BOUND" value="0"/>
             <parameter id="UPPER_BOUND" value="1000"/>
+            <parameter id="OBJECTIVE_COEFFICIENT" value="0"/>
           </listOfParameters>
         </kineticLaw>
       </reaction>
@@ -1410,6 +1464,7 @@
           <listOfParameters>
             <parameter id="LOWER_BOUND" value="0"/>
             <parameter id="UPPER_BOUND" value="1000"/>
+            <parameter id="OBJECTIVE_COEFFICIENT" value="0"/>
           </listOfParameters>
         </kineticLaw>
       </reaction>
@@ -1434,6 +1489,7 @@
           <listOfParameters>
             <parameter id="LOWER_BOUND" value="-1000"/>
             <parameter id="UPPER_BOUND" value="1000"/>
+            <parameter id="OBJECTIVE_COEFFICIENT" value="0"/>
           </listOfParameters>
         </kineticLaw>
       </reaction>
@@ -1459,6 +1515,7 @@
           <listOfParameters>
             <parameter id="LOWER_BOUND" value="0"/>
             <parameter id="UPPER_BOUND" value="1000"/>
+            <parameter id="OBJECTIVE_COEFFICIENT" value="0"/>
           </listOfParameters>
         </kineticLaw>
       </reaction>
@@ -1481,6 +1538,7 @@
           <listOfParameters>
             <parameter id="LOWER_BOUND" value="-1000"/>
             <parameter id="UPPER_BOUND" value="1000"/>
+            <parameter id="OBJECTIVE_COEFFICIENT" value="0"/>
           </listOfParameters>
         </kineticLaw>
       </reaction>
@@ -1506,6 +1564,7 @@
           <listOfParameters>
             <parameter id="LOWER_BOUND" value="-1000"/>
             <parameter id="UPPER_BOUND" value="1000"/>
+            <parameter id="OBJECTIVE_COEFFICIENT" value="0"/>
           </listOfParameters>
         </kineticLaw>
       </reaction>
@@ -1529,6 +1588,7 @@
           <listOfParameters>
             <parameter id="LOWER_BOUND" value="0"/>
             <parameter id="UPPER_BOUND" value="1000"/>
+            <parameter id="OBJECTIVE_COEFFICIENT" value="0"/>
           </listOfParameters>
         </kineticLaw>
       </reaction>
@@ -1554,6 +1614,7 @@
           <listOfParameters>
             <parameter id="LOWER_BOUND" value="-1000"/>
             <parameter id="UPPER_BOUND" value="1000"/>
+            <parameter id="OBJECTIVE_COEFFICIENT" value="0"/>
           </listOfParameters>
         </kineticLaw>
       </reaction>
@@ -1580,6 +1641,7 @@
           <listOfParameters>
             <parameter id="LOWER_BOUND" value="0"/>
             <parameter id="UPPER_BOUND" value="1000"/>
+            <parameter id="OBJECTIVE_COEFFICIENT" value="0"/>
           </listOfParameters>
         </kineticLaw>
       </reaction>
@@ -1604,6 +1666,7 @@
           <listOfParameters>
             <parameter id="LOWER_BOUND" value="0"/>
             <parameter id="UPPER_BOUND" value="1000"/>
+            <parameter id="OBJECTIVE_COEFFICIENT" value="0"/>
           </listOfParameters>
         </kineticLaw>
       </reaction>
@@ -1629,6 +1692,7 @@
           <listOfParameters>
             <parameter id="LOWER_BOUND" value="-1000"/>
             <parameter id="UPPER_BOUND" value="1000"/>
+            <parameter id="OBJECTIVE_COEFFICIENT" value="0"/>
           </listOfParameters>
         </kineticLaw>
       </reaction>
@@ -1654,6 +1718,7 @@
           <listOfParameters>
             <parameter id="LOWER_BOUND" value="0"/>
             <parameter id="UPPER_BOUND" value="1000"/>
+            <parameter id="OBJECTIVE_COEFFICIENT" value="0"/>
           </listOfParameters>
         </kineticLaw>
       </reaction>
@@ -1679,6 +1744,7 @@
           <listOfParameters>
             <parameter id="LOWER_BOUND" value="0"/>
             <parameter id="UPPER_BOUND" value="1000"/>
+            <parameter id="OBJECTIVE_COEFFICIENT" value="0"/>
           </listOfParameters>
         </kineticLaw>
       </reaction>
@@ -1705,6 +1771,7 @@
           <listOfParameters>
             <parameter id="LOWER_BOUND" value="0"/>
             <parameter id="UPPER_BOUND" value="1000"/>
+            <parameter id="OBJECTIVE_COEFFICIENT" value="0"/>
           </listOfParameters>
         </kineticLaw>
       </reaction>
@@ -1729,6 +1796,7 @@
           <listOfParameters>
             <parameter id="LOWER_BOUND" value="0"/>
             <parameter id="UPPER_BOUND" value="1000"/>
+            <parameter id="OBJECTIVE_COEFFICIENT" value="0"/>
           </listOfParameters>
         </kineticLaw>
       </reaction>
@@ -1751,6 +1819,7 @@
           <listOfParameters>
             <parameter id="LOWER_BOUND" value="-1000"/>
             <parameter id="UPPER_BOUND" value="1000"/>
+            <parameter id="OBJECTIVE_COEFFICIENT" value="0"/>
           </listOfParameters>
         </kineticLaw>
       </reaction>
@@ -1773,6 +1842,7 @@
           <listOfParameters>
             <parameter id="LOWER_BOUND" value="-1000"/>
             <parameter id="UPPER_BOUND" value="1000"/>
+            <parameter id="OBJECTIVE_COEFFICIENT" value="0"/>
           </listOfParameters>
         </kineticLaw>
       </reaction>
@@ -1799,6 +1869,7 @@
           <listOfParameters>
             <parameter id="LOWER_BOUND" value="0"/>
             <parameter id="UPPER_BOUND" value="1000"/>
+            <parameter id="OBJECTIVE_COEFFICIENT" value="0"/>
           </listOfParameters>
         </kineticLaw>
       </reaction>
@@ -1824,6 +1895,7 @@
           <listOfParameters>
             <parameter id="LOWER_BOUND" value="0"/>
             <parameter id="UPPER_BOUND" value="1000"/>
+            <parameter id="OBJECTIVE_COEFFICIENT" value="0"/>
           </listOfParameters>
         </kineticLaw>
       </reaction>
@@ -1848,6 +1920,7 @@
           <listOfParameters>
             <parameter id="LOWER_BOUND" value="0"/>
             <parameter id="UPPER_BOUND" value="1000"/>
+            <parameter id="OBJECTIVE_COEFFICIENT" value="0"/>
           </listOfParameters>
         </kineticLaw>
       </reaction>
@@ -1870,6 +1943,7 @@
           <listOfParameters>
             <parameter id="LOWER_BOUND" value="-1000"/>
             <parameter id="UPPER_BOUND" value="1000"/>
+            <parameter id="OBJECTIVE_COEFFICIENT" value="0"/>
           </listOfParameters>
         </kineticLaw>
       </reaction>
@@ -1894,6 +1968,7 @@
           <listOfParameters>
             <parameter id="LOWER_BOUND" value="-1000"/>
             <parameter id="UPPER_BOUND" value="1000"/>
+            <parameter id="OBJECTIVE_COEFFICIENT" value="0"/>
           </listOfParameters>
         </kineticLaw>
       </reaction>
@@ -1918,6 +1993,7 @@
           <listOfParameters>
             <parameter id="LOWER_BOUND" value="0"/>
             <parameter id="UPPER_BOUND" value="1000"/>
+            <parameter id="OBJECTIVE_COEFFICIENT" value="0"/>
           </listOfParameters>
         </kineticLaw>
       </reaction>
@@ -1940,6 +2016,7 @@
           <listOfParameters>
             <parameter id="LOWER_BOUND" value="-1000"/>
             <parameter id="UPPER_BOUND" value="1000"/>
+            <parameter id="OBJECTIVE_COEFFICIENT" value="0"/>
           </listOfParameters>
         </kineticLaw>
       </reaction>
@@ -1964,6 +2041,7 @@
           <listOfParameters>
             <parameter id="LOWER_BOUND" value="-1000"/>
             <parameter id="UPPER_BOUND" value="1000"/>
+            <parameter id="OBJECTIVE_COEFFICIENT" value="0"/>
           </listOfParameters>
         </kineticLaw>
       </reaction>
@@ -1990,6 +2068,7 @@
           <listOfParameters>
             <parameter id="LOWER_BOUND" value="0"/>
             <parameter id="UPPER_BOUND" value="1000"/>
+            <parameter id="OBJECTIVE_COEFFICIENT" value="0"/>
           </listOfParameters>
         </kineticLaw>
       </reaction>
@@ -2015,6 +2094,7 @@
           <listOfParameters>
             <parameter id="LOWER_BOUND" value="0"/>
             <parameter id="UPPER_BOUND" value="1000"/>
+            <parameter id="OBJECTIVE_COEFFICIENT" value="0"/>
           </listOfParameters>
         </kineticLaw>
       </reaction>
@@ -2042,6 +2122,7 @@
           <listOfParameters>
             <parameter id="LOWER_BOUND" value="0"/>
             <parameter id="UPPER_BOUND" value="1000"/>
+            <parameter id="OBJECTIVE_COEFFICIENT" value="0"/>
           </listOfParameters>
         </kineticLaw>
       </reaction>
@@ -2066,6 +2147,7 @@
           <listOfParameters>
             <parameter id="LOWER_BOUND" value="-1000"/>
             <parameter id="UPPER_BOUND" value="1000"/>
+            <parameter id="OBJECTIVE_COEFFICIENT" value="0"/>
           </listOfParameters>
         </kineticLaw>
       </reaction>
@@ -2091,6 +2173,7 @@
           <listOfParameters>
             <parameter id="LOWER_BOUND" value="0"/>
             <parameter id="UPPER_BOUND" value="1000"/>
+            <parameter id="OBJECTIVE_COEFFICIENT" value="0"/>
           </listOfParameters>
         </kineticLaw>
       </reaction>
@@ -2115,6 +2198,7 @@
           <listOfParameters>
             <parameter id="LOWER_BOUND" value="-1000"/>
             <parameter id="UPPER_BOUND" value="1000"/>
+            <parameter id="OBJECTIVE_COEFFICIENT" value="0"/>
           </listOfParameters>
         </kineticLaw>
       </reaction>
@@ -2137,6 +2221,7 @@
           <listOfParameters>
             <parameter id="LOWER_BOUND" value="-1000"/>
             <parameter id="UPPER_BOUND" value="1000"/>
+            <parameter id="OBJECTIVE_COEFFICIENT" value="0"/>
           </listOfParameters>
         </kineticLaw>
       </reaction>
@@ -2159,6 +2244,7 @@
           <listOfParameters>
             <parameter id="LOWER_BOUND" value="-1000"/>
             <parameter id="UPPER_BOUND" value="1000"/>
+            <parameter id="OBJECTIVE_COEFFICIENT" value="0"/>
           </listOfParameters>
         </kineticLaw>
       </reaction>
@@ -2183,6 +2269,7 @@
           <listOfParameters>
             <parameter id="LOWER_BOUND" value="0"/>
             <parameter id="UPPER_BOUND" value="1000"/>
+            <parameter id="OBJECTIVE_COEFFICIENT" value="0"/>
           </listOfParameters>
         </kineticLaw>
       </reaction>
@@ -2207,6 +2294,7 @@
           <listOfParameters>
             <parameter id="LOWER_BOUND" value="0"/>
             <parameter id="UPPER_BOUND" value="1000"/>
+            <parameter id="OBJECTIVE_COEFFICIENT" value="0"/>
           </listOfParameters>
         </kineticLaw>
       </reaction>
@@ -2231,6 +2319,7 @@
           <listOfParameters>
             <parameter id="LOWER_BOUND" value="0"/>
             <parameter id="UPPER_BOUND" value="1000"/>
+            <parameter id="OBJECTIVE_COEFFICIENT" value="0"/>
           </listOfParameters>
         </kineticLaw>
       </reaction>
@@ -2257,6 +2346,7 @@
           <listOfParameters>
             <parameter id="LOWER_BOUND" value="-1000"/>
             <parameter id="UPPER_BOUND" value="1000"/>
+            <parameter id="OBJECTIVE_COEFFICIENT" value="0"/>
           </listOfParameters>
         </kineticLaw>
       </reaction>
@@ -2281,6 +2371,7 @@
           <listOfParameters>
             <parameter id="LOWER_BOUND" value="-1000"/>
             <parameter id="UPPER_BOUND" value="1000"/>
+            <parameter id="OBJECTIVE_COEFFICIENT" value="0"/>
           </listOfParameters>
         </kineticLaw>
       </reaction>
@@ -2307,6 +2398,7 @@
           <listOfParameters>
             <parameter id="LOWER_BOUND" value="0"/>
             <parameter id="UPPER_BOUND" value="1000"/>
+            <parameter id="OBJECTIVE_COEFFICIENT" value="0"/>
           </listOfParameters>
         </kineticLaw>
       </reaction>
@@ -2331,6 +2423,7 @@
           <listOfParameters>
             <parameter id="LOWER_BOUND" value="-1000"/>
             <parameter id="UPPER_BOUND" value="1000"/>
+            <parameter id="OBJECTIVE_COEFFICIENT" value="0"/>
           </listOfParameters>
         </kineticLaw>
       </reaction>
@@ -2355,6 +2448,7 @@
           <listOfParameters>
             <parameter id="LOWER_BOUND" value="-1000"/>
             <parameter id="UPPER_BOUND" value="1000"/>
+            <parameter id="OBJECTIVE_COEFFICIENT" value="0"/>
           </listOfParameters>
         </kineticLaw>
       </reaction>
@@ -2377,6 +2471,7 @@
           <listOfParameters>
             <parameter id="LOWER_BOUND" value="-1000"/>
             <parameter id="UPPER_BOUND" value="1000"/>
+            <parameter id="OBJECTIVE_COEFFICIENT" value="0"/>
           </listOfParameters>
         </kineticLaw>
       </reaction>

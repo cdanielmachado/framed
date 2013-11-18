@@ -47,11 +47,13 @@ float_re = '-?\d+(?:\.\d+)?'
 compound = '(?:' + pos_float_re + '\s+)?' + id_re
 expression = compound + '(?:\s*\+\s*' + compound + ')*'
 bounds = '\[\s*(?P<lb>' + float_re + ')?\s*,\s*(?P<ub>' + float_re + ')?\s*\]'
+objective = '@' + float_re
 reaction = '^(?P<reaction_id>' + id_re + ')\s*:' + \
            '\s*(?P<substrates>' + expression + ')?' + \
            '\s*(?P<direction>-->|<->)' + \
            '\s*(?P<products>' + expression + ')?' + \
-           '\s*(?P<bounds>' + bounds + ')?$'
+           '\s*(?P<bounds>' + bounds + ')?' + \
+           '\s*(?P<objective>' + objective + ')?$'
 
 regex_compound = compile('(?P<coeff>' + pos_float_re + '\s+)?(?P<met_id>' + id_re + ')')
 regex_bounds = compile(bounds)
@@ -113,7 +115,9 @@ def add_reaction_from_str(model, reaction_str):
             if isinstance(model, ConstraintBasedModel):
                 bounds = match.group('bounds')
                 lb, ub = _parse_bounds(bounds, reversible)
-                model.add_reaction(reaction, lb, ub)
+                objective = match.group('objective')
+                obj = _parse_objective(objective)
+                model.add_reaction(reaction, lb, ub, obj)
             else:
                 model.add_reaction(reaction)
         if substrates:
@@ -149,6 +153,11 @@ def _parse_bounds(expression, reversible):
 
     return lb, ub
 
+def _parse_objective(expression):
+    obj = 0
+    if expression:
+        obj = float(expression[1:])
+    return obj
 
 def write_model_to_file(model, filename):
     """ Writes a model to a file.

@@ -18,7 +18,7 @@ R_AKGt2r: M_akg_e + M_h_e <-> M_akg_c + M_h_c
 R_ALCD2x: M_etoh_c + M_nad_c <-> M_acald_c + M_h_c + M_nadh_c
 R_ATPM: M_atp_c + M_h2o_c --> M_adp_c + M_h_c + M_pi_c [8.39, ]
 R_ATPS4r: M_adp_c + 4.0 M_h_e + M_pi_c <-> M_atp_c + M_h2o_c + 3.0 M_h_c
-R_Biomass_Ecoli_core_w_GAM: 1.496 M_3pg_c + 3.7478 M_accoa_c + 59.81 M_atp_c + 0.361 M_e4p_c + 0.0709 M_f6p_c + 0.129 M_g3p_c + 0.205 M_g6p_c + 0.2557 M_gln_L_c + 4.9414 M_glu_L_c + 59.81 M_h2o_c + 3.547 M_nad_c + 13.0279 M_nadph_c + 1.7867 M_oaa_c + 0.5191 M_pep_c + 2.8328 M_pyr_c + 0.8977 M_r5p_c --> 59.81 M_adp_c + 4.1182 M_akg_c + 3.7478 M_coa_c + 59.81 M_h_c + 3.547 M_nadh_c + 13.0279 M_nadp_c + 59.81 M_pi_c
+R_Biomass_Ecoli_core_w_GAM: 1.496 M_3pg_c + 3.7478 M_accoa_c + 59.81 M_atp_c + 0.361 M_e4p_c + 0.0709 M_f6p_c + 0.129 M_g3p_c + 0.205 M_g6p_c + 0.2557 M_gln_L_c + 4.9414 M_glu_L_c + 59.81 M_h2o_c + 3.547 M_nad_c + 13.0279 M_nadph_c + 1.7867 M_oaa_c + 0.5191 M_pep_c + 2.8328 M_pyr_c + 0.8977 M_r5p_c --> 59.81 M_adp_c + 4.1182 M_akg_c + 3.7478 M_coa_c + 59.81 M_h_c + 3.547 M_nadh_c + 13.0279 M_nadp_c + 59.81 M_pi_c @1.0
 R_CO2t: M_co2_e <-> M_co2_c
 R_CS: M_accoa_c + M_h2o_c + M_oaa_c --> M_cit_c + M_coa_c + M_h_c
 R_CYTBD: 2.0 M_h_c + 0.5 M_o2_c + M_q8h2_c --> M_h2o_c + 2.0 M_h_e + M_q8_c

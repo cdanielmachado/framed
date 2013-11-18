@@ -289,7 +289,7 @@ def suite():
     tests = [SBMLTest, PlainTextIOTest, FBATest, pFBATest, qpFBATest, FBAFromPlainTextTest, FVATest, IrreversibleModelFBATest,
              SimplifiedModelFBATest, TransformationCommutativityTest, GeneDeletionFBATest, GeneDeletionMOMATest,
              GeneEssentialityTest, GeneDeletionLMOMATest, GeneDeletionROOMTest]
-    #tests = [GeneDeletionROOMTest]
+    #tests = [FBAFromPlainTextTest]
 
     test_suite = unittest.TestSuite()
     for test in tests:

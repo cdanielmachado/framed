@@ -31,6 +31,7 @@ GPR_CONSTRAINED = 'GPR-Constrained'
 
 LB_TAG = 'LOWER_BOUND'
 UB_TAG = 'UPPER_BOUND'
+OBJ_TAG = 'OBJECTIVE_COEFFICIENT'
 GPR_TAG = 'GENE_ASSOCIATION:'
 
 DEFAULT_SBML_LEVEL = 2
@@ -115,23 +116,32 @@ def _load_constraintbased_model(sbml_model):
     model.add_metabolites(_load_metabolites(sbml_model))
     model.add_reactions(_load_reactions(sbml_model))
     model.add_stoichiometry(_load_stoichiometry(sbml_model))
-    model.set_bounds(_load_bounds(sbml_model))
+    bounds, coefficients = _load_cb_parameters(sbml_model)
+    model.set_bounds(bounds)
+    model.set_objective_coefficients(coefficients)
     return model
 
 
-def _load_bounds(sbml_model):
-    return [(reaction.getId(), _get_flux_bound(reaction, LB_TAG), _get_flux_bound(reaction, UB_TAG))
-            for reaction in sbml_model.getListOfReactions()]
+def _load_cb_parameters(sbml_model):
+    cb_parameters = [(reaction.getId(),
+                      _get_cb_parameter(reaction, LB_TAG),
+                      _get_cb_parameter(reaction, UB_TAG),
+                      _get_cb_parameter(reaction, OBJ_TAG, default_value=0))
+                     for reaction in sbml_model.getListOfReactions()]
+    
+    bounds = map(lambda (r_id, lb, ub, coeff): (r_id, lb, ub), cb_parameters)
+    coefficients = map(lambda (r_id, lb, ub, coeff): (r_id, coeff), cb_parameters)
+    
+    return bounds, coefficients
 
-
-def _get_flux_bound(reaction, tag):
-    bound = None
+def _get_cb_parameter(reaction, tag, default_value=None):
+    param_value = default_value
     kinetic_law = reaction.getKineticLaw()
     if kinetic_law:
         parameter = kinetic_law.getParameter(tag)
         if parameter:
-            bound = parameter.getValue()
-    return bound
+            param_value = parameter.getValue()
+    return param_value
 
 
 def _load_gprconstrained_model(sbml_model):
@@ -140,7 +150,9 @@ def _load_gprconstrained_model(sbml_model):
     model.add_metabolites(_load_metabolites(sbml_model))
     model.add_reactions(_load_reactions(sbml_model))
     model.add_stoichiometry(_load_stoichiometry(sbml_model))
-    model.set_bounds(_load_bounds(sbml_model))
+    bounds, coefficients = _load_cb_parameters(sbml_model)
+    model.set_bounds(bounds)
+    model.set_objective_coefficients(coefficients)
     genes, rules = _load_gpr(sbml_model)
     model.add_genes(genes)
     model.set_rules(rules)
@@ -183,7 +195,7 @@ def save_sbml_model(model, filename):
     _save_reactions(model, sbml_model)
     _save_stoichiometry(model, sbml_model)
     if isinstance(model, ConstraintBasedModel):
-        _save_bounds(model, sbml_model)
+        _save_cb_parameters(model, sbml_model)
     if isinstance(model, GPRConstrainedModel):
         _save_gpr(model, sbml_model)
     writer = SBMLWriter()
@@ -226,23 +238,26 @@ def _save_stoichiometry(model, sbml_model):
             speciesReference.setStoichiometry(coeff)
 
 
-def _save_bounds(model, sbml_model):
+def _save_cb_parameters(model, sbml_model):
     for r_id in model.reactions:
         lb, ub = model.bounds[r_id]
-        if lb is not None or ub is not None:
-            sbml_reaction = sbml_model.getReaction(r_id)
-            kineticLaw = sbml_reaction.createKineticLaw()
-            kineticLaw.setFormula('0')
-            if lb is not None:
-                lbParameter = kineticLaw.createParameter()
-                lbParameter.setId(LB_TAG)
-                lbParameter.setValue(lb)
-            if ub is not None:
-                ubParameter = kineticLaw.createParameter()
-                ubParameter.setId(UB_TAG)
-                ubParameter.setValue(ub)
+        coeff = model.objective[r_id]
+        sbml_reaction = sbml_model.getReaction(r_id)
+        kineticLaw = sbml_reaction.createKineticLaw()
+        kineticLaw.setFormula('0')
+        if lb is not None:
+            lbParameter = kineticLaw.createParameter()
+            lbParameter.setId(LB_TAG)
+            lbParameter.setValue(lb)
+        if ub is not None:
+            ubParameter = kineticLaw.createParameter()
+            ubParameter.setId(UB_TAG)
+            ubParameter.setValue(ub)
+        objParameter = kineticLaw.createParameter()
+        objParameter.setId(OBJ_TAG)
+        objParameter.setValue(coeff)
 
-
+                
 def _save_gpr(model, sbml_model):
     for r_id in model.reactions:
         sbml_reaction = sbml_model.getReaction(r_id)

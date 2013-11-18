@@ -466,6 +466,7 @@ class ConstraintBasedModel(StoichiometricModel):
         """
         StoichiometricModel.__init__(self, model_id)
         self.bounds = OrderedDict()
+        self.objective = OrderedDict()
         self.biomass_reaction = None
 
     def set_bounds(self, bounds_list):
@@ -509,8 +510,28 @@ class ConstraintBasedModel(StoichiometricModel):
         if r_id in self.reactions:
             lb, _ = self.bounds[r_id]
             self.bounds[r_id] = lb, ub
+    
+    def set_objective_coefficients(self, coefficients):
+        """ Define objective coefficients for a list of reactions
+        
+        Arguments:
+            coefficients : list (of str, float) -- reaction id, coefficient
+        """
+        for r_id, coeff, in coefficients:
+            self.set_reaction_objective(r_id, coeff)
 
-    def add_reaction(self, reaction, lb=None, ub=None):
+    def set_reaction_objective(self, r_id, coeff=0):
+        """ Define objective coefficient for a single reaction
+        
+        Arguments:
+            r_id : str -- reaction id
+            coeff : float -- reaction objective (default: 0)
+        """
+        if r_id in self.reactions:
+            self.objective[r_id] = coeff
+            
+
+    def add_reaction(self, reaction, lb=None, ub=None, coeff=0):
         """ Add a single reaction to the model.
         If a reaction with the same id exists, it will be replaced.
         
@@ -518,6 +539,7 @@ class ConstraintBasedModel(StoichiometricModel):
             reaction : Reaction
             lb : float -- lower bound (default: None)
             ub : float -- upper bound (default: None)
+            coeff : float -- objective coefficient (default: 0)
         """
         StoichiometricModel.add_reaction(self, reaction)
 
@@ -525,6 +547,7 @@ class ConstraintBasedModel(StoichiometricModel):
             lb = 0
 
         self.bounds[reaction.id] = (lb, ub)
+        self.objective[reaction.id] = coeff
 
     def remove_reactions(self, id_list):
         """ Remove a list of reactions from the model.
@@ -552,26 +575,30 @@ class ConstraintBasedModel(StoichiometricModel):
         if lb != None and (rev or lb != 0.0) or ub != None:
             res += ' [{}, {}]'.format(lb if lb != None else '',
                                       ub if ub != None else '')
+        coeff = self.objective[r_id]
+        if coeff:
+            res += ' @{}'.format(coeff)
+        
         return res
 
     def detect_biomass_reaction(self):
-        """ Detects biomass reaction in the model (searches for the word biomass)
-        
+        """ Detects biomass reaction in the model (searches by objective coefficient)
+         
         Returns:
-            str -- first reaction id that matches (or else None)
+            str -- first reaction that matches (or else None)
         """
-
+ 
         if not self.biomass_reaction:
-            matches = [r_id for r_id in self.reactions if 'biomass' in r_id.lower()]
-
+            matches = [r_id for r_id, coeff in self.objective.items() if coeff]
+ 
             if matches:
                 self.biomass_reaction = matches[0]
             else:
                 print 'No biomass reaction detected.'
-
+ 
             if len(matches) > 1:
                 print 'Multiple biomass reactions detected (first selected):', " ".join(matches)
-
+ 
         return self.biomass_reaction
 
 
