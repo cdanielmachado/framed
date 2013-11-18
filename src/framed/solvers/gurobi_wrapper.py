@@ -56,8 +56,8 @@ class GurobiSolver(Solver):
         self.var_ids = repr_dict['var_ids']
         self.constr_ids = repr_dict['constr_ids']
 
-
-    def add_variable(self, var_id, lb=None, ub=None, vartype=VarType.CONTINUOUS, persistent=True):
+            
+    def add_variable(self, var_id, lb=None, ub=None, vartype=VarType.CONTINUOUS, persistent=True, update_problem=True):
         """ Add a variable to the current problem.
         
         Arguments:
@@ -65,7 +65,8 @@ class GurobiSolver(Solver):
             lb : float -- lower bound
             ub : float -- upper bound
             vartype : VarType -- variable type (default: CONTINUOUS)
-            persistent : bool -- if the variable should be reused for multiple calls
+            persistent : bool -- if the variable should be reused for multiple calls (default: true)
+            update_problem : bool -- update problem immediately (default: True)
         """
         lb = lb if lb is not None else -GRB.INFINITY
         ub = ub if ub is not None else GRB.INFINITY
@@ -79,16 +80,17 @@ class GurobiSolver(Solver):
             var.setAttr('lb', lb)
             var.setAttr('ub', ub)
             var.setAttr('vtype', map_types[vartype])
-            self.problem.update()
         else:
             self.problem.addVar(name=var_id, lb=lb, ub=ub, vtype=map_types[vartype])
             self.var_ids.append(var_id)
-            self.problem.update()
             
         if not persistent:
             self.temp_vars.add(var_id)
+        
+        if update_problem:
+            self.problem.update()
 
-    def add_constraint(self, constr_id, lhs, sense='=', rhs=0, persistent=True):
+    def add_constraint(self, constr_id, lhs, sense='=', rhs=0, persistent=True, update_problem=True):
         """ Add a variable to the current problem.
         
         Arguments:
@@ -96,7 +98,8 @@ class GurobiSolver(Solver):
             lhs : list [of (str, float)] -- variables and respective coefficients
             sense : {'<', '=', '>'} -- default '='
             rhs : float -- right-hand side of equation (default: 0)
-            persistent : bool -- if the variable should be reused for multiple calls
+            persistent : bool -- if the variable should be reused for multiple calls (default: True)
+            update_problem : bool -- update problem immediately (default: True)
         """
 
         grb_sense = {'=': GRB.EQUAL,
@@ -107,14 +110,16 @@ class GurobiSolver(Solver):
             constr = self.problem.getConstrByName(constr_id)
             self.problem.remove(constr)
 
-        expr = quicksum([coeff * self.problem.getVarByName(r_id) for r_id, coeff in lhs])
+        expr = quicksum([coeff * self.problem.getVarByName(r_id) for r_id, coeff in lhs if coeff])
         self.problem.addConstr(expr, grb_sense[sense], rhs, constr_id)
         self.constr_ids.append(constr_id)
-        self.problem.update()
             
         if not persistent:
             self.temp_constrs.add(constr_id)
 
+        if update_problem:
+            self.problem.update()
+                                
     def remove_variable(self, var_id):
         """ Remove a variable from the current problem.
         
@@ -134,6 +139,11 @@ class GurobiSolver(Solver):
         if constr_id in self.constr_ids:
             self.problem.remove(self.problem.getConstrByName(constr_id))
             self.constr_ids.remove(constr_id)
+    
+    def update(self):
+        """ Update internal structure. Used for efficient lazy updating. """
+        self.problem.update()
+    
     
     def set_presolve(self, active=False):
         """ Set gurobi presolver on or off
