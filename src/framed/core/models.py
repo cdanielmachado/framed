@@ -124,7 +124,7 @@ class StoichiometricModel:
         """
         for metabolite in metabolites:
             self.add_metabolite(metabolite)
-
+        
     def add_metabolite(self, metabolite):
         """ Add a single metabolite to the model.
         If a metabolite with the same id exists, it will be replaced.
@@ -133,6 +133,7 @@ class StoichiometricModel:
         Arguments:
             metabolite : Metabolite
         """
+        
         if metabolite.compartment in self.compartments or not metabolite.compartment:
             self.metabolites[metabolite.id] = metabolite
             self._clear_temp()
@@ -203,6 +204,27 @@ class StoichiometricModel:
                 del self.stoichiometry[(m2_id, r_id)]
         self._clear_temp()
 
+    def remove_metabolites_and_associated_reactions(self, id_list):
+        """ Remove a list of metabolites from the model.
+        Also removes all the edges connected to the metabolites.
+        
+        Arguments:
+            id_list : list of str -- metabolite ids
+        """
+        reactions_not_in_use = []
+
+        for m_id in id_list:
+            if m_id in self.metabolites:
+                del self.metabolites[m_id]
+        for (m2_id, r_id) in self.stoichiometry:
+            if m2_id in id_list:
+                del self.stoichiometry[(m2_id, r_id)]
+                reactions_not_in_use.append(r_id)
+
+        self.remove_reactions(set(reactions_not_in_use))
+
+        self._clear_temp()
+
     def remove_metabolite(self, m_id):
         """ Remove a single metabolite from the model.
         Also removes all the edges connected to the metabolite.
@@ -227,6 +249,33 @@ class StoichiometricModel:
                 del self.stoichiometry[(m_id, r2_id)]
         self._clear_temp()
 
+    def remove_reactions_and_associated_metabolites(self, id_list):
+        """ Remove a list of reactions from the model.
+        Also removes all the edges connected to the reactions.
+        
+        Arguments:
+            id_list : list of str -- reaction ids
+        """
+
+        for r_id in id_list:
+            if r_id in self.reactions:
+                del self.reactions[r_id]
+        for (m_id, r2_id) in self.stoichiometry:
+            if r2_id in id_list:
+                del self.stoichiometry[(m_id, r2_id)]
+        
+        mets_not_in_use = []
+
+        mets_reactions = list(sum(self.stoichiometry.keys(), ()))
+
+        for m_id in self.metabolites.keys():
+            if m_id not in mets_reactions:
+                mets_not_in_use.append(m_id)
+
+        self.remove_metabolites(mets_not_in_use)
+
+        self._clear_temp()
+
     def remove_reaction(self, r_id):
         """ Remove a single reaction from the model.
         Also removes all the edges connected to the reaction.
@@ -235,7 +284,6 @@ class StoichiometricModel:
             r_id : str -- reaction id
         """
         self.remove_reactions([r_id])
-
 
     def remove_compartment(self, c_id, delete_metabolites=True):
         """ Remove a compartment from the model.
@@ -252,7 +300,6 @@ class StoichiometricModel:
                 self.remove_metabolites([m_id for m_id, metabolite in self.metabolites.items()
                                          if metabolite.compartment == c_id])
 
-
     def get_reaction_substrates(self, r_id):
         """ Return the list of substrates for one reaction 
         
@@ -264,7 +311,6 @@ class StoichiometricModel:
         """
         table = self.reaction_metabolite_lookup_table()
         return [m_id for m_id, coeff in table[r_id].items() if coeff < 0]
-
 
     def get_reaction_products(self, r_id):
         """ Return the list of products for one reaction 
@@ -278,7 +324,6 @@ class StoichiometricModel:
         table = self.reaction_metabolite_lookup_table()
         return [m_id for m_id, coeff in table[r_id].items() if coeff > 0]
 
-
     def get_reaction_neighbours(self, r_id):
         """ Return the list of metabolites connected to a reaction 
         
@@ -290,7 +335,6 @@ class StoichiometricModel:
         """
         table = self.reaction_metabolite_lookup_table()
         return [m_id for m_id, coeff in table[r_id].items() if coeff != 0]
-
 
     def get_metabolite_inputs(self, m_id):
         """ Return the list of input reactions for one metabolite 
@@ -304,7 +348,6 @@ class StoichiometricModel:
         table = self.metabolite_reaction_lookup_table()
         return [r_id for r_id, coeff in table[m_id].items() if coeff > 0]
 
-
     def get_metabolite_outputs(self, m_id):
         """ Return the list of output reactions for one metabolite 
         
@@ -317,7 +360,6 @@ class StoichiometricModel:
         table = self.metabolite_reaction_lookup_table()
         return [r_id for r_id, coeff in table[m_id].items() if coeff < 0]
 
-
     def get_metabolite_neighbours(self, m_id):
         """ Return the list of reactions connected to a metabolite 
         
@@ -329,7 +371,6 @@ class StoichiometricModel:
         """
         table = self.metabolite_reaction_lookup_table()
         return [r_id for r_id, coeff in table[m_id].items() if coeff != 0]
-
 
     def metabolite_reaction_lookup_table(self):
         """ Return the network topology as a nested map: metabolite id -> reaction id -> coefficient 
@@ -346,7 +387,6 @@ class StoichiometricModel:
 
         return self._m_r_lookup
 
-
     def reaction_metabolite_lookup_table(self):
         """ Return the network topology as a nested map: reaction id -> metabolite id -> coefficient 
         
@@ -362,7 +402,6 @@ class StoichiometricModel:
 
         return self._r_m_lookup
 
-
     def stoichiometric_matrix(self):
         """ Return the full stoichiometric matrix represented by the network topology
         
@@ -376,7 +415,6 @@ class StoichiometricModel:
                               for m_id in self.metabolites]
 
         return self._s_matrix
-
 
     def print_reaction(self, r_id, reaction_names=False, metabolite_names=False):
         """ Print a reaction to a text based representation.
@@ -606,7 +644,7 @@ class GPRConstrainedModel(ConstraintBasedModel):
 
     def set_rule(self, r_id, rule):
         """ Define GPR association rule for one reaction
-        
+
         Arguments:
             r_id : str -- reaction id
             rule : str -- GPR association rule
@@ -618,10 +656,10 @@ class GPRConstrainedModel(ConstraintBasedModel):
 
     def eval_GPR(self, active_genes):
         """ Evaluate the GPR associations.
-        
+
         Arguments:
             active_genes : list (of str) -- set of active genes
-        
+
         Returns:
             list (of str) -- set of active reactions
         """
@@ -638,4 +676,3 @@ class GPRConstrainedModel(ConstraintBasedModel):
                 rule = rule.replace(' ' + gene + ' ', ' x[\'' + gene + '\'] ')
         return eval('lambda x: ' + rule)
 
-    

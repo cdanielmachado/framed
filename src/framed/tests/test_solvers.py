@@ -13,6 +13,7 @@ from framed.core.fixes import fix_bigg_model
 from test_glpk_alone import *
 
 SMALL_TEST_MODEL = '../../../examples/models/ecoli_core_model.xml'
+#SMALL_TEST_MODEL = '../../../examples/models/toy_model.xml'
 
 
 class SolverPickleTest(unittest.TestCase):
@@ -21,6 +22,7 @@ class SolverPickleTest(unittest.TestCase):
     def setUp(self):
         self.model = load_sbml_model(SMALL_TEST_MODEL, kind=CONSTRAINT_BASED)
         fix_bigg_model(self.model)
+        
 
     def test_gurobi_solver_pickle(self):
         set_default_solver(solvername="gurobi")
@@ -53,12 +55,28 @@ class SolverGLPKTest(unittest.TestCase):
         self.assertEqual(result[1], 45)
         self.assertEqual(result[2], 6.25)
 
+    def test_glpk_milp_alone(self):
+        # integer variables only
+        #result = solve_milp_int_prob_glpk()
+        #print result
+        #self.assertEqual(result[0], 524)
+        #self.assertEqual(result[1], 14)
+        #self.assertEqual(result[2], 14)
+        #self.assertEqual(result[3], 20)
+
+        # binary variables only
+        result = solve_milp_bin_prob_glpk()
+        self.assertEqual(result[0], -14)
+        self.assertEqual(result[1], 1)
+        self.assertEqual(result[2], 1)
+        self.assertEqual(result[3], 0)
+        self.assertEqual(result[4], 0)
+
     def test_glpk_against_gurobi(self):
         set_default_solver(solvername="gurobi")
         self.solver_one = solver_instance()
         self.solver_one.build_problem(self.model)
         sol_one = FBA(self.model, solver=self.solver_one)
-
         set_default_solver(solvername="glpk")
         self.solver_two = solver_instance()
         self.solver_two.build_problem(self.model)
@@ -68,7 +86,7 @@ class SolverGLPKTest(unittest.TestCase):
 
 
 def suite():
-    tests = [SolverPickleTest, SolverGLPKTest]
+    tests = [SolverGLPKTest]
     test_suite = unittest.TestSuite()
     for test in tests:
         test_suite.addTest(unittest.makeSuite(test))
