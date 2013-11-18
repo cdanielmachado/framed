@@ -123,6 +123,7 @@ class GurobiSolver(Solver):
         """
         if var_id in self.var_ids:
             self.problem.remove(self.problem.getVarByName(var_id))
+            self.var_ids.remove(var_id)
     
     def remove_constraint(self, constr_id):
         """ Remove a constraint from the current problem.
@@ -132,6 +133,7 @@ class GurobiSolver(Solver):
         """
         if constr_id in self.constr_ids:
             self.problem.remove(self.problem.getConstrByName(constr_id))
+            self.constr_ids.remove(constr_id)
     
     def set_presolve(self, active=False):
         """ Set gurobi presolver on or off
@@ -206,12 +208,13 @@ class GurobiSolver(Solver):
         obj_expr = quicksum(quad_obj_expr + lin_obj_expr)
 
         problem.setObjective(obj_expr, sense)
+        problem.update()
 
         if self.presolve:
             problem.setParam("Presolve", 1)
 
- #       if quad_obj:
- #           self.problem.write("out.lp")
+#        from datetime import datetime
+#        self.problem.write("problem_{}.lp".format(str(datetime.now())))
         
         #run the optimization
         problem.optimize()
