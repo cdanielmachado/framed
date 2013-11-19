@@ -139,7 +139,7 @@ class Solver:
         pass
 
 
-    def add_variable(self, var_id, lb=None, ub=None, vartype=VarType.CONTINUOUS, persistent=True):
+    def add_variable(self, var_id, lb=None, ub=None, vartype=VarType.CONTINUOUS, persistent=True, update_problem=True):
         """ Add a variable to the current problem.
         
         Arguments:
@@ -147,11 +147,11 @@ class Solver:
             lb : float -- lower bound
             ub : float -- upper bound
             vartype : VarType -- variable type (default: CONTINUOUS)
-            persistent : bool -- if the variable should be reused for multiple calls
+            persistent : bool -- if the variable should be reused for multiple calls (default: true)
+            update_problem : bool -- update problem immediately (default: True)
         """
-        pass
 
-    def add_constraint(self, constr_id, lhs, sense='=', rhs=0, persistent=True):
+    def add_constraint(self, constr_id, lhs, sense='=', rhs=0, persistent=True, update_problem=True):
         """ Add a variable to the current problem.
         
         Arguments:
@@ -159,7 +159,8 @@ class Solver:
             lhs : list [of (str, float)] -- variables and respective coefficients
             sense : {'<', '=', '>'} -- default '='
             rhs : float -- right-hand side of equation (default: 0)
-            persistent : bool -- if the variable should be reused for multiple calls
+            persistent : bool -- if the variable should be reused for multiple calls (default: True)
+            update_problem : bool -- update problem immediately (default: True)
         """
         pass
     
@@ -211,7 +212,11 @@ class Solver:
             for constr_id in self.temp_constrs:
                 self.remove_constraint(constr_id)
                 
-    
+
+    def update(self):
+        """ Update internal structure. Used for efficient lazy updating. """
+        pass
+        
     def build_problem(self, model):
         """ Create problem structure for a given model.
 
@@ -220,11 +225,13 @@ class Solver:
         """
 
         for r_id, (lb, ub) in model.bounds.items():
-            self.add_variable(r_id, lb, ub)
-
+            self.add_variable(r_id, lb, ub, update_problem=False)
+        self.update()
+        
         table = model.metabolite_reaction_lookup_table()
         for m_id in model.metabolites:
-            self.add_constraint(m_id, table[m_id].items())
+            self.add_constraint(m_id, table[m_id].items(), update_problem=False)
+        self.update()
             
     def solve_lp(self, objective, model=None, constraints=None, get_shadow_prices=False, get_reduced_costs=False):
         """ Solve an LP optimization problem.

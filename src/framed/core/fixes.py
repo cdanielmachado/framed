@@ -79,6 +79,7 @@ def clean_bigg_ids(model):
         reaction.id = clean(r_id)
         key_replace(model.reactions, r_id, reaction.id)
         key_replace(model.bounds, r_id, reaction.id)
+        key_replace(model.objective, r_id, reaction.id)
 
         if isinstance(model, GPRConstrainedModel):
             key_replace(model.rules, r_id, reaction.id)

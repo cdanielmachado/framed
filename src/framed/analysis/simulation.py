@@ -89,11 +89,15 @@ def pFBA(model, objective=None, maximize=True, constraints=None, solver=None):
         for r_id, reaction in model.reactions.items():
             if reaction.reversible:
                 pos, neg = r_id + '+', r_id + '-'
-                solver.add_variable(pos, 0, None, persistent=False)
-                solver.add_variable(neg, 0, None, persistent=False)
-                solver.add_constraint('c' + pos, [(r_id, -1), (pos, 1)], '>', 0, persistent=False)
-                solver.add_constraint('c' + neg, [(r_id, 1), (neg, 1)], '>', 0, persistent=False)
-
+                solver.add_variable(pos, 0, None, persistent=False, update_problem=False)
+                solver.add_variable(neg, 0, None, persistent=False, update_problem=False)
+        solver.update()        
+        for r_id, reaction in model.reactions.items():
+            if reaction.reversible:
+                pos, neg = r_id + '+', r_id + '-'
+                solver.add_constraint('c' + pos, [(r_id, -1), (pos, 1)], '>', 0, persistent=False, update_problem=False)
+                solver.add_constraint('c' + neg, [(r_id, 1), (neg, 1)], '>', 0, persistent=False, update_problem=False)
+        solver.update()
 
     if not constraints:
         constraints = dict()
@@ -217,11 +221,15 @@ def lMOMA(model, reference=None, constraints=None, solver=None):
         solver.lMOMA_flag = True
         for r_id in model.reactions.keys():
             d_pos, d_neg = r_id + '_d+', r_id + '_d-'
-            solver.add_variable(d_pos, 0, None, persistent=False)
-            solver.add_variable(d_neg, 0, None, persistent=False)
-            solver.add_constraint('c' + d_pos, [(r_id, -1), (d_pos, 1)], '>', -reference[r_id], persistent=False)
-            solver.add_constraint('c' + d_neg, [(r_id, 1), (d_neg, 1)], '>', reference[r_id], persistent=False)
-
+            solver.add_variable(d_pos, 0, None, persistent=False, update_problem=False)
+            solver.add_variable(d_neg, 0, None, persistent=False, update_problem=False)
+        solver.update()
+        for r_id in model.reactions.keys():
+            d_pos, d_neg = r_id + '_d+', r_id + '_d-'
+            solver.add_constraint('c' + d_pos, [(r_id, -1), (d_pos, 1)], '>', -reference[r_id], persistent=False, update_problem=False)
+            solver.add_constraint('c' + d_neg, [(r_id, 1), (d_neg, 1)], '>', reference[r_id], persistent=False, update_problem=False)
+        solver.update()
+        
     objective = dict()
     for r_id in model.reactions.keys():
         d_pos, d_neg = r_id + '_d+', r_id + '_d-'
@@ -271,13 +279,17 @@ def ROOM(model, reference=None, constraints=None, solver=None, delta=0.03, epsil
         solver.ROOM_flag = True
         for r_id in model.reactions.keys():
             y_i = 'y_' + r_id
-            solver.add_variable(y_i, 0, 1, vartype=VarType.BINARY, persistent=False)
+            solver.add_variable(y_i, 0, 1, vartype=VarType.BINARY, persistent=False, update_problem=False)
             objective[y_i] = -1
+        solver.update()
+        for r_id in model.reactions.keys():
+            y_i = 'y_' + r_id
             w_i = reference[r_id]
             w_u = w_i + delta*abs(w_i) + epsilon
             w_l = w_i - delta*abs(w_i) - epsilon
-            solver.add_constraint('c' + r_id + '_u', [(r_id, 1), (y_i, (w_u - U))], '<', w_u, persistent=False)
-            solver.add_constraint('c' + r_id + '_l', [(r_id, 1), (y_i, (w_l - L))], '>', w_l, persistent=False)
+            solver.add_constraint('c' + r_id + '_u', [(r_id, 1), (y_i, (w_u - U))], '<', w_u, persistent=False, update_problem=False)
+            solver.add_constraint('c' + r_id + '_l', [(r_id, 1), (y_i, (w_l - L))], '>', w_l, persistent=False, update_problem=False)
+        solver.update()
         
 
     solution = solver.solve_lp(objective, constraints=constraints)

@@ -593,12 +593,13 @@ class ConstraintBasedModel(StoichiometricModel):
  
             if matches:
                 self.biomass_reaction = matches[0]
+                if len(matches) == 1:
+                    print 'Biomass reaction detected:', self.biomass_reaction
+                else:
+                    print 'Multiple biomass reactions detected (first selected):', " ".join(matches)
             else:
                 print 'No biomass reaction detected.'
- 
-            if len(matches) > 1:
-                print 'Multiple biomass reactions detected (first selected):', " ".join(matches)
- 
+  
         return self.biomass_reaction
 
 

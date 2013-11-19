@@ -19,6 +19,7 @@
    
 '''
 
+from framed.analysis.deletion import reaction_deletion
 from framed.design.combinatorial import combinatorial_gene_deletion
 from framed.io_utils.sbml import load_sbml_model, GPR_CONSTRAINED
 from framed.core.fixes import fix_bigg_model
@@ -28,7 +29,7 @@ SMALL_TEST_MODEL = '../../../examples/models/ecoli_core_model.xml'
 LARGE_TEST_MODEL = '../../../examples/models/Ec_iAF1260_gene_names.xml'
 
 
-def benchmark(method, model):
+def benchmark_combinatorial(method, model):
     print 'benchmarking', method,
     tstart = time()
     fobj = lambda v: v['R_EX_succ_e']
@@ -37,18 +38,36 @@ def benchmark(method, model):
     tend = time()
     print 'took', tend - tstart
 
-
-def main():
-    model = load_sbml_model(SMALL_TEST_MODEL, GPR_CONSTRAINED)
-    #model = load_sbml_model(LARGE_TEST_MODEL, GPR_CONSTRAINED)
+def benchmark_methods_combinatorial(modelpath):
+    model = load_sbml_model(modelpath, GPR_CONSTRAINED)
     fix_bigg_model(model)
-    benchmark('FBA', model)
-    benchmark('pFBA', model)
-    benchmark('qpFBA', model)
-    benchmark('MOMA', model)
-    benchmark('lMOMA', model)
-    benchmark('ROOM', model)
+    benchmark_combinatorial('FBA', model)
+    benchmark_combinatorial('pFBA', model)
+    benchmark_combinatorial('qpFBA', model)
+    benchmark_combinatorial('MOMA', model)
+    benchmark_combinatorial('lMOMA', model)
+    benchmark_combinatorial('ROOM', model)
 
+def benchmark_method(method, model):
+    print 'benchmarking', method,
+    tstart = time()
+    reaction_deletion(model, [], method)
+    tend = time()
+    print 'took', tend - tstart
+    
+def benchmark_methods(modelpath):
+    model = load_sbml_model(modelpath, GPR_CONSTRAINED)
+    fix_bigg_model(model)
+    benchmark_method('FBA', model)
+    benchmark_method('pFBA', model)
+    benchmark_method('qpFBA', model)
+    benchmark_method('MOMA', model)
+    benchmark_method('lMOMA', model)
+    benchmark_method('ROOM', model)
+    
+def main():
+#    benchmark_methods_combinatorial(SMALL_TEST_MODEL)
+    benchmark_methods(LARGE_TEST_MODEL)
 
 if __name__ == '__main__':
     main()
