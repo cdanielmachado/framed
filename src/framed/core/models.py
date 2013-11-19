@@ -521,6 +521,7 @@ class ConstraintBasedModel(StoichiometricModel):
         StoichiometricModel.remove_reactions(self, id_list)
         for r_id in id_list:
             del self.bounds[r_id]
+            del self.objective[r_id]
 
     def print_reaction(self, r_id, reaction_names=False, metabolite_names=False):
         """ Print a reaction to a text based representation.
