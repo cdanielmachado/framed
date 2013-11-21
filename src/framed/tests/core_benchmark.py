@@ -23,6 +23,8 @@ from framed.analysis.deletion import reaction_deletion
 from framed.design.combinatorial import combinatorial_gene_deletion
 from framed.io_utils.sbml import load_sbml_model, GPR_CONSTRAINED
 from framed.core.fixes import fix_bigg_model
+from framed.solvers import solver_instance
+from framed.analysis.simulation import FBA, pFBA
 from time import time
 
 SMALL_TEST_MODEL = '../../../examples/models/ecoli_core_model.xml'
@@ -64,10 +66,39 @@ def benchmark_methods(modelpath):
     benchmark_method('MOMA', model)
     benchmark_method('lMOMA', model)
     benchmark_method('ROOM', model)
+
+def benchmark_build_problem(modelpath, n=10):
+    model = load_sbml_model(modelpath, GPR_CONSTRAINED)
+    fix_bigg_model(model)
+    print 'benchmarking build problem for', n, 'instances:',
+    tstart = time()
+            
+    for i in range(n):
+        solver = solver_instance()
+        solver.build_problem(model)
+    tend = time()
+    print 'took', tend - tstart
     
+def benchmark_solving_stage(modelpath, n=10):
+    model = load_sbml_model(modelpath, GPR_CONSTRAINED)
+    fix_bigg_model(model)
+    print 'benchmarking solving stage for', n, 'repetitions:',
+    solver = solver_instance()
+    solver.build_problem(model)
+        
+    tstart = time()
+            
+    for i in range(n):
+        FBA(model, solver=solver)
+
+    tend = time()
+    print 'took', tend - tstart
+                
 def main():
 #    benchmark_methods_combinatorial(SMALL_TEST_MODEL)
-    benchmark_methods(LARGE_TEST_MODEL)
+#    benchmark_methods(LARGE_TEST_MODEL)
+    benchmark_build_problem(LARGE_TEST_MODEL, n=100)
+    benchmark_solving_stage(LARGE_TEST_MODEL, n=100)
 
 if __name__ == '__main__':
     main()
