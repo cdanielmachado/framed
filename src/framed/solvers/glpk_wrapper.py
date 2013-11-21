@@ -1,5 +1,5 @@
 '''
-Implementation of a Gurobi based solver interface.
+Implementation of a Glpk based solver interface.
 
 @author: Marta Matos
 
@@ -29,7 +29,7 @@ from collections import OrderedDict
 from .solver import Solver, Solution, Status, VarType
 from glpk.glpkpi import *
 from warnings import warn
-from framed.tests.write_LP_problem_plus_solution import *
+from pickle import NONE
 
 status_mapping = {GLP_OPT: Status.OPTIMAL,
                   GLP_FEAS: Status.SUBOPTIMAL,
@@ -37,8 +37,6 @@ status_mapping = {GLP_OPT: Status.OPTIMAL,
                   GLP_INFEAS: Status.INFEASIBLE,
                   GLP_NOFEAS: Status.INFEASIBLE,
                   GLP_UNDEF: Status.UNKNOWN}
-
-
 
 
 class GlpkSolver(Solver):
@@ -50,19 +48,21 @@ class GlpkSolver(Solver):
         self.problem = glp_create_prob()
         glp_create_index(self.problem)
         self.set_presolve()
-        
-        # initialize paramenter values for glpk simplex and intopt solvers
+
+        # variable to store constraints matrix for lazy loading
+        self.coefMatrix = {}
+
+        # initialize variable for glpk LP parameters
         self.smcp = glp_smcp()
         glp_init_smcp(self.smcp)
         self.smcp.presolve = GLP_OFF
-       
+
+       # initialize variable for glpk MILP parameters
         self.iocp = glp_iocp()
         glp_init_iocp(self.iocp)
         self.iocp.presolve = GLP_OFF
-        #self.iocp.tol_int = 0.00001  #default
-        #self.iocp.tol_obj = 0.0001  #default
-        #self.iocp.mip_gap = 0.1  #default
-        
+
+        # glpk does not print any output
         glp_term_out(GLP_OFF)
 
     def __getstate__(self):
@@ -83,13 +83,17 @@ class GlpkSolver(Solver):
         self.var_ids = repr_dict['var_ids']
         self.constr_ids = repr_dict['constr_ids']
 
-    def add_variable(self, var_id, lb=None, ub=None, vartype=VarType.CONTINUOUS, persistent=True):
+    def add_variable(self, var_id, lb=None, ub=None, vartype=VarType.CONTINUOUS, persistent=True, update_problem=True):
         """ Add a variable to the current problem.
 
         Arguments:
             var_id : str -- variable identifier
             lb : float -- lower bound
             ub : float -- upper bound
+            vartype : VarType -- variable type (default: CONTINUOUS)
+            persistent : bool -- if the variable should be reused for multiple calls (default: true)
+            update_problem : bool -- update problem immediately (default: True). update_problem is not
+                              used in glpk, it is kept only for compatibility with the gurobi wrapper
         """
 
         lb = lb if lb is not None else -10e6
@@ -101,32 +105,32 @@ class GlpkSolver(Solver):
 
         if var_id in self.var_ids:
             ind_col = glp_find_col(self.problem, var_id)
-            
+
             if lb == ub:
                 glp_set_col_bnds(self.problem, ind_col, GLP_FX, lb, ub)
             elif lb != ub:
                 glp_set_col_bnds(self.problem, ind_col, GLP_DB, lb, ub)
-                
+
             glp_set_col_kind(self.problem, ind_col, var_type_mapping[vartype])
 
         else:
             glp_add_cols(self.problem, 1)
             ind_col = glp_get_num_cols(self.problem)
             glp_set_col_name(self.problem, ind_col, var_id)
-            
+
             if lb == ub:
                 glp_set_col_bnds(self.problem, ind_col, GLP_FX, lb, ub)
             elif lb != ub:
                 glp_set_col_bnds(self.problem, ind_col, GLP_DB, lb, ub)
-                
+
             glp_set_col_kind(self.problem, ind_col, var_type_mapping[vartype])
 
             self.var_ids.append(var_id)
-            
+
         if not persistent:
             self.temp_vars.add(var_id)
 
-    def add_constraint(self, constr_id, lhs, sense='=', rhs=0, persistent=True):
+    def add_constraint(self, constr_id, lhs, sense='=', rhs=0, persistent=True, update_problem=True):
         """ Add a variable to the current problem.
 
         Arguments:
@@ -134,24 +138,16 @@ class GlpkSolver(Solver):
             lhs : list [of (str, float)] -- variables and respective coefficients
             sense : {'<', '=', '>'} -- default '='
             rhs : float -- right-hand side of equation (default: 0)
+            persistent : bool -- if the variable should be reused for multiple calls (default: True)
+            update_problem : bool -- update problem immediately (default: True)
         """
-        #print 'hi'
-        #print constr_id
-        #print rhs
-        #print lhs
-        #print sense
-        
-        
-        #for r_id, coeff in lhs:
-        #    print r_id
-        #    print coeff
-            
+
         if constr_id in self.constr_ids:
             ind_row = glp_find_row(self.problem, constr_id)
             n_vars = glp_get_num_cols(self.problem)
             coef_ind = intArray(n_vars + 1)
             coef_val = doubleArray(n_vars + 1)
-            
+
             for i in range(0, n_vars + 1):
                 coef_ind[i] = i
                 coef_val[i] = 0.
@@ -172,20 +168,27 @@ class GlpkSolver(Solver):
         else:
             glp_add_rows(self.problem, 1)
             ind_row = glp_get_num_rows(self.problem)
-            n_vars = glp_get_num_cols(self.problem)
-            coef_ind = intArray(n_vars + 1)
-            coef_val = doubleArray(n_vars + 1)
-
-            for i in range(0, n_vars + 1):
-                coef_ind[i] = i
-                coef_val[i] = 0.
-
-            for r_id, coeff in lhs:
-                coef_ind_col = glp_find_col(self.problem, r_id)
-                coef_val[coef_ind_col] = coeff
-
             glp_set_row_name(self.problem, ind_row, constr_id)
-            glp_set_mat_row(self.problem, ind_row, n_vars, coef_ind, coef_val)
+
+            if update_problem == False:
+                for r_id, coeff in lhs:
+                    ind_col = glp_find_col(self.problem, r_id)
+                    self.coefMatrix[(ind_row, ind_col)] = coeff
+
+            else:
+                n_vars = glp_get_num_cols(self.problem)
+                coef_ind = intArray(n_vars + 1)
+                coef_val = doubleArray(n_vars + 1)
+
+                for i in range(0, n_vars + 1):
+                    coef_ind[i] = i
+                    coef_val[i] = 0.
+
+                for r_id, coeff in lhs:
+                    coef_ind_col = glp_find_col(self.problem, r_id)
+                    coef_val[coef_ind_col] = coeff
+
+                glp_set_mat_row(self.problem, ind_row, n_vars, coef_ind, coef_val)
 
             if (sense == '>'):
                 glp_set_row_bnds(self.problem, ind_row, GLP_LO, rhs, 10e6)
@@ -199,25 +202,66 @@ class GlpkSolver(Solver):
         if not persistent:
             self.temp_constrs.add(constr_id)
 
-    def list_variables(self):
-        """ Get a list of the variable ids defined for the current problem.
+    def remove_variable(self, var_id):
+        """ Remove a variable from the current problem.
 
-        Returns:
-            list [of str] -- variable ids
+        Arguments:
+            var_id : str -- variable identifier
         """
-        return self.var_ids
+        col_to_delete = intArray(2)
+        col_to_delete[1] = glp_find_col(self.problem, var_id)
 
-    def list_constraints(self):
-        """ Get a list of the constraint ids defined for the current problem.
+        if var_id in self.var_ids:
+            if self.coefMatrix != {}:
+                for (row, col) in self.coefMatrix:
+                    if col == col_to_delete[1]:
+                        del self.coefMatrix[(row, col)]
+            else:
+                glp_del_cols(self.problem, 1, col_to_delete)
+            self.var_ids.remove(var_id)
 
-        Returns:
-            list [of str] -- constraint ids
+    def remove_constraint(self, constr_id):
+        """ Remove a constraint from the current problem.
+
+        Arguments:
+            constr_id : str -- constraint identifier
         """
-        return self.constr_ids
+        row_to_delete = intArray(2)
+        row_to_delete[1] = glp_find_row(self.problem, constr_id)
+
+        if constr_id in self.constr_ids:
+            if self.coefMatrix != {}:
+                for (row, col) in self.coefMatrix:
+                    if row == row_to_delete[1]:
+                        del self.coefMatrix[(row, col)]
+            else:
+                glp_del_rows(self.problem, 1, row_to_delete)
+            self.constr_ids.remove(constr_id)
+
+
+    def update(self):
+        """ Update internal structure. Used for efficient lazy updating. """
+        if self.coefMatrix != {}:
+            nEntries = len(self.coefMatrix) + 1
+
+            rows_ind = intArray(nEntries)
+            cols_ind = intArray(nEntries)
+            coeffs = doubleArray(nEntries)
+
+            i = 1
+            for entry in self.coefMatrix.items():
+                rows_ind[i] = entry[0][0]
+                cols_ind[i] = entry[0][1]
+                coeffs[i] = entry[1]
+                i += 1
+
+            glp_load_matrix(self.problem, nEntries - 1, rows_ind, cols_ind, coeffs)
+
+            self.coefMatrix = {}
 
     def set_presolve(self, active=False):
-        """ Set gurobi presolver on or off
-        
+        """ Set glpk presolver on or off
+
         Arguments:
             active : bool -- uses glpk presolver  (default: False)
         """
@@ -233,7 +277,6 @@ class GlpkSolver(Solver):
             constraints : dict (of str to (float, float)) -- environmental or additional constraints (optional)
             get_shadow_prices : bool -- return shadow price information if available (optional, default: False)
             get_reduced_costs : bool -- return reduced costs information if available (optional, default: False)
-            presolve : bool -- uses glpk presolver on simplex method  (default: False)
         Returns:
             Solution
         """
@@ -243,9 +286,8 @@ class GlpkSolver(Solver):
             get_reduced_costs)
 
     def solve_qp(
-        self, quad_obj, lin_obj, model=None, constraints=None, get_shadow_prices=False,
-            get_reduced_costs=False):
-        """ Solve an LP optimization problem.
+        self, quad_obj, lin_obj, model=None, constraints=None, get_shadow_prices=False, get_reduced_costs=False):
+        """ Solve a QP optimization problem. However, this is not possible with gurobi
 
         Arguments:
             quad_obj : dict (of (str, str) to float) -- map reaction pairs to respective coefficients
@@ -254,7 +296,7 @@ class GlpkSolver(Solver):
             constraints : dict (of str to (float, float)) -- overriding constraints (optional)
             get_shadow_prices : bool -- return shadow price information if available (default: False)
             get_reduced_costs : bool -- return reduced costs information if available (default: False)
-            presolve : bool -- uses glpk presolver on simplex method  (default: False)
+
         Returns:
             Solution
         """
@@ -263,19 +305,18 @@ class GlpkSolver(Solver):
         # program with GLPK
         raise Exception('GLPK does not solve quadratic programming problems')
 
-    def _generic_solve(
-        self, quad_obj, lin_obj, sense, model=None, constraints=None, get_shadow_prices=False,
-            get_reduced_costs=False):
+    def _generic_solve(self, quad_obj, lin_obj, sense, model=None, constraints=None, get_shadow_prices=False,
+                       get_reduced_costs=False):
 
         if model:
             self.build_problem(model)
 
         if not self.problem:
-            raise Exception(
-                'A model must be given if solver is used for the first time.')
+            raise Exception('A model must be given if solver is used for the first time.')
 
         if constraints:
             old_constraints = {}
+
             for r_id, (lb, ub) in constraints.items():
                 ind_col = glp_find_col(self.problem, r_id)
                 old_constraints[r_id] = (glp_get_col_lb(self.problem, ind_col), glp_get_col_ub(self.problem, ind_col))
@@ -299,7 +340,7 @@ class GlpkSolver(Solver):
 
         glp_set_obj_dir(self.problem, sense)
 
-        # check if self.problem is MILP or LP
+        # check if self.problem is MILP or LP, if it is an MILP call mip generic solver
         nBin_var = glp_get_num_bin(self.problem)
         nInt_var = glp_get_num_int(self.problem)
 
@@ -308,7 +349,7 @@ class GlpkSolver(Solver):
                 return self._generic_solve_mip(old_constraints, get_shadow_prices, get_reduced_costs)
             else:
                 return self._generic_solve_mip(None, get_shadow_prices, get_reduced_costs)
-        print 'oops'
+
         if self.presolve:
             self.smcp.presolve = GLP_ON
 
@@ -363,12 +404,9 @@ class GlpkSolver(Solver):
 
         if self.presolve:
             self.iocp.presolve = GLP_ON
-        
-        glp_write_lp(self.problem, None, 'ble.lp')
-        
+
         glp_intopt(self.problem, self.iocp)
-        
-        print glp_mip_obj_val(self.problem)
+
         # take care of status mapping
         self.problemStatus = glp_mip_status(self.problem)
         status = status_mapping[

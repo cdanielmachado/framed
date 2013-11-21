@@ -1,99 +1,109 @@
 '''
-Unit testing solver interfaces.
+Unit testing for gap finding.
 
 @author: Marta Matos
 '''
 import unittest
 import re
 from framed.io_utils.sbml import load_sbml_model, CONSTRAINT_BASED
-from framed.solvers import *
-from framed.analysis.simulation import FBA
+from framed.io_utils.plaintext import read_model_from_file
 from framed.core.fixes import fix_bigg_model
-from framed.analysis.gapFind import *
-from framed.analysis.gapFind_raven import GapFindRaven
-from framed.analysis.variability import *
+from framed.solvers import GlpkSolver, GurobiSolver
+from framed.analysis.reconstruction.gapFind import *
+
 
 class GapFindTest(unittest.TestCase):
 
-    #def setUp(self):
-    #    self.model = load_sbml_model(SMALL_TEST_MODEL, kind=CONSTRAINT_BASED)
-    #    fix_bigg_model(self.model)
-    
-    def compare_to_matlab(self, framed_result, matlab_mets_result_filename, matlab_rxns_result_filename):
-        mets_file = open(matlab_mets_result_filename, 'r')
-        rxns_file = open(matlab_rxns_result_filename, 'r')
-        
-        matlab_mets = mets_file.read()
-        matlab_rxns = rxns_file.read()
-        
-        matlab_mets = matlab_mets.split()
-        matlab_rxns = matlab_rxns.split()
+    """ The tests in this class find gaps in 7 networks and
+    the results are compared to the ones obtained with the
+    same algorithm implemented by the COBRA toolbox.
+    The comparison is done separately for Glpk and Gurobi,
+    as each solver produces different results.
+    COBRA results are stored in files.
+    """
 
-        for i in range(0,len(matlab_mets)):
-            matlab_mets[i] = 'M_' + re.sub('[\[]', '_', matlab_mets[i])
-            matlab_mets[i] = re.sub('[\]]', '', matlab_mets[i])
+    def compare_to_COBRA(self, framed_result, COBRA_mets_result_filename, COBRA_rxns_result_filename):
+        """ Compares framed results to COBRA results
+        """
+        mets_file = open(COBRA_mets_result_filename, 'r')
+        rxns_file = open(COBRA_rxns_result_filename, 'r')
 
-        for i in range(0,len(matlab_rxns)):
-            matlab_rxns[i] = 'R_' + re.sub('[(]', '_', matlab_rxns[i])
-            matlab_rxns[i] = re.sub('[\)]', '', matlab_rxns[i])
-        
-        #print 'framed'
-        #print framed_result[0]
-        #print 'matlab'
-        #print matlab_mets
-        
-        #print 'framed'
+        COBRA_mets = mets_file.read()
+        COBRA_rxns = rxns_file.read()
+
+        COBRA_mets = COBRA_mets.split()
+        COBRA_rxns = COBRA_rxns.split()
+
+        for i in range(0, len(COBRA_mets)):
+            COBRA_mets[i] = 'M_' + re.sub('[\[]', '_', COBRA_mets[i])
+            COBRA_mets[i] = re.sub('[\]]', '', COBRA_mets[i])
+
+        for i in range(0, len(COBRA_rxns)):
+            COBRA_rxns[i] = 'R_' + re.sub('[(]', '_', COBRA_rxns[i])
+            COBRA_rxns[i] = re.sub('[\)]', '', COBRA_rxns[i])
+
         framed_result[1].sort()
-        #print framed_result[1]
-        #print 'matlab'
-        #print matlab_rxns
 
         mets_file.close()
         rxns_file.close()
-        
-        return (framed_result[0] == matlab_mets and framed_result[1] == matlab_rxns)
 
-    @unittest.skip("demonstrating skipping")
+        return (framed_result[0] == COBRA_mets and framed_result[1] == COBRA_rxns)
+
     def test_gapFind_gurobi(self):
-        
+        """ Find gaps in 7 models using Gurobi
+        """
         for i in range(1,8):
+            # for some reason COBRA does not find a solution
+            #  for gapFind problem of ecoli_core_model6...
             if i == 6:
                 continue
             solver = GurobiSolver()
-            print 'iter ' + str(i)
-            model = '../../../examples/models/ecoli_core_model' + str(i) + '.xml'
+
+            model = '../../../examples/models/gapFind/ecoli_core_model' + str(i) + '.xml'
             self.model = load_sbml_model(model, kind=CONSTRAINT_BASED)
             fix_bigg_model(self.model)
 
             framed_result = GapFind(self.model, solver)
-            matlab_mets_result_filename = '../../../examples/models/gapFind_results/ecoli0' + str(i) + '_mets_gurobi.txt'
-            matlab_rxns_result_filename = '../../../examples/models/gapFind_results/ecoli0' + str(i) + '_rxns_gurobi.txt'
-            
-            result = self.compare_to_matlab(framed_result, matlab_mets_result_filename, matlab_rxns_result_filename)
-            print result
+            COBRA_mets_result_filename = '../../../examples/models/gapFind/gapFind_results/ecoli0' + str(i) + '_mets_gurobi.txt'
+            COBRA_rxns_result_filename = '../../../examples/models/gapFind/gapFind_results/ecoli0' + str(i) + '_rxns_gurobi.txt'
+
+            result = self.compare_to_COBRA(framed_result, COBRA_mets_result_filename, COBRA_rxns_result_filename)
             self.assertTrue(result)
-    
-    #@unittest.skip("demonstrating skipping")
+
     def test_gapFind_glpk(self):
-
-        for i in range(1,2):
+        """ Finds gaps in 7 models using Glpk
+        """
+        for i in range(1,8):
             solver = GlpkSolver()
-            print 'iter ' + str(i)
-            model = '../../../examples/models/ecoli_core_model' + str(i) + '.xml'
+
+            model = '../../../examples/models/gapFind/ecoli_core_model' + str(i) + '.xml'
             self.model = load_sbml_model(model, kind=CONSTRAINT_BASED)
             fix_bigg_model(self.model)
-            
+
             framed_result = GapFind(self.model, solver)
-            matlab_mets_result_filename = '../../../examples/models/gapFind_results/ecoli0' + str(i) + '_mets_glpk.txt'
-            matlab_rxns_result_filename = '../../../examples/models/gapFind_results/ecoli0' + str(i) + '_rxns_glpk.txt'
-            
-            result = self.compare_to_matlab(framed_result, matlab_mets_result_filename, matlab_rxns_result_filename)
-            print result
+            COBRA_mets_result_filename = '../../../examples/models/gapFind/gapFind_results/ecoli0' + str(i) + '_mets_glpk.txt'
+            COBRA_rxns_result_filename = '../../../examples/models/gapFind/gapFind_results/ecoli0' + str(i) + '_rxns_glpk.txt'
+
+            result = self.compare_to_COBRA(framed_result, COBRA_mets_result_filename, COBRA_rxns_result_filename)
             self.assertTrue(result)
-            
+
+
+class GapFind_exp(unittest.TestCase):
+    """ Class created just to look at the results from 
+    the particular method that was tested
+    """
+    
+    def test_gapFind_exp(self):
+        solver = GlpkSolver()
+        model = '../../../examples/models/toy_model2'
+        self.model = read_model_from_file(model, kind=CONSTRAINT_BASED)
+        fix_bigg_model(self.model)
+
+        framed_result = GapFind(self.model, solver)
+        print framed_result
 
 def suite():
-    tests = [GapFindTest]
+    tests = [GapFindTest, GapFind_exp]
     test_suite = unittest.TestSuite()
     for test in tests:
         test_suite.addTest(unittest.makeSuite(test))
