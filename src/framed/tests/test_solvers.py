@@ -73,7 +73,6 @@ class SolverGLPKTest(unittest.TestCase):
         self.assertEqual(result[3], 0)
         self.assertEqual(result[4], 0)
 
-
     def test_glpk_against_gurobi(self):
 
         self.solver_one = GurobiSolver()
@@ -85,7 +84,6 @@ class SolverGLPKTest(unittest.TestCase):
         sol_two = FBA(self.model, solver=self.solver_two)
 
         self.assertAlmostEqual(sol_one.fobj, sol_two.fobj, places=5)
-
 
     def test_glpk_lazy_loading(self):
 
@@ -101,8 +99,6 @@ class SolverGLPKTest(unittest.TestCase):
 
     def test_remove_constraint(self):
         """ This tests works only for the ecoli core model.
-        Plus, it should fail, glpk returns an unknown status,
-        and gurobi a very big value for the obj. function.
         """
         constr_id = "M_glu_L_c"
 
@@ -117,9 +113,6 @@ class SolverGLPKTest(unittest.TestCase):
         self.solver_two.remove_constraint(constr_id)
         nRows_after = glp_get_num_rows(self.solver_two.problem)
         sol_two = FBA(self.model, solver=self.solver_two)
-
-        print(sol_one)
-        print(sol_two)
 
         self.assertEqual(nRows_before, nRows_after + 1)
         self.assertAlmostEqual(sol_one.fobj, sol_two.fobj, places=5)
@@ -141,9 +134,6 @@ class SolverGLPKTest(unittest.TestCase):
         self.solver_two.remove_variable(var_id)
         nCols_after = glp_get_num_cols(self.solver_two.problem)
         sol_two = FBA(self.model, solver=self.solver_two)
-
-        print(sol_one)
-        print(sol_two)
 
         self.assertEqual(nCols_before, nCols_after + 1)
         self.assertAlmostEqual(sol_one.fobj, sol_two.fobj, places=5)

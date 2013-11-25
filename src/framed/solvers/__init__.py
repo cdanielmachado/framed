@@ -45,7 +45,7 @@ try:
 except:
     pass
 
-default_solver = 'gurobi'
+default_solver = 'glpk'
 
 
 def set_default_solver(solvername):

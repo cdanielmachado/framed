@@ -57,6 +57,7 @@ def FVA(model, obj_percentage=0, reactions=None, constraints=None):
 
     for r_id in reactions:
         solution = FBA(model, {r_id: 1}, False, constraints=_constraints, solver=solver)
+        #print(-solution.fobj)
         if solution.status == Status.OPTIMAL:
             variability[r_id][0] = -solution.fobj
         elif solution.status == Status.UNBOUNDED:
@@ -66,6 +67,7 @@ def FVA(model, obj_percentage=0, reactions=None, constraints=None):
 
     for r_id in reactions:
         solution = FBA(model, {r_id: 1}, True, constraints=_constraints, solver=solver)
+        #print(solution.fobj)
         if solution.status == Status.OPTIMAL:
             variability[r_id][1] = solution.fobj
         elif solution.status == Status.UNBOUNDED:
@@ -76,11 +78,12 @@ def FVA(model, obj_percentage=0, reactions=None, constraints=None):
     return variability
 
 
-def blocked_reactions(model):
+def blocked_reactions(model, tol=1e-9):
     """ Find all blocked reactions in a model
     
     Arguments:
         model : ConstraintBasedModel -- a constraint-based model
+        tol : float -- absolute tolerance (default: 1e-9)
         
     Returns:
         list (of str) -- blocked reactions
@@ -88,7 +91,8 @@ def blocked_reactions(model):
 
     variability = FVA(model)
 
-    return [r_id for r_id, (lb, ub) in variability.items() if lb == 0 and ub == 0]
+    return [r_id for r_id, (lb, ub) in variability.items()
+            if lb is not None and abs(lb) < tol and ub is not None and abs(ub) < tol]
 
 
 def flux_envelope(model, r_x, r_y, steps=10, constraints=None):

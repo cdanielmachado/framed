@@ -29,7 +29,6 @@ from collections import OrderedDict
 from .solver import Solver, Solution, Status, VarType
 from glpk.glpkpi import *
 from warnings import warn
-from pickle import NONE
 
 status_mapping = {GLP_OPT: Status.OPTIMAL,
                   GLP_FEAS: Status.SUBOPTIMAL,
@@ -57,10 +56,10 @@ class GlpkSolver(Solver):
         glp_init_smcp(self.smcp)
         self.smcp.presolve = GLP_OFF
 
-       # initialize variable for glpk MILP parameters
+        # initialize variable for glpk MILP parameters
         self.iocp = glp_iocp()
         glp_init_iocp(self.iocp)
-        self.iocp.presolve = GLP_OFF
+        self.iocp.presolve = GLP_ON
 
         # glpk does not print any output
         glp_term_out(GLP_OFF)
@@ -96,9 +95,6 @@ class GlpkSolver(Solver):
                               used in glpk, it is kept only for compatibility with the gurobi wrapper
         """
 
-        lb = lb if lb is not None else -10e6
-        ub = ub if ub is not None else 10e6
-
         var_type_mapping = {VarType.BINARY: GLP_BV,
                             VarType.INTEGER: GLP_IV,
                             VarType.CONTINUOUS: GLP_CV}
@@ -106,32 +102,20 @@ class GlpkSolver(Solver):
         if var_id in self.var_ids:
             ind_col = glp_find_col(self.problem, var_id)
 
-            if lb == ub:
-                glp_set_col_bnds(self.problem, ind_col, GLP_FX, lb, ub)
-            elif lb != ub:
-                glp_set_col_bnds(self.problem, ind_col, GLP_DB, lb, ub)
-
-            glp_set_col_kind(self.problem, ind_col, var_type_mapping[vartype])
-
         else:
             glp_add_cols(self.problem, 1)
             ind_col = glp_get_num_cols(self.problem)
             glp_set_col_name(self.problem, ind_col, var_id)
-
-            if lb == ub:
-                glp_set_col_bnds(self.problem, ind_col, GLP_FX, lb, ub)
-            elif lb != ub:
-                glp_set_col_bnds(self.problem, ind_col, GLP_DB, lb, ub)
-
-            glp_set_col_kind(self.problem, ind_col, var_type_mapping[vartype])
-
             self.var_ids.append(var_id)
+
+        self.set_var_bounds(ind_col, lb, ub)
+        glp_set_col_kind(self.problem, ind_col, var_type_mapping[vartype])
 
         if not persistent:
             self.temp_vars.add(var_id)
 
     def add_constraint(self, constr_id, lhs, sense='=', rhs=0, persistent=True, update_problem=True):
-        """ Add a variable to the current problem.
+        """ Add a constraint to the current problem.
 
         Arguments:
             constr_id : str -- constraint identifier
@@ -144,13 +128,7 @@ class GlpkSolver(Solver):
 
         if constr_id in self.constr_ids:
             ind_row = glp_find_row(self.problem, constr_id)
-            n_vars = glp_get_num_cols(self.problem)
-            coef_ind = intArray(n_vars + 1)
-            coef_val = doubleArray(n_vars + 1)
-
-            for i in range(0, n_vars + 1):
-                coef_ind[i] = i
-                coef_val[i] = 0.
+            coef_ind, coef_val, n_vars = self.init_constr_arrays()
 
             for r_id, coeff in lhs:
                 coef_ind_col = glp_find_col(self.problem, r_id)
@@ -158,31 +136,21 @@ class GlpkSolver(Solver):
 
             glp_set_mat_row(self.problem, ind_row, n_vars, coef_ind, coef_val)
 
-            if (sense == '>'):
-                glp_set_row_bnds(self.problem, ind_row, GLP_LO, rhs, 10e6)
-            elif (sense == '<'):
-                glp_set_row_bnds(self.problem, ind_row, GLP_UP, -10e6, rhs)
-            elif (sense == '='):
-                glp_set_row_bnds(self.problem, ind_row, GLP_FX, rhs, rhs)
-
         else:
             glp_add_rows(self.problem, 1)
             ind_row = glp_get_num_rows(self.problem)
             glp_set_row_name(self.problem, ind_row, constr_id)
+            self.constr_ids.append(constr_id)
 
-            if update_problem == False:
+            # if there are any entries in the constraint matrix, further constraints
+            #  will be added to the matrix and not immediately to the problem
+            if update_problem == False or self.coefMatrix != {}:
                 for r_id, coeff in lhs:
                     ind_col = glp_find_col(self.problem, r_id)
                     self.coefMatrix[(ind_row, ind_col)] = coeff
 
             else:
-                n_vars = glp_get_num_cols(self.problem)
-                coef_ind = intArray(n_vars + 1)
-                coef_val = doubleArray(n_vars + 1)
-
-                for i in range(0, n_vars + 1):
-                    coef_ind[i] = i
-                    coef_val[i] = 0.
+                coef_ind, coef_val, n_vars = self.init_constr_arrays()
 
                 for r_id, coeff in lhs:
                     coef_ind_col = glp_find_col(self.problem, r_id)
@@ -190,14 +158,7 @@ class GlpkSolver(Solver):
 
                 glp_set_mat_row(self.problem, ind_row, n_vars, coef_ind, coef_val)
 
-            if (sense == '>'):
-                glp_set_row_bnds(self.problem, ind_row, GLP_LO, rhs, 10e6)
-            elif (sense == '<'):
-                glp_set_row_bnds(self.problem, ind_row, GLP_UP, -10e6, rhs)
-            elif (sense == '='):
-                glp_set_row_bnds(self.problem, ind_row, GLP_FX, rhs, rhs)
-
-            self.constr_ids.append(constr_id)
+        self.set_constr_bounds(ind_row, sense, rhs)
 
         if not persistent:
             self.temp_constrs.add(constr_id)
@@ -211,13 +172,17 @@ class GlpkSolver(Solver):
         col_to_delete = intArray(2)
         col_to_delete[1] = glp_find_col(self.problem, var_id)
 
+        entries_to_remove = []
+
         if var_id in self.var_ids:
             if self.coefMatrix != {}:
                 for (row, col) in self.coefMatrix:
                     if col == col_to_delete[1]:
-                        del self.coefMatrix[(row, col)]
-            else:
-                glp_del_cols(self.problem, 1, col_to_delete)
+                        entries_to_remove.append((row, col))
+                for row, col in entries_to_remove:
+                    del self.coefMatrix[(row, col)]
+
+            glp_del_cols(self.problem, 1, col_to_delete)
             self.var_ids.remove(var_id)
 
     def remove_constraint(self, constr_id):
@@ -229,18 +194,36 @@ class GlpkSolver(Solver):
         row_to_delete = intArray(2)
         row_to_delete[1] = glp_find_row(self.problem, constr_id)
 
+        entries_to_remove = []
+
         if constr_id in self.constr_ids:
             if self.coefMatrix != {}:
                 for (row, col) in self.coefMatrix:
                     if row == row_to_delete[1]:
-                        del self.coefMatrix[(row, col)]
-            else:
-                glp_del_rows(self.problem, 1, row_to_delete)
+                        entries_to_remove.append((row, col))
+                for row, col in entries_to_remove:
+                    del self.coefMatrix[(row, col)]
+
+            glp_del_rows(self.problem, 1, row_to_delete)
             self.constr_ids.remove(constr_id)
 
 
     def update(self):
         """ Update internal structure. Used for efficient lazy updating. """
+
+        num_constraints = glp_get_num_rows(self.problem)
+        coef_ind, coef_val, n_vars = self.init_constr_arrays()
+
+        # if the constraint matrix is empty but constraints were added 
+        #  to the problem, these are copied to the matrix, which will be
+        #  loaded afterwards
+        if self.coefMatrix == {} and num_constraints > 0:
+            for i in range(1, num_constraints + 1):
+                glp_get_mat_row(self.problem, i, coef_ind, coef_val)
+                for j in range(1, n_vars + 1):
+                    if coef_val[j] != 0:
+                        self.coefMatrix[(i, coef_ind[j])] = coef_val[j]
+
         if self.coefMatrix != {}:
             nEntries = len(self.coefMatrix) + 1
 
@@ -257,7 +240,6 @@ class GlpkSolver(Solver):
 
             glp_load_matrix(self.problem, nEntries - 1, rows_ind, cols_ind, coeffs)
 
-            self.coefMatrix = {}
 
     def set_presolve(self, active=False):
         """ Set glpk presolver on or off
@@ -320,14 +302,7 @@ class GlpkSolver(Solver):
             for r_id, (lb, ub) in constraints.items():
                 ind_col = glp_find_col(self.problem, r_id)
                 old_constraints[r_id] = (glp_get_col_lb(self.problem, ind_col), glp_get_col_ub(self.problem, ind_col))
-
-                lb = lb if lb is not None else -10e6
-                ub = ub if ub is not None else 10e6
-
-                if lb == ub:
-                    glp_set_col_bnds(self.problem, ind_col, GLP_FX, lb, ub)
-                elif lb != ub:
-                    glp_set_col_bnds(self.problem, ind_col, GLP_DB, lb, ub)
+                self.set_var_bounds(ind_col, lb, ub)
 
         if lin_obj:
             for r_id, f in lin_obj.items():
@@ -353,9 +328,11 @@ class GlpkSolver(Solver):
         if self.presolve:
             self.smcp.presolve = GLP_ON
 
+        #glp_scale_prob(self.problem, GLP_SF_AUTO)
         glp_simplex(self.problem, self.smcp)
 
         self.problemStatus = glp_get_status(self.problem)
+
         status = status_mapping[
             self.problemStatus] if self.problemStatus in status_mapping else Status.UNKNOWN
 
@@ -363,15 +340,16 @@ class GlpkSolver(Solver):
 
         if status == Status.OPTIMAL:
             fobj = glp_get_obj_val(self.problem)
+
             values = OrderedDict([(r_id, glp_get_col_prim(self.problem, glp_find_col(self.problem, r_id)))
                                  for r_id in self.var_ids])
 
             # if metabolite is disconnected no constraint will exist
-            shadow_prices = OrderedDict([(m_id, glp_get_row_dual(self.problem, glp_find_row(m_id)))
+            shadow_prices = OrderedDict([(m_id, glp_get_row_dual(self.problem, glp_find_row(self.problem, m_id)))
                                          for m_id in self.constr_ids
-                                         if glp_find_row(m_id)]) if get_shadow_prices else None
+                                         if glp_find_row(self.problem, m_id)]) if get_shadow_prices else None
 
-            reduced_costs = OrderedDict([(r_id, glp_get_col_dual(self.problem, glp_find_col(r_id)))
+            reduced_costs = OrderedDict([(r_id, glp_get_col_dual(self.problem, glp_find_col(self.problem, r_id)))
                                          for r_id in self.var_ids]) if get_reduced_costs else None
 
             solution = Solution(status, message, fobj, values, shadow_prices, reduced_costs)
@@ -389,21 +367,13 @@ class GlpkSolver(Solver):
         if constraints:
             for r_id, (lb, ub) in old_constraints.items():
                 ind_col = glp_find_col(self.problem, r_id)
-
-                lb = lb if lb is not None else -10e6
-                ub = ub if ub is not None else 10e6
-
-                if lb == ub:
-                    glp_set_col_bnds(self.problem, ind_col, GLP_FX, lb, ub)
-                elif lb != ub:
-                    glp_set_col_bnds(self.problem, ind_col, GLP_DB, lb, ub)
+                self.set_var_bounds(ind_col, lb, ub)
 
         return solution
 
     def _generic_solve_mip(self, old_constraints=None, get_shadow_prices=False, get_reduced_costs=False):
 
-        if self.presolve:
-            self.iocp.presolve = GLP_ON
+        self.iocp.presolve = GLP_ON
 
         glp_intopt(self.problem, self.iocp)
 
@@ -421,11 +391,11 @@ class GlpkSolver(Solver):
 
             # i'm not sure if one can get shadow prices and reduced costs for glpk mip problem!!!!!!
             # if metabolite is disconnected no constraint will exist
-            shadow_prices = OrderedDict([(m_id, glp_get_row_dual(self.problem, glp_find_row(m_id)))
+            shadow_prices = OrderedDict([(m_id, glp_get_row_dual(self.problem, glp_find_row(self.problem, m_id)))
                                          for m_id in self.constr_ids
-                                         if glp_find_row(m_id)]) if get_shadow_prices else None
+                                         if glp_find_row(self.problem, m_id)]) if get_shadow_prices else None
 
-            reduced_costs = OrderedDict([(r_id, glp_get_col_dual(self.problem, glp_find_col(r_id)))
+            reduced_costs = OrderedDict([(r_id, glp_get_col_dual(self.problem, glp_find_col(self.problem, r_id)))
                                          for r_id in self.var_ids]) if get_reduced_costs else None
 
             solution = Solution(status, message, fobj, values, shadow_prices, reduced_costs)
@@ -443,13 +413,63 @@ class GlpkSolver(Solver):
         if old_constraints:
             for r_id, (lb, ub) in old_constraints.items():
                 ind_col = glp_find_col(self.problem, r_id)
-
-                lb = lb if lb is not None else -10e6
-                ub = ub if ub is not None else 10e6
-
-                if lb == ub:
-                    glp_set_col_bnds(self.problem, ind_col, GLP_FX, lb, ub)
-                elif lb != ub:
-                    glp_set_col_bnds(self.problem, ind_col, GLP_DB, lb, ub)
+                self.set_var_bounds(ind_col, lb, ub)
 
         return solution
+
+    def set_var_bounds(self, ind_col, lb, ub):
+        """ Defines the given column/variable lower and upper bounds.
+
+        Arguments:
+            ind_col : int -- the index of the column/variable whose bounds are to be defined 
+            lb: float -- lower bound for the given variable
+            ub : float -- upper bound for the given variable
+        """
+
+        if (lb is None or lb < -10e6) and (ub is None or ub > 10e6):
+            glp_set_col_bnds(self.problem, ind_col, GLP_FR, -10e6, 10e6)
+        elif (lb is None or lb < -10e6) and ub is not None:
+            glp_set_col_bnds(self.problem, ind_col, GLP_UP, -10e6, ub)
+        elif lb is not None and (ub is None or ub > 10e6):
+            glp_set_col_bnds(self.problem, ind_col, GLP_LO, lb, 10e6)
+        elif lb == ub:
+            glp_set_col_bnds(self.problem, ind_col, GLP_FX, lb, ub)
+        elif lb != ub:
+            glp_set_col_bnds(self.problem, ind_col, GLP_DB, lb, ub)
+
+    def set_constr_bounds(self, ind_row, sense, rhs):
+        """ Defines then give row/constraint bounds.
+
+        Arguments:
+            ind_row : int -- the index of the row/constraint whose bounds are to be defined 
+            sense: str -- the sense of the constraint, must be '>', '<', or "="
+            rhs : float -- the right-hand side of the constraint
+        """
+
+        if (sense == '>'):
+            glp_set_row_bnds(self.problem, ind_row, GLP_LO, rhs, 10e6)
+        elif (sense == '<'):
+            glp_set_row_bnds(self.problem, ind_row, GLP_UP, -10e6, rhs)
+        elif (sense == '='):
+            glp_set_row_bnds(self.problem, ind_row, GLP_FX, rhs, rhs)
+
+    def init_constr_arrays(self):
+        """ Initializes the arrays required to set the LP problem
+        matrix row and returns them together with the number of
+        variables in the problem.
+
+        Returns:
+            coef_ind : intArray -- the column indexes in the matrix row
+            coef_val : doubleArray -- the entries in the matrix row
+            n_vars: int --  the number of variables in the given problem
+        """
+
+        n_vars = glp_get_num_cols(self.problem)
+        coef_ind = intArray(n_vars + 1)
+        coef_val = doubleArray(n_vars + 1)
+
+        for i in range(0, n_vars + 1):
+            coef_ind[i] = i
+            coef_val[i] = 0.
+
+        return (coef_ind, coef_val, n_vars)
