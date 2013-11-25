@@ -38,8 +38,7 @@ class GurobiSolver(Solver):
     def __init__(self):
         Solver.__init__(self)
         self.problem = GurobiModel()
-        self.set_presolve()
-
+        
 
     def __getstate__(self):
         tmp_file = tempfile.mktemp(suffix=".lp")
@@ -143,15 +142,6 @@ class GurobiSolver(Solver):
     def update(self):
         """ Update internal structure. Used for efficient lazy updating. """
         self.problem.update()
-    
-    
-    def set_presolve(self, active=False):
-        """ Set gurobi presolver on or off
-        
-        Arguments:
-            active : bool -- uses gurobi presolver level 1  (default: False)
-        """
-        self.presolve = active;
 
         
     def solve_lp(self, objective, model=None, constraints=None, get_shadow_prices=False, get_reduced_costs=False):
@@ -219,9 +209,6 @@ class GurobiSolver(Solver):
 
         problem.setObjective(obj_expr, sense)
         problem.update()
-
-        if self.presolve:
-            problem.setParam("Presolve", 1)
 
 #        from datetime import datetime
 #        self.problem.write("problem_{}.lp".format(str(datetime.now())))

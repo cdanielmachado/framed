@@ -57,7 +57,7 @@ class Solution:
                         Status.UNBOUNDED: 'Unbounded',
                         Status.INFEASIBLE: 'Infeasible'}
 
-        return 'Objective: {}\nStatus: {}\nMessage {}\n'.format(self.fobj, status_codes[self.status], self.message)
+        return 'Objective: {}\nStatus: {}\nMessage: {}\n'.format(self.fobj, status_codes[self.status], self.message)
 
 
     def show_values(self, zeros=False, pattern=None):
@@ -115,6 +115,38 @@ class Solution:
         entries = ['{}\t{}'.format(m_id, val) for (m_id, val) in values]
 
         return '\n'.join(entries)
+    
+    
+    def show_metabolite_balance(self, model, m_id, zeros=False, sort=False, percentage=False):
+        
+        if not self.values:
+            return None
+        
+        inputs = model.get_metabolite_inputs(m_id)
+        outputs = model.get_metabolite_outputs(m_id)
+        
+        fwd_in = [(r_id, model.stoichiometry[(m_id, r_id)] * self.values[r_id], '--> o')
+                  for r_id in inputs if self.values[r_id] > 0 or zeros and self.values[r_id] == 0]
+        rev_in = [(r_id, model.stoichiometry[(m_id, r_id)] * self.values[r_id], 'o <--')
+                  for r_id in outputs if self.values[r_id] < 0]
+        fwd_out = [(r_id, model.stoichiometry[(m_id, r_id)] * self.values[r_id], 'o -->')
+                   for r_id in outputs if self.values[r_id] > 0 or zeros and self.values[r_id] == 0]
+        rev_out = [(r_id, model.stoichiometry[(m_id, r_id)] * self.values[r_id], '<-- o')
+                    for r_id in inputs if self.values[r_id] < 0]
+        
+        flux_in = fwd_in + rev_in
+        flux_out = fwd_out + rev_out
+        
+        if sort:
+            flux_in.sort(key=lambda x: x[1], reverse=True)
+            flux_out.sort(key=lambda x: x[1], reverse=False)
+        
+        if percentage:
+            turnover = sum(map(lambda x: x[1], flux_in))
+            flux_in = map(lambda (a, b, c): (a, str(b / turnover * 100) + ' %', c), flux_in)
+            flux_out = map(lambda (a, b, c): (a, str(b / turnover * 100) + ' %', c), flux_out)
+
+        return '\n'.join(map(lambda (a, b, c): '[ {} ] {}\t{}'.format(c, a, b), flux_in + flux_out))
 
 
 class Solver:
