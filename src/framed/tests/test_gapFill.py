@@ -30,7 +30,7 @@ class GapFillTest_gurobi(unittest.TestCase):
         fix_bigg_model(self.model)
  
         framed_result = GapFill(self.model, reactionsDB, solver, 0.05, 'txt')
-        self.assertEquals(framed_result, ['R_ACKr', 'R_PGK', 'R_PGM'])
+        self.assertEquals(framed_result, ['R_PGK', 'R_PGM', 'R_SUCOAS'])
  
  
     def test_gapFind_gurobi_core_sbml_b005(self):
@@ -42,7 +42,7 @@ class GapFillTest_gurobi(unittest.TestCase):
         fix_bigg_model(self.model)
  
         framed_result = GapFill(self.model, reactionsDB, solver, 0.05, 'sbml')
-        self.assertEquals(framed_result, ['R_ACKr', 'R_PGK', 'R_PGM'])
+        self.assertEquals(framed_result, ['R_PGK', 'R_PGM', 'R_SUCOAS'])
  
  
     def test_gapFind_gurobi_core_sbml_b087(self):
@@ -66,7 +66,9 @@ class GapFillTest_gurobi(unittest.TestCase):
         fix_bigg_model(self.model)
  
         framed_result = GapFill(self.model, reactionsDB, solver, 0.87, 'sbml')
-        self.assertEquals(framed_result, ['R_ATPS4rpp', 'R_Htex', 'R_PGK', 'R_PGM'])
+        # R_CYTBO3_4pp is required to produce M_h_p, which is a reactant in R_ATPS4rpp
+        self.assertEquals(framed_result, ['R_ATPS4rpp', 'R_CYTBO3_4pp', 'R_PGK', 'R_PGM'])
+        
 
 
 class GapFillTest_glpk(unittest.TestCase):
@@ -120,6 +122,7 @@ class GapFillTest_glpk(unittest.TestCase):
         fix_bigg_model(self.model)
 
         framed_result = GapFill(self.model, reactionsDB, solver, 0.87, 'sbml')
+        # R_Htex is required to produce M_h_p, which is a reactant in R_ATPS4rpp
         self.assertEquals(framed_result, ['R_ATPS4rpp', 'R_Htex', 'R_PGK', 'R_PGM'])
 
 

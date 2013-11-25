@@ -78,7 +78,7 @@ def FVA(model, obj_percentage=0, reactions=None, constraints=None):
     return variability
 
 
-def blocked_reactions(model, tol=1e-9):
+def blocked_reactions(model, tol=1e-5):
     """ Find all blocked reactions in a model
     
     Arguments:

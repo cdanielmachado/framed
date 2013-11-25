@@ -28,7 +28,7 @@ from re import match
 from copy import deepcopy
 
 
-def GapFill(model, reactionsDB, solver, biomass_ouput, DB_type):
+def GapFill(model, reactionsDB, solver, biomass_ouput, DB_type, tol=1e-5):
     """ Fills gaps in the metabolic network by using a reference database.
         The gaps are filled by solving the following MILP problem:
 
@@ -103,14 +103,13 @@ def GapFill(model, reactionsDB, solver, biomass_ouput, DB_type):
 
     # update MILP problem - lazy loading
     solver.update()
-    # turn on the presolver
-    solver.set_presolve(True)
+
     # solve the MILP problem
     solution = solver.solve_lp(objective_coeffs)
 
     # get the DB reactions added to the model
     added_reactions = [entry[0][2:] for entry in solution.values.items()
-                                    if match('z_*', entry[0]) and entry[1] == 1]
+                                    if match('z_*', entry[0]) and (entry[1] > 1 - tol and entry[1] < 1 + tol)]
 
     return(added_reactions)
 

@@ -25,7 +25,7 @@ from framed.solvers.solver import VarType
 from numpy import where, array
 
 
-def GapFind(model, solver):
+def GapFind(model, solver, tol=1e-5):
     """ Implements the GapFind algorithm (Kumar et al, 2007)
         with some modifications.
         It finds all the non producing and non consuming metabolites by
@@ -123,13 +123,12 @@ def GapFind(model, solver):
 
     # update problem
     solver.update()
-    # turn on presolver
-    solver.set_presolve(True)
+
     # solve problem
     solution = solver.solve_lp(objective_coeffs)
 
     # get gap metabolites
-    gap_mets_ind = [ind for ind in range(0, n_mets) if solution.values.values()[n_reactions+ind] == 0]
+    gap_mets_ind = [ind for ind in range(0, n_mets) if solution.values.values()[n_reactions+ind] < abs(tol)]
     gap_metabolites = [model.metabolites.keys()[gap_mets_ind[ind]] for ind in range(0, len(gap_mets_ind))]
 
     # get reactions associated with gap metabolites and unable to carry flux

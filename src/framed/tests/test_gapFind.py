@@ -68,6 +68,7 @@ class GapFindTest(unittest.TestCase):
             COBRA_rxns_result_filename = '../../../examples/models/gapFind/gapFind_results/ecoli0' + str(i) + '_rxns_gurobi.txt'
 
             result = self.compare_to_COBRA(framed_result, COBRA_mets_result_filename, COBRA_rxns_result_filename)
+
             self.assertTrue(result)
 
     def test_gapFind_glpk(self):
