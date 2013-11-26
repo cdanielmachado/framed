@@ -83,9 +83,9 @@ class Solution:
             values = filter(lambda (r_id, val): pattern in r_id, values)
 
         if self.reduced_costs:
-            entries = ['{}\t{}\t({})'.format(r_id, val, self.reduced_costs[r_id]) for (r_id, val) in values]
+            entries = ['{:<10}\t{}\t({})'.format(r_id, val, self.reduced_costs[r_id]) for (r_id, val) in values]
         else:
-            entries = ['{}\t{}'.format(r_id, val) for (r_id, val) in values]
+            entries = ['{:<10}\t{}'.format(r_id, val) for (r_id, val) in values]
 
         return '\n'.join(entries)
 
@@ -112,7 +112,7 @@ class Solution:
         if pattern:
             values = filter(lambda (m_id, val): pattern in m_id, values)
 
-        entries = ['{}\t{}'.format(m_id, val) for (m_id, val) in values]
+        entries = ['{:<10}\t{}'.format(m_id, val) for (m_id, val) in values]
 
         return '\n'.join(entries)
     
@@ -158,7 +158,7 @@ class Solution:
             flux_in = map(lambda (a, b, c): (a, str(b / turnover * 100) + ' %', c), flux_in)
             flux_out = map(lambda (a, b, c): (a, str(b / turnover * 100) + ' %', c), flux_out)
 
-        return '\n'.join(map(lambda (a, b, c): '[ {} ] {}\t{}'.format(c, a, b), flux_in + flux_out))
+        return '\n'.join(map(lambda (a, b, c): '[ {} ] {:<10}\t{}'.format(c, a, b), flux_in + flux_out))
 
 
 class Solver:
