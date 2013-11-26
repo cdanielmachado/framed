@@ -83,9 +83,9 @@ class Solution:
             values = filter(lambda (r_id, val): pattern in r_id, values)
 
         if self.reduced_costs:
-            entries = ['{:<10}\t{}\t({})'.format(r_id, val, self.reduced_costs[r_id]) for (r_id, val) in values]
+            entries = ['{:<12} {: .6g} ({: .6g})'.format(r_id, val, self.reduced_costs[r_id]) for (r_id, val) in values]
         else:
-            entries = ['{:<10}\t{}'.format(r_id, val) for (r_id, val) in values]
+            entries = ['{:<12} {: .6g}'.format(r_id, val) for (r_id, val) in values]
 
         return '\n'.join(entries)
 
@@ -112,12 +112,12 @@ class Solution:
         if pattern:
             values = filter(lambda (m_id, val): pattern in m_id, values)
 
-        entries = ['{:<10}\t{}'.format(m_id, val) for (m_id, val) in values]
+        entries = ['{:<12} {: .6g}'.format(m_id, val) for (m_id, val) in values]
 
         return '\n'.join(entries)
     
     
-    def show_metabolite_balance(self, m_id, model, zeros=False, sort=False, percentage=False):
+    def show_metabolite_balance(self, m_id, model, zeros=False, sort=False, percentage=False, equations=False):
         """ Show metabolite balance details.
 
         Arguments:
@@ -155,10 +155,19 @@ class Solution:
         
         if percentage:
             turnover = sum(map(lambda x: x[1], flux_in))
-            flux_in = map(lambda (a, b, c): (a, str(b / turnover * 100) + ' %', c), flux_in)
-            flux_out = map(lambda (a, b, c): (a, str(b / turnover * 100) + ' %', c), flux_out)
+            flux_in = map(lambda (a, b, c): (a, b / turnover, c), flux_in)
+            flux_out = map(lambda (a, b, c): (a, b / turnover, c), flux_out)
+            print_format = '[ {} ] {:<12} {:< 10.2%}'
+        else:
+            print_format = '[ {} ] {:<12} {:< 10.6g}'
 
-        return '\n'.join(map(lambda (a, b, c): '[ {} ] {:<10}\t{}'.format(c, a, b), flux_in + flux_out))
+        if equations:
+            print_format += '\t{}'
+            lines = map(lambda (a, b, c): print_format.format(c, a, b, model.print_reaction(a)[len(a)+1:]), flux_in + flux_out)
+        else:
+            lines = map(lambda (a, b, c): print_format.format(c, a, b), flux_in + flux_out)           
+        
+        return '\n'.join(lines)
 
 
 class Solver:
