@@ -117,8 +117,20 @@ class Solution:
         return '\n'.join(entries)
     
     
-    def show_metabolite_balance(self, model, m_id, zeros=False, sort=False, percentage=False):
+    def show_metabolite_balance(self, m_id, model, zeros=False, sort=False, percentage=False):
+        """ Show metabolite balance details.
+
+        Arguments:
+            m_id: str - metabolite id
+            model: ConstraintBasedModel - model that generated the solution
+            zeros: bool - show zero entries (default: False)
+            sort: bool - sort reactions by flux (default: False)
+            percentage: bool - show percentage of carried flux instead of absolute flux (default: False)
         
+        Returns:
+            str : formatted output
+        """
+                
         if not self.values:
             return None
         
