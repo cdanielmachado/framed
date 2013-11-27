@@ -38,7 +38,7 @@ status_mapping = {GLP_OPT: Status.OPTIMAL,
                   GLP_UNDEF: Status.UNKNOWN}
 
 
-class GlpkSolver(Solver):
+class GlpkSolverLazy(Solver):
 
     """ Implements the solver interface using python-GLPK. """
 
@@ -146,8 +146,9 @@ class GlpkSolver(Solver):
             #  will be added to the matrix and not immediately to the problem
             if update_problem == False or self.coefMatrix != {}:
                 for r_id, coeff in lhs:
-                    ind_col = glp_find_col(self.problem, r_id)
-                    self.coefMatrix[(ind_row, ind_col)] = coeff
+                    if coeff != 0:
+                        ind_col = glp_find_col(self.problem, r_id)
+                        self.coefMatrix[(ind_row, ind_col)] = coeff
 
             else:
                 coef_ind, coef_val, n_vars = self.init_constr_arrays()
@@ -191,6 +192,7 @@ class GlpkSolver(Solver):
         Arguments:
             constr_id : str -- constraint identifier
         """
+
         row_to_delete = intArray(2)
         row_to_delete[1] = glp_find_row(self.problem, constr_id)
 
@@ -208,6 +210,7 @@ class GlpkSolver(Solver):
             self.constr_ids.remove(constr_id)
 
 
+
     def update(self):
         """ Update internal structure. Used for efficient lazy updating. """
 
@@ -217,6 +220,7 @@ class GlpkSolver(Solver):
         # if the constraint matrix is empty but constraints were added 
         #  to the problem, these are copied to the matrix, which will be
         #  loaded afterwards
+
         if self.coefMatrix == {} and num_constraints > 0:
             for i in range(1, num_constraints + 1):
                 glp_get_mat_row(self.problem, i, coef_ind, coef_val)
@@ -295,6 +299,9 @@ class GlpkSolver(Solver):
 
         if not self.problem:
             raise Exception('A model must be given if solver is used for the first time.')
+
+        if (self.coefMatrix) != {} and (glp_get_num_nz(self.problem) > len(self.coefMatrix)):
+            self.update()
 
         if constraints:
             old_constraints = {}
@@ -446,12 +453,15 @@ class GlpkSolver(Solver):
             rhs : float -- the right-hand side of the constraint
         """
 
-        if (sense == '>'):
-            glp_set_row_bnds(self.problem, ind_row, GLP_LO, rhs, 10e6)
-        elif (sense == '<'):
-            glp_set_row_bnds(self.problem, ind_row, GLP_UP, -10e6, rhs)
-        elif (sense == '='):
-            glp_set_row_bnds(self.problem, ind_row, GLP_FX, rhs, rhs)
+        if rhs is not None:
+            if (sense == '>'):
+                glp_set_row_bnds(self.problem, ind_row, GLP_LO, rhs, 10e6)
+            elif (sense == '<'):
+                glp_set_row_bnds(self.problem, ind_row, GLP_UP, -10e6, rhs)
+            elif (sense == '='):
+                glp_set_row_bnds(self.problem, ind_row, GLP_FX, rhs, rhs)
+        else:
+            glp_set_row_bnds(self.problem, ind_row, GLP_FR, -10e6, 10e6)
 
     def init_constr_arrays(self):
         """ Initializes the arrays required to set the LP problem

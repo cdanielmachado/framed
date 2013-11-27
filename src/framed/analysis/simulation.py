@@ -294,7 +294,6 @@ def ROOM(model, reference=None, constraints=None, solver=None, delta=0.03, epsil
             solver.add_constraint('c' + r_id + '_l', [(r_id, 1), (y_i, (w_l - L))], '>', w_l, persistent=False, update_problem=False)
         solver.update()
 
-    solver.set_presolve(True)
     solution = solver.solve_lp(objective, constraints=constraints)
 
     #post process

@@ -39,13 +39,20 @@ except:
     pass
 
 try:
+    from .glpk_wrapper_with_lazy import GlpkSolverLazy
+
+    solvers['glpk_lazy'] = GlpkSolverLazy
+except:
+    pass
+
+try:
     from .gurobi_wrapper import GurobiSolver
 
     solvers['gurobi'] = GurobiSolver
 except:
     pass
 
-default_solver = 'glpk'
+default_solver = 'glpk_lazy'
 
 
 def set_default_solver(solvername):
