@@ -1,0 +1,14 @@
+# Text based model representation
+# Format: "Reaction id : substrates --> products [lower bound, upper bound]"
+# valid identifiers can contain letters, numbers or underscore (_) but must begin with a letter (for SBML compatibility)
+# Use --> or <-> for irreversible or reversible reactions respectively
+# bounds are optional and can be specified only in one direction, eg: [-10.0,]
+# begin with # to comment out any line
+
+
+R_EX_gluc1: --> M_EX_Gluc1 [0,1000]
+R_gluc1_A: M_EX_Gluc1 --> M_A [0,1000]
+R_A_B: M_A --> M_B [0,1000]
+R_B_Biomass: M_B --> M_Biomass [0,1000] @1.0
+R_EX_Biomass: M_Biomass --> [0,1000]
+
