@@ -39,7 +39,7 @@ except:
     pass
 
 try:
-    from .glpk_wrapper_with_lazy import GlpkSolverLazy
+    from .glpk_wrapper_lazy import GlpkSolverLazy
 
     solvers['glpk_lazy'] = GlpkSolverLazy
 except:

@@ -1,5 +1,5 @@
 '''
-Implementation of a Glpk based solver interface.
+Implementation of a Glpk based solver interface with lazy loading.
 
 @author: Marta Matos
 
