@@ -21,9 +21,6 @@
 
 from ..solvers import solver_instance
 from ..solvers.solver import Status, VarType
-from framed.solvers.gurobi_wrapper import GurobiSolver
-from framed.solvers.glpk_wrapper import GlpkSolver
-from glpk.glpkpi import glp_write_prob, glp_write_lp
 
 
 def FBA(model, objective=None, maximize=True, constraints=None, solver=None, get_shadow_prices=False,
@@ -45,7 +42,7 @@ def FBA(model, objective=None, maximize=True, constraints=None, solver=None, get
 
     if not objective:
         objective = model.objective
-
+        
     if not maximize:
         objective = {r_id : -1 * coeff for r_id, coeff in objective.items()}
 
@@ -54,7 +51,6 @@ def FBA(model, objective=None, maximize=True, constraints=None, solver=None, get
         solver.build_problem(model)
 
     solution = solver.solve_lp(objective, None, constraints, get_shadow_prices, get_reduced_costs)
-
     return solution
 
 
@@ -80,14 +76,14 @@ def pFBA(model, objective=None, maximize=True, constraints=None, solver=None):
         objective = model.objective
 
     pre_solution = FBA(model, objective, maximize, constraints, solver)
-
+    
     if maximize:
         obj_value = pre_solution.fobj
     else:
         obj_value = -1 * pre_solution.fobj
-
+        
     solver.add_constraint('obj', objective.items(), '=', obj_value)
-
+       
     if not hasattr(solver, 'pFBA_flag'): #for speed (about 3x faster)
         solver.pFBA_flag = True
         for r_id, reaction in model.reactions.items():
@@ -95,7 +91,7 @@ def pFBA(model, objective=None, maximize=True, constraints=None, solver=None):
                 pos, neg = r_id + '+', r_id + '-'
                 solver.add_variable(pos, 0, None, persistent=False, update_problem=False)
                 solver.add_variable(neg, 0, None, persistent=False, update_problem=False)
-        solver.update()
+        solver.update()        
         for r_id, reaction in model.reactions.items():
             if reaction.reversible:
                 pos, neg = r_id + '+', r_id + '-'
@@ -118,9 +114,9 @@ def pFBA(model, objective=None, maximize=True, constraints=None, solver=None):
     solution = solver.solve_lp(objective, constraints=constraints)
 
     #post process
-
+    
     solver.remove_constraint('obj')
-
+                      
     if solution.status == Status.OPTIMAL:
         for r_id, reaction in model.reactions.items():
             if reaction.reversible:
@@ -273,6 +269,7 @@ def ROOM(model, reference=None, constraints=None, solver=None, delta=0.03, epsil
     if not reference:
         wt_solution = pFBA(model)
         reference = wt_solution.values
+
     if not solver:
         solver = solver_instance()
         solver.build_problem(model)
@@ -293,9 +290,10 @@ def ROOM(model, reference=None, constraints=None, solver=None, delta=0.03, epsil
             solver.add_constraint('c' + r_id + '_u', [(r_id, 1), (y_i, (w_u - U))], '<', w_u, persistent=False, update_problem=False)
             solver.add_constraint('c' + r_id + '_l', [(r_id, 1), (y_i, (w_l - L))], '>', w_l, persistent=False, update_problem=False)
         solver.update()
+        
 
     solution = solver.solve_lp(objective, constraints=constraints)
-
+    
     #post process
     if solution.status == Status.OPTIMAL:
         for r_id in model.reactions.keys():

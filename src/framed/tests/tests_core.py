@@ -129,7 +129,7 @@ class qpFBATest(unittest.TestCase):
         self.assertAlmostEqual(growth1, growth2, places=4)
         norm1 = sum([abs(solution1.values[r_id]) for r_id in model.reactions])
         norm2 = sum([abs(solution2.values[r_id]) for r_id in model.reactions])
-        self.assertLessEqual(norm1, norm2 + 1e-5)
+        self.assertLessEqual(norm1, norm2 + 1e-6)
 
 class FBAFromPlainTextTest(unittest.TestCase):
     """ Test FBA simulation from plain text model. """
@@ -240,14 +240,15 @@ class GeneDeletionLMOMATest(unittest.TestCase):
         self.assertAlmostEqual(solution.values['R_EX_succ_e'], LMOMA_SUCC_EX, 3)
 
 class GeneDeletionROOMTest(unittest.TestCase):
+    """ Test gene deletion with ROOM. """
 
     def testRun(self):
         model = load_sbml_model(SMALL_TEST_MODEL, kind=GPR_CONSTRAINED)
         fix_bigg_model(model)
         solution = gene_deletion(model, ROOM_GENE_KO, 'ROOM')
         self.assertEqual(solution.status, Status.OPTIMAL)
-        self.assertAlmostEqual(solution.values[model.detect_biomass_reaction()], ROOM_GROWTH_RATE, 1)
-        self.assertAlmostEqual(solution.values['R_EX_succ_e'], ROOM_SUCC_EX, 1)
+        self.assertAlmostEqual(solution.values[model.detect_biomass_reaction()], ROOM_GROWTH_RATE, 3)
+        self.assertAlmostEqual(solution.values['R_EX_succ_e'], ROOM_SUCC_EX, 3)
 
 
 class GeneEssentialityTest(unittest.TestCase):
@@ -257,7 +258,6 @@ class GeneEssentialityTest(unittest.TestCase):
         model = load_sbml_model(SMALL_TEST_MODEL, kind=GPR_CONSTRAINED)
         fix_bigg_model(model)
         essential = essential_genes(model)
-        #print(essential)
         self.assertListEqual(essential, ESSENTIAL_GENES)
 
 
