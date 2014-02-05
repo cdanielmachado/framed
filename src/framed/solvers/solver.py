@@ -126,6 +126,7 @@ class Solution:
             zeros: bool - show zero entries (default: False)
             sort: bool - sort reactions by flux (default: False)
             percentage: bool - show percentage of carried flux instead of absolute flux (default: False)
+            equations: bool - show reaction equations (default: False)
         
         Returns:
             str : formatted output
@@ -163,7 +164,7 @@ class Solution:
 
         if equations:
             print_format += '\t{}'
-            lines = map(lambda (a, b, c): print_format.format(c, a, b, model.print_reaction(a)[len(a)+1:]), flux_in + flux_out)
+            lines = map(lambda (a, b, c): print_format.format(c, a, b, model.print_reaction(a, metabolite_names=True)[len(a)+1:]), flux_in + flux_out)
         else:
             lines = map(lambda (a, b, c): print_format.format(c, a, b), flux_in + flux_out)           
         
