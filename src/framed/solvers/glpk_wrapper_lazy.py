@@ -1,6 +1,5 @@
 '''
-Implementation of a Glpk based solver interface  with lazy loading only
-for buil_problem().
+Implementation of a Glpk based solver interface with lazy loading.
 
 @author: Marta Matos
 
@@ -39,7 +38,7 @@ status_mapping = {GLP_OPT: Status.OPTIMAL,
                   GLP_UNDEF: Status.UNKNOWN}
 
 
-class GlpkSolver(Solver):
+class GlpkSolverLazy(Solver):
 
     """ Implements the solver interface using python-GLPK. """
 
@@ -83,26 +82,11 @@ class GlpkSolver(Solver):
         self.__init__()
         tmp_file = tempfile.mktemp(suffix=".lp")
         open(tmp_file, 'w').write(repr_dict['cplex_form'])
+        self.empty_problem()
         glp_read_lp(self.problem, None, tmp_file)
         glp_create_index(self.problem)
         self.var_ids = repr_dict['var_ids']
         self.constr_ids = repr_dict['constr_ids']
-
-    def build_problem(self, model):
-        """ Create problem structure for a given model.
-
-        Arguments:
-            model : ConstraintBasedModel
-        """
-
-        for r_id, (lb, ub) in model.bounds.items():
-            self.add_variable(r_id, lb, ub, update_problem=False)
-        self.update()
-
-        table = model.metabolite_reaction_lookup_table()
-        for m_id in model.metabolites:
-            self.__add_constraint_lazy(m_id, table[m_id].items(), update_problem=False)
-        self.update()
 
     def add_variable(self, var_id, lb=None, ub=None, vartype=VarType.CONTINUOUS, persistent=True, update_problem=True):
         """ Add a variable to the current problem.
@@ -164,39 +148,22 @@ class GlpkSolver(Solver):
             glp_set_row_name(self.problem, ind_row, constr_id)
             self.constr_ids.append(constr_id)
 
-            coef_ind, coef_val, n_vars = self.init_constr_arrays()
+            # if there are any entries in the constraint matrix, further constraints
+            #  will be added to the matrix and not immediately to the problem
+            if update_problem == False or self.coefMatrix != {}:
+                for r_id, coeff in lhs:
+                    if coeff != 0:
+                        ind_col = glp_find_col(self.problem, r_id)
+                        self.coefMatrix[(ind_row, ind_col)] = coeff
 
-            for r_id, coeff in lhs:
-                coef_ind_col = glp_find_col(self.problem, r_id)
-                coef_val[coef_ind_col] = coeff
+            else:
+                coef_ind, coef_val, n_vars = self.init_constr_arrays()
 
-            glp_set_mat_row(self.problem, ind_row, n_vars, coef_ind, coef_val)
+                for r_id, coeff in lhs:
+                    coef_ind_col = glp_find_col(self.problem, r_id)
+                    coef_val[coef_ind_col] = coeff
 
-        self.set_constr_bounds(ind_row, sense, rhs)
-
-        if not persistent:
-            self.temp_constrs.add(constr_id)
-
-    def __add_constraint_lazy(self, constr_id, lhs, sense='=', rhs=0, persistent=True, update_problem=True):
-        """ Add a constraint to the current problem.
-
-        Arguments:
-            constr_id : str -- constraint identifier
-            lhs : list [of (str, float)] -- variables and respective coefficients
-            sense : {'<', '=', '>'} -- default '='
-            rhs : float -- right-hand side of equation (default: 0)
-            persistent : bool -- if the variable should be reused for multiple calls (default: True)
-            update_problem : bool -- update problem immediately (default: True)
-        """
-
-        glp_add_rows(self.problem, 1)
-        ind_row = glp_get_num_rows(self.problem)
-        glp_set_row_name(self.problem, ind_row, constr_id)
-        self.constr_ids.append(constr_id)
-
-        for r_id, coeff in lhs:
-            ind_col = glp_find_col(self.problem, r_id)
-            self.coefMatrix[(ind_row, ind_col)] = coeff
+                glp_set_mat_row(self.problem, ind_row, n_vars, coef_ind, coef_val)
 
         self.set_constr_bounds(ind_row, sense, rhs)
 
@@ -211,8 +178,19 @@ class GlpkSolver(Solver):
         """
         col_to_delete = intArray(2)
         col_to_delete[1] = glp_find_col(self.problem, var_id)
-        glp_del_cols(self.problem, 1, col_to_delete)
-        self.var_ids.remove(var_id)
+
+        entries_to_remove = []
+
+        if var_id in self.var_ids:
+            if self.coefMatrix != {}:
+                for (row, col) in self.coefMatrix:
+                    if col == col_to_delete[1]:
+                        entries_to_remove.append((row, col))
+                for row, col in entries_to_remove:
+                    del self.coefMatrix[(row, col)]
+
+            glp_del_cols(self.problem, 1, col_to_delete)
+            self.var_ids.remove(var_id)
 
     def remove_constraint(self, constr_id):
         """ Remove a constraint from the current problem.
@@ -220,13 +198,41 @@ class GlpkSolver(Solver):
         Arguments:
             constr_id : str -- constraint identifier
         """
+
         row_to_delete = intArray(2)
         row_to_delete[1] = glp_find_row(self.problem, constr_id)
-        glp_del_rows(self.problem, 1, row_to_delete)
-        self.constr_ids.remove(constr_id)
+
+        entries_to_remove = []
+
+        if constr_id in self.constr_ids:
+            if self.coefMatrix != {}:
+                for (row, col) in self.coefMatrix:
+                    if row == row_to_delete[1]:
+                        entries_to_remove.append((row, col))
+                for row, col in entries_to_remove:
+                    del self.coefMatrix[(row, col)]
+
+            glp_del_rows(self.problem, 1, row_to_delete)
+            self.constr_ids.remove(constr_id)
+
+
 
     def update(self):
         """ Update internal structure. Used for efficient lazy updating. """
+
+        num_constraints = glp_get_num_rows(self.problem)
+        coef_ind, coef_val, n_vars = self.init_constr_arrays()
+
+        # if the constraint matrix is empty but constraints were added 
+        #  to the problem, these are copied to the matrix, which will be
+        #  loaded afterwards
+
+        if self.coefMatrix == {} and num_constraints > 0:
+            for i in range(1, num_constraints + 1):
+                glp_get_mat_row(self.problem, i, coef_ind, coef_val)
+                for j in range(1, n_vars + 1):
+                    if coef_val[j] != 0:
+                        self.coefMatrix[(i, coef_ind[j])] = coef_val[j]
 
         if self.coefMatrix != {}:
             nEntries = len(self.coefMatrix) + 1
@@ -243,8 +249,6 @@ class GlpkSolver(Solver):
                 i += 1
 
             glp_load_matrix(self.problem, nEntries - 1, rows_ind, cols_ind, coeffs)
-            
-            self.coefMatrix =  {}
 
 
     def set_presolve(self, active=False):
@@ -301,6 +305,9 @@ class GlpkSolver(Solver):
 
         if not self.problem:
             raise Exception('A model must be given if solver is used for the first time.')
+
+        if (self.coefMatrix) != {} and (glp_get_num_nz(self.problem) > len(self.coefMatrix)):
+            self.update()
 
         if constraints:
             old_constraints = {}
