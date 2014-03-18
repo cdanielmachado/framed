@@ -1,0 +1,1 @@
+ACALD  ACALDt  ACKr  ACONTa  ACONTb  ACt2r  AKGDH  AKGt2r  ALCD2x  Biomass_Ecoli_core_w_GAM  CS  ETOHt2r  EX_ac(e)  EX_acald(e)  EX_akg(e)  EX_co2(e)  EX_etoh(e)  EX_for(e)  EX_fru(e)  EX_fum(e)  EX_gln_L(e)  EX_glu_L(e)  EX_mal_L(e)  EX_o2(e)  FORt2  FRUpts2  FUM  FUMt2_2  ICDHyr  ICL  MALS  MALt2_2  MDH  ME1  ME2  NH4t  O2t  PFL  PGL  PPCK  RPE  RPI  SUCOAS  TKT1  TKT2  

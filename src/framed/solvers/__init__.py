@@ -39,6 +39,14 @@ except:
     pass
 
 try:
+    from .glpk_wrapper_lazy import GlpkSolverLazy
+
+    solvers['glpk_lazy'] = GlpkSolverLazy
+except:
+    pass
+
+
+try:
     from .gurobi_wrapper import GurobiSolver
 
     solvers['gurobi'] = GurobiSolver

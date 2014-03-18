@@ -7,7 +7,7 @@ import unittest
 import pickle
 
 from framed.io_utils.sbml import load_sbml_model, CONSTRAINT_BASED
-from framed.solvers import *
+from framed.solvers import GurobiSolver, GlpkSolver, GlpkSolverLazy
 from framed.analysis.simulation import FBA
 from framed.core.fixes import fix_bigg_model
 from test_glpk_alone import *
@@ -23,8 +23,8 @@ class SolverPickleTest(unittest.TestCase):
         fix_bigg_model(self.model)
 
     def test_gurobi_solver_pickle(self):
-        set_default_solver(solvername="gurobi")
-        self.solver = solver_instance()
+
+        self.solver = GurobiSolver()
         self.solver.build_problem(self.model)
         solver_from_pickle = pickle.loads(pickle.dumps(self.solver))
         FBA(self.model, solver=self.solver)
@@ -32,8 +32,8 @@ class SolverPickleTest(unittest.TestCase):
                          FBA(self.model, solver=solver_from_pickle).status)
 
     def test_glpk_solver_pickle(self):
-        set_default_solver(solvername="glpk")
-        self.solver = solver_instance()
+
+        self.solver = GlpkSolver()
         self.solver.build_problem(self.model)
         solver_from_pickle = pickle.loads(pickle.dumps(self.solver))
         self.assertEqual(FBA(self.model, solver=self.solver).status,
@@ -54,19 +54,82 @@ class SolverGLPKTest(unittest.TestCase):
         self.assertEqual(result[2], 6.25)
 
     def test_glpk_against_gurobi(self):
-        set_default_solver(solvername="gurobi")
-        self.solver_one = solver_instance()
+        
+        self.solver_one = GurobiSolver()
         self.solver_one.build_problem(self.model)
         sol_one = FBA(self.model, solver=self.solver_one)
 
-        set_default_solver(solvername="glpk")
-        self.solver_two = solver_instance()
+        
+        self.solver_two = GlpkSolver()
         self.solver_two.build_problem(self.model)
         sol_two = FBA(self.model, solver=self.solver_two)
 
         self.assertAlmostEqual(sol_one.fobj, sol_two.fobj, places=5)
 
+    def test_glpk_milp_alone(self):
+        # binary variables only
+        result = solve_milp_bin_prob_glpk()
+        self.assertEqual(result[0], -14)
+        self.assertEqual(result[1], 1)
+        self.assertEqual(result[2], 1)
+        self.assertEqual(result[3], 0)
+        self.assertEqual(result[4], 0)
 
+
+    def test_glpk_lazy_loading(self):
+
+        self.solver_one = GlpkSolver()
+        self.solver_one.build_problem(self.model)
+        sol_one = FBA(self.model, solver=self.solver_one)
+
+        self.solver_two = GlpkSolverLazy()
+        self.solver_two.build_problem(self.model)
+        sol_two = FBA(self.model, solver=self.solver_two)
+
+        self.assertAlmostEqual(sol_one.fobj, sol_two.fobj, places=5)
+
+    def test_remove_constraint(self):
+        """ This tests works only for the ecoli core model.
+        """
+        constr_id = "M_glu_L_c"
+
+        self.solver_one = GlpkSolverLazy()
+        self.solver_one.build_problem(self.model)
+        self.solver_one.remove_constraint(constr_id)
+        sol_one = FBA(self.model, solver=self.solver_one)
+
+        self.solver_two = GlpkSolver()
+        self.solver_two.build_problem(self.model)
+        nRows_before = glp_get_num_rows(self.solver_two.problem)
+        self.solver_two.remove_constraint(constr_id)
+        nRows_after = glp_get_num_rows(self.solver_two.problem)
+        sol_two = FBA(self.model, solver=self.solver_two)
+
+        self.assertEqual(nRows_before, nRows_after + 1)
+        self.assertAlmostEqual(sol_one.fobj, sol_two.fobj, places=5)
+
+    def test_remove_variable(self):
+        """ This tests works only for the ecoli core model.
+        """
+        var_id = "R_SUCOAS"
+
+        self.solver_one = GlpkSolverLazy()
+        self.solver_one.build_problem(self.model)
+        self.solver_one.remove_variable(var_id)
+        sol_one = FBA(self.model, solver=self.solver_one)
+
+        self.solver_two = GlpkSolver()
+        self.solver_two.build_problem(self.model)
+
+        nCols_before = glp_get_num_cols(self.solver_two.problem)
+        self.solver_two.remove_variable(var_id)
+        nCols_after = glp_get_num_cols(self.solver_two.problem)
+        sol_two = FBA(self.model, solver=self.solver_two)
+
+        self.assertEqual(nCols_before, nCols_after + 1)
+        self.assertAlmostEqual(sol_one.fobj, sol_two.fobj, places=5)
+        
+        
 def suite():
     tests = [SolverPickleTest, SolverGLPKTest]
     test_suite = unittest.TestSuite()

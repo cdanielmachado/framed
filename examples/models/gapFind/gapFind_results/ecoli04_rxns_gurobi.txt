@@ -1,0 +1,1 @@
+ACKr  ACt2r  AKGDH  AKGt2r  Biomass_Ecoli_core_w_GAM  EX_ac(e)  EX_akg(e)  EX_fru(e)  EX_fum(e)  EX_gln_L(e)  EX_glu_L(e)  EX_mal_L(e)  EX_nh4(e)  EX_pyr(e)  FRUpts2  FUMt2_2  G6PDH2r  GLNabc  MALt2_2  NH4t  PGL  RPE  RPI  SUCOAS  TKT1  TKT2  
