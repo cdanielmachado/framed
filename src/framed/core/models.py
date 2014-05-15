@@ -19,7 +19,7 @@ TODO: Add explicit (graph-based) gene-reaction associations
    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
    See the License for the specific language governing permissions and
    limitations under the License.
-   
+
 """
 
 from collections import OrderedDict
@@ -118,7 +118,7 @@ class StoichiometricModel:
 
     def add_metabolites(self, metabolites):
         """ Add a list of metabolites to the model.
-        
+
         Arguments:
             metabolites : list of Metabolite
         """
@@ -129,7 +129,7 @@ class StoichiometricModel:
         """ Add a single metabolite to the model.
         If a metabolite with the same id exists, it will be replaced.
         If the metabolite compartment is defined, then it must exist in the model.
-        
+
         Arguments:
             metabolite : Metabolite
         """
@@ -139,7 +139,7 @@ class StoichiometricModel:
 
     def add_reactions(self, reactions):
         """ Add a list of reactions to the model.
-        
+
         Arguments:
             reactions : list of Reaction
         """
@@ -150,7 +150,7 @@ class StoichiometricModel:
     def add_reaction(self, reaction):
         """ Add a single reaction to the model.
         If a reaction with the same id exists, it will be replaced.
-        
+
         Arguments:
             reaction : Reaction
         """
@@ -159,7 +159,7 @@ class StoichiometricModel:
 
     def add_compartments(self, compartments):
         """ Add a list of compartments to the model.
-        
+
         Arguments:
             compartments : list of Compartment
         """
@@ -169,29 +169,38 @@ class StoichiometricModel:
     def add_compartment(self, compartment):
         """ Add a single compartment to the model.
         If a compartment with the same id exists, it will be replaced.
-        
+
         Arguments:
             compartment : Compartment
         """
         self.compartments[compartment.id] = compartment
 
-    def add_stoichiometry(self, stoichiometry):
+    def add_stoichiometry(self, stoichiometry, replace=False):
         """ Add stoichiometric coefficients (weighted edges between metabolites and reactions).
         Negative coefficients represent consumption, positive coefficients represent production.
         If coefficients for the same metabolite-reaction pairs exist in the model, they will be replaced.
-        
+
         Arguments:
             stoichiometry : list of (str, str, float) -- metabolite id, reaction id, coefficient
+            replace : bool -- replace old coefficient with new instead of adding (default: False)
         """
         for m_id, r_id, coeff in stoichiometry:
             if m_id in self.metabolites and r_id in self.reactions:
-                self.stoichiometry[(m_id, r_id)] = coeff
+                if (m_id, r_id) not in self.stoichiometry or replace:
+                    self.stoichiometry[(m_id, r_id)] = coeff
+                else:
+                    coeff += self.stoichiometry[(m_id, r_id)]
+                    if coeff:
+                        self.stoichiometry[(m_id, r_id)] = coeff
+                    else:
+                        del self.stoichiometry[(m_id, r_id)]
+
         self._clear_temp()
 
     def remove_metabolites(self, id_list):
         """ Remove a list of metabolites from the model.
         Also removes all the edges connected to the metabolites.
-        
+
         Arguments:
             id_list : list of str -- metabolite ids
         """
@@ -206,7 +215,7 @@ class StoichiometricModel:
     def remove_metabolite(self, m_id):
         """ Remove a single metabolite from the model.
         Also removes all the edges connected to the metabolite.
-        
+
         Arguments:
             m_id : str -- metabolite id
         """
@@ -215,7 +224,7 @@ class StoichiometricModel:
     def remove_reactions(self, id_list):
         """ Remove a list of reactions from the model.
         Also removes all the edges connected to the reactions.
-        
+
         Arguments:
             id_list : list of str -- reaction ids
         """
@@ -230,7 +239,7 @@ class StoichiometricModel:
     def remove_reaction(self, r_id):
         """ Remove a single reaction from the model.
         Also removes all the edges connected to the reaction.
-        
+
         Arguments:
             r_id : str -- reaction id
         """
@@ -240,7 +249,7 @@ class StoichiometricModel:
     def remove_compartment(self, c_id, delete_metabolites=True):
         """ Remove a compartment from the model.
         Removes also all the metabolites in that compartment.
-        
+
         Arguments:
             c_id : str -- compartment id
             delete_metabolites : Bool -- True (default)
@@ -254,8 +263,8 @@ class StoichiometricModel:
 
 
     def get_reaction_substrates(self, r_id):
-        """ Return the list of substrates for one reaction 
-        
+        """ Return the list of substrates for one reaction
+
         Arguments:
             r_id: str -- reaction id
 
@@ -267,8 +276,8 @@ class StoichiometricModel:
 
 
     def get_reaction_products(self, r_id):
-        """ Return the list of products for one reaction 
-        
+        """ Return the list of products for one reaction
+
         Arguments:
             r_id: str -- reaction id
 
@@ -280,8 +289,8 @@ class StoichiometricModel:
 
 
     def get_reaction_neighbours(self, r_id):
-        """ Return the list of metabolites connected to a reaction 
-        
+        """ Return the list of metabolites connected to a reaction
+
         Arguments:
             r_id: str -- reaction id
 
@@ -293,8 +302,8 @@ class StoichiometricModel:
 
 
     def get_metabolite_inputs(self, m_id):
-        """ Return the list of input reactions for one metabolite 
-        
+        """ Return the list of input reactions for one metabolite
+
         Arguments:
             m_id: str -- metabolite id
 
@@ -306,8 +315,8 @@ class StoichiometricModel:
 
 
     def get_metabolite_outputs(self, m_id):
-        """ Return the list of output reactions for one metabolite 
-        
+        """ Return the list of output reactions for one metabolite
+
         Arguments:
             m_id: str -- metabolite id
 
@@ -319,8 +328,8 @@ class StoichiometricModel:
 
 
     def get_metabolite_neighbours(self, m_id):
-        """ Return the list of reactions connected to a metabolite 
-        
+        """ Return the list of reactions connected to a metabolite
+
         Arguments:
             m_id: str -- metabolite id
 
@@ -332,8 +341,8 @@ class StoichiometricModel:
 
 
     def metabolite_reaction_lookup_table(self):
-        """ Return the network topology as a nested map: metabolite id -> reaction id -> coefficient 
-        
+        """ Return the network topology as a nested map: metabolite id -> reaction id -> coefficient
+
         Returns:
             OrderedDict (of str to OrderedDict of str to float) -- lookup table
         """
@@ -348,8 +357,8 @@ class StoichiometricModel:
 
 
     def reaction_metabolite_lookup_table(self):
-        """ Return the network topology as a nested map: reaction id -> metabolite id -> coefficient 
-        
+        """ Return the network topology as a nested map: reaction id -> metabolite id -> coefficient
+
         Returns:
             OrderedDict (of str to OrderedDict of str to float) -- lookup table
         """
@@ -365,7 +374,7 @@ class StoichiometricModel:
 
     def stoichiometric_matrix(self):
         """ Return the full stoichiometric matrix represented by the network topology
-        
+
         Returns:
             list (of list of float) -- stoichiometric matrix
         """
@@ -380,12 +389,12 @@ class StoichiometricModel:
 
     def print_reaction(self, r_id, reaction_names=False, metabolite_names=False):
         """ Print a reaction to a text based representation.
-        
+
         Arguments:
             r_id : str -- reaction id
             reaction_names : bool -- print reaction names instead of ids (default: False)
             metabolite_names : bool -- print metabolite names instead of ids (default: False)
-        
+
         Returns:
             str -- reaction string
         """
@@ -405,7 +414,7 @@ class StoichiometricModel:
 
     def to_string(self, reaction_names=False, metabolite_names=False):
         """ Print the model to a text based representation.
-                
+
         Returns:
             str -- model string
         """
@@ -433,7 +442,7 @@ class ConstraintBasedModel(StoichiometricModel):
 
     def set_bounds(self, bounds_list):
         """ Define flux bounds for a set of reactions
-        
+
         Arguments:
             bounds_list : list (of str, float, float) -- reaction id, lower bound, upper bound
         """
@@ -442,7 +451,7 @@ class ConstraintBasedModel(StoichiometricModel):
 
     def set_flux_bounds(self, r_id, lb, ub):
         """ Define flux bounds for one reaction
-        
+
         Arguments:
             r_id : str -- reaction id
             lb : float -- lower bound (use None to represent negative infinity)
@@ -453,7 +462,7 @@ class ConstraintBasedModel(StoichiometricModel):
 
     def set_lower_bound(self, r_id, lb):
         """ Define lower bound for one reaction
-        
+
         Arguments:
             r_id : str -- reaction id
             lb : float -- lower bound (use None to represent negative infinity)
@@ -464,7 +473,7 @@ class ConstraintBasedModel(StoichiometricModel):
 
     def set_upper_bound(self, r_id, ub):
         """ Define upper bound for one reaction
-        
+
         Arguments:
             r_id : str -- reaction id
             ub : float -- upper bound (use None to represent positive infinity)
@@ -472,10 +481,10 @@ class ConstraintBasedModel(StoichiometricModel):
         if r_id in self.reactions:
             lb, _ = self.bounds[r_id]
             self.bounds[r_id] = lb, ub
-    
+
     def set_objective_coefficients(self, coefficients):
         """ Define objective coefficients for a list of reactions
-        
+
         Arguments:
             coefficients : list (of str, float) -- reaction id, coefficient
         """
@@ -484,19 +493,19 @@ class ConstraintBasedModel(StoichiometricModel):
 
     def set_reaction_objective(self, r_id, coeff=0):
         """ Define objective coefficient for a single reaction
-        
+
         Arguments:
             r_id : str -- reaction id
             coeff : float -- reaction objective (default: 0)
         """
         if r_id in self.reactions:
             self.objective[r_id] = coeff
-            
+
 
     def add_reaction(self, reaction, lb=None, ub=None, coeff=0):
         """ Add a single reaction to the model.
         If a reaction with the same id exists, it will be replaced.
-        
+
         Arguments:
             reaction : Reaction
             lb : float -- lower bound (default: None)
@@ -514,7 +523,7 @@ class ConstraintBasedModel(StoichiometricModel):
     def remove_reactions(self, id_list):
         """ Remove a list of reactions from the model.
         Also removes all the edges connected to the reactions.
-        
+
         Arguments:
             id_list : list of str -- reaction ids
         """
@@ -525,10 +534,10 @@ class ConstraintBasedModel(StoichiometricModel):
 
     def print_reaction(self, r_id, reaction_names=False, metabolite_names=False):
         """ Print a reaction to a text based representation.
-        
+
         Arguments:
             r_id : str -- reaction id
-        
+
         Returns:
             str -- reaction string
         """
@@ -541,19 +550,19 @@ class ConstraintBasedModel(StoichiometricModel):
         coeff = self.objective[r_id]
         if coeff:
             res += ' @{}'.format(coeff)
-        
+
         return res
 
     def detect_biomass_reaction(self):
         """ Detects biomass reaction in the model (searches by objective coefficient)
-         
+
         Returns:
             str -- first reaction that matches (or else None)
         """
- 
+
         if not self.biomass_reaction:
             matches = [r_id for r_id, coeff in self.objective.items() if coeff]
- 
+
             if matches:
                 self.biomass_reaction = matches[0]
                 if len(matches) == 1:
@@ -562,7 +571,7 @@ class ConstraintBasedModel(StoichiometricModel):
                     print 'Multiple biomass reactions detected (first selected):', " ".join(matches)
             else:
                 print 'No biomass reaction detected.'
-  
+
         return self.biomass_reaction
 
 
@@ -583,7 +592,7 @@ class GPRConstrainedModel(ConstraintBasedModel):
 
     def add_genes(self, genes):
         """ Add a list of genes to the model.
-        
+
         Arguments:
             genes : list of Gene
         """
@@ -593,7 +602,7 @@ class GPRConstrainedModel(ConstraintBasedModel):
     def add_gene(self, gene):
         """ Add a gene metabolite to the model.
         If a gene with the same id exists, it will be replaced.
-        
+
         Arguments:
             gene : Gene
         """
@@ -602,7 +611,7 @@ class GPRConstrainedModel(ConstraintBasedModel):
     def add_reaction(self, reaction, lb=None, ub=None, rule=''):
         """ Add a single reaction to the model.
         If a reaction with the same id exists, it will be replaced.
-        
+
         Arguments:
             reaction : Reaction
             lb : float -- lower bound (default: None)
@@ -615,7 +624,7 @@ class GPRConstrainedModel(ConstraintBasedModel):
     def remove_reactions(self, id_list):
         """ Remove a list of reactions from the model.
         Also removes all the edges connected to the reactions.
-        
+
         Arguments:
             id_list : list of str -- reaction ids
         """
@@ -626,7 +635,7 @@ class GPRConstrainedModel(ConstraintBasedModel):
 
     def set_rules(self, rules):
         """ Define GPR association rules for a set of reactions
-        
+
         Arguments:
             rules : list (of (str, str)) -- reaction id, rule
         """
@@ -635,7 +644,7 @@ class GPRConstrainedModel(ConstraintBasedModel):
 
     def set_rule(self, r_id, rule):
         """ Define GPR association rule for one reaction
-        
+
         Arguments:
             r_id : str -- reaction id
             rule : str -- GPR association rule
@@ -647,10 +656,10 @@ class GPRConstrainedModel(ConstraintBasedModel):
 
     def eval_GPR(self, active_genes):
         """ Evaluate the GPR associations.
-        
+
         Arguments:
             active_genes : list (of str) -- set of active genes
-        
+
         Returns:
             list (of str) -- set of active reactions
         """
@@ -667,4 +676,4 @@ class GPRConstrainedModel(ConstraintBasedModel):
                 rule = rule.replace(' ' + gene + ' ', ' x[\'' + gene + '\'] ')
         return eval('lambda x: ' + rule)
 
-    
+
