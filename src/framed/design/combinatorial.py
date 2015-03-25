@@ -21,7 +21,6 @@
 
 from itertools import combinations
 from collections import OrderedDict
-from ..core.models import GPRConstrainedModel
 from ..analysis.deletion import deletion
 from ..analysis.simulation import pFBA
 from ..solvers.solver import Status
@@ -88,7 +87,7 @@ def combinatorial_deletion(model, fobj, max_dels, kind='reactions', targets=None
         list (of (list of str, float)) -- valid solutions
     """
 
-    if kind == 'genes' and isinstance(model, GPRConstrainedModel):
+    if kind == 'genes':
         targets = model.genes if not targets else targets
     else:
         kind = 'reactions'

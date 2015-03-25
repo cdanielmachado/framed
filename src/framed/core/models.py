@@ -93,7 +93,7 @@ class Compartment:
         return self.name if self.name else self.id
 
 
-class StoichiometricModel:
+class Model:
     """ Base class for all metabolic models implemented as a bipartite network.
     Contains the list of metabolites, reactions, compartments, and stoichiometry.
     """
@@ -425,7 +425,7 @@ class StoichiometricModel:
         return self.to_string()
 
 
-class ConstraintBasedModel(StoichiometricModel):
+class CBModel(Model):
     """ Base class for constraint-based models.
     Extends StoichiometricModel with flux bounds.
     """
@@ -435,10 +435,15 @@ class ConstraintBasedModel(StoichiometricModel):
         Arguments:
             model_id : String -- a valid unique identifier
         """
-        StoichiometricModel.__init__(self, model_id)
+        Model.__init__(self, model_id)
         self.bounds = OrderedDict()
         self.objective = OrderedDict()
+        self.genes = OrderedDict()
+        self.rules = OrderedDict()
+        self.rule_functions = OrderedDict()
         self.biomass_reaction = None
+
+
 
     def set_bounds(self, bounds_list):
         """ Define flux bounds for a set of reactions
@@ -502,7 +507,7 @@ class ConstraintBasedModel(StoichiometricModel):
             self.objective[r_id] = coeff
 
 
-    def add_reaction(self, reaction, lb=None, ub=None, coeff=0):
+    def add_reaction(self, reaction, lb=None, ub=None, coeff=0, rule=''):
         """ Add a single reaction to the model.
         If a reaction with the same id exists, it will be replaced.
 
@@ -512,13 +517,16 @@ class ConstraintBasedModel(StoichiometricModel):
             ub : float -- upper bound (default: None)
             coeff : float -- objective coefficient (default: 0)
         """
-        StoichiometricModel.add_reaction(self, reaction)
+        Model.add_reaction(self, reaction)
 
         if lb == None and not reaction.reversible:
             lb = 0
 
         self.bounds[reaction.id] = (lb, ub)
         self.objective[reaction.id] = coeff
+        self.set_rule(reaction.id, rule)
+
+
 
     def remove_reactions(self, id_list):
         """ Remove a list of reactions from the model.
@@ -527,10 +535,12 @@ class ConstraintBasedModel(StoichiometricModel):
         Arguments:
             id_list : list of str -- reaction ids
         """
-        StoichiometricModel.remove_reactions(self, id_list)
+        Model.remove_reactions(self, id_list)
         for r_id in id_list:
             del self.bounds[r_id]
             del self.objective[r_id]
+            del self.rules[r_id]
+            del self.rule_functions[r_id]
 
     def print_reaction(self, r_id, reaction_names=False, metabolite_names=False):
         """ Print a reaction to a text based representation.
@@ -541,7 +551,7 @@ class ConstraintBasedModel(StoichiometricModel):
         Returns:
             str -- reaction string
         """
-        res = StoichiometricModel.print_reaction(self, r_id, reaction_names, metabolite_names)
+        res = Model.print_reaction(self, r_id, reaction_names, metabolite_names)
         lb, ub = self.bounds[r_id]
         rev = self.reactions[r_id].reversible
         if lb != None and (rev or lb != 0.0) or ub != None:
@@ -575,21 +585,6 @@ class ConstraintBasedModel(StoichiometricModel):
         return self.biomass_reaction
 
 
-class GPRConstrainedModel(ConstraintBasedModel):
-    """ Base class for constraint-based models with GPR associations.
-    Extends ConstraintBasedModel with genes and rules
-    """
-
-    def __init__(self, model_id):
-        """
-        Arguments:
-            model_id : String -- a valid unique identifier
-        """
-        ConstraintBasedModel.__init__(self, model_id)
-        self.genes = OrderedDict()
-        self.rules = OrderedDict()
-        self.rule_functions = OrderedDict()
-
     def add_genes(self, genes):
         """ Add a list of genes to the model.
 
@@ -607,31 +602,6 @@ class GPRConstrainedModel(ConstraintBasedModel):
             gene : Gene
         """
         self.genes[gene.id] = gene
-
-    def add_reaction(self, reaction, lb=None, ub=None, rule=''):
-        """ Add a single reaction to the model.
-        If a reaction with the same id exists, it will be replaced.
-
-        Arguments:
-            reaction : Reaction
-            lb : float -- lower bound (default: None)
-            ub : float -- upper bound (default: None)
-            rule : str -- GPR association rule (default: None)
-        """
-        ConstraintBasedModel.add_reaction(self, reaction, lb, ub)
-        self.set_rule(reaction.id, rule)
-
-    def remove_reactions(self, id_list):
-        """ Remove a list of reactions from the model.
-        Also removes all the edges connected to the reactions.
-
-        Arguments:
-            id_list : list of str -- reaction ids
-        """
-        ConstraintBasedModel.remove_reactions(self, id_list)
-        for r_id in id_list:
-            del self.rules[r_id]
-            del self.rule_functions[r_id]
 
     def set_rules(self, rules):
         """ Define GPR association rules for a set of reactions
@@ -675,5 +645,11 @@ class GPRConstrainedModel(ConstraintBasedModel):
             for gene in self.genes:
                 rule = rule.replace(' ' + gene + ' ', ' x[\'' + gene + '\'] ')
         return eval('lambda x: ' + rule)
+
+
+
+
+
+
 
 

@@ -19,8 +19,6 @@
    
 '''
 
-from collections import OrderedDict
-from ..core.models import GPRConstrainedModel
 from ..analysis.deletion import deletion
 from ..analysis.simulation import FBA
 from ..solvers.solver import Status
@@ -46,7 +44,7 @@ def greedy_deletion(model, fobj, max_dels, kind='reactions', targets=None, metho
         list (of (list of str, float)) -- valid solutions
     """
 
-    if kind == 'genes' and isinstance(model, GPRConstrainedModel):
+    if kind == 'genes':
         targets = model.genes if not targets else targets
     else:
         kind = 'reactions'

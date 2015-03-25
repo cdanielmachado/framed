@@ -20,7 +20,6 @@ This module implements methods to compute gene and reaction essentiality.
    
 '''
 
-from ..core.models import GPRConstrainedModel
 from ..solvers import solver_instance
 from ..solvers.solver import Status
 from simulation import FBA
@@ -75,7 +74,7 @@ def essentiality(model, kind='reactions', min_growth=0.01, constraints=None):
     wt_solution = FBA(model, constraints=constraints, solver=solver)
     wt_growth = wt_solution.fobj
 
-    if kind == 'genes' and isinstance(model, GPRConstrainedModel):
+    if kind == 'genes':
         elements = model.genes
     else:
         kind = 'reactions'

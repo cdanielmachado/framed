@@ -20,7 +20,7 @@ Module for model transformation operations.
    
 '''
 
-from models import Metabolite, Reaction, ConstraintBasedModel, GPRConstrainedModel
+from models import Metabolite, Reaction, CBModel
 from ..analysis.variability import blocked_reactions
 
 
@@ -69,12 +69,10 @@ def make_irreversible(model):
                 model.stoichiometry[(m_id, fwd_id)] = coeff
                 model.stoichiometry[(m_id, bwd_id)] = -coeff
 
-            if isinstance(model, ConstraintBasedModel):
+            if isinstance(model, CBModel):
                 lb, ub = model.bounds[r_id]
                 model.set_flux_bounds(fwd_id, 0, ub)
                 model.set_flux_bounds(bwd_id, 0, -lb if lb != None else None)
-
-            if isinstance(model, GPRConstrainedModel):
                 model.set_rule(fwd_id, model.rules[r_id])
                 model.set_rule(bwd_id, model.rules[r_id])
 

@@ -5,7 +5,7 @@ Unit testing module for core features.
 """
 import unittest
 
-from framed.io_utils.sbml import load_sbml_model, save_sbml_model, CONSTRAINT_BASED, GPR_CONSTRAINED
+from framed.io_utils.sbml import load_sbml_model, save_sbml_model
 from framed.core.fixes import fix_bigg_model
 from framed.analysis.simulation import FBA, pFBA, qpFBA
 from framed.analysis.variability import FVA
@@ -46,9 +46,9 @@ class SBMLTest(unittest.TestCase):
     """ Test SBML import and export. """
 
     def testRun(self):
-        model = load_sbml_model(SMALL_TEST_MODEL, kind=GPR_CONSTRAINED)
+        model = load_sbml_model(SMALL_TEST_MODEL, kind='cb')
         save_sbml_model(model, TEST_MODEL_COPY)
-        model_copy = load_sbml_model(TEST_MODEL_COPY, kind=GPR_CONSTRAINED)
+        model_copy = load_sbml_model(TEST_MODEL_COPY, kind='cb')
         self.assertEqual(model.id, model_copy.id)
         self.assertListEqual(model.metabolites.keys(), model_copy.metabolites.keys())
         self.assertListEqual(model.reactions.keys(), model_copy.reactions.keys())
@@ -62,9 +62,9 @@ class PlainTextIOTest(unittest.TestCase):
     """ Test plain text import and export. """
 
     def testRun(self):
-        model = load_sbml_model(SMALL_TEST_MODEL, kind=CONSTRAINT_BASED)
+        model = load_sbml_model(SMALL_TEST_MODEL, kind='cb')
         write_model_to_file(model, PLAIN_TEXT_COPY)
-        model_copy = read_model_from_file(PLAIN_TEXT_COPY, kind=CONSTRAINT_BASED)
+        model_copy = read_model_from_file(PLAIN_TEXT_COPY, kind='cb')
         self.assertListEqual(sorted(model.metabolites.keys()),
                              sorted(model_copy.metabolites.keys()))
         self.assertListEqual(model.reactions.keys(), model_copy.reactions.keys())
@@ -77,7 +77,7 @@ class FBATest(unittest.TestCase):
     """ Test FBA simulation. """
 
     def testRun(self):
-        model = load_sbml_model(SMALL_TEST_MODEL, kind=GPR_CONSTRAINED)
+        model = load_sbml_model(SMALL_TEST_MODEL, kind='cb')
         fix_bigg_model(model)
         solution = FBA(model, get_shadow_prices=True, get_reduced_costs=True)
         self.assertEqual(solution.status, Status.OPTIMAL)
@@ -87,7 +87,7 @@ class FBAwithRatioTest(unittest.TestCase):
     """ Test FBA with ratio constraints simulation. """
 
     def testRun(self):
-        model = load_sbml_model(SMALL_TEST_MODEL, kind=GPR_CONSTRAINED)
+        model = load_sbml_model(SMALL_TEST_MODEL, kind='cb')
         fix_bigg_model(model)
         r_id1 = 'R_PGI'
         r_id2 = 'R_G6PDH2r'
@@ -101,7 +101,7 @@ class pFBATest(unittest.TestCase):
     """ Test pFBA simulation. """
 
     def testRun(self):
-        model = load_sbml_model(SMALL_TEST_MODEL, kind=GPR_CONSTRAINED)
+        model = load_sbml_model(SMALL_TEST_MODEL, kind='cb')
         fix_bigg_model(model)
         solution1 = pFBA(model)
         solution2 = FBA(model)
@@ -118,7 +118,7 @@ class qpFBATest(unittest.TestCase):
     """ Test qpFBA simulation. """
 
     def testRun(self):
-        model = load_sbml_model(SMALL_TEST_MODEL, kind=GPR_CONSTRAINED)
+        model = load_sbml_model(SMALL_TEST_MODEL, kind='cb')
         fix_bigg_model(model)
         solution1 = qpFBA(model)
         solution2 = FBA(model)
@@ -129,16 +129,16 @@ class qpFBATest(unittest.TestCase):
         self.assertAlmostEqual(growth1, growth2, places=4)
         norm1 = sum([abs(solution1.values[r_id]) for r_id in model.reactions])
         norm2 = sum([abs(solution2.values[r_id]) for r_id in model.reactions])
-        self.assertLessEqual(norm1, norm2 + 1e-6)
+        self.assertLessEqual(norm1, norm2 + 1e-5)
 
 class FBAFromPlainTextTest(unittest.TestCase):
     """ Test FBA simulation from plain text model. """
 
     def testRun(self):
-        model = load_sbml_model(SMALL_TEST_MODEL, kind=CONSTRAINT_BASED)
+        model = load_sbml_model(SMALL_TEST_MODEL, kind='cb')
         fix_bigg_model(model)
         write_model_to_file(model, PLAIN_TEXT_COPY)
-        model_copy = read_model_from_file(PLAIN_TEXT_COPY, kind=CONSTRAINT_BASED)
+        model_copy = read_model_from_file(PLAIN_TEXT_COPY, kind='cb')
         solution = FBA(model_copy)
         self.assertEqual(solution.status, Status.OPTIMAL)
         self.assertAlmostEqual(solution.fobj, GROWTH_RATE, places=2)
@@ -148,7 +148,7 @@ class IrreversibleModelFBATest(unittest.TestCase):
     """ Test FBA simulation after reversible decomposition. """
 
     def testRun(self):
-        model = load_sbml_model(SMALL_TEST_MODEL, kind=GPR_CONSTRAINED)
+        model = load_sbml_model(SMALL_TEST_MODEL, kind='cb')
         fix_bigg_model(model)
         make_irreversible(model)
         self.assertTrue(all([not reaction.reversible for reaction in model.reactions.values()]))
@@ -161,7 +161,7 @@ class SimplifiedModelFBATest(unittest.TestCase):
     """ Test FBA simulation after model simplification. """
 
     def testRun(self):
-        model = load_sbml_model(SMALL_TEST_MODEL, kind=GPR_CONSTRAINED)
+        model = load_sbml_model(SMALL_TEST_MODEL, kind='cb')
         fix_bigg_model(model)
         simplify(model)
         solution = FBA(model)
@@ -173,13 +173,13 @@ class TransformationCommutativityTest(unittest.TestCase):
     """ Test commutativity between transformations. """
 
     def testRun(self):
-        model = load_sbml_model(SMALL_TEST_MODEL, kind=GPR_CONSTRAINED)
+        model = load_sbml_model(SMALL_TEST_MODEL, kind='cb')
         fix_bigg_model(model)
         simplify(model)
         make_irreversible(model)
         simplify(model) #remove directionally blocked reactions
 
-        model2 = load_sbml_model(SMALL_TEST_MODEL, kind=GPR_CONSTRAINED)
+        model2 = load_sbml_model(SMALL_TEST_MODEL, kind='cb')
         fix_bigg_model(model2)
         make_irreversible(model2)
         simplify(model2)
@@ -197,7 +197,7 @@ class FVATest(unittest.TestCase):
     """ Test flux variability analysis """
 
     def testRun(self):
-        model = load_sbml_model(SMALL_TEST_MODEL, kind=GPR_CONSTRAINED)
+        model = load_sbml_model(SMALL_TEST_MODEL, kind='cb')
         fix_bigg_model(model)
         variability = FVA(model)
         self.assertTrue(all([lb <= ub if lb is not None and ub is not None else True
@@ -208,7 +208,7 @@ class GeneDeletionFBATest(unittest.TestCase):
     """ Test gene deletion with FBA. """
 
     def testRun(self):
-        model = load_sbml_model(SMALL_TEST_MODEL, kind=GPR_CONSTRAINED)
+        model = load_sbml_model(SMALL_TEST_MODEL, kind='cb')
         fix_bigg_model(model)
         solution = gene_deletion(model, DOUBLE_GENE_KO)
         self.assertEqual(solution.status, Status.OPTIMAL)
@@ -220,7 +220,7 @@ class GeneDeletionMOMATest(unittest.TestCase):
     """ Test gene deletion with MOMA. """
 
     def testRun(self):
-        model = load_sbml_model(SMALL_TEST_MODEL, kind=GPR_CONSTRAINED)
+        model = load_sbml_model(SMALL_TEST_MODEL, kind='cb')
         fix_bigg_model(model)
         solution = gene_deletion(model, MOMA_GENE_KO, 'MOMA')
         self.assertEqual(solution.status, Status.OPTIMAL)
@@ -232,7 +232,7 @@ class GeneDeletionLMOMATest(unittest.TestCase):
     """ Test gene deletion with MOMA. """
 
     def testRun(self):
-        model = load_sbml_model(SMALL_TEST_MODEL, kind=GPR_CONSTRAINED)
+        model = load_sbml_model(SMALL_TEST_MODEL, kind='cb')
         fix_bigg_model(model)
         solution = gene_deletion(model, LMOMA_GENE_KO, 'lMOMA')
         self.assertEqual(solution.status, Status.OPTIMAL)
@@ -243,7 +243,7 @@ class GeneDeletionROOMTest(unittest.TestCase):
     """ Test gene deletion with ROOM. """
 
     def testRun(self):
-        model = load_sbml_model(SMALL_TEST_MODEL, kind=GPR_CONSTRAINED)
+        model = load_sbml_model(SMALL_TEST_MODEL, kind='cb')
         fix_bigg_model(model)
         solution = gene_deletion(model, ROOM_GENE_KO, 'ROOM')
         self.assertEqual(solution.status, Status.OPTIMAL)
@@ -255,7 +255,7 @@ class GeneEssentialityTest(unittest.TestCase):
     """ Test gene essentiality. """
 
     def testRun(self):
-        model = load_sbml_model(SMALL_TEST_MODEL, kind=GPR_CONSTRAINED)
+        model = load_sbml_model(SMALL_TEST_MODEL, kind='cb')
         fix_bigg_model(model)
         essential = essential_genes(model)
         self.assertListEqual(essential, ESSENTIAL_GENES)

@@ -23,12 +23,10 @@ TODO: Add support for GPRConstrainedModel (problem GPRs can't be parsed with reg
    
 '''
 
-from ..core.models import Metabolite, Reaction, StoichiometricModel, ConstraintBasedModel
+from ..core.models import Metabolite, Reaction, Model, CBModel
 from re import compile
 from os.path import splitext, basename
 
-STOICHIOMETRIC = 'Stoichiometric'
-CONSTRAINT_BASED = 'Constraint-based'
 
 INSTRUCTIONS = """
 # Text based model representation
@@ -60,7 +58,7 @@ regex_bounds = compile(bounds)
 regex_reaction = compile(reaction)
 
 
-def read_model_from_file(filename, kind=STOICHIOMETRIC):
+def read_model_from_file(filename, kind=None):
     """ Reads a model from a file.
     
     Arguments:
@@ -75,12 +73,10 @@ def read_model_from_file(filename, kind=STOICHIOMETRIC):
         with open(filename, 'r') as stream:
             model_id = splitext(basename(filename))[0]
 
-            if kind == STOICHIOMETRIC:
-                model = StoichiometricModel(model_id)
-            elif kind == CONSTRAINT_BASED:
-                model = ConstraintBasedModel(model_id)
+            if kind == 'cb':
+                model = CBModel(model_id)
             else:
-                model = None
+                model = Model(model_id)
 
             if model:
                 for line in stream:
@@ -112,7 +108,7 @@ def add_reaction_from_str(model, reaction_str):
         products = match.group('products')
         if substrates or products:
             reaction = Reaction(reaction_id, reaction_id, reversible);
-            if isinstance(model, ConstraintBasedModel):
+            if isinstance(model, CBModel):
                 bounds = match.group('bounds')
                 lb, ub = _parse_bounds(bounds, reversible)
                 objective = match.group('objective')

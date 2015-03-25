@@ -1,4 +1,4 @@
-from models import Reaction, ConstraintBasedModel
+from models import Reaction, CBModel
 from uuid import uuid4
 
 
@@ -50,7 +50,7 @@ def remove_balanced_metabolite(model, m_id, fluxes, must_keep=None, abstol=1e-9)
             reversible = all([model.reactions[r_id].reversible for r_id in neighbours])
             model.add_reaction(Reaction(new_id, new_id, reversible))
 
-            if not reversible and isinstance(model, ConstraintBasedModel):
+            if not reversible and isinstance(model, CBModel):
                 model.set_lower_bound(new_id, 0)
 
             for m_id2, coeff in new_coeffs.items():

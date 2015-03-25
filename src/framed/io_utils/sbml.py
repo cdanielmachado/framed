@@ -20,14 +20,10 @@ TODO: Import/export of bounds and GPR follows the BiGG model format, consider ch
    limitations under the License.
    
 """
-from ..core.models import StoichiometricModel, ConstraintBasedModel, GPRConstrainedModel, Metabolite, Reaction, Gene, Compartment
+from ..core.models import Model, CBModel, Metabolite, Reaction, Gene, Compartment
 
 from libsbml import SBMLReader, SBMLWriter, SBMLDocument, XMLNode
 
-
-STOICHIOMETRIC = 'Stoichiometric'
-CONSTRAINT_BASED = 'Constraint-based'
-GPR_CONSTRAINED = 'GPR-Constrained'
 
 LB_TAG = 'LOWER_BOUND'
 UB_TAG = 'UPPER_BOUND'
@@ -38,7 +34,7 @@ DEFAULT_SBML_LEVEL = 2
 DEFAULT_SBML_VERSION = 1
 
 
-def load_sbml_model(filename, kind=STOICHIOMETRIC):
+def load_sbml_model(filename, kind=None):
     """ Loads a metabolic model from a file.
     
     Arguments:
@@ -55,20 +51,16 @@ def load_sbml_model(filename, kind=STOICHIOMETRIC):
     if sbml_model is None:
         raise IOError('Failed to load model.')
 
-    if kind == STOICHIOMETRIC:
-        model = _load_stoichiometric_model(sbml_model)
-    elif kind == CONSTRAINT_BASED:
-        model = _load_constraintbased_model(sbml_model)
-    elif kind == GPR_CONSTRAINED:
-        model = _load_gprconstrained_model(sbml_model)
+    if kind == 'cb':
+        model = _load_cbmodel(sbml_model)
     else:
-        model = None
+        model = _load_stoichiometric_model(sbml_model)
 
     return model
 
 
 def _load_stoichiometric_model(sbml_model):
-    model = StoichiometricModel(sbml_model.getId())
+    model = Model(sbml_model.getId())
     model.add_compartments(_load_compartments(sbml_model))
     model.add_metabolites(_load_metabolites(sbml_model))
     model.add_reactions(_load_reactions(sbml_model))
@@ -110,8 +102,8 @@ def _load_stoichiometry(model):
     return inputs + outputs
 
 
-def _load_constraintbased_model(sbml_model):
-    model = ConstraintBasedModel(sbml_model.getId())
+def _load_cbmodel(sbml_model):
+    model = CBModel(sbml_model.getId())
     model.add_compartments(_load_compartments(sbml_model))
     model.add_metabolites(_load_metabolites(sbml_model))
     model.add_reactions(_load_reactions(sbml_model))
@@ -119,6 +111,9 @@ def _load_constraintbased_model(sbml_model):
     bounds, coefficients = _load_cb_parameters(sbml_model)
     model.set_bounds(bounds)
     model.set_objective_coefficients(coefficients)
+    genes, rules = _load_gpr(sbml_model)
+    model.add_genes(genes)
+    model.set_rules(rules)
     return model
 
 
@@ -142,21 +137,6 @@ def _get_cb_parameter(reaction, tag, default_value=None):
         if parameter:
             param_value = parameter.getValue()
     return param_value
-
-
-def _load_gprconstrained_model(sbml_model):
-    model = GPRConstrainedModel(sbml_model.getId())
-    model.add_compartments(_load_compartments(sbml_model))
-    model.add_metabolites(_load_metabolites(sbml_model))
-    model.add_reactions(_load_reactions(sbml_model))
-    model.add_stoichiometry(_load_stoichiometry(sbml_model))
-    bounds, coefficients = _load_cb_parameters(sbml_model)
-    model.set_bounds(bounds)
-    model.set_objective_coefficients(coefficients)
-    genes, rules = _load_gpr(sbml_model)
-    model.add_genes(genes)
-    model.set_rules(rules)
-    return model
 
 
 def _load_gpr(sbml_model):
@@ -194,9 +174,8 @@ def save_sbml_model(model, filename):
     _save_metabolites(model, sbml_model)
     _save_reactions(model, sbml_model)
     _save_stoichiometry(model, sbml_model)
-    if isinstance(model, ConstraintBasedModel):
+    if isinstance(model, CBModel):
         _save_cb_parameters(model, sbml_model)
-    if isinstance(model, GPRConstrainedModel):
         _save_gpr(model, sbml_model)
     writer = SBMLWriter()
     writer.writeSBML(document, filename)
