@@ -21,10 +21,15 @@ TODO: Import/export of bounds and GPR follows the BiGG model format, consider ch
    
 """
 from ..core.models import Model, CBModel, Metabolite, Reaction, Gene, Compartment
+from ..core.fixes import fix_bigg_model
 
 from collections import OrderedDict
 from libsbml import SBMLReader, SBMLWriter, SBMLDocument, XMLNode
 
+CB_MODEL = 'cb'
+ODE_MODEL = 'ode'
+
+BIGG_MODEL = 'bigg'
 
 LB_TAG = 'LOWER_BOUND'
 UB_TAG = 'UPPER_BOUND'
@@ -34,6 +39,14 @@ GPR_TAG = 'GENE_ASSOCIATION:'
 DEFAULT_SBML_LEVEL = 2
 DEFAULT_SBML_VERSION = 1
 
+
+def load_cbmodel(filename, flavor=None):
+    model = load_sbml_model(filename, kind=CB_MODEL)
+
+    if flavor and flavor.lower() == BIGG_MODEL:
+        fix_bigg_model(model)
+
+    return model
 
 def load_sbml_model(filename, kind=None):
     """ Loads a metabolic model from a file.
@@ -52,7 +65,7 @@ def load_sbml_model(filename, kind=None):
     if sbml_model is None:
         raise IOError('Failed to load model.')
 
-    if kind == 'cb':
+    if kind and kind.lower() == CB_MODEL:
         model = _load_cbmodel(sbml_model)
     else:
         model = _load_stoichiometric_model(sbml_model)

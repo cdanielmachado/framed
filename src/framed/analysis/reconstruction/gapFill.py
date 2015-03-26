@@ -160,7 +160,6 @@ def _load_constraintbased_model(sbml_model, model):
     model_extended.add_metabolites(_load_metabolites(sbml_model, model))
     (reactions_ids, reactions) = _load_reactions(sbml_model, model)
     model_extended.add_reactions(reactions)
-    model_extended.add_stoichiometry(_load_stoichiometry(sbml_model, model))
     bounds, coefficients = _load_cb_parameters(sbml_model, model)
     model_extended.set_bounds(bounds)
     model_extended.set_objective_coefficients(coefficients)
