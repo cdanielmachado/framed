@@ -135,8 +135,8 @@ class Solution:
         if not self.values:
             return None
         
-        inputs = model.get_metabolite_inputs(m_id)
-        outputs = model.get_metabolite_outputs(m_id)
+        inputs = model.get_metabolite_sources(m_id)
+        outputs = model.get_metabolite_sinks(m_id)
         
         fwd_in = [(r_id, model.stoichiometry[(m_id, r_id)] * self.values[r_id], '--> o')
                   for r_id in inputs if self.values[r_id] > 0 or zeros and self.values[r_id] == 0]

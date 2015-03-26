@@ -106,5 +106,4 @@ def _disconnected_metabolites(model):
 
 
 def _disconnected_reactions(model):
-    r_m_table = model.reaction_metabolite_lookup_table()
-    return [r_id for r_id, edges in r_m_table.items() if not edges]
+    return [r_id for r_id, rxn in model.reactions.items() if len(rxn.stoichiometry) == 0]

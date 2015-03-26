@@ -52,7 +52,6 @@ class SBMLTest(unittest.TestCase):
         self.assertEqual(model.id, model_copy.id)
         self.assertListEqual(model.metabolites.keys(), model_copy.metabolites.keys())
         self.assertListEqual(model.reactions.keys(), model_copy.reactions.keys())
-        self.assertDictEqual(model.stoichiometry, model_copy.stoichiometry)
         self.assertDictEqual(model.bounds, model_copy.bounds)
         self.assertListEqual(model.genes.keys(), model_copy.genes.keys())
         self.assertDictEqual(model.rules, model_copy.rules)
@@ -68,8 +67,6 @@ class PlainTextIOTest(unittest.TestCase):
         self.assertListEqual(sorted(model.metabolites.keys()),
                              sorted(model_copy.metabolites.keys()))
         self.assertListEqual(model.reactions.keys(), model_copy.reactions.keys())
-        self.assertDictEqual(dict(model.stoichiometry),
-                             dict(model_copy.stoichiometry))
         self.assertDictEqual(model.bounds, model_copy.bounds)
 
 
@@ -187,7 +184,6 @@ class TransformationCommutativityTest(unittest.TestCase):
         self.assertEqual(model.id, model2.id)
         self.assertListEqual(model.metabolites.keys(), model2.metabolites.keys())
         self.assertListEqual(model.reactions.keys(), model2.reactions.keys())
-        self.assertDictEqual(model.stoichiometry, model2.stoichiometry)
         self.assertDictEqual(model.bounds, model2.bounds)
         self.assertListEqual(model.genes.keys(), model2.genes.keys())
         self.assertDictEqual(model.rules, model2.rules)

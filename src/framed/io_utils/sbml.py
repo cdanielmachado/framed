@@ -22,6 +22,7 @@ TODO: Import/export of bounds and GPR follows the BiGG model format, consider ch
 """
 from ..core.models import Model, CBModel, Metabolite, Reaction, Gene, Compartment
 
+from collections import OrderedDict
 from libsbml import SBMLReader, SBMLWriter, SBMLDocument, XMLNode
 
 
@@ -64,7 +65,6 @@ def _load_stoichiometric_model(sbml_model):
     model.add_compartments(_load_compartments(sbml_model))
     model.add_metabolites(_load_metabolites(sbml_model))
     model.add_reactions(_load_reactions(sbml_model))
-    model.add_stoichiometry(_load_stoichiometry(sbml_model))
     return model
 
 
@@ -89,17 +89,28 @@ def _load_reactions(sbml_model):
 
 
 def _load_reaction(reaction):
-    return Reaction(reaction.getId(), reaction.getName(), reaction.getReversible())
 
+    stoichiometry = OrderedDict()
 
-def _load_stoichiometry(model):
-    inputs = [(reactant.getSpecies(), reaction.getId(), -reactant.getStoichiometry()) for reaction in
-              model.getListOfReactions()
-              for reactant in reaction.getListOfReactants()]
-    outputs = [(product.getSpecies(), reaction.getId(), product.getStoichiometry()) for reaction in
-               model.getListOfReactions()
-               for product in reaction.getListOfProducts()]
-    return inputs + outputs
+    for reactant in reaction.getListOfReactants():
+        m_id = reactant.getSpecies()
+        coeff = -reactant.getStoichiometry()
+        if m_id not in stoichiometry:
+            stoichiometry[m_id] = coeff
+        else:
+            stoichiometry[m_id] += coeff
+
+    for product in reaction.getListOfProducts():
+        m_id = product.getSpecies()
+        coeff = product.getStoichiometry()
+        if m_id not in stoichiometry:
+            stoichiometry[m_id] = coeff
+        else:
+            stoichiometry[m_id] += coeff
+        if stoichiometry[m_id] == 0.0:
+            del stoichiometry[m_id]
+
+    return Reaction(reaction.getId(), reaction.getName(), reaction.getReversible(), stoichiometry)
 
 
 def _load_cbmodel(sbml_model):
@@ -107,7 +118,6 @@ def _load_cbmodel(sbml_model):
     model.add_compartments(_load_compartments(sbml_model))
     model.add_metabolites(_load_metabolites(sbml_model))
     model.add_reactions(_load_reactions(sbml_model))
-    model.add_stoichiometry(_load_stoichiometry(sbml_model))
     bounds, coefficients = _load_cb_parameters(sbml_model)
     model.set_bounds(bounds)
     model.set_objective_coefficients(coefficients)
@@ -173,7 +183,6 @@ def save_sbml_model(model, filename):
     _save_compartments(model, sbml_model)
     _save_metabolites(model, sbml_model)
     _save_reactions(model, sbml_model)
-    _save_stoichiometry(model, sbml_model)
     if isinstance(model, CBModel):
         _save_cb_parameters(model, sbml_model)
         _save_gpr(model, sbml_model)
@@ -202,20 +211,15 @@ def _save_reactions(model, sbml_model):
         sbml_reaction.setId(reaction.id)
         sbml_reaction.setName(reaction.name)
         sbml_reaction.setReversible(reaction.reversible)
-
-
-def _save_stoichiometry(model, sbml_model):
-    for (m_id, r_id), coeff in model.stoichiometry.items():
-        sbml_reaction = sbml_model.getReaction(r_id)
-        if coeff < 0:
-            speciesReference = sbml_reaction.createReactant()
-            speciesReference.setSpecies(m_id)
-            speciesReference.setStoichiometry(-coeff)
-        elif coeff > 0:
-            speciesReference = sbml_reaction.createProduct()
-            speciesReference.setSpecies(m_id)
-            speciesReference.setStoichiometry(coeff)
-
+        for m_id, coeff in reaction.stoichiometry.items():
+            if coeff < 0:
+                speciesReference = sbml_reaction.createReactant()
+                speciesReference.setSpecies(m_id)
+                speciesReference.setStoichiometry(-coeff)
+            elif coeff > 0:
+                speciesReference = sbml_reaction.createProduct()
+                speciesReference.setSpecies(m_id)
+                speciesReference.setStoichiometry(coeff)
 
 def _save_cb_parameters(model, sbml_model):
     for r_id in model.reactions:

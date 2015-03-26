@@ -54,20 +54,15 @@ def make_irreversible(model):
     """
 
     mapping = dict()
-    table = model.reaction_metabolite_lookup_table()
 
     for r_id, reaction in model.reactions.items():
         if reaction.reversible:
             fwd_id = reaction.id + '_f'
             bwd_id = reaction.id + '_b'
             mapping[r_id] = (fwd_id, bwd_id)
-
-            model.add_reaction(Reaction(fwd_id, reaction.name, False))
-            model.add_reaction(Reaction(bwd_id, reaction.name, False))
-
-            for m_id, coeff in table[r_id].items():
-                model.stoichiometry[(m_id, fwd_id)] = coeff
-                model.stoichiometry[(m_id, bwd_id)] = -coeff
+            bwd_stoichiometry = [(m_id, -coeff) for m_id, coeff in reaction.stoichiometry.items()]
+            model.add_reaction(Reaction(fwd_id, reaction.name, False, reaction.stoichiometry))
+            model.add_reaction(Reaction(bwd_id, reaction.name, False, bwd_stoichiometry))
 
             if isinstance(model, CBModel):
                 lb, ub = model.bounds[r_id]
@@ -97,7 +92,8 @@ def add_ratio_constraint(model, r_id_num, r_id_den, ratio):
     if r_id_num in model.reactions and r_id_den in model.reactions:
         m_id = 'ratio_{}_{}'.format(r_id_num, r_id_den)
         model.add_metabolite(Metabolite(m_id))
-        model.add_stoichiometry([(m_id, r_id_num, 1), (m_id, r_id_den, -ratio)])
+        model.set_stoichiometry(m_id, r_id_num, 1)
+        model.set_stoichiometry(m_id, r_id_den, -ratio)
         return m_id
 
 

@@ -47,7 +47,7 @@ class Metabolite:
 class Reaction:
     """ Base class for modeling reactions. """
 
-    def __init__(self, elem_id, name=None, reversible=True):
+    def __init__(self, elem_id, name=None, reversible=True, stoichiometry=None):
         """
         Arguments:
             elem_id : String -- a valid unique identifier
@@ -56,9 +56,20 @@ class Reaction:
         self.id = elem_id
         self.name = name
         self.reversible = reversible
+        self.stoichiometry = OrderedDict()
+        if stoichiometry:
+            self.stoichiometry.update(stoichiometry)
+
 
     def __str__(self):
         return self.name if self.name else self.id
+
+    def get_substrates(self):
+        return [m_id for m_id, coeff in self.stoichiometry.items() if coeff < 0]
+
+    def get_products(self):
+        return [m_id for m_id, coeff in self.stoichiometry.items() if coeff > 0]
+
 
 
 class Gene:
@@ -107,7 +118,6 @@ class Model:
         self.metabolites = OrderedDict()
         self.reactions = OrderedDict()
         self.compartments = OrderedDict()
-        self.stoichiometry = OrderedDict()
         self._clear_temp()
 
     def _clear_temp(self):
@@ -175,25 +185,13 @@ class Model:
         """
         self.compartments[compartment.id] = compartment
 
-    def add_stoichiometry(self, stoichiometry, replace=False):
-        """ Add stoichiometric coefficients (weighted edges between metabolites and reactions).
-        Negative coefficients represent consumption, positive coefficients represent production.
-        If coefficients for the same metabolite-reaction pairs exist in the model, they will be replaced.
 
-        Arguments:
-            stoichiometry : list of (str, str, float) -- metabolite id, reaction id, coefficient
-            replace : bool -- replace old coefficient with new instead of adding (default: False)
-        """
-        for m_id, r_id, coeff in stoichiometry:
-            if m_id in self.metabolites and r_id in self.reactions:
-                if (m_id, r_id) not in self.stoichiometry or replace:
-                    self.stoichiometry[(m_id, r_id)] = coeff
-                else:
-                    coeff += self.stoichiometry[(m_id, r_id)]
-                    if coeff:
-                        self.stoichiometry[(m_id, r_id)] = coeff
-                    else:
-                        del self.stoichiometry[(m_id, r_id)]
+    def set_stoichiometry(self, m_id, r_id, coeff):
+        if m_id in self.metabolites and r_id in self.reactions:
+            if not coeff and m_id in self.reactions[r_id].stoichiometry:
+                del self.reactions[r_id].stoichiometry[m_id]
+            else:
+                self.reactions[r_id].stoichiometry[m_id] = coeff
 
         self._clear_temp()
 
@@ -207,9 +205,9 @@ class Model:
         for m_id in id_list:
             if m_id in self.metabolites:
                 del self.metabolites[m_id]
-        for (m2_id, r_id) in self.stoichiometry:
-            if m2_id in id_list:
-                del self.stoichiometry[(m2_id, r_id)]
+            for reaction in self.reactions.values():
+                if m_id in reaction.stoichiometry.keys():
+                    del reaction.stoichiometry[m_id]
         self._clear_temp()
 
     def remove_metabolite(self, m_id):
@@ -231,9 +229,6 @@ class Model:
         for r_id in id_list:
             if r_id in self.reactions:
                 del self.reactions[r_id]
-        for (m_id, r2_id) in self.stoichiometry:
-            if r2_id in id_list:
-                del self.stoichiometry[(m_id, r2_id)]
         self._clear_temp()
 
     def remove_reaction(self, r_id):
@@ -262,46 +257,46 @@ class Model:
                                          if metabolite.compartment == c_id])
 
 
-    def get_reaction_substrates(self, r_id):
-        """ Return the list of substrates for one reaction
-
-        Arguments:
-            r_id: str -- reaction id
-
-        Returns:
-            list [of str] -- substrates list
-        """
-        table = self.reaction_metabolite_lookup_table()
-        return [m_id for m_id, coeff in table[r_id].items() if coeff < 0]
-
-
-    def get_reaction_products(self, r_id):
-        """ Return the list of products for one reaction
-
-        Arguments:
-            r_id: str -- reaction id
-
-        Returns:
-            list [of str] -- products list
-        """
-        table = self.reaction_metabolite_lookup_table()
-        return [m_id for m_id, coeff in table[r_id].items() if coeff > 0]
-
-
-    def get_reaction_neighbours(self, r_id):
-        """ Return the list of metabolites connected to a reaction
-
-        Arguments:
-            r_id: str -- reaction id
-
-        Returns:
-            list [of str] -- metabolites list
-        """
-        table = self.reaction_metabolite_lookup_table()
-        return [m_id for m_id, coeff in table[r_id].items() if coeff != 0]
+    # def get_reaction_substrates(self, r_id):
+    #     """ Return the list of substrates for one reaction
+    #
+    #     Arguments:
+    #         r_id: str -- reaction id
+    #
+    #     Returns:
+    #         list [of str] -- substrates list
+    #     """
+    #     table = self.reaction_metabolite_lookup_table()
+    #     return [m_id for m_id, coeff in table[r_id].items() if coeff < 0]
+    #
+    #
+    # def get_reaction_products(self, r_id):
+    #     """ Return the list of products for one reaction
+    #
+    #     Arguments:
+    #         r_id: str -- reaction id
+    #
+    #     Returns:
+    #         list [of str] -- products list
+    #     """
+    #     table = self.reaction_metabolite_lookup_table()
+    #     return [m_id for m_id, coeff in table[r_id].items() if coeff > 0]
 
 
-    def get_metabolite_inputs(self, m_id):
+    # def get_reaction_neighbours(self, r_id):
+    #     """ Return the list of metabolites connected to a reaction
+    #
+    #     Arguments:
+    #         r_id: str -- reaction id
+    #
+    #     Returns:
+    #         list [of str] -- metabolites list
+    #     """
+    #     table = self.reaction_metabolite_lookup_table()
+    #     return [m_id for m_id, coeff in table[r_id].items() if coeff != 0]
+
+
+    def get_metabolite_sources(self, m_id):
         """ Return the list of input reactions for one metabolite
 
         Arguments:
@@ -314,7 +309,7 @@ class Model:
         return [r_id for r_id, coeff in table[m_id].items() if coeff > 0]
 
 
-    def get_metabolite_outputs(self, m_id):
+    def get_metabolite_sinks(self, m_id):
         """ Return the list of output reactions for one metabolite
 
         Arguments:
@@ -327,17 +322,17 @@ class Model:
         return [r_id for r_id, coeff in table[m_id].items() if coeff < 0]
 
 
-    def get_metabolite_neighbours(self, m_id):
-        """ Return the list of reactions connected to a metabolite
-
-        Arguments:
-            m_id: str -- metabolite id
-
-        Returns:
-            list [of str] -- reactions list
-        """
-        table = self.metabolite_reaction_lookup_table()
-        return [r_id for r_id, coeff in table[m_id].items() if coeff != 0]
+    # def get_metabolite_neighbours(self, m_id):
+    #     """ Return the list of reactions connected to a metabolite
+    #
+    #     Arguments:
+    #         m_id: str -- metabolite id
+    #
+    #     Returns:
+    #         list [of str] -- reactions list
+    #     """
+    #     table = self.metabolite_reaction_lookup_table()
+    #     return [r_id for r_id, coeff in table[m_id].items() if coeff != 0]
 
 
     def metabolite_reaction_lookup_table(self):
@@ -350,26 +345,27 @@ class Model:
         if not self._m_r_lookup:
             self._m_r_lookup = OrderedDict([(m_id, OrderedDict()) for m_id in self.metabolites])
 
-            for (m_id, r_id), coeff in self.stoichiometry.items():
-                self._m_r_lookup[m_id][r_id] = coeff
+            for r_id, reaction in self.reactions.items():
+                for m_id, coeff in reaction.stoichiometry.items():
+                    self._m_r_lookup[m_id][r_id] = coeff
 
         return self._m_r_lookup
 
 
-    def reaction_metabolite_lookup_table(self):
-        """ Return the network topology as a nested map: reaction id -> metabolite id -> coefficient
-
-        Returns:
-            OrderedDict (of str to OrderedDict of str to float) -- lookup table
-        """
-
-        if not self._r_m_lookup:
-            self._r_m_lookup = OrderedDict([(r_id, OrderedDict()) for r_id in self.reactions])
-
-            for (m_id, r_id), coeff in self.stoichiometry.items():
-                self._r_m_lookup[r_id][m_id] = coeff
-
-        return self._r_m_lookup
+    # def reaction_metabolite_lookup_table(self):
+    #     """ Return the network topology as a nested map: reaction id -> metabolite id -> coefficient
+    #
+    #     Returns:
+    #         OrderedDict (of str to OrderedDict of str to float) -- lookup table
+    #     """
+    #
+    #     if not self._r_m_lookup:
+    #         self._r_m_lookup = OrderedDict([(r_id, OrderedDict()) for r_id in self.reactions])
+    #
+    #         for (m_id, r_id), coeff in self.stoichiometry.items():
+    #             self._r_m_lookup[r_id][m_id] = coeff
+    #
+    #     return self._r_m_lookup
 
 
     def stoichiometric_matrix(self):
@@ -399,17 +395,16 @@ class Model:
             str -- reaction string
         """
 
-        table = self.reaction_metabolite_lookup_table()
-
         r_repr = self.reactions[r_id].name if reaction_names else r_id
         m_repr = lambda m_id: self.metabolites[m_id].name if metabolite_names else m_id
+        stoichiometry = self.reactions[r_id].stoichiometry
 
         res = r_repr + ': '
         res += ' + '.join([m_repr(m_id) if coeff == -1.0 else str(-coeff) + ' ' + m_repr(m_id)
-                           for m_id, coeff in table[r_id].items() if coeff < 0])
+                           for m_id, coeff in stoichiometry.items() if coeff < 0])
         res += ' <-> ' if self.reactions[r_id].reversible else ' --> '
         res += ' + '.join([m_repr(m_id) if coeff == 1.0 else str(coeff) + ' ' + m_repr(m_id)
-                           for m_id, coeff in table[r_id].items() if coeff > 0])
+                           for m_id, coeff in stoichiometry.items() if coeff > 0])
         return res
 
     def to_string(self, reaction_names=False, metabolite_names=False):

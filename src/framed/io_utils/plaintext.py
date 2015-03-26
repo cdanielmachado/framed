@@ -134,7 +134,7 @@ def _parse_coefficients(expression, model, reaction_id, sense):
         met_id = match.group('met_id')
         if met_id not in model.metabolites:
             model.add_metabolite(Metabolite(met_id, met_id))
-        model.add_stoichiometry([(met_id, reaction_id, coeff * sense)])
+        model.set_stoichiometry(met_id, reaction_id, coeff * sense)
 
 
 def _parse_bounds(expression, reversible):
