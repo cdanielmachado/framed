@@ -122,7 +122,6 @@ class Model:
 
     def _clear_temp(self):
         self._m_r_lookup = None
-        self._r_m_lookup = None
         self._s_matrix = None
 
 
@@ -376,8 +375,8 @@ class Model:
         """
 
         if not self._s_matrix:
-            self._s_matrix = [[self.stoichiometry[(m_id, r_id)] if (m_id, r_id) in self.stoichiometry else 0
-                               for r_id in self.reactions]
+            self._s_matrix = [[reaction.stoichiometry[m_id] if m_id in reaction.stoichiometry else 0
+                               for reaction in self.reactions.values()]
                               for m_id in self.metabolites]
 
         return self._s_matrix
@@ -440,13 +439,11 @@ class CBModel(Model):
 
 
 
-    def set_bounds(self, bounds_list):
+    def set_multiple_bounds(self, bounds):
         """ Define flux bounds for a set of reactions
 
-        Arguments:
-            bounds_list : list (of str, float, float) -- reaction id, lower bound, upper bound
         """
-        for r_id, lb, ub in bounds_list:
+        for r_id, (lb, ub) in bounds.items():
             self.set_flux_bounds(r_id, lb, ub)
 
     def set_flux_bounds(self, r_id, lb, ub):
@@ -482,13 +479,11 @@ class CBModel(Model):
             lb, _ = self.bounds[r_id]
             self.bounds[r_id] = lb, ub
 
-    def set_objective_coefficients(self, coefficients):
+    def set_objective(self, coefficients):
         """ Define objective coefficients for a list of reactions
 
-        Arguments:
-            coefficients : list (of str, float) -- reaction id, coefficient
         """
-        for r_id, coeff, in coefficients:
+        for r_id, coeff, in coefficients.items():
             self.set_reaction_objective(r_id, coeff)
 
     def set_reaction_objective(self, r_id, coeff=0):

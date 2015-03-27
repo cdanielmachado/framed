@@ -132,8 +132,8 @@ def _load_cbmodel(sbml_model):
     model.add_metabolites(_load_metabolites(sbml_model))
     model.add_reactions(_load_reactions(sbml_model))
     bounds, coefficients = _load_cb_parameters(sbml_model)
-    model.set_bounds(bounds)
-    model.set_objective_coefficients(coefficients)
+    model.set_multiple_bounds(bounds)
+    model.set_objective(coefficients)
     genes, rules = _load_gpr(sbml_model)
     model.add_genes(genes)
     model.set_rules(rules)
@@ -146,10 +146,10 @@ def _load_cb_parameters(sbml_model):
                       _get_cb_parameter(reaction, UB_TAG),
                       _get_cb_parameter(reaction, OBJ_TAG, default_value=0))
                      for reaction in sbml_model.getListOfReactions()]
-    
-    bounds = map(lambda (r_id, lb, ub, coeff): (r_id, lb, ub), cb_parameters)
-    coefficients = map(lambda (r_id, lb, ub, coeff): (r_id, coeff), cb_parameters)
-    
+
+    bounds = OrderedDict([(r_id, (lb, ub)) for r_id, lb, ub, _ in cb_parameters])
+    coefficients = OrderedDict([(r_id, coeff) for r_id, _, _, coeff in cb_parameters])
+
     return bounds, coefficients
 
 def _get_cb_parameter(reaction, tag, default_value=None):
