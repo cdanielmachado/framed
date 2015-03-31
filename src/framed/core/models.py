@@ -47,7 +47,7 @@ class Metabolite:
 class Reaction:
     """ Base class for modeling reactions. """
 
-    def __init__(self, elem_id, name=None, reversible=True, stoichiometry=None):
+    def __init__(self, elem_id, name=None, reversible=True, stoichiometry=None, modifiers=None):
         """
         Arguments:
             elem_id : String -- a valid unique identifier
@@ -57,8 +57,11 @@ class Reaction:
         self.name = name
         self.reversible = reversible
         self.stoichiometry = OrderedDict()
+        self.modifiers = []
         if stoichiometry:
             self.stoichiometry.update(stoichiometry)
+        if modifiers:
+            self.modifiers.extend(modifiers)
 
 
     def __str__(self):
@@ -69,7 +72,6 @@ class Reaction:
 
     def get_products(self):
         return [m_id for m_id, coeff in self.stoichiometry.items() if coeff > 0]
-
 
 
 class Gene:
@@ -91,7 +93,7 @@ class Gene:
 class Compartment:
     """ Base class for modeling compartments. """
 
-    def __init__(self, elem_id, name=None):
+    def __init__(self, elem_id, name=None, size=1.0):
         """
         Arguments:
             elem_id : String -- a valid unique identifier
@@ -99,6 +101,7 @@ class Compartment:
         """
         self.id = elem_id
         self.name = name
+        self.size = size
 
     def __str__(self):
         return self.name if self.name else self.id
@@ -443,7 +446,7 @@ class CBModel(Model):
         """ Define flux bounds for a set of reactions
 
         """
-        for r_id, (lb, ub) in bounds.items():
+        for r_id, (lb, ub) in bounds:
             self.set_flux_bounds(r_id, lb, ub)
 
     def set_flux_bounds(self, r_id, lb, ub):
@@ -483,7 +486,7 @@ class CBModel(Model):
         """ Define objective coefficients for a list of reactions
 
         """
-        for r_id, coeff, in coefficients.items():
+        for r_id, coeff, in coefficients:
             self.set_reaction_objective(r_id, coeff)
 
     def set_reaction_objective(self, r_id, coeff=0):
@@ -637,9 +640,146 @@ class CBModel(Model):
         return eval('lambda x: ' + rule)
 
 
+class ODEModel(Model):
+
+    def __init__(self, model_id):
+        """
+        Arguments:
+            model_id : String -- a valid unique identifier
+        """
+        Model.__init__(self, model_id)
+        self.concentrations = OrderedDict()
+        self.global_parameters = OrderedDict()
+        self.local_parameters = OrderedDict()
+        self.ratelaws = OrderedDict()
+        self.indexed_params = None
+        self.rates = None
+        self.ODEs = None
+
+    def add_reaction(self, reaction, ratelaw=''):
+        Model.add_reaction(self, reaction)
+        self.ratelaws[reaction.id] = ratelaw
+        self.local_parameters[reaction.id] = OrderedDict()
+
+    def set_concentrations(self, concentrations):
+        for m_id, concentration in concentrations:
+            self.set_concentration(m_id, concentration)
+
+    def set_concentration(self, m_id, concentration):
+        if m_id in self.metabolites: #check concentration >= 0 ?
+            self.concentrations[m_id] = concentration
+
+    def set_ratelaws(self, ratelaws):
+        for r_id, ratelaw in ratelaws:
+            self.set_ratelaw(r_id, ratelaw)
+
+    def set_ratelaw(self, r_id, ratelaw):
+        if r_id in self.reactions:
+            self.ratelaws[r_id] = ratelaw
+
+    def set_global_parameters(self, parameters):
+        for key, value in parameters:
+            self.global_parameters[key] = value
+
+    def set_local_parameters(self, parameters):
+        for r_id, params in parameters.items():
+            if r_id in self.reactions:
+                for p_id, value in params:
+                    self.set_local_parameter(r_id, p_id, value)
+
+    def set_local_parameter(self, r_id, p_id, value):
+        if r_id in self.reactions:
+            self.local_parameters[r_id][p_id] = value
 
 
+    def remove_reactions(self, id_list):
+        """ Remove a list of reactions from the model.
+        Also removes all the edges connected to the reactions.
+
+        Arguments:
+            id_list : list of str -- reaction ids
+        """
+        Model.remove_reactions(self, id_list)
+        for r_id in id_list:
+            del self.ratelaws[r_id]
+            del self.local_parameters[r_id]
+
+    def get_p(self):
+        print 'get p'
+        if not self.indexed_params:
+            self._rebuild_parameter_list()
+        return self.indexed_params.values()
 
 
+    def _rebuild_parameter_list(self):
+        self.indexed_params = OrderedDict()
+        for comp in self.compartments.values():
+            self.indexed_params[comp.id] = comp.size
+        for p_id, value in self.global_parameters.items():
+            self.indexed_params[p_id] = value
+        for r_id, reaction in self.reactions.items():
+            for p_id, value in self.local_parameters[r_id].items():
+                self.indexed_params[(r_id, p_id)] = value
 
+    def get_ODEs(self, p=None):
+        if not self.ODEs:
+            self._rebuild_ODEs(p)
+        return self.ODEs
+
+    def _rebuild_ODEs(self, p=None):
+        self._rebuild_parameter_list()
+        self._rebuild_rate_functions()
+        self._rebuild_balance_equations()
+        p = p if p else self.get_p()
+        self.ODEs = lambda x, t: [eq(x, p) for eq in self._balance_equations.values()]
+
+    def _rebuild_rate_functions(self):
+        self.rates = OrderedDict()
+        for r_id, ratelaw in self.ratelaws.items():
+            self.rates[r_id] = self._rate_to_function(r_id, ratelaw)
+
+    def _rate_to_function(self, r_id, ratelaw):
+
+        symbols = '()+*-/,'
+        ratelaw = ' ' + ratelaw + ' '
+        for symbol in symbols:
+            ratelaw = ratelaw.replace(symbol, ' ' + symbol + ' ')
+
+        for i, m_id in enumerate(self.metabolites):
+            ratelaw = ratelaw.replace(' ' + m_id + ' ', ' x[{}] '.format(i))
+
+        for c_id in self.compartments:
+            index = self.indexed_params.keys().index(c_id)
+            ratelaw = ratelaw.replace(' ' + c_id + ' ', ' p[{}] '.format(index))
+
+        for p_id in self.global_parameters:
+            if p_id not in self.local_parameters[r_id]:
+                index = self.indexed_params.keys().index(p_id)
+                ratelaw = ratelaw.replace(' ' + p_id + ' ', ' p[{}] '.format(index))
+
+        for p_id in self.local_parameters[r_id]:
+            index = self.indexed_params.keys().index((r_id, p_id))
+            ratelaw = ratelaw.replace(' ' + p_id + ' ', ' p[{}] '.format(index))
+
+        print "build rate function for", r_id
+
+        return eval('lambda x, p: ' + ratelaw)
+
+
+    def _rebuild_balance_equations(self):
+        table = self.metabolite_reaction_lookup_table()
+        self._balance_equations = OrderedDict()
+
+        for m_id, met in self.metabolites.items():
+            volume = self.indexed_params.keys().index(met.compartment)
+            self._build_balance_equation(m_id, table[m_id].items(), volume)
+
+
+    def _build_balance_equation(self, m_id, stoichiometry, volume):
+        print "build balance for", m_id
+
+        expr = lambda x, p: 1/p[volume]* sum([coeff*self.rates[r_id](x, p)
+                                              for r_id, coeff in stoichiometry])
+
+        self._balance_equations[m_id] = expr
 
