@@ -61,8 +61,8 @@ def make_irreversible(model):
             bwd_id = reaction.id + '_b'
             mapping[r_id] = (fwd_id, bwd_id)
             bwd_stoichiometry = [(m_id, -coeff) for m_id, coeff in reaction.stoichiometry.items()]
-            model.add_reaction(Reaction(fwd_id, reaction.name, False, reaction.stoichiometry))
-            model.add_reaction(Reaction(bwd_id, reaction.name, False, bwd_stoichiometry))
+            model.add_reaction(Reaction(fwd_id, reaction.name, False, reaction.stoichiometry, reaction.modifiers))
+            model.add_reaction(Reaction(bwd_id, reaction.name, False, bwd_stoichiometry, reaction.modifiers))
 
             if isinstance(model, CBModel):
                 lb, ub = model.bounds[r_id]
