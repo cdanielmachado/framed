@@ -66,8 +66,15 @@ def make_irreversible(model):
 
             if isinstance(model, CBModel):
                 lb, ub = model.bounds[r_id]
-                model.set_flux_bounds(fwd_id, 0, ub)
-                model.set_flux_bounds(bwd_id, 0, -lb if lb != None else None)
+                lb_fwd = max(0, lb) if lb is not None else 0
+                ub_fwd = max(0, ub) if ub is not None else None
+                lb_bwd = max(-ub, 0) if ub is not None else 0
+                ub_bwd = max(-lb, 0) if lb is not None else None
+                model.set_flux_bounds(fwd_id, lb_fwd, ub_fwd)
+                model.set_flux_bounds(bwd_id, lb_bwd, ub_bwd)
+                obj = model.objective[r_id]
+                model.set_reaction_objective(fwd_id, obj if obj >= 0 else 0)
+                model.set_reaction_objective(bwd_id, -obj if obj < 0 else 0)
                 model.set_rule(fwd_id, model.rules[r_id])
                 model.set_rule(bwd_id, model.rules[r_id])
 

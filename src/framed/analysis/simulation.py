@@ -76,6 +76,9 @@ def pFBA(model, objective=None, maximize=True, constraints=None, solver=None):
         objective = model.objective
 
     pre_solution = FBA(model, objective, maximize, constraints, solver)
+
+    if pre_solution.status != Status.OPTIMAL:
+        return pre_solution
     
     if maximize:
         obj_value = pre_solution.fobj
@@ -150,6 +153,9 @@ def qpFBA(model, objective=None, maximize=True, constraints=None, solver=None):
         
     pre_solution = FBA(model, objective, maximize, constraints, solver)
 
+    if pre_solution.status != Status.OPTIMAL:
+        return pre_solution
+
     if not constraints:
         constraints = dict()
 
@@ -219,19 +225,19 @@ def lMOMA(model, reference=None, constraints=None, solver=None):
 
     if not hasattr(solver, 'lMOMA_flag'): #for speed (about 3x faster)
         solver.lMOMA_flag = True
-        for r_id in model.reactions.keys():
+        for r_id in reference.keys():
             d_pos, d_neg = r_id + '_d+', r_id + '_d-'
             solver.add_variable(d_pos, 0, None, persistent=False, update_problem=False)
             solver.add_variable(d_neg, 0, None, persistent=False, update_problem=False)
         solver.update()
-        for r_id in model.reactions.keys():
+        for r_id in reference.keys():
             d_pos, d_neg = r_id + '_d+', r_id + '_d-'
             solver.add_constraint('c' + d_pos, [(r_id, -1), (d_pos, 1)], '>', -reference[r_id], persistent=False, update_problem=False)
             solver.add_constraint('c' + d_neg, [(r_id, 1), (d_neg, 1)], '>', reference[r_id], persistent=False, update_problem=False)
         solver.update()
         
     objective = dict()
-    for r_id in model.reactions.keys():
+    for r_id in reference.keys():
         d_pos, d_neg = r_id + '_d+', r_id + '_d-'
         objective[d_pos] = -1
         objective[d_neg] = -1
@@ -240,7 +246,7 @@ def lMOMA(model, reference=None, constraints=None, solver=None):
 
     #post process
     if solution.status == Status.OPTIMAL:
-        for r_id in model.reactions.keys():
+        for r_id in reference.keys():
             d_pos, d_neg = r_id + '_d+', r_id + '_d-'
             del solution.values[d_pos]
             del solution.values[d_neg]
@@ -290,7 +296,6 @@ def ROOM(model, reference=None, constraints=None, solver=None, delta=0.03, epsil
             solver.add_constraint('c' + r_id + '_u', [(r_id, 1), (y_i, (w_u - U))], '<', w_u, persistent=False, update_problem=False)
             solver.add_constraint('c' + r_id + '_l', [(r_id, 1), (y_i, (w_l - L))], '>', w_l, persistent=False, update_problem=False)
         solver.update()
-        
 
     solution = solver.solve_lp(objective, constraints=constraints)
     

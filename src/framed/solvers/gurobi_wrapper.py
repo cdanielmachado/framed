@@ -26,6 +26,7 @@ from .solver import Solver, Solution, Status, VarType
 from gurobipy import setParam, Model as GurobiModel, GRB, quicksum, read
 
 setParam("OutputFlag", 0)
+setParam('IntFeasTol', 1e-9)
 
 status_mapping = {GRB.OPTIMAL: Status.OPTIMAL,
                   GRB.UNBOUNDED: Status.UNBOUNDED,
@@ -192,10 +193,13 @@ class GurobiSolver(Solver):
         if constraints:
             old_constraints = {}
             for r_id, (lb, ub) in constraints.items():
-                lpvar = problem.getVarByName(r_id)
-                old_constraints[r_id] = (lpvar.lb, lpvar.ub)
-                lpvar.lb = lb if lb is not None else -GRB.INFINITY
-                lpvar.ub = ub if ub is not None else GRB.INFINITY
+                if r_id in self.var_ids:
+                    lpvar = problem.getVarByName(r_id)
+                    old_constraints[r_id] = (lpvar.lb, lpvar.ub)
+                    lpvar.lb = lb if lb is not None else -GRB.INFINITY
+                    lpvar.ub = ub if ub is not None else GRB.INFINITY
+                else:
+                    print 'Error: constrained variable not previously declared', r_id
             problem.update()
 
         #create objective function

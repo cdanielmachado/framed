@@ -24,8 +24,8 @@ from simulation import FBA
 from matplotlib.pyplot import plot, xlabel, ylabel, show, savefig, xlim, ylim
 
 
-def plot_flux_envelope(model, r_x, r_y, substrate=None, reference=None, alternatives=None, label_x=None, label_y=None,
-                       filename=None, steps=10):
+def plot_flux_envelope(model, r_x, r_y, substrate=None, constraints=None, reference=None, alternatives=None,
+                       label_x=None, label_y=None, filename=None, steps=10):
     """ Plots the flux envelope for a pair of reactions.
     
     Arguments:
@@ -39,7 +39,7 @@ def plot_flux_envelope(model, r_x, r_y, substrate=None, reference=None, alternat
         list (of float), list (of float), list (of float) -- x values, y min values, y max values
     """
 
-    xvals, ymins, ymaxs = flux_envelope(model, r_x, r_y, steps)
+    xvals, ymins, ymaxs = flux_envelope(model, r_x, r_y, steps, constraints)
 
     if substrate:
         sol = FBA(model)

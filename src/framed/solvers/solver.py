@@ -171,6 +171,13 @@ class Solution:
         return '\n'.join(lines)
 
 
+    def get_metabolites_turnover(self, model):
+        m_r_table = model.metabolite_reaction_lookup_table()
+        t = {m_id: 0.5*sum([abs(coeff * self.values[r_id]) for r_id, coeff in neighbours.items()])
+             for m_id, neighbours in m_r_table.items()}
+        return t
+
+
 class Solver:
     """ Abstract class representing a generic solver.
     All solver interfaces should implement the basic methods.

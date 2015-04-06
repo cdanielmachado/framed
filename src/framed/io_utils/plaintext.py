@@ -107,7 +107,7 @@ def add_reaction_from_str(model, reaction_str):
         substrates = match.group('substrates')
         products = match.group('products')
         if substrates or products:
-            reaction = Reaction(reaction_id, reaction_id, reversible);
+            reaction = Reaction(reaction_id, reaction_id, reversible)
             if isinstance(model, CBModel):
                 bounds = match.group('bounds')
                 lb, ub = _parse_bounds(bounds, reversible)
@@ -134,7 +134,9 @@ def _parse_coefficients(expression, model, reaction_id, sense):
         met_id = match.group('met_id')
         if met_id not in model.metabolites:
             model.add_metabolite(Metabolite(met_id, met_id))
-        model.set_stoichiometry(met_id, reaction_id, coeff * sense)
+        old_coeff = model.get_stoichiometry(met_id, reaction_id)
+        new_coeff = coeff * sense + old_coeff
+        model.set_stoichiometry(met_id, reaction_id, new_coeff)
 
 
 def _parse_bounds(expression, reversible):

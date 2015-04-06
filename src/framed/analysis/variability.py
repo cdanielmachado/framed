@@ -44,7 +44,7 @@ def FVA(model, obj_percentage=0, reactions=None, constraints=None):
 
     if obj_percentage > 0:
         target = model.detect_biomass_reaction()
-        solution = FBA(model)
+        solution = FBA(model, objective={target: 1})
         _constraints[target] = (obj_percentage * solution.fobj, None)
 
     if not reactions:

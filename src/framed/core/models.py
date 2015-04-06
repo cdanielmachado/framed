@@ -187,6 +187,13 @@ class Model:
         """
         self.compartments[compartment.id] = compartment
 
+    def get_stoichiometry(self, m_id, r_id):
+        coeff = None
+        if m_id in self.metabolites and r_id in self.reactions:
+            coeff = 0.0
+            if m_id in self.reactions[r_id].stoichiometry:
+                coeff = self.reactions[r_id].stoichiometry[m_id]
+        return coeff
 
     def set_stoichiometry(self, m_id, r_id, coeff):
         if m_id in self.metabolites and r_id in self.reactions:
