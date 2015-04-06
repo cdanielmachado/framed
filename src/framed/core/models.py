@@ -661,7 +661,16 @@ class ODEModel(Model):
         self.ratelaws = OrderedDict()
         self.indexed_params = None
         self.rates = None
+        self._balance_equations = None
         self.ODEs = None
+
+    def _clear_temp(self):
+        Model._clear_temp(self)
+        self.indexed_params = None
+        self.rates = None
+        self._balance_equations = None
+        self.ODEs = None
+
 
     def add_reaction(self, reaction, ratelaw=''):
         Model.add_reaction(self, reaction)
