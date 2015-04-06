@@ -705,7 +705,6 @@ class ODEModel(Model):
             del self.local_parameters[r_id]
 
     def get_p(self):
-        print 'get p'
         if not self.indexed_params:
             self._rebuild_parameter_list()
         return self.indexed_params.values()
@@ -731,7 +730,7 @@ class ODEModel(Model):
         self._rebuild_rate_functions()
         self._rebuild_balance_equations()
         p = p if p else self.get_p()
-        self.ODEs = lambda x, t: [eq(x, p) for eq in self._balance_equations.values()]
+        self.ODEs = lambda t, x: [eq(x, p) for eq in self._balance_equations.values()]
 
     def _rebuild_rate_functions(self):
         self.rates = OrderedDict()
@@ -761,8 +760,6 @@ class ODEModel(Model):
             index = self.indexed_params.keys().index((r_id, p_id))
             ratelaw = ratelaw.replace(' ' + p_id + ' ', ' p[{}] '.format(index))
 
-        print "build rate function for", r_id
-
         return eval('lambda x, p: ' + ratelaw)
 
 
@@ -776,7 +773,6 @@ class ODEModel(Model):
 
 
     def _build_balance_equation(self, m_id, stoichiometry, volume):
-        print "build balance for", m_id
 
         expr = lambda x, p: 1/p[volume]* sum([coeff*self.rates[r_id](x, p)
                                               for r_id, coeff in stoichiometry])

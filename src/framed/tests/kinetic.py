@@ -1,23 +1,24 @@
 from framed.io_utils.sbml import load_odemodel
-from scipy.integrate import odeint
-from numpy import arange
-from matplotlib.pyplot import plot, show
+import seaborn
+from matplotlib.pyplot import show
+from framed.kinetic.plotting import plot_simulation
+from framed.kinetic.simulation import find_steady_state, simulate
 __author__ = 'daniel'
 
 
-KINETIC_MODEL = '../../../examples/models/BIOMD0000000051.xml'
+KINETIC_MODEL = '../../../examples/models/Chassagnole2002_fixed.xml'
 
 
 def main():
     model = load_odemodel(KINETIC_MODEL)
-    x0 = model.concentrations.values()
-    x0[1] = 2
-    t = arange(0, 100, 0.1)
-    p = model.get_p()
-    p[model.indexed_params.keys().index(('vPGI', 'rmaxPGI'))] *= 0.01
-    x = odeint(model.get_ODEs(p), x0, t)
-    plot(t, x)
+    model.concentrations['cglcex'] = 2.0
+    model.local_parameters['vG6PDH']['rmaxG6PDH'] *= 0.1
+    plot_simulation(model, 1e3, metabolites=['cglcex', 'cg6p', 'cpep', 'cpyr'],
+                    xlabel='time', ylabel='concentration')
     show()
+
+    fluxes = find_steady_state(model)
+    print fluxes.items()
 
 
 
