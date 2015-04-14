@@ -1,24 +1,49 @@
 from framed.io_utils.sbml import load_odemodel
-import seaborn
-from matplotlib.pyplot import show
-from framed.kinetic.plotting import plot_simulation
+#import seaborn
+from matplotlib.pyplot import show, subplot
+from framed.kinetic.fitting import fit_from_metabolomics
+from framed.kinetic.plotting import plot_simulation, plot_sampling_results, plot_simulation_vs_data
 from framed.kinetic.simulation import find_steady_state, simulate
+
+from framed.kinetic.sampling import sample
 __author__ = 'daniel'
 
 
 KINETIC_MODEL = '../../../examples/models/Chassagnole2002_fixed.xml'
 
+PREY_PREDATOR = '../../../examples/models/prey_predator.xml'
 
-def main():
+
+def run_simulation_and_plot():
     model = load_odemodel(KINETIC_MODEL)
-    model.concentrations['cglcex'] = 2.0
-    model.local_parameters['vG6PDH']['rmaxG6PDH'] *= 0.1
     plot_simulation(model, 1e3, metabolites=['cglcex', 'cg6p', 'cpep', 'cpyr'],
-                    xlabel='time', ylabel='concentration')
+                    xlabel='time', ylabel='concentration', parameters={'Dil': 0.2/3600})
     show()
 
-    fluxes = find_steady_state(model)
-    print fluxes.items()
+def run_sampling():
+    model = load_odemodel(KINETIC_MODEL)
+    parameters = model.get_parameters()
+    vmaxs = [param for param in parameters.keys() if isinstance(param, tuple) and 'max' in param[1]]
+    p_sample, v_sample = sample(model, 10,  parameters=vmaxs, scale='log10', dist='normal', dist_args=(0, 1))
+    reactions = model.reactions.keys()[:3]
+    plot_sampling_results(model, v_sample, reactions)
+    show()
+
+
+def run_calibration():
+    model = load_odemodel(PREY_PREDATOR)
+    perturbed = {'k1': 0.8, 'k2': 0.9, 'k3': 1.5}
+    t, X = simulate(model, 10, steps=100, parameters=perturbed)
+    all_data = dict(zip(model.metabolites.keys(), X.T))
+    bounds = [(0, 10)]*3
+    fitted = fit_from_metabolomics(model, t, all_data, bounds=bounds)
+    plot_simulation_vs_data(model, t, all_data, parameters=fitted)
+    show()
+
+
+def main():
+    run_sampling()
+    #run_calibration()
 
 
 

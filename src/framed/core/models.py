@@ -659,14 +659,14 @@ class ODEModel(Model):
         self.global_parameters = OrderedDict()
         self.local_parameters = OrderedDict()
         self.ratelaws = OrderedDict()
-        self.indexed_params = None
+        self._indexed_params = None
         self.rates = None
         self._balance_equations = None
         self.ODEs = None
 
     def _clear_temp(self):
         Model._clear_temp(self)
-        self.indexed_params = None
+        self._indexed_params = None
         self.rates = None
         self._balance_equations = None
         self.ODEs = None
@@ -707,6 +707,23 @@ class ODEModel(Model):
         if r_id in self.reactions:
             self.local_parameters[r_id][p_id] = value
 
+    def set_parameters(self, parameters):
+        if not self._indexed_params:
+            self._rebuild_parameter_list()
+        for key, value in parameters.items():
+            if key in self._indexed_params:
+                self._indexed_params[key] = value
+
+    def get_parameters(self, exclude_compartments=False):
+        if not self._indexed_params:
+            self._rebuild_parameter_list()
+        parameters = OrderedDict()
+        parameters.update(self._indexed_params)
+        if exclude_compartments:
+            for c_id in self.compartments:
+                del parameters[c_id]
+        return parameters
+
 
     def remove_reactions(self, id_list):
         """ Remove a list of reactions from the model.
@@ -720,33 +737,35 @@ class ODEModel(Model):
             del self.ratelaws[r_id]
             del self.local_parameters[r_id]
 
-    def get_p(self):
-        if not self.indexed_params:
-            self._rebuild_parameter_list()
-        return self.indexed_params.values()
-
 
     def _rebuild_parameter_list(self):
-        self.indexed_params = OrderedDict()
+        self._indexed_params = OrderedDict()
         for comp in self.compartments.values():
-            self.indexed_params[comp.id] = comp.size
+            self._indexed_params[comp.id] = comp.size
         for p_id, value in self.global_parameters.items():
-            self.indexed_params[p_id] = value
+            self._indexed_params[p_id] = value
         for r_id, reaction in self.reactions.items():
             for p_id, value in self.local_parameters[r_id].items():
-                self.indexed_params[(r_id, p_id)] = value
+                self._indexed_params[(r_id, p_id)] = value
 
-    def get_ODEs(self, p=None):
+    def get_ODEs(self, params=None):
         if not self.ODEs:
-            self._rebuild_ODEs(p)
-        return self.ODEs
+            self._rebuild_ODEs()
 
-    def _rebuild_ODEs(self, p=None):
+        if params:
+            p = [params[key] if key in params else value
+                 for key, value in self._indexed_params.items()]
+        else:
+            p = self._indexed_params.values()
+
+        f = lambda t, x: self.ODEs(t, x, p)
+        return f
+
+    def _rebuild_ODEs(self,):
         self._rebuild_parameter_list()
         self._rebuild_rate_functions()
         self._rebuild_balance_equations()
-        p = p if p else self.get_p()
-        self.ODEs = lambda t, x: [eq(x, p) for eq in self._balance_equations.values()]
+        self.ODEs = lambda t, x, p: [eq(x, p) for eq in self._balance_equations.values()]
 
     def _rebuild_rate_functions(self):
         self.rates = OrderedDict()
@@ -764,16 +783,16 @@ class ODEModel(Model):
             ratelaw = ratelaw.replace(' ' + m_id + ' ', ' x[{}] '.format(i))
 
         for c_id in self.compartments:
-            index = self.indexed_params.keys().index(c_id)
+            index = self._indexed_params.keys().index(c_id)
             ratelaw = ratelaw.replace(' ' + c_id + ' ', ' p[{}] '.format(index))
 
         for p_id in self.global_parameters:
             if p_id not in self.local_parameters[r_id]:
-                index = self.indexed_params.keys().index(p_id)
+                index = self._indexed_params.keys().index(p_id)
                 ratelaw = ratelaw.replace(' ' + p_id + ' ', ' p[{}] '.format(index))
 
         for p_id in self.local_parameters[r_id]:
-            index = self.indexed_params.keys().index((r_id, p_id))
+            index = self._indexed_params.keys().index((r_id, p_id))
             ratelaw = ratelaw.replace(' ' + p_id + ' ', ' p[{}] '.format(index))
 
         return eval('lambda x, p: ' + ratelaw)
@@ -784,7 +803,7 @@ class ODEModel(Model):
         self._balance_equations = OrderedDict()
 
         for m_id, met in self.metabolites.items():
-            volume = self.indexed_params.keys().index(met.compartment)
+            volume = self._indexed_params.keys().index(met.compartment)
             self._build_balance_equation(m_id, table[m_id].items(), volume)
 
 
