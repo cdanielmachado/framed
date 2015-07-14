@@ -142,9 +142,11 @@ def _load_cbmodel(sbml_model):
     model.add_reactions(_load_reactions(sbml_model))
     model.set_multiple_bounds(_load_bounds(sbml_model))
     model.set_objective(_load_objective_coefficients(sbml_model))
-    genes, rules = _load_gpr(sbml_model)
+    genes, rules, reaction_genes = _load_gpr(sbml_model)
     model.add_genes(genes)
     model.set_rules(rules)
+    for r_id, gene_set in reaction_genes.items():
+        model.reaction_genes[r_id] = gene_set
     return model
 
 
@@ -172,13 +174,15 @@ def _get_cb_parameter(reaction, tag, default_value=None):
 def _load_gpr(sbml_model):
     genes = set()
     rules = []
+    reaction_genes = {}
     for reaction in sbml_model.getListOfReactions():
         rule = _extract_rule(reaction)
         new_genes = rule.replace('(', '').replace(')', '').replace(' and ', ' ').replace(' or ', ' ').split()
         genes = genes | set(new_genes)
         rules.append((reaction.getId(), rule))
+        reaction_genes[reaction.getId()] = set(new_genes)
     genes = [Gene(gene) for gene in sorted(genes)]
-    return genes, rules
+    return genes, rules, reaction_genes
 
 
 def _extract_rule(reaction):

@@ -76,7 +76,7 @@ def FVA(model, obj_percentage=0, reactions=None, constraints=None):
     return variability
 
 
-def blocked_reactions(model):
+def blocked_reactions(model, abstol=1e-9):
     """ Find all blocked reactions in a model
     
     Arguments:
@@ -88,7 +88,8 @@ def blocked_reactions(model):
 
     variability = FVA(model)
 
-    return [r_id for r_id, (lb, ub) in variability.items() if lb == 0 and ub == 0]
+    return [r_id for r_id, (lb, ub) in variability.items()
+            if lb is not None and ub is not None and abs(lb) < abstol and abs(ub) < abstol]
 
 
 def flux_envelope(model, r_x, r_y, steps=10, constraints=None):

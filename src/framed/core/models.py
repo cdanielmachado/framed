@@ -443,6 +443,7 @@ class CBModel(Model):
         self.bounds = OrderedDict()
         self.objective = OrderedDict()
         self.genes = OrderedDict()
+        self.reaction_genes = OrderedDict()
         self.rules = OrderedDict()
         self.rule_functions = OrderedDict()
         self.biomass_reaction = None
@@ -507,7 +508,7 @@ class CBModel(Model):
             self.objective[r_id] = coeff
 
 
-    def add_reaction(self, reaction, lb=None, ub=None, coeff=0, rule=''):
+    def add_reaction(self, reaction, lb=None, ub=None, coeff=0):
         """ Add a single reaction to the model.
         If a reaction with the same id exists, it will be replaced.
 
@@ -524,7 +525,8 @@ class CBModel(Model):
 
         self.bounds[reaction.id] = (lb, ub)
         self.objective[reaction.id] = coeff
-        self.set_rule(reaction.id, rule)
+        self.set_rule(reaction.id, '')
+        self.reaction_genes[reaction.id] = set()
 
 
 
@@ -541,6 +543,7 @@ class CBModel(Model):
             del self.objective[r_id]
             del self.rules[r_id]
             del self.rule_functions[r_id]
+            del self.reaction_genes[r_id]
 
     def print_reaction(self, r_id, reaction_names=False, metabolite_names=False):
         """ Print a reaction to a text based representation.

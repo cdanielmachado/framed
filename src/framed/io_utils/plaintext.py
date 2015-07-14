@@ -39,8 +39,9 @@ INSTRUCTIONS = """
 """
 
 id_re = '[a-zA-Z]\w*'
-pos_float_re = '\d+(?:\.\d+)?'
-float_re = '-?\d+(?:\.\d+)?'
+pos_float_re = '\d+(?:\.\d+)?(?:e[+-]?\d+)?'
+float_re = '-?\d+(?:\.\d+)?(?:e[+-]?\d+)?'
+
 
 compound = '(?:' + pos_float_re + '\s+)?' + id_re
 expression = compound + '(?:\s*\+\s*' + compound + ')*'

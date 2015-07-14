@@ -138,13 +138,13 @@ class Solution:
         inputs = model.get_metabolite_sources(m_id)
         outputs = model.get_metabolite_sinks(m_id)
         
-        fwd_in = [(r_id, model.stoichiometry[(m_id, r_id)] * self.values[r_id], '--> o')
+        fwd_in = [(r_id, model.reactions[r_id].stoichiometry[m_id] * self.values[r_id], '--> o')
                   for r_id in inputs if self.values[r_id] > 0 or zeros and self.values[r_id] == 0]
-        rev_in = [(r_id, model.stoichiometry[(m_id, r_id)] * self.values[r_id], 'o <--')
+        rev_in = [(r_id, model.reactions[r_id].stoichiometry[m_id] * self.values[r_id], 'o <--')
                   for r_id in outputs if self.values[r_id] < 0]
-        fwd_out = [(r_id, model.stoichiometry[(m_id, r_id)] * self.values[r_id], 'o -->')
+        fwd_out = [(r_id, model.reactions[r_id].stoichiometry[m_id] * self.values[r_id], 'o -->')
                    for r_id in outputs if self.values[r_id] > 0 or zeros and self.values[r_id] == 0]
-        rev_out = [(r_id, model.stoichiometry[(m_id, r_id)] * self.values[r_id], '<-- o')
+        rev_out = [(r_id, model.reactions[r_id].stoichiometry[m_id] * self.values[r_id], '<-- o')
                     for r_id in inputs if self.values[r_id] < 0]
         
         flux_in = fwd_in + rev_in
