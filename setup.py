@@ -7,7 +7,7 @@ setup(
     packages = find_packages('src'),
     install_requires = [], # e.g. ["numpy>=1.3.0"]
     author = 'Daniel Machado',
-    author_email = 'danm@biosustain.dtu.dk',
+    author_email = 'cdanielmachado@gmail.com',
     description = 'FRAMED - FRAmework for Metabolic Engineering and Design',
     license = 'Apache License Version 2.0',
     keywords = 'biology metabolism bioinformatics',

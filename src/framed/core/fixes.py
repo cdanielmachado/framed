@@ -19,7 +19,6 @@ Fixes to clean up common models from different sources/groups.
    limitations under the License.
    
 '''
-from framed.core.models import GPRConstrainedModel
 
 
 def fix_bigg_model(model, boundary_metabolites=True, reversibility=True, bounds=True, bigg_ids=True):
@@ -70,7 +69,6 @@ def clean_bigg_ids(model):
         del ord_dict[key]
         ord_dict[new_key] = item
 
-
     for m_id, metabolite in model.metabolites.items():
         metabolite.id = clean(m_id)
         key_replace(model.metabolites, m_id, metabolite.id)
@@ -81,10 +79,10 @@ def clean_bigg_ids(model):
         key_replace(model.bounds, r_id, reaction.id)
         key_replace(model.objective, r_id, reaction.id)
 
-        if isinstance(model, GPRConstrainedModel):
-            key_replace(model.rules, r_id, reaction.id)
-            key_replace(model.rule_functions, r_id, reaction.id)
+        key_replace(model.rules, r_id, reaction.id)
+        key_replace(model.rule_functions, r_id, reaction.id)
+        key_replace(model.reaction_genes, r_id, reaction.id)
 
-    for (m_id, r_id) in model.stoichiometry.keys():
-        key_replace(model.stoichiometry, (m_id, r_id), (clean(m_id), clean(r_id)))
+        for m_id in reaction.stoichiometry.keys():
+            key_replace(reaction.stoichiometry, m_id, clean(m_id))
         

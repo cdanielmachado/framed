@@ -23,6 +23,7 @@ TODO: Add explicit (graph-based) gene-reaction associations
 """
 
 from collections import OrderedDict
+from copy import deepcopy
 
 
 class Metabolite:
@@ -47,18 +48,34 @@ class Metabolite:
 class Reaction:
     """ Base class for modeling reactions. """
 
-    def __init__(self, elem_id, name=None, reversible=True):
+    def __init__(self, elem_id, name=None, reversible=True, stoichiometry=None, modifiers=None):
         """
         Arguments:
             elem_id : String -- a valid unique identifier
             name : String -- common reaction name
+            reversible : bool -- reaction reversibility (default: True)
+            stoichiometry : dict of str to float -- stoichiometry
+            modifiers : -- list of reaction modifiers
         """
         self.id = elem_id
         self.name = name
         self.reversible = reversible
+        self.stoichiometry = OrderedDict()
+        self.modifiers = []
+        if stoichiometry:
+            self.stoichiometry.update(stoichiometry)
+        if modifiers:
+            self.modifiers.extend(modifiers)
+
 
     def __str__(self):
         return self.name if self.name else self.id
+
+    def get_substrates(self):
+        return [m_id for m_id, coeff in self.stoichiometry.items() if coeff < 0]
+
+    def get_products(self):
+        return [m_id for m_id, coeff in self.stoichiometry.items() if coeff > 0]
 
 
 class Gene:
@@ -80,7 +97,7 @@ class Gene:
 class Compartment:
     """ Base class for modeling compartments. """
 
-    def __init__(self, elem_id, name=None):
+    def __init__(self, elem_id, name=None, size=1.0):
         """
         Arguments:
             elem_id : String -- a valid unique identifier
@@ -88,12 +105,13 @@ class Compartment:
         """
         self.id = elem_id
         self.name = name
+        self.size = size
 
     def __str__(self):
         return self.name if self.name else self.id
 
 
-class StoichiometricModel:
+class Model:
     """ Base class for all metabolic models implemented as a bipartite network.
     Contains the list of metabolites, reactions, compartments, and stoichiometry.
     """
@@ -107,14 +125,14 @@ class StoichiometricModel:
         self.metabolites = OrderedDict()
         self.reactions = OrderedDict()
         self.compartments = OrderedDict()
-        self.stoichiometry = OrderedDict()
         self._clear_temp()
 
     def _clear_temp(self):
         self._m_r_lookup = None
-        self._r_m_lookup = None
         self._s_matrix = None
 
+    def copy(self):
+        return deepcopy(self)
 
     def add_metabolites(self, metabolites):
         """ Add a list of metabolites to the model.
@@ -175,25 +193,20 @@ class StoichiometricModel:
         """
         self.compartments[compartment.id] = compartment
 
-    def add_stoichiometry(self, stoichiometry, replace=False):
-        """ Add stoichiometric coefficients (weighted edges between metabolites and reactions).
-        Negative coefficients represent consumption, positive coefficients represent production.
-        If coefficients for the same metabolite-reaction pairs exist in the model, they will be replaced.
+    def get_stoichiometry(self, m_id, r_id):
+        coeff = None
+        if m_id in self.metabolites and r_id in self.reactions:
+            coeff = 0.0
+            if m_id in self.reactions[r_id].stoichiometry:
+                coeff = self.reactions[r_id].stoichiometry[m_id]
+        return coeff
 
-        Arguments:
-            stoichiometry : list of (str, str, float) -- metabolite id, reaction id, coefficient
-            replace : bool -- replace old coefficient with new instead of adding (default: False)
-        """
-        for m_id, r_id, coeff in stoichiometry:
-            if m_id in self.metabolites and r_id in self.reactions:
-                if (m_id, r_id) not in self.stoichiometry or replace:
-                    self.stoichiometry[(m_id, r_id)] = coeff
-                else:
-                    coeff += self.stoichiometry[(m_id, r_id)]
-                    if coeff:
-                        self.stoichiometry[(m_id, r_id)] = coeff
-                    else:
-                        del self.stoichiometry[(m_id, r_id)]
+    def set_stoichiometry(self, m_id, r_id, coeff):
+        if m_id in self.metabolites and r_id in self.reactions:
+            if not coeff and m_id in self.reactions[r_id].stoichiometry:
+                del self.reactions[r_id].stoichiometry[m_id]
+            else:
+                self.reactions[r_id].stoichiometry[m_id] = coeff
 
         self._clear_temp()
 
@@ -207,9 +220,9 @@ class StoichiometricModel:
         for m_id in id_list:
             if m_id in self.metabolites:
                 del self.metabolites[m_id]
-        for (m2_id, r_id) in self.stoichiometry:
-            if m2_id in id_list:
-                del self.stoichiometry[(m2_id, r_id)]
+            for reaction in self.reactions.values():
+                if m_id in reaction.stoichiometry.keys():
+                    del reaction.stoichiometry[m_id]
         self._clear_temp()
 
     def remove_metabolite(self, m_id):
@@ -231,9 +244,6 @@ class StoichiometricModel:
         for r_id in id_list:
             if r_id in self.reactions:
                 del self.reactions[r_id]
-        for (m_id, r2_id) in self.stoichiometry:
-            if r2_id in id_list:
-                del self.stoichiometry[(m_id, r2_id)]
         self._clear_temp()
 
     def remove_reaction(self, r_id):
@@ -262,46 +272,7 @@ class StoichiometricModel:
                                          if metabolite.compartment == c_id])
 
 
-    def get_reaction_substrates(self, r_id):
-        """ Return the list of substrates for one reaction
-
-        Arguments:
-            r_id: str -- reaction id
-
-        Returns:
-            list [of str] -- substrates list
-        """
-        table = self.reaction_metabolite_lookup_table()
-        return [m_id for m_id, coeff in table[r_id].items() if coeff < 0]
-
-
-    def get_reaction_products(self, r_id):
-        """ Return the list of products for one reaction
-
-        Arguments:
-            r_id: str -- reaction id
-
-        Returns:
-            list [of str] -- products list
-        """
-        table = self.reaction_metabolite_lookup_table()
-        return [m_id for m_id, coeff in table[r_id].items() if coeff > 0]
-
-
-    def get_reaction_neighbours(self, r_id):
-        """ Return the list of metabolites connected to a reaction
-
-        Arguments:
-            r_id: str -- reaction id
-
-        Returns:
-            list [of str] -- metabolites list
-        """
-        table = self.reaction_metabolite_lookup_table()
-        return [m_id for m_id, coeff in table[r_id].items() if coeff != 0]
-
-
-    def get_metabolite_inputs(self, m_id):
+    def get_metabolite_sources(self, m_id):
         """ Return the list of input reactions for one metabolite
 
         Arguments:
@@ -314,7 +285,7 @@ class StoichiometricModel:
         return [r_id for r_id, coeff in table[m_id].items() if coeff > 0]
 
 
-    def get_metabolite_outputs(self, m_id):
+    def get_metabolite_sinks(self, m_id):
         """ Return the list of output reactions for one metabolite
 
         Arguments:
@@ -327,19 +298,6 @@ class StoichiometricModel:
         return [r_id for r_id, coeff in table[m_id].items() if coeff < 0]
 
 
-    def get_metabolite_neighbours(self, m_id):
-        """ Return the list of reactions connected to a metabolite
-
-        Arguments:
-            m_id: str -- metabolite id
-
-        Returns:
-            list [of str] -- reactions list
-        """
-        table = self.metabolite_reaction_lookup_table()
-        return [r_id for r_id, coeff in table[m_id].items() if coeff != 0]
-
-
     def metabolite_reaction_lookup_table(self):
         """ Return the network topology as a nested map: metabolite id -> reaction id -> coefficient
 
@@ -350,26 +308,11 @@ class StoichiometricModel:
         if not self._m_r_lookup:
             self._m_r_lookup = OrderedDict([(m_id, OrderedDict()) for m_id in self.metabolites])
 
-            for (m_id, r_id), coeff in self.stoichiometry.items():
-                self._m_r_lookup[m_id][r_id] = coeff
+            for r_id, reaction in self.reactions.items():
+                for m_id, coeff in reaction.stoichiometry.items():
+                    self._m_r_lookup[m_id][r_id] = coeff
 
         return self._m_r_lookup
-
-
-    def reaction_metabolite_lookup_table(self):
-        """ Return the network topology as a nested map: reaction id -> metabolite id -> coefficient
-
-        Returns:
-            OrderedDict (of str to OrderedDict of str to float) -- lookup table
-        """
-
-        if not self._r_m_lookup:
-            self._r_m_lookup = OrderedDict([(r_id, OrderedDict()) for r_id in self.reactions])
-
-            for (m_id, r_id), coeff in self.stoichiometry.items():
-                self._r_m_lookup[r_id][m_id] = coeff
-
-        return self._r_m_lookup
 
 
     def stoichiometric_matrix(self):
@@ -380,8 +323,8 @@ class StoichiometricModel:
         """
 
         if not self._s_matrix:
-            self._s_matrix = [[self.stoichiometry[(m_id, r_id)] if (m_id, r_id) in self.stoichiometry else 0
-                               for r_id in self.reactions]
+            self._s_matrix = [[reaction.stoichiometry[m_id] if m_id in reaction.stoichiometry else 0
+                               for reaction in self.reactions.values()]
                               for m_id in self.metabolites]
 
         return self._s_matrix
@@ -399,17 +342,16 @@ class StoichiometricModel:
             str -- reaction string
         """
 
-        table = self.reaction_metabolite_lookup_table()
-
         r_repr = self.reactions[r_id].name if reaction_names else r_id
         m_repr = lambda m_id: self.metabolites[m_id].name if metabolite_names else m_id
+        stoichiometry = self.reactions[r_id].stoichiometry
 
         res = r_repr + ': '
         res += ' + '.join([m_repr(m_id) if coeff == -1.0 else str(-coeff) + ' ' + m_repr(m_id)
-                           for m_id, coeff in table[r_id].items() if coeff < 0])
+                           for m_id, coeff in stoichiometry.items() if coeff < 0])
         res += ' <-> ' if self.reactions[r_id].reversible else ' --> '
         res += ' + '.join([m_repr(m_id) if coeff == 1.0 else str(coeff) + ' ' + m_repr(m_id)
-                           for m_id, coeff in table[r_id].items() if coeff > 0])
+                           for m_id, coeff in stoichiometry.items() if coeff > 0])
         return res
 
     def to_string(self, reaction_names=False, metabolite_names=False):
@@ -425,28 +367,27 @@ class StoichiometricModel:
         return self.to_string()
 
 
-class ConstraintBasedModel(StoichiometricModel):
-    """ Base class for constraint-based models.
-    Extends StoichiometricModel with flux bounds.
-    """
+class CBModel(Model):
 
     def __init__(self, model_id):
         """
         Arguments:
             model_id : String -- a valid unique identifier
         """
-        StoichiometricModel.__init__(self, model_id)
+        Model.__init__(self, model_id)
         self.bounds = OrderedDict()
         self.objective = OrderedDict()
+        self.genes = OrderedDict()
+        self.reaction_genes = OrderedDict()
+        self.rules = OrderedDict()
+        self.rule_functions = OrderedDict()
         self.biomass_reaction = None
 
-    def set_bounds(self, bounds_list):
+    def set_multiple_bounds(self, bounds):
         """ Define flux bounds for a set of reactions
 
-        Arguments:
-            bounds_list : list (of str, float, float) -- reaction id, lower bound, upper bound
         """
-        for r_id, lb, ub in bounds_list:
+        for r_id, (lb, ub) in bounds:
             self.set_flux_bounds(r_id, lb, ub)
 
     def set_flux_bounds(self, r_id, lb, ub):
@@ -482,11 +423,9 @@ class ConstraintBasedModel(StoichiometricModel):
             lb, _ = self.bounds[r_id]
             self.bounds[r_id] = lb, ub
 
-    def set_objective_coefficients(self, coefficients):
+    def set_objective(self, coefficients):
         """ Define objective coefficients for a list of reactions
 
-        Arguments:
-            coefficients : list (of str, float) -- reaction id, coefficient
         """
         for r_id, coeff, in coefficients:
             self.set_reaction_objective(r_id, coeff)
@@ -512,13 +451,17 @@ class ConstraintBasedModel(StoichiometricModel):
             ub : float -- upper bound (default: None)
             coeff : float -- objective coefficient (default: 0)
         """
-        StoichiometricModel.add_reaction(self, reaction)
+        Model.add_reaction(self, reaction)
 
         if lb == None and not reaction.reversible:
             lb = 0
 
         self.bounds[reaction.id] = (lb, ub)
         self.objective[reaction.id] = coeff
+        self.set_rule(reaction.id, '')
+        self.reaction_genes[reaction.id] = set()
+
+
 
     def remove_reactions(self, id_list):
         """ Remove a list of reactions from the model.
@@ -527,10 +470,13 @@ class ConstraintBasedModel(StoichiometricModel):
         Arguments:
             id_list : list of str -- reaction ids
         """
-        StoichiometricModel.remove_reactions(self, id_list)
+        Model.remove_reactions(self, id_list)
         for r_id in id_list:
             del self.bounds[r_id]
             del self.objective[r_id]
+            del self.rules[r_id]
+            del self.rule_functions[r_id]
+            del self.reaction_genes[r_id]
 
     def print_reaction(self, r_id, reaction_names=False, metabolite_names=False):
         """ Print a reaction to a text based representation.
@@ -541,7 +487,7 @@ class ConstraintBasedModel(StoichiometricModel):
         Returns:
             str -- reaction string
         """
-        res = StoichiometricModel.print_reaction(self, r_id, reaction_names, metabolite_names)
+        res = Model.print_reaction(self, r_id, reaction_names, metabolite_names)
         lb, ub = self.bounds[r_id]
         rev = self.reactions[r_id].reversible
         if lb != None and (rev or lb != 0.0) or ub != None:
@@ -575,21 +521,6 @@ class ConstraintBasedModel(StoichiometricModel):
         return self.biomass_reaction
 
 
-class GPRConstrainedModel(ConstraintBasedModel):
-    """ Base class for constraint-based models with GPR associations.
-    Extends ConstraintBasedModel with genes and rules
-    """
-
-    def __init__(self, model_id):
-        """
-        Arguments:
-            model_id : String -- a valid unique identifier
-        """
-        ConstraintBasedModel.__init__(self, model_id)
-        self.genes = OrderedDict()
-        self.rules = OrderedDict()
-        self.rule_functions = OrderedDict()
-
     def add_genes(self, genes):
         """ Add a list of genes to the model.
 
@@ -608,30 +539,27 @@ class GPRConstrainedModel(ConstraintBasedModel):
         """
         self.genes[gene.id] = gene
 
-    def add_reaction(self, reaction, lb=None, ub=None, rule=''):
-        """ Add a single reaction to the model.
-        If a reaction with the same id exists, it will be replaced.
+    def remove_gene(self, gene_id):
+        """ Remove a gene from the model.
 
         Arguments:
-            reaction : Reaction
-            lb : float -- lower bound (default: None)
-            ub : float -- upper bound (default: None)
-            rule : str -- GPR association rule (default: None)
+            str : Gene id
         """
-        ConstraintBasedModel.add_reaction(self, reaction, lb, ub)
-        self.set_rule(reaction.id, rule)
+        self.remove_genes([gene_id])
 
-    def remove_reactions(self, id_list):
-        """ Remove a list of reactions from the model.
-        Also removes all the edges connected to the reactions.
+
+    def remove_genes(self, gene_list):
+        """ Remove a set of genes from the model.
+            TODO: When switching to a GPR class representation, make sure to clean up rules as well
 
         Arguments:
-            id_list : list of str -- reaction ids
+            list of str : Gene ids
         """
-        ConstraintBasedModel.remove_reactions(self, id_list)
-        for r_id in id_list:
-            del self.rules[r_id]
-            del self.rule_functions[r_id]
+
+        for gene_id in gene_list:
+            del self.genes[gene_id]
+
+
 
     def set_rules(self, rules):
         """ Define GPR association rules for a set of reactions
@@ -676,4 +604,171 @@ class GPRConstrainedModel(ConstraintBasedModel):
                 rule = rule.replace(' ' + gene + ' ', ' x[\'' + gene + '\'] ')
         return eval('lambda x: ' + rule)
 
+
+class ODEModel(Model):
+
+    def __init__(self, model_id):
+        """
+        Arguments:
+            model_id : String -- a valid unique identifier
+        """
+        Model.__init__(self, model_id)
+        self.concentrations = OrderedDict()
+        self.global_parameters = OrderedDict()
+        self.local_parameters = OrderedDict()
+        self.ratelaws = OrderedDict()
+        self._indexed_params = None
+        self.rates = None
+        self._balance_equations = None
+        self.ODEs = None
+
+    def _clear_temp(self):
+        Model._clear_temp(self)
+        self._indexed_params = None
+        self.rates = None
+        self._balance_equations = None
+        self.ODEs = None
+
+
+    def add_reaction(self, reaction, ratelaw=''):
+        Model.add_reaction(self, reaction)
+        self.ratelaws[reaction.id] = ratelaw
+        self.local_parameters[reaction.id] = OrderedDict()
+
+    def set_concentrations(self, concentrations):
+        for m_id, concentration in concentrations:
+            self.set_concentration(m_id, concentration)
+
+    def set_concentration(self, m_id, concentration):
+        if m_id in self.metabolites: #check concentration >= 0 ?
+            self.concentrations[m_id] = concentration
+
+    def set_ratelaws(self, ratelaws):
+        for r_id, ratelaw in ratelaws:
+            self.set_ratelaw(r_id, ratelaw)
+
+    def set_ratelaw(self, r_id, ratelaw):
+        if r_id in self.reactions:
+            self.ratelaws[r_id] = ratelaw
+
+    def set_global_parameters(self, parameters):
+        for key, value in parameters:
+            self.global_parameters[key] = value
+
+    def set_local_parameters(self, parameters):
+        for r_id, params in parameters.items():
+            if r_id in self.reactions:
+                for p_id, value in params:
+                    self.set_local_parameter(r_id, p_id, value)
+
+    def set_local_parameter(self, r_id, p_id, value):
+        if r_id in self.reactions:
+            self.local_parameters[r_id][p_id] = value
+
+    def set_parameters(self, parameters):
+        if not self._indexed_params:
+            self._rebuild_parameter_list()
+        for key, value in parameters.items():
+            if key in self._indexed_params:
+                self._indexed_params[key] = value
+
+    def get_parameters(self, exclude_compartments=False):
+        if not self._indexed_params:
+            self._rebuild_parameter_list()
+        parameters = OrderedDict()
+        parameters.update(self._indexed_params)
+        if exclude_compartments:
+            for c_id in self.compartments:
+                del parameters[c_id]
+        return parameters
+
+
+    def remove_reactions(self, id_list):
+        """ Remove a list of reactions from the model.
+        Also removes all the edges connected to the reactions.
+
+        Arguments:
+            id_list : list of str -- reaction ids
+        """
+        Model.remove_reactions(self, id_list)
+        for r_id in id_list:
+            del self.ratelaws[r_id]
+            del self.local_parameters[r_id]
+
+
+    def _rebuild_parameter_list(self):
+        self._indexed_params = OrderedDict()
+        for comp in self.compartments.values():
+            self._indexed_params[comp.id] = comp.size
+        for p_id, value in self.global_parameters.items():
+            self._indexed_params[p_id] = value
+        for r_id, reaction in self.reactions.items():
+            for p_id, value in self.local_parameters[r_id].items():
+                self._indexed_params[(r_id, p_id)] = value
+
+    def get_ODEs(self, params=None):
+        if not self.ODEs:
+            self._rebuild_ODEs()
+
+        if params:
+            p = [params[key] if key in params else value
+                 for key, value in self._indexed_params.items()]
+        else:
+            p = self._indexed_params.values()
+
+        f = lambda t, x: self.ODEs(t, x, p)
+        return f
+
+    def _rebuild_ODEs(self,):
+        self._rebuild_parameter_list()
+        self._rebuild_rate_functions()
+        self._rebuild_balance_equations()
+        self.ODEs = lambda t, x, p: [eq(x, p) for eq in self._balance_equations.values()]
+
+    def _rebuild_rate_functions(self):
+        self.rates = OrderedDict()
+        for r_id, ratelaw in self.ratelaws.items():
+            self.rates[r_id] = self._rate_to_function(r_id, ratelaw)
+
+    def _rate_to_function(self, r_id, ratelaw):
+
+        symbols = '()+*-/,'
+        ratelaw = ' ' + ratelaw + ' '
+        for symbol in symbols:
+            ratelaw = ratelaw.replace(symbol, ' ' + symbol + ' ')
+
+        for i, m_id in enumerate(self.metabolites):
+            ratelaw = ratelaw.replace(' ' + m_id + ' ', ' x[{}] '.format(i))
+
+        for c_id in self.compartments:
+            index = self._indexed_params.keys().index(c_id)
+            ratelaw = ratelaw.replace(' ' + c_id + ' ', ' p[{}] '.format(index))
+
+        for p_id in self.global_parameters:
+            if p_id not in self.local_parameters[r_id]:
+                index = self._indexed_params.keys().index(p_id)
+                ratelaw = ratelaw.replace(' ' + p_id + ' ', ' p[{}] '.format(index))
+
+        for p_id in self.local_parameters[r_id]:
+            index = self._indexed_params.keys().index((r_id, p_id))
+            ratelaw = ratelaw.replace(' ' + p_id + ' ', ' p[{}] '.format(index))
+
+        return eval('lambda x, p: ' + ratelaw)
+
+
+    def _rebuild_balance_equations(self):
+        table = self.metabolite_reaction_lookup_table()
+        self._balance_equations = OrderedDict()
+
+        for m_id, met in self.metabolites.items():
+            volume = self._indexed_params.keys().index(met.compartment)
+            self._build_balance_equation(m_id, table[m_id].items(), volume)
+
+
+    def _build_balance_equation(self, m_id, stoichiometry, volume):
+
+        expr = lambda x, p: 1/p[volume]* sum([coeff*self.rates[r_id](x, p)
+                                              for r_id, coeff in stoichiometry])
+
+        self._balance_equations[m_id] = expr
 

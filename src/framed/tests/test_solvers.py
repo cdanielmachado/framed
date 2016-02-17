@@ -6,8 +6,10 @@ Unit testing solver interfaces.
 import unittest
 import pickle
 
-from framed.io_utils.sbml import load_sbml_model, CONSTRAINT_BASED
-from framed.solvers import GurobiSolver, GlpkSolver, GlpkSolverLazy
+from framed.io_utils.sbml import load_cbmodel
+from framed.solvers.gurobi_wrapper import GurobiSolver
+from framed.solvers.glpk_wrapper import GlpkSolver
+from framed.solvers.glpk_wrapper_lazy import GlpkSolverLazy
 from framed.analysis.simulation import FBA
 from framed.core.fixes import fix_bigg_model
 from test_glpk_alone import *
@@ -19,8 +21,7 @@ class SolverPickleTest(unittest.TestCase):
     """docstring for SolverPickleTest"""
 
     def setUp(self):
-        self.model = load_sbml_model(SMALL_TEST_MODEL, kind=CONSTRAINT_BASED)
-        fix_bigg_model(self.model)
+        self.model = load_cbmodel(SMALL_TEST_MODEL, flavor='bigg')
 
     def test_gurobi_solver_pickle(self):
 
@@ -44,7 +45,7 @@ class SolverPickleTest(unittest.TestCase):
 class SolverGLPKTest(unittest.TestCase):
 
     def setUp(self):
-        self.model = load_sbml_model(SMALL_TEST_MODEL, kind=CONSTRAINT_BASED)
+        self.model = load_cbmodel(SMALL_TEST_MODEL, flavor='bigg')
         fix_bigg_model(self.model)
 
     def test_glpk_alone(self):

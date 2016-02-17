@@ -1,0 +1,1948 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sbml xmlns="http://www.sbml.org/sbml/level2" level="2" version="1">
+  <model id="Chassagnole2002_Carbon_Metabolism">
+    <listOfCompartments>
+      <compartment id="extracellular" size="1"/>
+      <compartment id="cytosol" size="1"/>
+    </listOfCompartments>
+    <listOfSpecies>
+      <species id="cpep" name="Phosphoenol pyruvate" compartment="cytosol" initialConcentration="2.67"/>
+      <species id="cglcex" name="Extracellular Glucose" compartment="extracellular" initialConcentration="2"/>
+      <species id="cg6p" name="Glucose-6-Phosphate" compartment="cytosol" initialConcentration="3.48"/>
+      <species id="cpyr" name="Pyruvate" compartment="cytosol" initialConcentration="2.67"/>
+      <species id="cf6p" name="Fructose-6-Phosphate" compartment="cytosol" initialConcentration="0.6"/>
+      <species id="cg1p" name="Glucose-1-Phosphate" compartment="cytosol" initialConcentration="0.653"/>
+      <species id="cpg" name="6-Phosphogluconate" compartment="cytosol" initialConcentration="0.808"/>
+      <species id="cfdp" name="Fructose-1,6-bisphosphate" compartment="cytosol" initialConcentration="0.272"/>
+      <species id="csed7p" name="sedoheptulose-7-phosphate" compartment="cytosol" initialConcentration="0.276"/>
+      <species id="cgap" name="Glyceraldehyde-3-Phosphate" compartment="cytosol" initialConcentration="0.218"/>
+      <species id="ce4p" name="Erythrose-4-phosphate" compartment="cytosol" initialConcentration="0.098"/>
+      <species id="cxyl5p" name="Xylulose-5-phosphate" compartment="cytosol" initialConcentration="0.138"/>
+      <species id="crib5p" name="Ribose-5-phosphate" compartment="cytosol" initialConcentration="0.398"/>
+      <species id="cdhap" name="Dihydroxyacetonephosphate" compartment="cytosol" initialConcentration="0.167"/>
+      <species id="cpgp" name="1,3-diphosphosphoglycerate" compartment="cytosol" initialConcentration="0.008"/>
+      <species id="cpg3" name="3-Phosphoglycerate" compartment="cytosol" initialConcentration="2.13"/>
+      <species id="cpg2" name="2-Phosphoglycerate" compartment="cytosol" initialConcentration="0.399"/>
+      <species id="cribu5p" name="Ribulose-5-phosphate" compartment="cytosol" initialConcentration="0.111"/>
+    </listOfSpecies>
+    <listOfParameters>
+      <parameter id="catp" value="4.27"/>
+      <parameter id="cadp" value="0.595"/>
+      <parameter id="camp" value="0.955"/>
+      <parameter id="cnadp" value="0.195"/>
+      <parameter id="cnadph" value="0.062"/>
+      <parameter id="cnad" value="1.47"/>
+      <parameter id="cnadh" value="0.1"/>
+    </listOfParameters>
+    <listOfReactions>
+      <reaction id="vPTS" name="Phosphotransferase system" reversible="true">
+        <listOfReactants>
+          <speciesReference species="cglcex" stoichiometry="1"/>
+          <speciesReference species="cpep" stoichiometry="65"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="cg6p" stoichiometry="65"/>
+          <speciesReference species="cpyr" stoichiometry="65"/>
+        </listOfProducts>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <divide/>
+              <apply>
+                <times/>
+                <ci> extracellular </ci>
+                <ci> rmaxPTS </ci>
+                <ci> cglcex </ci>
+                <apply>
+                  <divide/>
+                  <ci> cpep </ci>
+                  <ci> cpyr </ci>
+                </apply>
+              </apply>
+              <apply>
+                <times/>
+                <apply>
+                  <plus/>
+                  <ci> KPTSa1 </ci>
+                  <apply>
+                    <times/>
+                    <ci> KPTSa2 </ci>
+                    <apply>
+                      <divide/>
+                      <ci> cpep </ci>
+                      <ci> cpyr </ci>
+                    </apply>
+                  </apply>
+                  <apply>
+                    <times/>
+                    <ci> KPTSa3 </ci>
+                    <ci> cglcex </ci>
+                  </apply>
+                  <apply>
+                    <times/>
+                    <ci> cglcex </ci>
+                    <apply>
+                      <divide/>
+                      <ci> cpep </ci>
+                      <ci> cpyr </ci>
+                    </apply>
+                  </apply>
+                </apply>
+                <apply>
+                  <plus/>
+                  <cn type="integer"> 1 </cn>
+                  <apply>
+                    <divide/>
+                    <apply>
+                      <power/>
+                      <ci> cg6p </ci>
+                      <ci> nPTSg6p </ci>
+                    </apply>
+                    <ci> KPTSg6p </ci>
+                  </apply>
+                </apply>
+              </apply>
+            </apply>
+          </math>
+          <listOfParameters>
+            <parameter id="rmaxPTS" value="7829.78"/>
+            <parameter id="KPTSa1" value="3082.3"/>
+            <parameter id="KPTSa2" value="0.01"/>
+            <parameter id="KPTSa3" value="245.3"/>
+            <parameter id="nPTSg6p" value="3.66"/>
+            <parameter id="KPTSg6p" value="2.15"/>
+          </listOfParameters>
+        </kineticLaw>
+      </reaction>
+      <reaction id="vPGI" name="Glucose-6-phosphate isomerase" reversible="true">
+        <listOfReactants>
+          <speciesReference species="cg6p" stoichiometry="1"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="cf6p" stoichiometry="1"/>
+        </listOfProducts>
+        <listOfModifiers>
+          <modifierSpeciesReference species="cpg"/>
+        </listOfModifiers>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <divide/>
+              <apply>
+                <times/>
+                <ci> cytosol </ci>
+                <ci> rmaxPGI </ci>
+                <apply>
+                  <minus/>
+                  <ci> cg6p </ci>
+                  <apply>
+                    <divide/>
+                    <ci> cf6p </ci>
+                    <ci> KPGIeq </ci>
+                  </apply>
+                </apply>
+              </apply>
+              <apply>
+                <plus/>
+                <apply>
+                  <times/>
+                  <ci> KPGIg6p </ci>
+                  <apply>
+                    <plus/>
+                    <cn type="integer"> 1 </cn>
+                    <apply>
+                      <divide/>
+                      <ci> cf6p </ci>
+                      <apply>
+                        <times/>
+                        <ci> KPGIf6p </ci>
+                        <apply>
+                          <plus/>
+                          <cn type="integer"> 1 </cn>
+                          <apply>
+                            <divide/>
+                            <ci> cpg </ci>
+                            <ci> KPGIf6ppginh </ci>
+                          </apply>
+                        </apply>
+                      </apply>
+                    </apply>
+                    <apply>
+                      <divide/>
+                      <ci> cpg </ci>
+                      <ci> KPGIg6ppginh </ci>
+                    </apply>
+                  </apply>
+                </apply>
+                <ci> cg6p </ci>
+              </apply>
+            </apply>
+          </math>
+          <listOfParameters>
+            <parameter id="rmaxPGI" value="650.9878687"/>
+            <parameter id="KPGIeq" value="0.1725"/>
+            <parameter id="KPGIg6p" value="2.9"/>
+            <parameter id="KPGIf6p" value="0.266"/>
+            <parameter id="KPGIf6ppginh" value="0.2"/>
+            <parameter id="KPGIg6ppginh" value="0.2"/>
+          </listOfParameters>
+        </kineticLaw>
+      </reaction>
+      <reaction id="vPGM" name="Phosphoglucomutase" reversible="true">
+        <listOfReactants>
+          <speciesReference species="cg6p" stoichiometry="1"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="cg1p" stoichiometry="1"/>
+        </listOfProducts>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <divide/>
+              <apply>
+                <times/>
+                <ci> cytosol </ci>
+                <ci> rmaxPGM </ci>
+                <apply>
+                  <minus/>
+                  <ci> cg6p </ci>
+                  <apply>
+                    <divide/>
+                    <ci> cg1p </ci>
+                    <ci> KPGMeq </ci>
+                  </apply>
+                </apply>
+              </apply>
+              <apply>
+                <plus/>
+                <apply>
+                  <times/>
+                  <ci> KPGMg6p </ci>
+                  <apply>
+                    <plus/>
+                    <cn type="integer"> 1 </cn>
+                    <apply>
+                      <divide/>
+                      <ci> cg1p </ci>
+                      <ci> KPGMg1p </ci>
+                    </apply>
+                  </apply>
+                </apply>
+                <ci> cg6p </ci>
+              </apply>
+            </apply>
+          </math>
+          <listOfParameters>
+            <parameter id="rmaxPGM" value="0.8398242773"/>
+            <parameter id="KPGMeq" value="0.196"/>
+            <parameter id="KPGMg6p" value="1.038"/>
+            <parameter id="KPGMg1p" value="0.0136"/>
+          </listOfParameters>
+        </kineticLaw>
+      </reaction>
+      <reaction id="vG6PDH" name="Glucose-6-phosphate dehydrogenase" reversible="true">
+        <listOfReactants>
+          <speciesReference species="cg6p" stoichiometry="1"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="cpg" stoichiometry="1"/>
+        </listOfProducts>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <divide/>
+              <apply>
+                <times/>
+                <ci> cytosol </ci>
+                <ci> rmaxG6PDH </ci>
+                <ci> cg6p </ci>
+                <ci> cnadp </ci>
+              </apply>
+              <apply>
+                <times/>
+                <apply>
+                  <plus/>
+                  <ci> cg6p </ci>
+                  <ci> KG6PDHg6p </ci>
+                </apply>
+                <apply>
+                  <plus/>
+                  <cn type="integer"> 1 </cn>
+                  <apply>
+                    <divide/>
+                    <ci> cnadph </ci>
+                    <ci> KG6PDHnadphg6pinh </ci>
+                  </apply>
+                </apply>
+                <apply>
+                  <plus/>
+                  <apply>
+                    <times/>
+                    <ci> KG6PDHnadp </ci>
+                    <apply>
+                      <plus/>
+                      <cn type="integer"> 1 </cn>
+                      <apply>
+                        <divide/>
+                        <ci> cnadph </ci>
+                        <ci> KG6PDHnadphnadpinh </ci>
+                      </apply>
+                    </apply>
+                  </apply>
+                  <ci> cnadp </ci>
+                </apply>
+              </apply>
+            </apply>
+          </math>
+          <listOfParameters>
+            <parameter id="rmaxG6PDH" value="1.380196955"/>
+            <parameter id="KG6PDHg6p" value="14.4"/>
+            <parameter id="KG6PDHnadphg6pinh" value="6.43"/>
+            <parameter id="KG6PDHnadp" value="0.0246"/>
+            <parameter id="KG6PDHnadphnadpinh" value="0.01"/>
+          </listOfParameters>
+        </kineticLaw>
+      </reaction>
+      <reaction id="vPFK" name="Phosphofructokinase" reversible="true">
+        <listOfReactants>
+          <speciesReference species="cf6p" stoichiometry="1"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="cfdp" stoichiometry="1"/>
+        </listOfProducts>
+        <listOfModifiers>
+          <modifierSpeciesReference species="cpep"/>
+        </listOfModifiers>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <divide/>
+              <apply>
+                <times/>
+                <ci> cytosol </ci>
+                <ci> rmaxPFK </ci>
+                <ci> catp </ci>
+                <ci> cf6p </ci>
+              </apply>
+              <apply>
+                <times/>
+                <apply>
+                  <plus/>
+                  <ci> catp </ci>
+                  <apply>
+                    <times/>
+                    <ci> KPFKatps </ci>
+                    <apply>
+                      <plus/>
+                      <cn type="integer"> 1 </cn>
+                      <apply>
+                        <divide/>
+                        <ci> cadp </ci>
+                        <ci> KPFKadpc </ci>
+                      </apply>
+                    </apply>
+                  </apply>
+                </apply>
+                <apply>
+                  <plus/>
+                  <ci> cf6p </ci>
+                  <apply>
+                    <divide/>
+                    <apply>
+                      <times/>
+                      <ci> KPFKf6ps </ci>
+                      <apply>
+                        <plus/>
+                        <cn type="integer"> 1 </cn>
+                        <apply>
+                          <divide/>
+                          <ci> cpep </ci>
+                          <ci> KPFKpep </ci>
+                        </apply>
+                        <apply>
+                          <divide/>
+                          <ci> cadp </ci>
+                          <ci> KPFKadpb </ci>
+                        </apply>
+                        <apply>
+                          <divide/>
+                          <ci> camp </ci>
+                          <ci> KPFKampb </ci>
+                        </apply>
+                      </apply>
+                    </apply>
+                    <apply>
+                      <plus/>
+                      <cn type="integer"> 1 </cn>
+                      <apply>
+                        <divide/>
+                        <ci> cadp </ci>
+                        <ci> KPFKadpa </ci>
+                      </apply>
+                      <apply>
+                        <divide/>
+                        <ci> camp </ci>
+                        <ci> KPFKampa </ci>
+                      </apply>
+                    </apply>
+                  </apply>
+                </apply>
+                <apply>
+                  <plus/>
+                  <cn type="integer"> 1 </cn>
+                  <apply>
+                    <divide/>
+                    <ci> LPFK </ci>
+                    <apply>
+                      <power/>
+                      <apply>
+                        <plus/>
+                        <cn type="integer"> 1 </cn>
+                        <apply>
+                          <divide/>
+                          <apply>
+                            <times/>
+                            <ci> cf6p </ci>
+                            <apply>
+                              <plus/>
+                              <cn type="integer"> 1 </cn>
+                              <apply>
+                                <divide/>
+                                <ci> cadp </ci>
+                                <ci> KPFKadpa </ci>
+                              </apply>
+                              <apply>
+                                <divide/>
+                                <ci> camp </ci>
+                                <ci> KPFKampa </ci>
+                              </apply>
+                            </apply>
+                          </apply>
+                          <apply>
+                            <times/>
+                            <ci> KPFKf6ps </ci>
+                            <apply>
+                              <plus/>
+                              <cn type="integer"> 1 </cn>
+                              <apply>
+                                <divide/>
+                                <ci> cpep </ci>
+                                <ci> KPFKpep </ci>
+                              </apply>
+                              <apply>
+                                <divide/>
+                                <ci> cadp </ci>
+                                <ci> KPFKadpb </ci>
+                              </apply>
+                              <apply>
+                                <divide/>
+                                <ci> camp </ci>
+                                <ci> KPFKampb </ci>
+                              </apply>
+                            </apply>
+                          </apply>
+                        </apply>
+                      </apply>
+                      <ci> nPFK </ci>
+                    </apply>
+                  </apply>
+                </apply>
+              </apply>
+            </apply>
+          </math>
+          <listOfParameters>
+            <parameter id="rmaxPFK" value="1840.584747"/>
+            <parameter id="KPFKatps" value="0.123"/>
+            <parameter id="KPFKadpc" value="4.14"/>
+            <parameter id="KPFKf6ps" value="0.325"/>
+            <parameter id="KPFKpep" value="3.26"/>
+            <parameter id="KPFKadpb" value="3.89"/>
+            <parameter id="KPFKampb" value="3.2"/>
+            <parameter id="KPFKadpa" value="128"/>
+            <parameter id="KPFKampa" value="19.1"/>
+            <parameter id="LPFK" value="5629067"/>
+            <parameter id="nPFK" value="11.1"/>
+          </listOfParameters>
+        </kineticLaw>
+      </reaction>
+      <reaction id="vTA" name="Transaldolase" reversible="true">
+        <listOfReactants>
+          <speciesReference species="cgap" stoichiometry="1"/>
+          <speciesReference species="csed7p" stoichiometry="1"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="cf6p" stoichiometry="1"/>
+          <speciesReference species="ce4p" stoichiometry="1"/>
+        </listOfProducts>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <times/>
+              <ci> cytosol </ci>
+              <ci> rmaxTA </ci>
+              <apply>
+                <minus/>
+                <apply>
+                  <times/>
+                  <ci> cgap </ci>
+                  <ci> csed7p </ci>
+                </apply>
+                <apply>
+                  <divide/>
+                  <apply>
+                    <times/>
+                    <ci> ce4p </ci>
+                    <ci> cf6p </ci>
+                  </apply>
+                  <ci> KTAeq </ci>
+                </apply>
+              </apply>
+            </apply>
+          </math>
+          <listOfParameters>
+            <parameter id="rmaxTA" value="10.87164108"/>
+            <parameter id="KTAeq" value="1.05"/>
+          </listOfParameters>
+        </kineticLaw>
+      </reaction>
+      <reaction id="vTKA" name="Transketolase a" reversible="true">
+        <listOfReactants>
+          <speciesReference species="crib5p" stoichiometry="1"/>
+          <speciesReference species="cxyl5p" stoichiometry="1"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="cgap" stoichiometry="1"/>
+          <speciesReference species="csed7p" stoichiometry="1"/>
+        </listOfProducts>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <times/>
+              <ci> cytosol </ci>
+              <ci> rmaxTKa </ci>
+              <apply>
+                <minus/>
+                <apply>
+                  <times/>
+                  <ci> crib5p </ci>
+                  <ci> cxyl5p </ci>
+                </apply>
+                <apply>
+                  <divide/>
+                  <apply>
+                    <times/>
+                    <ci> csed7p </ci>
+                    <ci> cgap </ci>
+                  </apply>
+                  <ci> KTKaeq </ci>
+                </apply>
+              </apply>
+            </apply>
+          </math>
+          <listOfParameters>
+            <parameter id="rmaxTKa" value="9.473384783"/>
+            <parameter id="KTKaeq" value="1.2"/>
+          </listOfParameters>
+        </kineticLaw>
+      </reaction>
+      <reaction id="vTKB" name="Transketolase b" reversible="true">
+        <listOfReactants>
+          <speciesReference species="ce4p" stoichiometry="1"/>
+          <speciesReference species="cxyl5p" stoichiometry="1"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="cgap" stoichiometry="1"/>
+          <speciesReference species="cf6p" stoichiometry="1"/>
+        </listOfProducts>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <times/>
+              <ci> cytosol </ci>
+              <ci> rmaxTKb </ci>
+              <apply>
+                <minus/>
+                <apply>
+                  <times/>
+                  <ci> cxyl5p </ci>
+                  <ci> ce4p </ci>
+                </apply>
+                <apply>
+                  <divide/>
+                  <apply>
+                    <times/>
+                    <ci> cf6p </ci>
+                    <ci> cgap </ci>
+                  </apply>
+                  <ci> KTKbeq </ci>
+                </apply>
+              </apply>
+            </apply>
+          </math>
+          <listOfParameters>
+            <parameter id="rmaxTKb" value="86.55855855"/>
+            <parameter id="KTKbeq" value="10"/>
+          </listOfParameters>
+        </kineticLaw>
+      </reaction>
+      <reaction id="vMURSyNTH" name="Mureine synthesis" reversible="true">
+        <listOfReactants>
+          <speciesReference species="cf6p" stoichiometry="2"/>
+        </listOfReactants>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <times/>
+              <ci> cytosol </ci>
+              <ci> rmaxMurSynth </ci>
+            </apply>
+          </math>
+          <listOfParameters>
+            <parameter id="rmaxMurSynth" value="0.00043711"/>
+          </listOfParameters>
+        </kineticLaw>
+      </reaction>
+      <reaction id="vALDO" name="Aldolase" reversible="true">
+        <listOfReactants>
+          <speciesReference species="cfdp" stoichiometry="1"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="cdhap" stoichiometry="1"/>
+          <speciesReference species="cgap" stoichiometry="1"/>
+        </listOfProducts>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <divide/>
+              <apply>
+                <times/>
+                <ci> cytosol </ci>
+                <ci> rmaxALDO </ci>
+                <apply>
+                  <minus/>
+                  <ci> cfdp </ci>
+                  <apply>
+                    <divide/>
+                    <apply>
+                      <times/>
+                      <ci> cgap </ci>
+                      <ci> cdhap </ci>
+                    </apply>
+                    <ci> kALDOeq </ci>
+                  </apply>
+                </apply>
+              </apply>
+              <apply>
+                <plus/>
+                <ci> kALDOfdp </ci>
+                <ci> cfdp </ci>
+                <apply>
+                  <divide/>
+                  <apply>
+                    <times/>
+                    <ci> kALDOgap </ci>
+                    <ci> cdhap </ci>
+                  </apply>
+                  <apply>
+                    <times/>
+                    <ci> kALDOeq </ci>
+                    <ci> VALDOblf </ci>
+                  </apply>
+                </apply>
+                <apply>
+                  <divide/>
+                  <apply>
+                    <times/>
+                    <ci> kALDOdhap </ci>
+                    <ci> cgap </ci>
+                  </apply>
+                  <apply>
+                    <times/>
+                    <ci> kALDOeq </ci>
+                    <ci> VALDOblf </ci>
+                  </apply>
+                </apply>
+                <apply>
+                  <divide/>
+                  <apply>
+                    <times/>
+                    <ci> cfdp </ci>
+                    <ci> cgap </ci>
+                  </apply>
+                  <ci> kALDOgapinh </ci>
+                </apply>
+                <apply>
+                  <divide/>
+                  <apply>
+                    <times/>
+                    <ci> cgap </ci>
+                    <ci> cdhap </ci>
+                  </apply>
+                  <apply>
+                    <times/>
+                    <ci> VALDOblf </ci>
+                    <ci> kALDOeq </ci>
+                  </apply>
+                </apply>
+              </apply>
+            </apply>
+          </math>
+          <listOfParameters>
+            <parameter id="rmaxALDO" value="17.41464425"/>
+            <parameter id="kALDOeq" value="0.144"/>
+            <parameter id="kALDOfdp" value="1.75"/>
+            <parameter id="kALDOgap" value="0.088"/>
+            <parameter id="VALDOblf" value="2"/>
+            <parameter id="kALDOdhap" value="0.088"/>
+            <parameter id="kALDOgapinh" value="0.6"/>
+          </listOfParameters>
+        </kineticLaw>
+      </reaction>
+      <reaction id="vGAPDH" name="Glyceraldehyde-3-phosphate dehydrogenase" reversible="true">
+        <listOfReactants>
+          <speciesReference species="cgap" stoichiometry="1"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="cpgp" stoichiometry="1"/>
+        </listOfProducts>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <divide/>
+              <apply>
+                <times/>
+                <ci> cytosol </ci>
+                <ci> rmaxGAPDH </ci>
+                <apply>
+                  <minus/>
+                  <apply>
+                    <times/>
+                    <ci> cgap </ci>
+                    <ci> cnad </ci>
+                  </apply>
+                  <apply>
+                    <divide/>
+                    <apply>
+                      <times/>
+                      <ci> cpgp </ci>
+                      <ci> cnadh </ci>
+                    </apply>
+                    <ci> KGAPDHeq </ci>
+                  </apply>
+                </apply>
+              </apply>
+              <apply>
+                <times/>
+                <apply>
+                  <plus/>
+                  <apply>
+                    <times/>
+                    <ci> KGAPDHgap </ci>
+                    <apply>
+                      <plus/>
+                      <cn type="integer"> 1 </cn>
+                      <apply>
+                        <divide/>
+                        <ci> cpgp </ci>
+                        <ci> KGAPDHpgp </ci>
+                      </apply>
+                    </apply>
+                  </apply>
+                  <ci> cgap </ci>
+                </apply>
+                <apply>
+                  <plus/>
+                  <apply>
+                    <times/>
+                    <ci> KGAPDHnad </ci>
+                    <apply>
+                      <plus/>
+                      <cn type="integer"> 1 </cn>
+                      <apply>
+                        <divide/>
+                        <ci> cnadh </ci>
+                        <ci> KGAPDHnadh </ci>
+                      </apply>
+                    </apply>
+                  </apply>
+                  <ci> cnad </ci>
+                </apply>
+              </apply>
+            </apply>
+          </math>
+          <listOfParameters>
+            <parameter id="rmaxGAPDH" value="921.5942861"/>
+            <parameter id="KGAPDHeq" value="0.63"/>
+            <parameter id="KGAPDHgap" value="0.683"/>
+            <parameter id="KGAPDHpgp" value="1.04e-05"/>
+            <parameter id="KGAPDHnad" value="0.252"/>
+            <parameter id="KGAPDHnadh" value="1.09"/>
+          </listOfParameters>
+        </kineticLaw>
+      </reaction>
+      <reaction id="vTIS" name="Triosephosphate isomerase" reversible="true">
+        <listOfReactants>
+          <speciesReference species="cdhap" stoichiometry="1"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="cgap" stoichiometry="1"/>
+        </listOfProducts>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <divide/>
+              <apply>
+                <times/>
+                <ci> cytosol </ci>
+                <ci> rmaxTIS </ci>
+                <apply>
+                  <minus/>
+                  <ci> cdhap </ci>
+                  <apply>
+                    <divide/>
+                    <ci> cgap </ci>
+                    <ci> kTISeq </ci>
+                  </apply>
+                </apply>
+              </apply>
+              <apply>
+                <plus/>
+                <apply>
+                  <times/>
+                  <ci> kTISdhap </ci>
+                  <apply>
+                    <plus/>
+                    <cn type="integer"> 1 </cn>
+                    <apply>
+                      <divide/>
+                      <ci> cgap </ci>
+                      <ci> kTISgap </ci>
+                    </apply>
+                  </apply>
+                </apply>
+                <ci> cdhap </ci>
+              </apply>
+            </apply>
+          </math>
+          <listOfParameters>
+            <parameter id="rmaxTIS" value="68.67474392"/>
+            <parameter id="kTISeq" value="1.39"/>
+            <parameter id="kTISdhap" value="2.8"/>
+            <parameter id="kTISgap" value="0.3"/>
+          </listOfParameters>
+        </kineticLaw>
+      </reaction>
+      <reaction id="vTRPSYNTH" name="Tryptophan synthesis" reversible="true">
+        <listOfProducts>
+          <speciesReference species="cpyr" stoichiometry="1"/>
+          <speciesReference species="cgap" stoichiometry="1"/>
+        </listOfProducts>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <times/>
+              <ci> cytosol </ci>
+              <ci> rmaxTrpSynth </ci>
+            </apply>
+          </math>
+          <listOfParameters>
+            <parameter id="rmaxTrpSynth" value="0.001037"/>
+          </listOfParameters>
+        </kineticLaw>
+      </reaction>
+      <reaction id="vG3PDH" name="Glycerol-3-phosphate dehydrogenase" reversible="true">
+        <listOfReactants>
+          <speciesReference species="cdhap" stoichiometry="1"/>
+        </listOfReactants>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <divide/>
+              <apply>
+                <times/>
+                <ci> cytosol </ci>
+                <ci> rmaxG3PDH </ci>
+                <ci> cdhap </ci>
+              </apply>
+              <apply>
+                <plus/>
+                <ci> KG3PDHdhap </ci>
+                <ci> cdhap </ci>
+              </apply>
+            </apply>
+          </math>
+          <listOfParameters>
+            <parameter id="rmaxG3PDH" value="0.01162042696"/>
+            <parameter id="KG3PDHdhap" value="1"/>
+          </listOfParameters>
+        </kineticLaw>
+      </reaction>
+      <reaction id="vPGK" name="Phosphoglycerate kinase" reversible="true">
+        <listOfReactants>
+          <speciesReference species="cpgp" stoichiometry="1"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="cpg3" stoichiometry="1"/>
+        </listOfProducts>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <divide/>
+              <apply>
+                <times/>
+                <ci> cytosol </ci>
+                <ci> rmaxPGK </ci>
+                <apply>
+                  <minus/>
+                  <apply>
+                    <times/>
+                    <ci> cadp </ci>
+                    <ci> cpgp </ci>
+                  </apply>
+                  <apply>
+                    <divide/>
+                    <apply>
+                      <times/>
+                      <ci> catp </ci>
+                      <ci> cpg3 </ci>
+                    </apply>
+                    <ci> KPGKeq </ci>
+                  </apply>
+                </apply>
+              </apply>
+              <apply>
+                <times/>
+                <apply>
+                  <plus/>
+                  <apply>
+                    <times/>
+                    <ci> KPGKadp </ci>
+                    <apply>
+                      <plus/>
+                      <cn type="integer"> 1 </cn>
+                      <apply>
+                        <divide/>
+                        <ci> catp </ci>
+                        <ci> KPGKatp </ci>
+                      </apply>
+                    </apply>
+                  </apply>
+                  <ci> cadp </ci>
+                </apply>
+                <apply>
+                  <plus/>
+                  <apply>
+                    <times/>
+                    <ci> KPGKpgp </ci>
+                    <apply>
+                      <plus/>
+                      <cn type="integer"> 1 </cn>
+                      <apply>
+                        <divide/>
+                        <ci> cpg3 </ci>
+                        <ci> KPGKpg3 </ci>
+                      </apply>
+                    </apply>
+                  </apply>
+                  <ci> cpgp </ci>
+                </apply>
+              </apply>
+            </apply>
+          </math>
+          <listOfParameters>
+            <parameter id="rmaxPGK" value="3021.773771"/>
+            <parameter id="KPGKeq" value="1934.4"/>
+            <parameter id="KPGKadp" value="0.185"/>
+            <parameter id="KPGKatp" value="0.653"/>
+            <parameter id="KPGKpgp" value="0.0468"/>
+            <parameter id="KPGKpg3" value="0.473"/>
+          </listOfParameters>
+        </kineticLaw>
+      </reaction>
+      <reaction id="vsersynth" name="Serine synthesis" reversible="true">
+        <listOfReactants>
+          <speciesReference species="cpg3" stoichiometry="1"/>
+        </listOfReactants>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <divide/>
+              <apply>
+                <times/>
+                <ci> cytosol </ci>
+                <ci> rmaxSerSynth </ci>
+                <ci> cpg3 </ci>
+              </apply>
+              <apply>
+                <plus/>
+                <ci> KSerSynthpg3 </ci>
+                <ci> cpg3 </ci>
+              </apply>
+            </apply>
+          </math>
+          <listOfParameters>
+            <parameter id="rmaxSerSynth" value="0.025712107"/>
+            <parameter id="KSerSynthpg3" value="1"/>
+          </listOfParameters>
+        </kineticLaw>
+      </reaction>
+      <reaction id="vrpGluMu" name="Phosphoglycerate mutase" reversible="true">
+        <listOfReactants>
+          <speciesReference species="cpg3" stoichiometry="1"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="cpg2" stoichiometry="1"/>
+        </listOfProducts>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <divide/>
+              <apply>
+                <times/>
+                <ci> cytosol </ci>
+                <ci> rmaxPGluMu </ci>
+                <apply>
+                  <minus/>
+                  <ci> cpg3 </ci>
+                  <apply>
+                    <divide/>
+                    <ci> cpg2 </ci>
+                    <ci> KPGluMueq </ci>
+                  </apply>
+                </apply>
+              </apply>
+              <apply>
+                <plus/>
+                <apply>
+                  <times/>
+                  <ci> KPGluMupg3 </ci>
+                  <apply>
+                    <plus/>
+                    <cn type="integer"> 1 </cn>
+                    <apply>
+                      <divide/>
+                      <ci> cpg2 </ci>
+                      <ci> KPGluMupg2 </ci>
+                    </apply>
+                  </apply>
+                </apply>
+                <ci> cpg3 </ci>
+              </apply>
+            </apply>
+          </math>
+          <listOfParameters>
+            <parameter id="rmaxPGluMu" value="89.04965407"/>
+            <parameter id="KPGluMueq" value="0.188"/>
+            <parameter id="KPGluMupg3" value="0.2"/>
+            <parameter id="KPGluMupg2" value="0.369"/>
+          </listOfParameters>
+        </kineticLaw>
+      </reaction>
+      <reaction id="vENO" name="Enolase" reversible="true">
+        <listOfReactants>
+          <speciesReference species="cpg2" stoichiometry="1"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="cpep" stoichiometry="1"/>
+        </listOfProducts>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <divide/>
+              <apply>
+                <times/>
+                <ci> cytosol </ci>
+                <ci> rmaxENO </ci>
+                <apply>
+                  <minus/>
+                  <ci> cpg2 </ci>
+                  <apply>
+                    <divide/>
+                    <ci> cpep </ci>
+                    <ci> KENOeq </ci>
+                  </apply>
+                </apply>
+              </apply>
+              <apply>
+                <plus/>
+                <apply>
+                  <times/>
+                  <ci> KENOpg2 </ci>
+                  <apply>
+                    <plus/>
+                    <cn type="integer"> 1 </cn>
+                    <apply>
+                      <divide/>
+                      <ci> cpep </ci>
+                      <ci> KENOpep </ci>
+                    </apply>
+                  </apply>
+                </apply>
+                <ci> cpg2 </ci>
+              </apply>
+            </apply>
+          </math>
+          <listOfParameters>
+            <parameter id="rmaxENO" value="330.4476151"/>
+            <parameter id="KENOeq" value="6.73"/>
+            <parameter id="KENOpg2" value="0.1"/>
+            <parameter id="KENOpep" value="0.135"/>
+          </listOfParameters>
+        </kineticLaw>
+      </reaction>
+      <reaction id="vPK" name="Pyruvate kinase" reversible="true">
+        <listOfReactants>
+          <speciesReference species="cpep" stoichiometry="1"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="cpyr" stoichiometry="1"/>
+        </listOfProducts>
+        <listOfModifiers>
+          <modifierSpeciesReference species="cfdp"/>
+        </listOfModifiers>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <divide/>
+              <apply>
+                <times/>
+                <ci> cytosol </ci>
+                <ci> rmaxPK </ci>
+                <ci> cpep </ci>
+                <apply>
+                  <power/>
+                  <apply>
+                    <plus/>
+                    <apply>
+                      <divide/>
+                      <ci> cpep </ci>
+                      <ci> KPKpep </ci>
+                    </apply>
+                    <cn type="integer"> 1 </cn>
+                  </apply>
+                  <apply>
+                    <minus/>
+                    <ci> nPK </ci>
+                    <cn type="integer"> 1 </cn>
+                  </apply>
+                </apply>
+                <ci> cadp </ci>
+              </apply>
+              <apply>
+                <times/>
+                <ci> KPKpep </ci>
+                <apply>
+                  <plus/>
+                  <apply>
+                    <times/>
+                    <ci> LPK </ci>
+                    <apply>
+                      <power/>
+                      <apply>
+                        <divide/>
+                        <apply>
+                          <plus/>
+                          <cn type="integer"> 1 </cn>
+                          <apply>
+                            <divide/>
+                            <ci> catp </ci>
+                            <ci> KPKatp </ci>
+                          </apply>
+                        </apply>
+                        <apply>
+                          <plus/>
+                          <apply>
+                            <divide/>
+                            <ci> cfdp </ci>
+                            <ci> KPKfdp </ci>
+                          </apply>
+                          <apply>
+                            <divide/>
+                            <ci> camp </ci>
+                            <ci> KPKamp </ci>
+                          </apply>
+                          <cn type="integer"> 1 </cn>
+                        </apply>
+                      </apply>
+                      <ci> nPK </ci>
+                    </apply>
+                  </apply>
+                  <apply>
+                    <power/>
+                    <apply>
+                      <plus/>
+                      <apply>
+                        <divide/>
+                        <ci> cpep </ci>
+                        <ci> KPKpep </ci>
+                      </apply>
+                      <cn type="integer"> 1 </cn>
+                    </apply>
+                    <ci> nPK </ci>
+                  </apply>
+                </apply>
+                <apply>
+                  <plus/>
+                  <ci> cadp </ci>
+                  <ci> KPKadp </ci>
+                </apply>
+              </apply>
+            </apply>
+          </math>
+          <listOfParameters>
+            <parameter id="rmaxPK" value="0.06113150238"/>
+            <parameter id="KPKpep" value="0.31"/>
+            <parameter id="nPK" value="4"/>
+            <parameter id="LPK" value="1000"/>
+            <parameter id="KPKatp" value="22.5"/>
+            <parameter id="KPKfdp" value="0.19"/>
+            <parameter id="KPKamp" value="0.2"/>
+            <parameter id="KPKadp" value="0.26"/>
+          </listOfParameters>
+        </kineticLaw>
+      </reaction>
+      <reaction id="vpepCxylase" name="PEP carboxylase" reversible="true">
+        <listOfReactants>
+          <speciesReference species="cpep" stoichiometry="1"/>
+        </listOfReactants>
+        <listOfModifiers>
+          <modifierSpeciesReference species="cfdp"/>
+        </listOfModifiers>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <divide/>
+              <apply>
+                <times/>
+                <ci> cytosol </ci>
+                <ci> rmaxpepCxylase </ci>
+                <ci> cpep </ci>
+                <apply>
+                  <plus/>
+                  <cn type="integer"> 1 </cn>
+                  <apply>
+                    <power/>
+                    <apply>
+                      <divide/>
+                      <ci> cfdp </ci>
+                      <ci> KpepCxylasefdp </ci>
+                    </apply>
+                    <ci> npepCxylasefdp </ci>
+                  </apply>
+                </apply>
+              </apply>
+              <apply>
+                <plus/>
+                <ci> KpepCxylasepep </ci>
+                <ci> cpep </ci>
+              </apply>
+            </apply>
+          </math>
+          <listOfParameters>
+            <parameter id="rmaxpepCxylase" value="0.1070205858"/>
+            <parameter id="KpepCxylasefdp" value="0.7"/>
+            <parameter id="npepCxylasefdp" value="4.21"/>
+            <parameter id="KpepCxylasepep" value="4.07"/>
+          </listOfParameters>
+        </kineticLaw>
+      </reaction>
+      <reaction id="vSynth1" name="Synthesis 1" reversible="true">
+        <listOfReactants>
+          <speciesReference species="cpep" stoichiometry="1"/>
+        </listOfReactants>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <divide/>
+              <apply>
+                <times/>
+                <ci> cytosol </ci>
+                <ci> rmaxSynth1 </ci>
+                <ci> cpep </ci>
+              </apply>
+              <apply>
+                <plus/>
+                <ci> KSynth1pep </ci>
+                <ci> cpep </ci>
+              </apply>
+            </apply>
+          </math>
+          <listOfParameters>
+            <parameter id="rmaxSynth1" value="0.01953897003"/>
+            <parameter id="KSynth1pep" value="1"/>
+          </listOfParameters>
+        </kineticLaw>
+      </reaction>
+      <reaction id="vSynth2" name="Synthesis 2" reversible="true">
+        <listOfReactants>
+          <speciesReference species="cpyr" stoichiometry="1"/>
+        </listOfReactants>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <divide/>
+              <apply>
+                <times/>
+                <ci> cytosol </ci>
+                <ci> rmaxSynth2 </ci>
+                <ci> cpyr </ci>
+              </apply>
+              <apply>
+                <plus/>
+                <ci> KSynth2pyr </ci>
+                <ci> cpyr </ci>
+              </apply>
+            </apply>
+          </math>
+          <listOfParameters>
+            <parameter id="rmaxSynth2" value="0.07361855055"/>
+            <parameter id="KSynth2pyr" value="1"/>
+          </listOfParameters>
+        </kineticLaw>
+      </reaction>
+      <reaction id="vDAHPS" name="DAHP synthesis" reversible="true">
+        <listOfReactants>
+          <speciesReference species="ce4p" stoichiometry="1"/>
+          <speciesReference species="cpep" stoichiometry="1"/>
+        </listOfReactants>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <divide/>
+              <apply>
+                <times/>
+                <ci> cytosol </ci>
+                <ci> rmaxDAHPS </ci>
+                <apply>
+                  <power/>
+                  <ci> ce4p </ci>
+                  <ci> nDAHPSe4p </ci>
+                </apply>
+                <apply>
+                  <power/>
+                  <ci> cpep </ci>
+                  <ci> nDAHPSpep </ci>
+                </apply>
+              </apply>
+              <apply>
+                <times/>
+                <apply>
+                  <plus/>
+                  <ci> KDAHPSe4p </ci>
+                  <apply>
+                    <power/>
+                    <ci> ce4p </ci>
+                    <ci> nDAHPSe4p </ci>
+                  </apply>
+                </apply>
+                <apply>
+                  <plus/>
+                  <ci> KDAHPSpep </ci>
+                  <apply>
+                    <power/>
+                    <ci> cpep </ci>
+                    <ci> nDAHPSpep </ci>
+                  </apply>
+                </apply>
+              </apply>
+            </apply>
+          </math>
+          <listOfParameters>
+            <parameter id="rmaxDAHPS" value="0.1079531227"/>
+            <parameter id="nDAHPSe4p" value="2.6"/>
+            <parameter id="nDAHPSpep" value="2.2"/>
+            <parameter id="KDAHPSe4p" value="0.035"/>
+            <parameter id="KDAHPSpep" value="0.0053"/>
+          </listOfParameters>
+        </kineticLaw>
+      </reaction>
+      <reaction id="vPDH" name="Pyruvate dehydrogenase" reversible="true">
+        <listOfReactants>
+          <speciesReference species="cpyr" stoichiometry="1"/>
+        </listOfReactants>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <divide/>
+              <apply>
+                <times/>
+                <ci> cytosol </ci>
+                <ci> rmaxPDH </ci>
+                <apply>
+                  <power/>
+                  <ci> cpyr </ci>
+                  <ci> nPDH </ci>
+                </apply>
+              </apply>
+              <apply>
+                <plus/>
+                <ci> KPDHpyr </ci>
+                <apply>
+                  <power/>
+                  <ci> cpyr </ci>
+                  <ci> nPDH </ci>
+                </apply>
+              </apply>
+            </apply>
+          </math>
+          <listOfParameters>
+            <parameter id="rmaxPDH" value="6.059531017"/>
+            <parameter id="nPDH" value="3.68"/>
+            <parameter id="KPDHpyr" value="1159"/>
+          </listOfParameters>
+        </kineticLaw>
+      </reaction>
+      <reaction id="vMethSynth" name="Methionine synthesis" reversible="true">
+        <listOfProducts>
+          <speciesReference species="cpyr" stoichiometry="1"/>
+        </listOfProducts>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <times/>
+              <ci> cytosol </ci>
+              <ci> rmaxMetSynth </ci>
+            </apply>
+          </math>
+          <listOfParameters>
+            <parameter id="rmaxMetSynth" value="0.0022627"/>
+          </listOfParameters>
+        </kineticLaw>
+      </reaction>
+      <reaction id="vPGDH" name="6-Phosphogluconate dehydrogenase" reversible="true">
+        <listOfReactants>
+          <speciesReference species="cpg" stoichiometry="1"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="cribu5p" stoichiometry="1"/>
+        </listOfProducts>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <divide/>
+              <apply>
+                <times/>
+                <ci> cytosol </ci>
+                <ci> rmaxPGDH </ci>
+                <ci> cpg </ci>
+                <ci> cnadp </ci>
+              </apply>
+              <apply>
+                <times/>
+                <apply>
+                  <plus/>
+                  <ci> cpg </ci>
+                  <ci> KPGDHpg </ci>
+                </apply>
+                <apply>
+                  <plus/>
+                  <ci> cnadp </ci>
+                  <apply>
+                    <times/>
+                    <ci> KPGDHnadp </ci>
+                    <apply>
+                      <plus/>
+                      <cn type="integer"> 1 </cn>
+                      <apply>
+                        <divide/>
+                        <ci> cnadph </ci>
+                        <ci> KPGDHnadphinh </ci>
+                      </apply>
+                    </apply>
+                    <apply>
+                      <plus/>
+                      <cn type="integer"> 1 </cn>
+                      <apply>
+                        <divide/>
+                        <ci> catp </ci>
+                        <ci> KPGDHatpinh </ci>
+                      </apply>
+                    </apply>
+                  </apply>
+                </apply>
+              </apply>
+            </apply>
+          </math>
+          <listOfParameters>
+            <parameter id="rmaxPGDH" value="16.23235977"/>
+            <parameter id="KPGDHpg" value="37.5"/>
+            <parameter id="KPGDHnadp" value="0.0506"/>
+            <parameter id="KPGDHnadphinh" value="0.0138"/>
+            <parameter id="KPGDHatpinh" value="208"/>
+          </listOfParameters>
+        </kineticLaw>
+      </reaction>
+      <reaction id="vR5PI" name="Ribose-phosphate isomerase" reversible="true">
+        <listOfReactants>
+          <speciesReference species="cribu5p" stoichiometry="1"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="crib5p" stoichiometry="1"/>
+        </listOfProducts>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <times/>
+              <ci> cytosol </ci>
+              <ci> rmaxR5PI </ci>
+              <apply>
+                <minus/>
+                <ci> cribu5p </ci>
+                <apply>
+                  <divide/>
+                  <ci> crib5p </ci>
+                  <ci> KR5PIeq </ci>
+                </apply>
+              </apply>
+            </apply>
+          </math>
+          <listOfParameters>
+            <parameter id="rmaxR5PI" value="4.83841193"/>
+            <parameter id="KR5PIeq" value="4"/>
+          </listOfParameters>
+        </kineticLaw>
+      </reaction>
+      <reaction id="vRu5P" name="Ribulose-phosphate epimerase" reversible="true">
+        <listOfReactants>
+          <speciesReference species="cribu5p" stoichiometry="1"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="cxyl5p" stoichiometry="1"/>
+        </listOfProducts>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <times/>
+              <ci> cytosol </ci>
+              <ci> rmaxRu5P </ci>
+              <apply>
+                <minus/>
+                <ci> cribu5p </ci>
+                <apply>
+                  <divide/>
+                  <ci> cxyl5p </ci>
+                  <ci> KRu5Peq </ci>
+                </apply>
+              </apply>
+            </apply>
+          </math>
+          <listOfParameters>
+            <parameter id="rmaxRu5P" value="6.739029475"/>
+            <parameter id="KRu5Peq" value="1.4"/>
+          </listOfParameters>
+        </kineticLaw>
+      </reaction>
+      <reaction id="vPPK" name="Ribose phosphate pyrophosphokinase" reversible="true">
+        <listOfReactants>
+          <speciesReference species="crib5p" stoichiometry="1"/>
+        </listOfReactants>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <divide/>
+              <apply>
+                <times/>
+                <ci> cytosol </ci>
+                <ci> rmaxRPPK </ci>
+                <ci> crib5p </ci>
+              </apply>
+              <apply>
+                <plus/>
+                <ci> KRPPKrib5p </ci>
+                <ci> crib5p </ci>
+              </apply>
+            </apply>
+          </math>
+          <listOfParameters>
+            <parameter id="rmaxRPPK" value="0.01290045226"/>
+            <parameter id="KRPPKrib5p" value="0.1"/>
+          </listOfParameters>
+        </kineticLaw>
+      </reaction>
+      <reaction id="vG1PAT" name="Glucose-1-phosphate adenyltransferase" reversible="true">
+        <listOfReactants>
+          <speciesReference species="cg1p" stoichiometry="1"/>
+        </listOfReactants>
+        <listOfModifiers>
+          <modifierSpeciesReference species="cfdp"/>
+        </listOfModifiers>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <divide/>
+              <apply>
+                <times/>
+                <ci> cytosol </ci>
+                <ci> rmaxG1PAT </ci>
+                <ci> cg1p </ci>
+                <ci> catp </ci>
+                <apply>
+                  <plus/>
+                  <cn type="integer"> 1 </cn>
+                  <apply>
+                    <power/>
+                    <apply>
+                      <divide/>
+                      <ci> cfdp </ci>
+                      <ci> KG1PATfdp </ci>
+                    </apply>
+                    <ci> nG1PATfdp </ci>
+                  </apply>
+                </apply>
+              </apply>
+              <apply>
+                <times/>
+                <apply>
+                  <plus/>
+                  <ci> KG1PATatp </ci>
+                  <ci> catp </ci>
+                </apply>
+                <apply>
+                  <plus/>
+                  <ci> KG1PATg1p </ci>
+                  <ci> cg1p </ci>
+                </apply>
+              </apply>
+            </apply>
+          </math>
+          <listOfParameters>
+            <parameter id="rmaxG1PAT" value="0.007525458026"/>
+            <parameter id="KG1PATfdp" value="0.119"/>
+            <parameter id="nG1PATfdp" value="1.2"/>
+            <parameter id="KG1PATatp" value="4.42"/>
+            <parameter id="KG1PATg1p" value="3.2"/>
+          </listOfParameters>
+        </kineticLaw>
+      </reaction>
+      <reaction id="vG6P" name="G6P degradation" reversible="true">
+        <listOfReactants>
+          <speciesReference species="cg6p" stoichiometry="1"/>
+        </listOfReactants>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <times/>
+              <ci> cytosol </ci>
+              <ci> mu </ci>
+              <ci> cg6p </ci>
+            </apply>
+          </math>
+          <listOfParameters>
+            <parameter id="mu" value="2.78e-05"/>
+          </listOfParameters>
+        </kineticLaw>
+      </reaction>
+      <reaction id="vf6P" name="F6P degradation" reversible="true">
+        <listOfReactants>
+          <speciesReference species="cf6p" stoichiometry="1"/>
+        </listOfReactants>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <times/>
+              <ci> cytosol </ci>
+              <ci> mu </ci>
+              <ci> cf6p </ci>
+            </apply>
+          </math>
+          <listOfParameters>
+            <parameter id="mu" value="2.78e-05"/>
+          </listOfParameters>
+        </kineticLaw>
+      </reaction>
+      <reaction id="vfdP" name="FDP degradation" reversible="true">
+        <listOfReactants>
+          <speciesReference species="cfdp" stoichiometry="1"/>
+        </listOfReactants>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <times/>
+              <ci> cytosol </ci>
+              <ci> mu </ci>
+              <ci> cfdp </ci>
+            </apply>
+          </math>
+          <listOfParameters>
+            <parameter id="mu" value="2.78e-05"/>
+          </listOfParameters>
+        </kineticLaw>
+      </reaction>
+      <reaction id="vGAP" name="GAP degradation" reversible="true">
+        <listOfReactants>
+          <speciesReference species="cgap" stoichiometry="1"/>
+        </listOfReactants>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <times/>
+              <ci> cytosol </ci>
+              <ci> mu </ci>
+              <ci> cgap </ci>
+            </apply>
+          </math>
+          <listOfParameters>
+            <parameter id="mu" value="2.78e-05"/>
+          </listOfParameters>
+        </kineticLaw>
+      </reaction>
+      <reaction id="vDHAP" name="DHAP degradation" reversible="true">
+        <listOfReactants>
+          <speciesReference species="cdhap" stoichiometry="1"/>
+        </listOfReactants>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <times/>
+              <ci> cytosol </ci>
+              <ci> mu </ci>
+              <ci> cdhap </ci>
+            </apply>
+          </math>
+          <listOfParameters>
+            <parameter id="mu" value="2.78e-05"/>
+          </listOfParameters>
+        </kineticLaw>
+      </reaction>
+      <reaction id="vPGP" name="PGP degradation" reversible="true">
+        <listOfReactants>
+          <speciesReference species="cpgp" stoichiometry="1"/>
+        </listOfReactants>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <times/>
+              <ci> cytosol </ci>
+              <ci> mu </ci>
+              <ci> cpgp </ci>
+            </apply>
+          </math>
+          <listOfParameters>
+            <parameter id="mu" value="2.78e-05"/>
+          </listOfParameters>
+        </kineticLaw>
+      </reaction>
+      <reaction id="vPG3" name="PG3 degradation" reversible="true">
+        <listOfReactants>
+          <speciesReference species="cpg3" stoichiometry="1"/>
+        </listOfReactants>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <times/>
+              <ci> cytosol </ci>
+              <ci> mu </ci>
+              <ci> cpg3 </ci>
+            </apply>
+          </math>
+          <listOfParameters>
+            <parameter id="mu" value="2.78e-05"/>
+          </listOfParameters>
+        </kineticLaw>
+      </reaction>
+      <reaction id="vpg2" name="PG2 degradation" reversible="true">
+        <listOfReactants>
+          <speciesReference species="cpg2" stoichiometry="1"/>
+        </listOfReactants>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <times/>
+              <ci> cytosol </ci>
+              <ci> mu </ci>
+              <ci> cpg2 </ci>
+            </apply>
+          </math>
+          <listOfParameters>
+            <parameter id="mu" value="2.78e-05"/>
+          </listOfParameters>
+        </kineticLaw>
+      </reaction>
+      <reaction id="vPEP" name="PEP degradation" reversible="true">
+        <listOfReactants>
+          <speciesReference species="cpep" stoichiometry="1"/>
+        </listOfReactants>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <times/>
+              <ci> cytosol </ci>
+              <ci> mu </ci>
+              <ci> cpep </ci>
+            </apply>
+          </math>
+          <listOfParameters>
+            <parameter id="mu" value="2.78e-05"/>
+          </listOfParameters>
+        </kineticLaw>
+      </reaction>
+      <reaction id="vRibu5p" name="Ribu5P dilution" reversible="true">
+        <listOfReactants>
+          <speciesReference species="cribu5p" stoichiometry="1"/>
+        </listOfReactants>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <times/>
+              <ci> cytosol </ci>
+              <ci> mu </ci>
+              <ci> cribu5p </ci>
+            </apply>
+          </math>
+          <listOfParameters>
+            <parameter id="mu" value="2.78e-05"/>
+          </listOfParameters>
+        </kineticLaw>
+      </reaction>
+      <reaction id="vRIB5P" name="Rib5P dilution" reversible="true">
+        <listOfReactants>
+          <speciesReference species="crib5p" stoichiometry="1"/>
+        </listOfReactants>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <times/>
+              <ci> cytosol </ci>
+              <ci> mu </ci>
+              <ci> crib5p </ci>
+            </apply>
+          </math>
+          <listOfParameters>
+            <parameter id="mu" value="2.78e-05"/>
+          </listOfParameters>
+        </kineticLaw>
+      </reaction>
+      <reaction id="vXYL5P" name="XYL5P dilution" reversible="true">
+        <listOfReactants>
+          <speciesReference species="cxyl5p" stoichiometry="1"/>
+        </listOfReactants>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <times/>
+              <ci> cytosol </ci>
+              <ci> mu </ci>
+              <ci> cxyl5p </ci>
+            </apply>
+          </math>
+          <listOfParameters>
+            <parameter id="mu" value="2.78e-05"/>
+          </listOfParameters>
+        </kineticLaw>
+      </reaction>
+      <reaction id="vSED7P" name="SED7P dilution" reversible="true">
+        <listOfReactants>
+          <speciesReference species="csed7p" stoichiometry="1"/>
+        </listOfReactants>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <times/>
+              <ci> cytosol </ci>
+              <ci> mu </ci>
+              <ci> csed7p </ci>
+            </apply>
+          </math>
+          <listOfParameters>
+            <parameter id="mu" value="2.78e-05"/>
+          </listOfParameters>
+        </kineticLaw>
+      </reaction>
+      <reaction id="vpyr" name="Pyruvate dilution" reversible="true">
+        <listOfReactants>
+          <speciesReference species="cpyr" stoichiometry="1"/>
+        </listOfReactants>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <times/>
+              <ci> cytosol </ci>
+              <ci> mu </ci>
+              <ci> cpyr </ci>
+            </apply>
+          </math>
+          <listOfParameters>
+            <parameter id="mu" value="2.78e-05"/>
+          </listOfParameters>
+        </kineticLaw>
+      </reaction>
+      <reaction id="vPG" name="PG dilution" reversible="true">
+        <listOfReactants>
+          <speciesReference species="cpg" stoichiometry="1"/>
+        </listOfReactants>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <times/>
+              <ci> cytosol </ci>
+              <ci> mu </ci>
+              <ci> cpg </ci>
+            </apply>
+          </math>
+          <listOfParameters>
+            <parameter id="mu" value="2.78e-05"/>
+          </listOfParameters>
+        </kineticLaw>
+      </reaction>
+      <reaction id="vE4P" name="E4P dilution" reversible="true">
+        <listOfReactants>
+          <speciesReference species="ce4p" stoichiometry="1"/>
+        </listOfReactants>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <times/>
+              <ci> cytosol </ci>
+              <ci> mu </ci>
+              <ci> ce4p </ci>
+            </apply>
+          </math>
+          <listOfParameters>
+            <parameter id="mu" value="2.78e-05"/>
+          </listOfParameters>
+        </kineticLaw>
+      </reaction>
+      <reaction id="vGLP" name="GLP dilution" reversible="true">
+        <listOfReactants>
+          <speciesReference species="cg1p" stoichiometry="1"/>
+        </listOfReactants>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <times/>
+              <ci> cytosol </ci>
+              <ci> mu </ci>
+              <ci> cg1p </ci>
+            </apply>
+          </math>
+          <listOfParameters>
+            <parameter id="mu" value="2.78e-05"/>
+          </listOfParameters>
+        </kineticLaw>
+      </reaction>
+      <reaction id="vEXTER" name="Extracellular glucose kinetics" reversible="true">
+        <listOfProducts>
+          <speciesReference species="cglcex" stoichiometry="1"/>
+        </listOfProducts>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <times/>
+              <ci> extracellular </ci>
+              <ci> Dil </ci>
+              <apply>
+                <minus/>
+                <ci> cfeed </ci>
+                <ci> cglcex </ci>
+              </apply>
+            </apply>
+          </math>
+          <listOfParameters>
+            <parameter id="Dil" value="2.78e-05"/>
+            <parameter id="cfeed" value="110.96"/>
+          </listOfParameters>
+        </kineticLaw>
+      </reaction>
+    </listOfReactions>
+  </model>
+</sbml>

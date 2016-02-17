@@ -26,6 +26,8 @@ from .solver import Solver, Solution, Status, VarType
 from gurobipy import setParam, Model as GurobiModel, GRB, quicksum, read
 
 setParam("OutputFlag", 0)
+setParam('IntFeasTol', 1e-9)
+#setParam('FeasibilityTol', 1e-9)
 
 status_mapping = {GRB.OPTIMAL: Status.OPTIMAL,
                   GRB.UNBOUNDED: Status.UNBOUNDED,
@@ -150,7 +152,7 @@ class GurobiSolver(Solver):
         Arguments:
             objective : dict (of str to float) -- reaction ids in the objective function and respective
                         coefficients, the sense is maximization by default
-            model : ConstraintBasedModel -- model (optional, leave blank to reuse previous model structure)
+            model : CBModel -- model (optional, leave blank to reuse previous model structure)
             constraints : dict (of str to (float, float)) -- environmental or additional constraints (optional)
             get_shadow_prices : bool -- return shadow price information if available (optional, default: False)
             get_reduced_costs : bool -- return reduced costs information if available (optional, default: False)
@@ -168,7 +170,7 @@ class GurobiSolver(Solver):
         Arguments:
             quad_obj : dict (of (str, str) to float) -- map reaction pairs to respective coefficients
             lin_obj : dict (of str to float) -- map single reaction ids to respective linear coefficients
-            model : ConstraintBasedModel -- model (optional, leave blank to reuse previous model structure)
+            model : CBModel -- model (optional, leave blank to reuse previous model structure)
             constraints : dict (of str to (float, float)) -- overriding constraints (optional)
             get_shadow_prices : bool -- return shadow price information if available (default: False)
             get_reduced_costs : bool -- return reduced costs information if available (default: False)
@@ -192,10 +194,13 @@ class GurobiSolver(Solver):
         if constraints:
             old_constraints = {}
             for r_id, (lb, ub) in constraints.items():
-                lpvar = problem.getVarByName(r_id)
-                old_constraints[r_id] = (lpvar.lb, lpvar.ub)
-                lpvar.lb = lb if lb is not None else -GRB.INFINITY
-                lpvar.ub = ub if ub is not None else GRB.INFINITY
+                if r_id in self.var_ids:
+                    lpvar = problem.getVarByName(r_id)
+                    old_constraints[r_id] = (lpvar.lb, lpvar.ub)
+                    lpvar.lb = lb if lb is not None else -GRB.INFINITY
+                    lpvar.ub = ub if ub is not None else GRB.INFINITY
+                else:
+                    print 'Error: constrained variable not previously declared', r_id
             problem.update()
 
         #create objective function
@@ -210,8 +215,8 @@ class GurobiSolver(Solver):
         problem.setObjective(obj_expr, sense)
         problem.update()
 
-#        from datetime import datetime
-#        self.problem.write("problem_{}.lp".format(str(datetime.now())))
+        #from datetime import datetime
+        #self.problem.write("problem_{}.lp".format(str(datetime.now())))
         
         #run the optimization
         problem.optimize()

@@ -4,15 +4,13 @@ Unit testing for gap filling algorithm.
 @author: Marta Matos
 '''
 import unittest
-import re
-from framed.io_utils.sbml import load_sbml_model, CONSTRAINT_BASED
-from framed.io_utils.plaintext import read_model_from_file, CONSTRAINT_BASED
-from framed.solvers import GlpkSolver, GlpkSolverLazy
-from framed.analysis.simulation import FBA
+
 from framed.core.fixes import fix_bigg_model
-from framed.analysis.reconstruction.gapFind import *
-from framed.analysis.reconstruction.gapFill import *
-from framed.analysis.variability import *
+from framed.io_utils.plaintext import read_model_from_file
+from framed.io_utils.sbml import load_cbmodel
+from framed.solvers.glpk_wrapper import GlpkSolver
+from framed.solvers.glpk_wrapper_lazy import GlpkSolverLazy
+from framed.reconstruction.gapFill import GapFill
 
 
 class GapFillTest_glpk(unittest.TestCase):
@@ -23,11 +21,10 @@ class GapFillTest_glpk(unittest.TestCase):
 
     def test_gapFind_glpk_core_txt_b005(self):
         solver = GlpkSolver()
-        model = '../../../examples/models/gapFill/ecoli_core_model_test.xml'
-        reactionsDB = '../../../examples/models/gapFill/ecoli_core_model_2.txt'
+        model = '../../../examples/reconstruction/gapFill/ecoli_core_model_test.xml'
+        reactionsDB = '../../../examples/reconstruction/gapFill/ecoli_core_model_2.txt'
 
-        self.model = load_sbml_model(model, kind=CONSTRAINT_BASED)
-        fix_bigg_model(self.model)
+        self.model = load_cbmodel(model, flavor='bigg')
 
         framed_result = GapFill(self.model, reactionsDB, solver, "R_Biomass_Ecoli_core_w_GAM", 0.05, 'txt')
         self.assertEquals(framed_result[1], ['R_PGK', 'R_PGM', 'R_PYK'])
@@ -35,11 +32,10 @@ class GapFillTest_glpk(unittest.TestCase):
 
     def test_gapFind_glpk_core_sbml_b005(self):
         solver = GlpkSolver()
-        model = '../../../examples/models/gapFill/ecoli_core_model_test.xml'
-        reactionsDB = '../../../examples/models/gapFill/ecoli_core_model.xml'
+        model = '../../../examples/reconstruction/gapFill/ecoli_core_model_test.xml'
+        reactionsDB = '../../../examples/reconstruction/gapFill/ecoli_core_model.xml'
 
-        self.model = load_sbml_model(model, kind=CONSTRAINT_BASED)
-        fix_bigg_model(self.model)
+        self.model = load_cbmodel(model, flavor='bigg')
 
         framed_result = GapFill(self.model, reactionsDB, solver, "R_Biomass_Ecoli_core_w_GAM", 0.05, 'sbml')
         self.assertEquals(framed_result[1], ['R_PGK', 'R_PGM', 'R_PYK'])
@@ -47,11 +43,10 @@ class GapFillTest_glpk(unittest.TestCase):
 
     def test_gapFind_glpk_core_sbml_b087(self):
         solver = GlpkSolver()
-        model = '../../../examples/models/gapFill/ecoli_core_model_test.xml'
-        reactionsDB = '../../../examples/models/gapFill/ecoli_core_model.xml'
+        model = '../../../examples/reconstruction/gapFill/ecoli_core_model_test.xml'
+        reactionsDB = '../../../examples/reconstruction/gapFill/ecoli_core_model.xml'
 
-        self.model = load_sbml_model(model, kind=CONSTRAINT_BASED)
-        fix_bigg_model(self.model)
+        self.model = load_cbmodel(model, flavor='bigg')
 
         framed_result = GapFill(self.model, reactionsDB, solver, "R_Biomass_Ecoli_core_w_GAM", 0.87, 'sbml')
         self.assertEquals(framed_result[1], ['R_ATPS4r', 'R_PGK', 'R_PGM', 'R_PYK', 'R_SUCOAS'])
@@ -59,11 +54,10 @@ class GapFillTest_glpk(unittest.TestCase):
 
     def test_gapFind_glpk_full_sbml_b087(self):
         solver = GlpkSolver()
-        model = '../../../examples/models/gapFill/ecoli_core_model_test.xml'
-        reactionsDB = '../../../examples/models/gapFill/iAF1260.xml'
+        model = '../../../examples/reconstruction/gapFill/ecoli_core_model_test.xml'
+        reactionsDB = '../../../examples/reconstruction/gapFill/iAF1260.xml'
 
-        self.model = load_sbml_model(model, kind=CONSTRAINT_BASED)
-        fix_bigg_model(self.model)
+        self.model = load_cbmodel(model, flavor='bigg')
 
         framed_result = GapFill(self.model, reactionsDB, solver, "R_Biomass_Ecoli_core_w_GAM", 0.87, 'sbml')
         # R_Htex is required to produce M_h_p, which is a reactant in R_ATPS4rpp
@@ -78,11 +72,10 @@ class GapFillTest_glpk_lazy(unittest.TestCase):
 
     def test_gapFind_glpk_core_txt_b005(self):
         solver = GlpkSolverLazy()
-        model = '../../../examples/models/gapFill/ecoli_core_model_test.xml'
-        reactionsDB = '../../../examples/models/gapFill/ecoli_core_model_2.txt'
+        model = '../../../examples/reconstruction/gapFill/ecoli_core_model_test.xml'
+        reactionsDB = '../../../examples/reconstruction/gapFill/ecoli_core_model_2.txt'
 
-        self.model = load_sbml_model(model, kind=CONSTRAINT_BASED)
-        fix_bigg_model(self.model)
+        self.model = load_cbmodel(model, flavor='bigg')
 
         framed_result = GapFill(self.model, reactionsDB, solver, "R_Biomass_Ecoli_core_w_GAM", 0.05, 'txt')
         self.assertEquals(framed_result[1], ['R_PGK', 'R_PGM', 'R_PYK'])
@@ -90,11 +83,10 @@ class GapFillTest_glpk_lazy(unittest.TestCase):
 
     def test_gapFind_glpk_core_sbml_b005(self):
         solver = GlpkSolverLazy()
-        model = '../../../examples/models/gapFill/ecoli_core_model_test.xml'
-        reactionsDB = '../../../examples/models/gapFill/ecoli_core_model.xml'
+        model = '../../../examples/reconstruction/gapFill/ecoli_core_model_test.xml'
+        reactionsDB = '../../../examples/reconstruction/gapFill/ecoli_core_model.xml'
 
-        self.model = load_sbml_model(model, kind=CONSTRAINT_BASED)
-        fix_bigg_model(self.model)
+        self.model = load_cbmodel(model, flavor='bigg')
 
         framed_result = GapFill(self.model, reactionsDB, solver, "R_Biomass_Ecoli_core_w_GAM", 0.05, 'sbml')
         self.assertEquals(framed_result[1], ['R_PGK', 'R_PGM', 'R_PYK'])
@@ -102,11 +94,10 @@ class GapFillTest_glpk_lazy(unittest.TestCase):
 
     def test_gapFind_glpk_core_sbml_b087(self):
         solver = GlpkSolverLazy()
-        model = '../../../examples/models/gapFill/ecoli_core_model_test.xml'
-        reactionsDB = '../../../examples/models/gapFill/ecoli_core_model.xml'
+        model = '../../../examples/reconstruction/gapFill/ecoli_core_model_test.xml'
+        reactionsDB = '../../../examples/reconstruction/gapFill/ecoli_core_model.xml'
 
-        self.model = load_sbml_model(model, kind=CONSTRAINT_BASED)
-        fix_bigg_model(self.model)
+        self.model = load_cbmodel(model, flavor='bigg')
 
         framed_result = GapFill(self.model, reactionsDB, solver, "R_Biomass_Ecoli_core_w_GAM", 0.87, 'sbml')
         self.assertEquals(framed_result[1], ['R_ATPS4r', 'R_PGK', 'R_PGM', 'R_PYK', 'R_SUCOAS'])
@@ -114,11 +105,10 @@ class GapFillTest_glpk_lazy(unittest.TestCase):
 
     def test_gapFind_glpk_full_sbml_b087(self):
         solver = GlpkSolverLazy()
-        model = '../../../examples/models/gapFill/ecoli_core_model_test.xml'
-        reactionsDB = '../../../examples/models/gapFill/iAF1260.xml'
+        model = '../../../examples/reconstruction/gapFill/ecoli_core_model_test.xml'
+        reactionsDB = '../../../examples/reconstruction/gapFill/iAF1260.xml'
 
-        self.model = load_sbml_model(model, kind=CONSTRAINT_BASED)
-        fix_bigg_model(self.model)
+        self.model = load_cbmodel(model, flavor='bigg')
 
         framed_result = GapFill(self.model, reactionsDB, solver, "R_Biomass_Ecoli_core_w_GAM", 0.87, 'sbml')
         # R_Htex is required to produce M_h_p, which is a reactant in R_ATPS4rpp
@@ -131,10 +121,10 @@ class GapFillTest_toy_model(unittest.TestCase):
 
     def test_gapFind_glpk_simpleToyModel(self):
         solver = GlpkSolver()
-        model = '../../../examples/models/gapFill/toy_model_simple_holes'
-        reactionsDB = '../../../examples/models/gapFill/toy_model_simple_DB'
+        model = '../../../examples/reconstruction/gapFill/toy_model_simple_holes'
+        reactionsDB = '../../../examples/reconstruction/gapFill/toy_model_simple_DB'
 
-        self.model = read_model_from_file(model, kind=CONSTRAINT_BASED)
+        self.model = read_model_from_file(model, kind='cb')
         fix_bigg_model(self.model)
 
         framed_result = GapFill(self.model, reactionsDB, solver, 'R_EX_Biomass', 0.05, 'txt')
@@ -142,10 +132,10 @@ class GapFillTest_toy_model(unittest.TestCase):
 
     def test_gapFind_gurobi_simpleToyModel(self):
         solver = GlpkSolverLazy()
-        model = '../../../examples/models/gapFill/toy_model_simple_holes'
-        reactionsDB = '../../../examples/models/gapFill/toy_model_simple_DB'
+        model = '../../../examples/reconstruction/gapFill/toy_model_simple_holes'
+        reactionsDB = '../../../examples/reconstruction/gapFill/toy_model_simple_DB'
 
-        self.model = read_model_from_file(model, kind=CONSTRAINT_BASED)
+        self.model = read_model_from_file(model, kind='cb')
         fix_bigg_model(self.model)
 
         framed_result = GapFill(self.model, reactionsDB, solver, 'R_EX_Biomass', 0.05, 'txt')
@@ -153,14 +143,14 @@ class GapFillTest_toy_model(unittest.TestCase):
 
 
 def suite():
-	tests = [GapFillTest_glpk_lazy, GapFillTest_toy_model]
+    tests = [GapFillTest_glpk_lazy, GapFillTest_toy_model]
 
-	test_suite = unittest.TestSuite()
-	for test in tests:
-		test_suite.addTest(unittest.makeSuite(test))
-	return test_suite
+    test_suite = unittest.TestSuite()
+    for test in tests:
+        test_suite.addTest(unittest.makeSuite(test))
+    return test_suite
 
 
 if __name__ == "__main__":
-	runner = unittest.TextTestRunner(verbosity=2)
-	runner.run(suite())
+    runner = unittest.TextTestRunner(verbosity=2)
+    runner.run(suite())

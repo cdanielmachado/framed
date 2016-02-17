@@ -1,8 +1,6 @@
 ''' This module implements methods for reading and writing models from a plain text format.
 
-TODO: Add support for coefficients in scientific notation e.g: 1.2e-05 
 TODO: Add support for compartments.
-TODO: Add support for GPRConstrainedModel (problem GPRs can't be parsed with regex).
 
 @author: Daniel Machado
 
@@ -23,12 +21,10 @@ TODO: Add support for GPRConstrainedModel (problem GPRs can't be parsed with reg
    
 '''
 
-from ..core.models import Metabolite, Reaction, StoichiometricModel, ConstraintBasedModel
+from ..core.models import Metabolite, Reaction, Model, CBModel
 from re import compile
 from os.path import splitext, basename
 
-STOICHIOMETRIC = 'Stoichiometric'
-CONSTRAINT_BASED = 'Constraint-based'
 
 INSTRUCTIONS = """
 # Text based model representation
@@ -41,8 +37,9 @@ INSTRUCTIONS = """
 """
 
 id_re = '[a-zA-Z]\w*'
-pos_float_re = '\d+(?:\.\d+)?'
-float_re = '-?\d+(?:\.\d+)?'
+pos_float_re = '\d+(?:\.\d+)?(?:e[+-]?\d+)?'
+float_re = '-?\d+(?:\.\d+)?(?:e[+-]?\d+)?'
+
 
 compound = '(?:' + pos_float_re + '\s+)?' + id_re
 expression = compound + '(?:\s*\+\s*' + compound + ')*'
@@ -60,27 +57,25 @@ regex_bounds = compile(bounds)
 regex_reaction = compile(reaction)
 
 
-def read_model_from_file(filename, kind=STOICHIOMETRIC):
+def read_model_from_file(filename, kind=None):
     """ Reads a model from a file.
     
     Arguments:
         filename : str -- file path
-        kind: {STOICHIOMETRIC (default), CONSTRAINT_BASED} -- define kind of model to read (optional)
+        kind: None or 'cb' -- define kind of model to read (optional)
 
     Returns:
-        StoichiometricModel -- Stoichiometric model or respective subclass
+        Model -- simple model or subclass
     """
 
     try:
         with open(filename, 'r') as stream:
             model_id = splitext(basename(filename))[0]
 
-            if kind == STOICHIOMETRIC:
-                model = StoichiometricModel(model_id)
-            elif kind == CONSTRAINT_BASED:
-                model = ConstraintBasedModel(model_id)
+            if kind == 'cb':
+                model = CBModel(model_id)
             else:
-                model = None
+                model = Model(model_id)
 
             if model:
                 for line in stream:
@@ -99,7 +94,7 @@ def add_reaction_from_str(model, reaction_str):
     """ Parse a reaction from a string and add it to the model.
     
     Arguments:
-        model : StoichiometricModel -- model
+        model : Model -- model
         reaction_str: str -- string representation a the reaction
     """
 
@@ -111,8 +106,8 @@ def add_reaction_from_str(model, reaction_str):
         substrates = match.group('substrates')
         products = match.group('products')
         if substrates or products:
-            reaction = Reaction(reaction_id, reaction_id, reversible);
-            if isinstance(model, ConstraintBasedModel):
+            reaction = Reaction(reaction_id, reaction_id, reversible)
+            if isinstance(model, CBModel):
                 bounds = match.group('bounds')
                 lb, ub = _parse_bounds(bounds, reversible)
                 objective = match.group('objective')
@@ -138,7 +133,9 @@ def _parse_coefficients(expression, model, reaction_id, sense):
         met_id = match.group('met_id')
         if met_id not in model.metabolites:
             model.add_metabolite(Metabolite(met_id, met_id))
-        model.add_stoichiometry([(met_id, reaction_id, coeff * sense)])
+        old_coeff = model.get_stoichiometry(met_id, reaction_id)
+        new_coeff = coeff * sense + old_coeff
+        model.set_stoichiometry(met_id, reaction_id, new_coeff)
 
 
 def _parse_bounds(expression, reversible):
@@ -163,7 +160,7 @@ def write_model_to_file(model, filename):
     """ Writes a model to a file.
     
     Arguments:
-        model: StoichiometricModel -- Stoichiometric model (or subclass)
+        model: Model -- Model (or CBModel)
         filename : str -- file path
     """
     try:

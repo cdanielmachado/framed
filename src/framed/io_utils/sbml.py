@@ -1,6 +1,6 @@
 """ This module implements methods for reading and writing SBML files.
 
-TODO: Import/export of bounds and GPR follows the BiGG model format, consider changing to the new SBML fbc package.
+TODO: Add support for sbml-fbc package.
 
 @author: Daniel Machado
 
@@ -20,14 +20,16 @@ TODO: Import/export of bounds and GPR follows the BiGG model format, consider ch
    limitations under the License.
    
 """
-from ..core.models import StoichiometricModel, ConstraintBasedModel, GPRConstrainedModel, Metabolite, Reaction, Gene, Compartment
+from ..core.models import Model, CBModel, ODEModel, Metabolite, Reaction, Gene, Compartment
+from ..core.fixes import fix_bigg_model
 
+from collections import OrderedDict
 from libsbml import SBMLReader, SBMLWriter, SBMLDocument, XMLNode
 
+CB_MODEL = 'cb'
+ODE_MODEL = 'ode'
 
-STOICHIOMETRIC = 'Stoichiometric'
-CONSTRAINT_BASED = 'Constraint-based'
-GPR_CONSTRAINED = 'GPR-Constrained'
+BIGG_MODEL = 'bigg'
 
 LB_TAG = 'LOWER_BOUND'
 UB_TAG = 'UPPER_BOUND'
@@ -38,15 +40,15 @@ DEFAULT_SBML_LEVEL = 2
 DEFAULT_SBML_VERSION = 1
 
 
-def load_sbml_model(filename, kind=STOICHIOMETRIC):
+def load_sbml_model(filename, kind=None):
     """ Loads a metabolic model from a file.
     
     Arguments:
         filename : String -- SBML file path
-        kind : {STOICHIOMETRIC (default), CONSTRAINT_BASED, GPR_CONSTRAINED} -- define kind of model to load (optional)
+        kind : {None (default), CB_MODEL, ODE_MODEL} -- define kind of model to load (optional)
     
     Returns:
-        StoichiometricModel -- Stoichiometric model or respective subclass
+        Model -- Simple model or respective subclass
     """
     reader = SBMLReader()
     document = reader.readSBML(filename)
@@ -55,24 +57,34 @@ def load_sbml_model(filename, kind=STOICHIOMETRIC):
     if sbml_model is None:
         raise IOError('Failed to load model.')
 
-    if kind == STOICHIOMETRIC:
-        model = _load_stoichiometric_model(sbml_model)
-    elif kind == CONSTRAINT_BASED:
-        model = _load_constraintbased_model(sbml_model)
-    elif kind == GPR_CONSTRAINED:
-        model = _load_gprconstrained_model(sbml_model)
+    if kind and kind.lower() == CB_MODEL:
+        model = _load_cbmodel(sbml_model)
+    elif kind and kind.lower() == ODE_MODEL:
+        model = _load_odemodel(sbml_model)
     else:
-        model = None
+        model = _load_stoichiometric_model(sbml_model)
 
     return model
 
 
+def load_cbmodel(filename, flavor=None):
+    model = load_sbml_model(filename, kind=CB_MODEL)
+
+    if flavor and flavor.lower() == BIGG_MODEL:
+        fix_bigg_model(model)
+
+    return model
+
+
+def load_odemodel(filename):
+    return load_sbml_model(filename, ODE_MODEL)
+
+
 def _load_stoichiometric_model(sbml_model):
-    model = StoichiometricModel(sbml_model.getId())
+    model = Model(sbml_model.getId())
     model.add_compartments(_load_compartments(sbml_model))
     model.add_metabolites(_load_metabolites(sbml_model))
     model.add_reactions(_load_reactions(sbml_model))
-    model.add_stoichiometry(_load_stoichiometry(sbml_model))
     return model
 
 
@@ -81,7 +93,7 @@ def _load_compartments(sbml_model):
 
 
 def _load_compartment(compartment):
-    return Compartment(compartment.getId(), compartment.getName())
+    return Compartment(compartment.getId(), compartment.getName(), compartment.getSize())
 
 
 def _load_metabolites(sbml_model):
@@ -97,42 +109,57 @@ def _load_reactions(sbml_model):
 
 
 def _load_reaction(reaction):
-    return Reaction(reaction.getId(), reaction.getName(), reaction.getReversible())
+
+    stoichiometry = OrderedDict()
+
+    for reactant in reaction.getListOfReactants():
+        m_id = reactant.getSpecies()
+        coeff = -reactant.getStoichiometry()
+        if m_id not in stoichiometry:
+            stoichiometry[m_id] = coeff
+        else:
+            stoichiometry[m_id] += coeff
+
+    for product in reaction.getListOfProducts():
+        m_id = product.getSpecies()
+        coeff = product.getStoichiometry()
+        if m_id not in stoichiometry:
+            stoichiometry[m_id] = coeff
+        else:
+            stoichiometry[m_id] += coeff
+        if stoichiometry[m_id] == 0.0:
+            del stoichiometry[m_id]
+
+    modifiers = [modifier.getSpecies() for modifier in reaction.getListOfModifiers()]
+
+    return Reaction(reaction.getId(), reaction.getName(), reaction.getReversible(), stoichiometry, modifiers)
 
 
-def _load_stoichiometry(model):
-    inputs = [(reactant.getSpecies(), reaction.getId(), -reactant.getStoichiometry()) for reaction in
-              model.getListOfReactions()
-              for reactant in reaction.getListOfReactants()]
-    outputs = [(product.getSpecies(), reaction.getId(), product.getStoichiometry()) for reaction in
-               model.getListOfReactions()
-               for product in reaction.getListOfProducts()]
-    return inputs + outputs
-
-
-def _load_constraintbased_model(sbml_model):
-    model = ConstraintBasedModel(sbml_model.getId())
+def _load_cbmodel(sbml_model):
+    model = CBModel(sbml_model.getId())
     model.add_compartments(_load_compartments(sbml_model))
     model.add_metabolites(_load_metabolites(sbml_model))
     model.add_reactions(_load_reactions(sbml_model))
-    model.add_stoichiometry(_load_stoichiometry(sbml_model))
-    bounds, coefficients = _load_cb_parameters(sbml_model)
-    model.set_bounds(bounds)
-    model.set_objective_coefficients(coefficients)
+    model.set_multiple_bounds(_load_bounds(sbml_model))
+    model.set_objective(_load_objective_coefficients(sbml_model))
+    genes, rules, reaction_genes = _load_gpr(sbml_model)
+    model.add_genes(genes)
+    model.set_rules(rules)
+    for r_id, gene_set in reaction_genes.items():
+        model.reaction_genes[r_id] = gene_set
     return model
 
 
-def _load_cb_parameters(sbml_model):
-    cb_parameters = [(reaction.getId(),
-                      _get_cb_parameter(reaction, LB_TAG),
-                      _get_cb_parameter(reaction, UB_TAG),
-                      _get_cb_parameter(reaction, OBJ_TAG, default_value=0))
-                     for reaction in sbml_model.getListOfReactions()]
-    
-    bounds = map(lambda (r_id, lb, ub, coeff): (r_id, lb, ub), cb_parameters)
-    coefficients = map(lambda (r_id, lb, ub, coeff): (r_id, coeff), cb_parameters)
-    
-    return bounds, coefficients
+def _load_bounds(sbml_model):
+    return [(reaction.getId(), (_get_cb_parameter(reaction, LB_TAG),
+                                _get_cb_parameter(reaction, UB_TAG)))
+            for reaction in sbml_model.getListOfReactions()]
+
+
+def _load_objective_coefficients(sbml_model):
+    return [(reaction.getId(), _get_cb_parameter(reaction, OBJ_TAG, default_value=0))
+            for reaction in sbml_model.getListOfReactions()]
+
 
 def _get_cb_parameter(reaction, tag, default_value=None):
     param_value = default_value
@@ -144,31 +171,18 @@ def _get_cb_parameter(reaction, tag, default_value=None):
     return param_value
 
 
-def _load_gprconstrained_model(sbml_model):
-    model = GPRConstrainedModel(sbml_model.getId())
-    model.add_compartments(_load_compartments(sbml_model))
-    model.add_metabolites(_load_metabolites(sbml_model))
-    model.add_reactions(_load_reactions(sbml_model))
-    model.add_stoichiometry(_load_stoichiometry(sbml_model))
-    bounds, coefficients = _load_cb_parameters(sbml_model)
-    model.set_bounds(bounds)
-    model.set_objective_coefficients(coefficients)
-    genes, rules = _load_gpr(sbml_model)
-    model.add_genes(genes)
-    model.set_rules(rules)
-    return model
-
-
 def _load_gpr(sbml_model):
     genes = set()
     rules = []
+    reaction_genes = {}
     for reaction in sbml_model.getListOfReactions():
         rule = _extract_rule(reaction)
         new_genes = rule.replace('(', '').replace(')', '').replace(' and ', ' ').replace(' or ', ' ').split()
         genes = genes | set(new_genes)
         rules.append((reaction.getId(), rule))
+        reaction_genes[reaction.getId()] = set(new_genes)
     genes = [Gene(gene) for gene in sorted(genes)]
-    return genes, rules
+    return genes, rules, reaction_genes
 
 
 def _extract_rule(reaction):
@@ -180,11 +194,46 @@ def _extract_rule(reaction):
     return rule
 
 
+def _load_odemodel(sbml_model):
+    model = ODEModel(sbml_model.getId())
+    model.add_compartments(_load_compartments(sbml_model))
+    model.add_metabolites(_load_metabolites(sbml_model))
+    model.add_reactions(_load_reactions(sbml_model))
+    model.set_concentrations(_load_concentrations(sbml_model))
+    model.set_global_parameters(_load_global_parameters(sbml_model))
+    model.set_local_parameters(_load_local_parameters(sbml_model))
+    model.set_ratelaws(_load_ratelaws(sbml_model))
+
+    return model
+
+
+def _load_concentrations(sbml_model):
+    return [(species.getId(), species.getInitialConcentration())
+            for species in sbml_model.getListOfSpecies()]
+
+
+def _load_global_parameters(sbml_model):
+    return [(parameter.getId(), parameter.getValue())
+            for parameter in sbml_model.getListOfParameters()]
+
+def _load_local_parameters(sbml_model):
+    params = OrderedDict()
+    for reaction in sbml_model.getListOfReactions():
+        params[reaction.getId()] = [(parameter.getId(), parameter.getValue())
+                                    for parameter in reaction.getKineticLaw().getListOfParameters()]
+    return params
+
+
+def _load_ratelaws(sbml_model):
+    return [(reaction.getId(), reaction.getKineticLaw().getFormula())
+            for reaction in sbml_model.getListOfReactions()]
+
+
 def save_sbml_model(model, filename):
     """ Save a model to an SBML file.
     
     Arguments:
-        model : StoichiometricModel (or any subclass) -- Stoichiometric model (or subclass)
+        model : Model (or any subclass) -- model
         filename : String -- SBML file path
     """
 
@@ -193,13 +242,29 @@ def save_sbml_model(model, filename):
     _save_compartments(model, sbml_model)
     _save_metabolites(model, sbml_model)
     _save_reactions(model, sbml_model)
-    _save_stoichiometry(model, sbml_model)
-    if isinstance(model, ConstraintBasedModel):
+    if isinstance(model, CBModel):
         _save_cb_parameters(model, sbml_model)
-    if isinstance(model, GPRConstrainedModel):
         _save_gpr(model, sbml_model)
+    if isinstance(model, ODEModel):
+        _save_concentrations(model, sbml_model)
+        _save_global_parameters(model, sbml_model)
+        _save_kineticlaws(model, sbml_model)
     writer = SBMLWriter()
     writer.writeSBML(document, filename)
+
+
+def save_cbmodel(model, filename, flavor=None):
+
+    if flavor and flavor.lower() == BIGG_MODEL:
+        old_bounds = model.bounds.copy()
+        for r_id, (lb, ub) in model.bounds.items():
+            lb = -1000 if lb is None else lb
+            ub = 1000 if ub is None else ub
+            model.set_flux_bounds(r_id, lb, ub)
+        save_sbml_model(model, filename)
+        model.bounds = old_bounds
+    else:
+         save_sbml_model(model, filename)       
 
 
 def _save_compartments(model, sbml_model):
@@ -207,6 +272,7 @@ def _save_compartments(model, sbml_model):
         sbml_compartment = sbml_model.createCompartment()
         sbml_compartment.setId(compartment.id)
         sbml_compartment.setName(compartment.name)
+        sbml_compartment.setSize(compartment.size)
 
 
 def _save_metabolites(model, sbml_model):
@@ -223,19 +289,18 @@ def _save_reactions(model, sbml_model):
         sbml_reaction.setId(reaction.id)
         sbml_reaction.setName(reaction.name)
         sbml_reaction.setReversible(reaction.reversible)
-
-
-def _save_stoichiometry(model, sbml_model):
-    for (m_id, r_id), coeff in model.stoichiometry.items():
-        sbml_reaction = sbml_model.getReaction(r_id)
-        if coeff < 0:
-            speciesReference = sbml_reaction.createReactant()
+        for m_id, coeff in reaction.stoichiometry.items():
+            if coeff < 0:
+                speciesReference = sbml_reaction.createReactant()
+                speciesReference.setSpecies(m_id)
+                speciesReference.setStoichiometry(-coeff)
+            elif coeff > 0:
+                speciesReference = sbml_reaction.createProduct()
+                speciesReference.setSpecies(m_id)
+                speciesReference.setStoichiometry(coeff)
+        for m_id in reaction.modifiers:
+            speciesReference = sbml_reaction.createModifier()
             speciesReference.setSpecies(m_id)
-            speciesReference.setStoichiometry(-coeff)
-        elif coeff > 0:
-            speciesReference = sbml_reaction.createProduct()
-            speciesReference.setSpecies(m_id)
-            speciesReference.setStoichiometry(coeff)
 
 
 def _save_cb_parameters(model, sbml_model):
@@ -266,4 +331,24 @@ def _save_gpr(model, sbml_model):
         note.getNamespaces().add('http://www.w3.org/1999/xhtml')
         sbml_reaction.setNotes(note)
 
-        
+
+def _save_concentrations(model, sbml_model):
+    for m_id, value in model.concentrations.items():
+        species = sbml_model.getSpecies(m_id)
+        species.setInitialConcentration(value)
+
+def _save_global_parameters(model, sbml_model):
+    for p_id, value in model.global_parameters.items():
+        parameter = sbml_model.createParameter()
+        parameter.setId(p_id)
+        parameter.setValue(value)
+
+def _save_kineticlaws(model, sbml_model):
+    for r_id, ratelaw in model.ratelaws.items():
+        sbml_reaction = sbml_model.getReaction(r_id)
+        kineticLaw = sbml_reaction.createKineticLaw()
+        kineticLaw.setFormula(ratelaw)
+        for p_id, value in model.local_parameters[r_id].items():
+            parameter = kineticLaw.createParameter()
+            parameter.setId(p_id)
+            parameter.setValue(value)

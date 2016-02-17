@@ -22,15 +22,15 @@
 from collections import OrderedDict
 from ..solvers import solver_instance
 from ..solvers.solver import Status
-from simulation import FBA
+from simulation import FBA, looplessFBA
 from numpy import linspace
 
 
-def FVA(model, obj_percentage=0, reactions=None, constraints=None):
+def FVA(model, obj_percentage=0, reactions=None, constraints=None, loopless=False, internal=None):
     """ Run Flux Variability Analysis (FVA).
     
     Arguments:
-        model : ConstraintBasedModel -- a constraint-based model
+        model : CBModel -- a constraint-based model
         obj_percentage : float -- minimum percentage of growth rate (default 0.0, max: 1.0)
         reactions : list (of str) -- list of reactions to analyze (default: all)
         
@@ -44,7 +44,7 @@ def FVA(model, obj_percentage=0, reactions=None, constraints=None):
 
     if obj_percentage > 0:
         target = model.detect_biomass_reaction()
-        solution = FBA(model)
+        solution = FBA(model, objective={target: 1}, constraints=constraints)
         _constraints[target] = (obj_percentage * solution.fobj, None)
 
     if not reactions:
@@ -56,7 +56,11 @@ def FVA(model, obj_percentage=0, reactions=None, constraints=None):
     variability = OrderedDict([(r_id, [None, None]) for r_id in reactions])
 
     for r_id in reactions:
-        solution = FBA(model, {r_id: 1}, False, constraints=_constraints, solver=solver)
+        if loopless:
+            solution = looplessFBA(model, {r_id: 1}, False, constraints=_constraints, internal=internal, solver=solver)
+        else:
+             solution = FBA(model, {r_id: 1}, False, constraints=_constraints, solver=solver)
+
         if solution.status == Status.OPTIMAL:
             variability[r_id][0] = -solution.fobj
         elif solution.status == Status.UNBOUNDED:
@@ -65,7 +69,11 @@ def FVA(model, obj_percentage=0, reactions=None, constraints=None):
             variability[r_id][0] = 0
 
     for r_id in reactions:
-        solution = FBA(model, {r_id: 1}, True, constraints=_constraints, solver=solver)
+        if loopless:
+            solution = looplessFBA(model, {r_id: 1}, True, constraints=_constraints, internal=internal, solver=solver)
+        else:
+             solution = FBA(model, {r_id: 1}, True, constraints=_constraints, solver=solver)
+             
         if solution.status == Status.OPTIMAL:
             variability[r_id][1] = solution.fobj
         elif solution.status == Status.UNBOUNDED:
@@ -76,11 +84,11 @@ def FVA(model, obj_percentage=0, reactions=None, constraints=None):
     return variability
 
 
-def blocked_reactions(model):
+def blocked_reactions(model, abstol=1e-9):
     """ Find all blocked reactions in a model
     
     Arguments:
-        model : ConstraintBasedModel -- a constraint-based model
+        model : CBModel -- a constraint-based model
         
     Returns:
         list (of str) -- blocked reactions
@@ -88,14 +96,15 @@ def blocked_reactions(model):
 
     variability = FVA(model)
 
-    return [r_id for r_id, (lb, ub) in variability.items() if lb == 0 and ub == 0]
+    return [r_id for r_id, (lb, ub) in variability.items()
+            if lb is not None and ub is not None and abs(lb) < abstol and abs(ub) < abstol]
 
 
 def flux_envelope(model, r_x, r_y, steps=10, constraints=None):
     """ Calculate the flux envelope for a pair of reactions.
 
     Arguments:
-        model : ConstraintBasedModel -- the model
+        model : CBModel -- the model
         r_x : str -- reaction on x-axis
         r_y : str -- reaction on y-axis
         steps : int -- number of steps to compute (default: 10)
@@ -128,7 +137,7 @@ def production_envelope(model, r_target, r_biomass=None, steps=10, constraints=N
     """ Calculate the production envelope of the target reaction
 
     Arguments:
-        model : ConstraintBasedModel -- the model
+        model : CBModel -- the model
         r_target: str -- the target reaction id
         steps: int -- number of steps along the envelope to be calculated (default: 10)
         r_biomass: str -- the biomass reaction id (default: None)
@@ -147,7 +156,7 @@ def flux_envelope_3d(model, r_x, r_y, r_z, steps=10, constraints=None):
     """ Calculate the flux envelope for a triplet of reactions.
 
     Arguments:
-        model : ConstraintBasedModel -- the model
+        model : CBModel -- the model
         r_x : str -- reaction on x-axis
         r_y : str -- reaction on y-axis
         r_z : str -- reaction on z-axis

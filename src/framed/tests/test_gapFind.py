@@ -3,14 +3,15 @@ Unit testing for gap finding.
 
 @author: Marta Matos
 '''
-import unittest
 import re
-from framed.io_utils.sbml import load_sbml_model, CONSTRAINT_BASED
-from framed.io_utils.plaintext import read_model_from_file
-from framed.core.fixes import fix_bigg_model
-from framed.solvers import GlpkSolver, GlpkSolverLazy
-from framed.analysis.reconstruction.gapFind import *
+import unittest
 
+from framed.core.fixes import fix_bigg_model
+from framed.io_utils.plaintext import read_model_from_file
+from framed.io_utils.sbml import load_cbmodel
+from framed.solvers.glpk_wrapper_lazy import GlpkSolverLazy
+from framed.reconstruction.gapFind import GapFind
+from framed.solvers.gurobi_wrapper import GurobiSolver
 
 class GapFindTest(unittest.TestCase):
 
@@ -56,13 +57,13 @@ class GapFindTest(unittest.TestCase):
 #         for i in range(1,8):
 #             solver = GlpkSolver()
 # 
-#             model = '../../../examples/models/gapFind/ecoli_core_model' + str(i) + '.xml'
+#             model = '../../../examples/reconstruction/gapFind/ecoli_core_model' + str(i) + '.xml'
 #             self.model = load_sbml_model(model, kind=CONSTRAINT_BASED)
 #             fix_bigg_model(self.model)
 # 
 #             framed_result = GapFind(self.model, solver)
-#             COBRA_mets_result_filename = '../../../examples/models/gapFind/gapFind_results/ecoli0' + str(i) + '_mets_glpk.txt'
-#             COBRA_rxns_result_filename = '../../../examples/models/gapFind/gapFind_results/ecoli0' + str(i) + '_rxns_glpk.txt'
+#             COBRA_mets_result_filename = '../../../examples/reconstruction/gapFind/gapFind_results/ecoli0' + str(i) + '_mets_glpk.txt'
+#             COBRA_rxns_result_filename = '../../../examples/reconstruction/gapFind/gapFind_results/ecoli0' + str(i) + '_rxns_glpk.txt'
 # 
 #             result = self.compare_to_COBRA(framed_result, COBRA_mets_result_filename, COBRA_rxns_result_filename)
 #             self.assertTrue(result)
@@ -74,13 +75,12 @@ class GapFindTest(unittest.TestCase):
         for i in range(1,8):
             solver = GlpkSolverLazy(tol_int="default")
  
-            model = '../../../examples/models/gapFind/ecoli_core_model' + str(i) + '.xml'
-            self.model = load_sbml_model(model, kind=CONSTRAINT_BASED)
-            fix_bigg_model(self.model)
- 
+            model = '../../../examples/reconstruction/gapFind/ecoli_core_model' + str(i) + '.xml'
+            self.model = load_cbmodel(model, flavor='bigg')
+
             framed_result = GapFind(self.model, solver)
-            COBRA_mets_result_filename = '../../../examples/models/gapFind/gapFind_results/ecoli0' + str(i) + '_mets_glpk.txt'
-            COBRA_rxns_result_filename = '../../../examples/models/gapFind/gapFind_results/ecoli0' + str(i) + '_rxns_glpk.txt'
+            COBRA_mets_result_filename = '../../../examples/reconstruction/gapFind/gapFind_results/ecoli0' + str(i) + '_mets_glpk.txt'
+            COBRA_rxns_result_filename = '../../../examples/reconstruction/gapFind/gapFind_results/ecoli0' + str(i) + '_rxns_glpk.txt'
  
             result = self.compare_to_COBRA(framed_result, COBRA_mets_result_filename, COBRA_rxns_result_filename)
             self.assertTrue(result)
@@ -94,13 +94,12 @@ class GapFindTest(unittest.TestCase):
                 continue
             solver = GurobiSolver()
 
-            model = '../../../examples/models/gapFind/ecoli_core_model' + str(i) + '.xml'
-            self.model = load_sbml_model(model, kind=CONSTRAINT_BASED)
-            fix_bigg_model(self.model)
+            model = '../../../examples/reconstruction/gapFind/ecoli_core_model' + str(i) + '.xml'
+            self.model = load_cbmodel(model, flavor='bigg')
 
             framed_result = GapFind(self.model, solver)
-            COBRA_mets_result_filename = '../../../examples/models/gapFind/gapFind_results/ecoli0' + str(i) + '_mets_gurobi.txt'
-            COBRA_rxns_result_filename = '../../../examples/models/gapFind/gapFind_results/ecoli0' + str(i) + '_rxns_gurobi.txt'
+            COBRA_mets_result_filename = '../../../examples/reconstruction/gapFind/gapFind_results/ecoli0' + str(i) + '_mets_gurobi.txt'
+            COBRA_rxns_result_filename = '../../../examples/reconstruction/gapFind/gapFind_results/ecoli0' + str(i) + '_rxns_gurobi.txt'
 
             result = self.compare_to_COBRA(framed_result, COBRA_mets_result_filename, COBRA_rxns_result_filename)
             self.assertTrue(result)            
@@ -112,8 +111,8 @@ class GapFind_exp(unittest.TestCase):
     
     def test_gapFind_exp(self):
         solver = GlpkSolverLazy()
-        model = '../../../examples/models/toy_model'
-        self.model = read_model_from_file(model, kind=CONSTRAINT_BASED)
+        model = '../../../examples/reconstruction/toy_model'
+        self.model = read_model_from_file(model, kind='cb')
         fix_bigg_model(self.model)
         print self.model
         framed_result = GapFind(self.model, solver, root_gaps_only=True)

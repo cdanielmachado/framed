@@ -54,7 +54,7 @@ class PuLPSolver(Solver):
         """ Create and store solver-specific internal structure for the given model.
         
         Arguments:
-            model : ConstraintBasedModel
+            model : CBModel
         """
 
         problem = LpProblem(sense=LpMaximize)
@@ -79,7 +79,7 @@ class PuLPSolver(Solver):
         Arguments:
             objective : dict (of str to float) -- reaction ids in the objective function and respective
                         coefficients, the sense is maximization by default
-            model : ConstraintBasedModel -- model (optional, leave blank to reuse previous model structure)
+            model : CBModel -- model (optional, leave blank to reuse previous model structure)
             constraints : dict (of str to (float, float)) -- environmental or additional constraints (optional)
             get_shadow_prices : bool -- return shadow price information if available (optional, default: False)
             get_reduced_costs : bool -- return reduced costs information if available (optional, default: False)

@@ -22,14 +22,15 @@
 from simulation import FBA, pFBA, qpFBA, MOMA, lMOMA, ROOM
 
 
-def gene_deletion(model, genes, method='FBA', reference=None, solver=None, compute_silent_deletions=False):
+def gene_deletion(model, genes, method='FBA', reference=None, constraints=None, solver=None, compute_silent_deletions=False):
     """ Simulate the deletion of a set of genes.
     
     Arguments:
-        model : GPRConstrainedModel -- model
+        model : CBModel -- model
         genes : list (of str) -- genes to delete
         method : str -- simulation method: FBA (default) or MOMA
         reference : dict (of str to float) -- reference flux distribution for MOMA (optional)
+        constraints : dict (of str to (float, float)) -- additional constraints
         solver : Solver -- solver instance instantiated with the model, for speed (optional)
         compute_silent_deletions : Bool -- don't compute gene deletion if no reactions are affected (optional, default: True)
 
@@ -40,7 +41,7 @@ def gene_deletion(model, genes, method='FBA', reference=None, solver=None, compu
     inactive_reactions = deleted_genes_to_reactions(model, genes)
 
     if inactive_reactions or compute_silent_deletions:
-        solution = reaction_deletion(model, inactive_reactions, method, reference, solver)
+        solution = reaction_deletion(model, inactive_reactions, method, reference, constraints, solver)
     else:
         solution = None
 
@@ -51,7 +52,7 @@ def deleted_genes_to_reactions(model, genes):
     """ Convert a set of deleted genes to the respective deleted reactions.
     
     Arguments:
-        model : GPRConstrainedModel -- model
+        model : CBModel -- model
         genes : list (of str) -- genes to delete
 
     Returns:
@@ -64,21 +65,26 @@ def deleted_genes_to_reactions(model, genes):
     return inactive_reactions
 
 
-def reaction_deletion(model, reactions, method='FBA', reference=None, solver=None):
+def reaction_deletion(model, reactions, method='FBA', reference=None, constraints=None, solver=None):
     """ Simulate the deletion of a set of reactions.
     
     Arguments:
-        model : GPRConstrainedModel -- model
+        model : CBModel -- model
         reactions : list (of str) -- reactions to delete
         method : str -- simulation method: FBA (default) or MOMA
         reference : dict (of str to float) -- reference flux distribution for MOMA (optional)
+        constraints : dict (of str to (float, float)) -- additional constraints
         solver : Solver -- solver instance instantiated with the model, for speed (optional)
 
     Returns:
         Solution -- solution
     """
 
-    constraints = {r_id: (0, 0) for r_id in reactions}
+    if not constraints:
+        constraints = {}
+
+    for r_id in reactions:
+        constraints[r_id] = (0, 0)
 
     if method == 'FBA':
         solution = FBA(model, constraints=constraints, solver=solver)
@@ -96,15 +102,16 @@ def reaction_deletion(model, reactions, method='FBA', reference=None, solver=Non
     return solution
 
 
-def deletion(model, elements, kind='reactions', method='FBA', reference=None, solver=None):
+def deletion(model, elements, kind='reactions', method='FBA', reference=None, constraints=None, solver=None):
     """ Generic interface for gene or reaction deletion.
     
     Arguments:
-        model : ConstraintBasedModel -- model (GPRConstrainedModel is required for gene deletions)
+        model : CBModel -- model
         elements : list (of str) -- elements to delete
         kind : str -- genes or reactions (default)
         method : str -- simulation method: FBA (default) or MOMA
         reference : dict (of str to float) -- reference flux distribution for MOMA (optional)
+        constraints : dict (of str to (float, float)) -- additional constraints
         solver : Solver -- solver instance instantiated with the model, for speed (optional)
 
     Returns:

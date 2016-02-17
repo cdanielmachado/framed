@@ -122,7 +122,7 @@ class Solution:
 
         Arguments:
             m_id: str - metabolite id
-            model: ConstraintBasedModel - model that generated the solution
+            model: CBModel - model that generated the solution
             zeros: bool - show zero entries (default: False)
             sort: bool - sort reactions by flux (default: False)
             percentage: bool - show percentage of carried flux instead of absolute flux (default: False)
@@ -135,16 +135,16 @@ class Solution:
         if not self.values:
             return None
         
-        inputs = model.get_metabolite_inputs(m_id)
-        outputs = model.get_metabolite_outputs(m_id)
+        inputs = model.get_metabolite_sources(m_id)
+        outputs = model.get_metabolite_sinks(m_id)
         
-        fwd_in = [(r_id, model.stoichiometry[(m_id, r_id)] * self.values[r_id], '--> o')
+        fwd_in = [(r_id, model.reactions[r_id].stoichiometry[m_id] * self.values[r_id], '--> o')
                   for r_id in inputs if self.values[r_id] > 0 or zeros and self.values[r_id] == 0]
-        rev_in = [(r_id, model.stoichiometry[(m_id, r_id)] * self.values[r_id], 'o <--')
+        rev_in = [(r_id, model.reactions[r_id].stoichiometry[m_id] * self.values[r_id], 'o <--')
                   for r_id in outputs if self.values[r_id] < 0]
-        fwd_out = [(r_id, model.stoichiometry[(m_id, r_id)] * self.values[r_id], 'o -->')
+        fwd_out = [(r_id, model.reactions[r_id].stoichiometry[m_id] * self.values[r_id], 'o -->')
                    for r_id in outputs if self.values[r_id] > 0 or zeros and self.values[r_id] == 0]
-        rev_out = [(r_id, model.stoichiometry[(m_id, r_id)] * self.values[r_id], '<-- o')
+        rev_out = [(r_id, model.reactions[r_id].stoichiometry[m_id] * self.values[r_id], '<-- o')
                     for r_id in inputs if self.values[r_id] < 0]
         
         flux_in = fwd_in + rev_in
@@ -169,6 +169,13 @@ class Solution:
             lines = map(lambda (a, b, c): print_format.format(c, a, b), flux_in + flux_out)           
         
         return '\n'.join(lines)
+
+
+    def get_metabolites_turnover(self, model):
+        m_r_table = model.metabolite_reaction_lookup_table()
+        t = {m_id: 0.5*sum([abs(coeff * self.values[r_id]) for r_id, coeff in neighbours.items()])
+             for m_id, neighbours in m_r_table.items()}
+        return t
 
 
 class Solver:
@@ -275,7 +282,7 @@ class Solver:
         """ Create problem structure for a given model.
 
         Arguments:
-            model : ConstraintBasedModel
+            model : CBModel
         """
 
         for r_id, (lb, ub) in model.bounds.items():
@@ -293,7 +300,7 @@ class Solver:
         Arguments:
             objective : dict (of str to float) -- reaction ids in the objective function and respective
                         coefficients, the sense is maximization by default
-            model : ConstraintBasedModel -- model (optional, leave blank to reuse previous model structure)
+            model : CBModel -- model (optional, leave blank to reuse previous model structure)
             constraints : dict (of str to (float, float)) -- environmental or additional constraints (optional)
             get_shadow_prices : bool -- return shadow price information if available (optional, default: False)
             get_reduced_costs : bool -- return reduced costs information if available (optional, default: False)
@@ -312,7 +319,7 @@ class Solver:
         Arguments:
             quad_obj : dict (of (str, str) to float) -- map reaction pairs to respective coefficients
             lin_obj : dict (of str to float) -- map single reaction ids to respective linear coefficients
-            model : ConstraintBasedModel -- model (optional, leave blank to reuse previous model structure)
+            model : CBModel -- model (optional, leave blank to reuse previous model structure)
             constraints : dict (of str to (float, float)) -- overriding constraints (optional)
             get_shadow_prices : bool -- return shadow price information if available (default: False)
             get_reduced_costs : bool -- return reduced costs information if available (default: False)

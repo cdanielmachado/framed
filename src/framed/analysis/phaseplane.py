@@ -123,7 +123,7 @@ def PhPP(model, rxn_x, rxn_y, rxn_x_range, rxn_y_range, target=None, maximize=Tr
     Phenotype Phase Plane Analysis
     analyze the changes in the objective function and the shadow prices
 
-    :param model: ConstraintBasedModel -- the metabolic model
+    :param model: CBModel -- the metabolic model
     :param rxn_x: str -- reaction to be plotted along x axis.  must be of a type convertable to numpy.array
     :param rxn_y: str -- reaction to be plotted along y axis.  must be of a type convertable to numpy.array
     :param rxn_x_range: list or array -- the range of the reaction x
@@ -137,9 +137,8 @@ def PhPP(model, rxn_x, rxn_y, rxn_x_range, rxn_y_range, target=None, maximize=Tr
     solver.build_problem(model)
 
     # find metabolite ids corresponding to reactions x and y
-    table = model.reaction_metabolite_lookup_table()
-    met_x = table[rxn_x].keys()[0]
-    met_y = table[rxn_y].keys()[0]
+    met_x = model.reactions[rxn_x].stoichiometry.keys()[0]
+    met_y = model.reactions[rxn_y].stoichiometry.keys()[0]
 
     # create a PhenotypePhasePlane instance for storing results
     phase_plane = PhenotypePhasePlane(rxn_x, rxn_y, rxn_x_range, rxn_y_range)
