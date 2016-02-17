@@ -34,12 +34,17 @@ def simplify(model):
         (list (of str), list (of str)) : lists of removed reactions and metabolites
     """
 
-    blocked = blocked_reactions(model)
-    model.remove_reactions(blocked)
-    disconnected = _disconnected_metabolites(model)
-    model.remove_metabolites(disconnected)
+    del_reactions = blocked_reactions(model)
+    model.remove_reactions(del_reactions)
+    del_metabolites = _disconnected_metabolites(model)
+    model.remove_metabolites(del_metabolites)
 
-    return blocked, disconnected
+    if isinstance(model, CBModel):
+        del_genes = _disconnected_genes(model)
+        model.remove_genes(del_genes)
+        return del_reactions, del_metabolites, del_genes
+    else:
+        return del_reactions, del_metabolites
 
 
 def make_irreversible(model):
@@ -107,3 +112,7 @@ def add_ratio_constraint(model, r_id_num, r_id_den, ratio):
 def _disconnected_metabolites(model):
     m_r_table = model.metabolite_reaction_lookup_table()
     return [m_id for m_id, edges in m_r_table.items() if not edges]
+
+def _disconnected_genes(model):
+    connected_genes = reduce(set.__or__, model.reaction_genes.values())
+    return set(model.genes) - connected_genes

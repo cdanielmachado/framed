@@ -23,6 +23,7 @@ TODO: Add explicit (graph-based) gene-reaction associations
 """
 
 from collections import OrderedDict
+from copy import deepcopy
 
 
 class Metabolite:
@@ -127,6 +128,8 @@ class Model:
         self._m_r_lookup = None
         self._s_matrix = None
 
+    def copy(self):
+        return deepcopy(self)
 
     def add_metabolites(self, metabolites):
         """ Add a list of metabolites to the model.
@@ -605,6 +608,28 @@ class CBModel(Model):
             gene : Gene
         """
         self.genes[gene.id] = gene
+
+    def remove_gene(self, gene_id):
+        """ Remove a gene from the model.
+
+        Arguments:
+            str : Gene id
+        """
+        self.remove_genes([gene_id])
+
+
+    def remove_genes(self, gene_list):
+        """ Remove a set of genes from the model.
+            TO DO: When switching to a GPR class representation, make sure to clean up rules as well
+
+        Arguments:
+            list of str : Gene ids
+        """
+
+        for gene_id in gene_list:
+            del self.genes[gene_id]
+
+
 
     def set_rules(self, rules):
         """ Define GPR association rules for a set of reactions

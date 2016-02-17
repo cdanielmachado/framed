@@ -253,6 +253,20 @@ def save_sbml_model(model, filename):
     writer.writeSBML(document, filename)
 
 
+def save_cbmodel(model, filename, flavor=None):
+
+    if flavor and flavor.lower() == BIGG_MODEL:
+        old_bounds = model.bounds.copy()
+        for r_id, (lb, ub) in model.bounds.items():
+            lb = -1000 if lb is None else lb
+            ub = 1000 if ub is None else ub
+            model.set_flux_bounds(r_id, lb, ub)
+        save_sbml_model(model, filename)
+        model.bounds = old_bounds
+    else:
+         save_sbml_model(model, filename)       
+
+
 def _save_compartments(model, sbml_model):
     for compartment in model.compartments.values():
         sbml_compartment = sbml_model.createCompartment()

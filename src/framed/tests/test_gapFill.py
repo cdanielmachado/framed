@@ -4,15 +4,11 @@ Unit testing for gap filling algorithm.
 @author: Marta Matos
 '''
 import unittest
-import re
-from framed.io_utils.sbml import load_sbml_model, CONSTRAINT_BASED
-from framed.io_utils.plaintext import read_model_from_file, CONSTRAINT_BASED
-from framed.solvers import GlpkSolver, GlpkSolverLazy
-from framed.analysis.simulation import FBA
+
 from framed.core.fixes import fix_bigg_model
-from framed.analysis.reconstruction.gapFind import *
-from framed.analysis.reconstruction.gapFill import *
-from framed.analysis.variability import *
+from framed.io_utils.plaintext import read_model_from_file, CONSTRAINT_BASED
+from framed.io_utils.sbml import load_sbml_model, CONSTRAINT_BASED
+from framed.solvers import GlpkSolver, GlpkSolverLazy
 
 
 class GapFillTest_glpk(unittest.TestCase):

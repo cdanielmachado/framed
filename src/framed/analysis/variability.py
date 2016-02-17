@@ -22,11 +22,11 @@
 from collections import OrderedDict
 from ..solvers import solver_instance
 from ..solvers.solver import Status
-from simulation import FBA
+from simulation import FBA, looplessFBA
 from numpy import linspace
 
 
-def FVA(model, obj_percentage=0, reactions=None, constraints=None):
+def FVA(model, obj_percentage=0, reactions=None, constraints=None, loopless=False, internal=None):
     """ Run Flux Variability Analysis (FVA).
     
     Arguments:
@@ -44,7 +44,7 @@ def FVA(model, obj_percentage=0, reactions=None, constraints=None):
 
     if obj_percentage > 0:
         target = model.detect_biomass_reaction()
-        solution = FBA(model, objective={target: 1})
+        solution = FBA(model, objective={target: 1}, constraints=constraints)
         _constraints[target] = (obj_percentage * solution.fobj, None)
 
     if not reactions:
@@ -56,7 +56,11 @@ def FVA(model, obj_percentage=0, reactions=None, constraints=None):
     variability = OrderedDict([(r_id, [None, None]) for r_id in reactions])
 
     for r_id in reactions:
-        solution = FBA(model, {r_id: 1}, False, constraints=_constraints, solver=solver)
+        if loopless:
+            solution = looplessFBA(model, {r_id: 1}, False, constraints=_constraints, internal=internal, solver=solver)
+        else:
+             solution = FBA(model, {r_id: 1}, False, constraints=_constraints, solver=solver)
+
         if solution.status == Status.OPTIMAL:
             variability[r_id][0] = -solution.fobj
         elif solution.status == Status.UNBOUNDED:
@@ -65,7 +69,11 @@ def FVA(model, obj_percentage=0, reactions=None, constraints=None):
             variability[r_id][0] = 0
 
     for r_id in reactions:
-        solution = FBA(model, {r_id: 1}, True, constraints=_constraints, solver=solver)
+        if loopless:
+            solution = looplessFBA(model, {r_id: 1}, True, constraints=_constraints, internal=internal, solver=solver)
+        else:
+             solution = FBA(model, {r_id: 1}, True, constraints=_constraints, solver=solver)
+             
         if solution.status == Status.OPTIMAL:
             variability[r_id][1] = solution.fobj
         elif solution.status == Status.UNBOUNDED:

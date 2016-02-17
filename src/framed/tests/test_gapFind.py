@@ -3,13 +3,13 @@ Unit testing for gap finding.
 
 @author: Marta Matos
 '''
-import unittest
 import re
-from framed.io_utils.sbml import load_sbml_model, CONSTRAINT_BASED
-from framed.io_utils.plaintext import read_model_from_file
+import unittest
+
 from framed.core.fixes import fix_bigg_model
-from framed.solvers import GlpkSolver, GlpkSolverLazy
-from framed.analysis.reconstruction.gapFind import *
+from framed.io_utils.plaintext import read_model_from_file
+from framed.io_utils.sbml import load_sbml_model, CONSTRAINT_BASED
+from framed.solvers import GlpkSolverLazy
 
 
 class GapFindTest(unittest.TestCase):

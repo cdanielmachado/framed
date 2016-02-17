@@ -27,6 +27,7 @@ from gurobipy import setParam, Model as GurobiModel, GRB, quicksum, read
 
 setParam("OutputFlag", 0)
 setParam('IntFeasTol', 1e-9)
+#setParam('FeasibilityTol', 1e-9)
 
 status_mapping = {GRB.OPTIMAL: Status.OPTIMAL,
                   GRB.UNBOUNDED: Status.UNBOUNDED,
@@ -214,8 +215,8 @@ class GurobiSolver(Solver):
         problem.setObjective(obj_expr, sense)
         problem.update()
 
-#        from datetime import datetime
-#        self.problem.write("problem_{}.lp".format(str(datetime.now())))
+        #from datetime import datetime
+        #self.problem.write("problem_{}.lp".format(str(datetime.now())))
         
         #run the optimization
         problem.optimize()
