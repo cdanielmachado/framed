@@ -15,6 +15,10 @@ This package is under development (no stable release yet). Some of the current f
 * Omics integration: GIMME, E-Flux
 * Kinetic models (experimental support): time-course and steady-state simulation, sampling, plotting utils
 
+This is an overview of the package structure:
+
+![package overview](https://raw.githubusercontent.com/cdanielmachado/framed/master/docs/package_overview.png)
+
 ### Credits and License
 
 Initial development at the Novo Nordisk Fundation Center for Biosustainability (Technical University of Denmark)
