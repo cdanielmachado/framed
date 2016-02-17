@@ -26,10 +26,11 @@ def gene_deletion(model, genes, method='FBA', reference=None, constraints=None, 
     """ Simulate the deletion of a set of genes.
     
     Arguments:
-        model : GPRConstrainedModel -- model
+        model : CBModel -- model
         genes : list (of str) -- genes to delete
         method : str -- simulation method: FBA (default) or MOMA
         reference : dict (of str to float) -- reference flux distribution for MOMA (optional)
+        constraints : dict (of str to (float, float)) -- additional constraints
         solver : Solver -- solver instance instantiated with the model, for speed (optional)
         compute_silent_deletions : Bool -- don't compute gene deletion if no reactions are affected (optional, default: True)
 
@@ -51,7 +52,7 @@ def deleted_genes_to_reactions(model, genes):
     """ Convert a set of deleted genes to the respective deleted reactions.
     
     Arguments:
-        model : GPRConstrainedModel -- model
+        model : CBModel -- model
         genes : list (of str) -- genes to delete
 
     Returns:
@@ -68,10 +69,11 @@ def reaction_deletion(model, reactions, method='FBA', reference=None, constraint
     """ Simulate the deletion of a set of reactions.
     
     Arguments:
-        model : GPRConstrainedModel -- model
+        model : CBModel -- model
         reactions : list (of str) -- reactions to delete
         method : str -- simulation method: FBA (default) or MOMA
         reference : dict (of str to float) -- reference flux distribution for MOMA (optional)
+        constraints : dict (of str to (float, float)) -- additional constraints
         solver : Solver -- solver instance instantiated with the model, for speed (optional)
 
     Returns:
@@ -104,11 +106,12 @@ def deletion(model, elements, kind='reactions', method='FBA', reference=None, co
     """ Generic interface for gene or reaction deletion.
     
     Arguments:
-        model : ConstraintBasedModel -- model (GPRConstrainedModel is required for gene deletions)
+        model : CBModel -- model
         elements : list (of str) -- elements to delete
         kind : str -- genes or reactions (default)
         method : str -- simulation method: FBA (default) or MOMA
         reference : dict (of str to float) -- reference flux distribution for MOMA (optional)
+        constraints : dict (of str to (float, float)) -- additional constraints
         solver : Solver -- solver instance instantiated with the model, for speed (optional)
 
     Returns:

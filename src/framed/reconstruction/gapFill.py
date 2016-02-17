@@ -287,7 +287,7 @@ def extend_model_with_DB_plainText(model, reactionsDB):
 def add_reaction_from_str(model, reaction_str):
     """ Parse a reaction from a string and add it to the model.
     Arguments:
-        model : StoichiometricModel -- model
+        model : Model -- model
         reaction_str: str -- string representation a the reaction
     """
 

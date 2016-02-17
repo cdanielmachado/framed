@@ -28,7 +28,7 @@ def simplify(model):
     """ Removes all blocked reactions in a constraint based model
     
     Arguments:
-        model : ConstraintBasedModel
+        model : CBModel
         
     Returns:
         (list (of str), list (of str)) : lists of removed reactions and metabolites
@@ -52,7 +52,7 @@ def make_irreversible(model):
     For efficiency the given model is converted. To keep a copy use deepcopy first.
     
     Arguments:
-        model : StoichiometricModel
+        model : Model (or CBmodel)
         
     Returns:
         dictionary (str to (str, str)): mapping of old reaction ids to splitted reaction ids
@@ -92,7 +92,7 @@ def add_ratio_constraint(model, r_id_num, r_id_den, ratio):
     """ Add a flux ratio constraint to a model.
 
     Arguments:
-        model : StoichiometricModel
+        model : CBmodel
         r_id_num : str -- id of the numerator
         r_id_num : str -- id of the denominator
         ratio : float -- ratio value

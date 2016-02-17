@@ -7,7 +7,6 @@ from collections import OrderedDict
 from warnings import warn
 
 
-
 def simulate(model, time=0, steps=100, t_steps=None, parameters=None, integrator_args=None):
     f = model.get_ODEs(parameters)
     f2 = lambda x, t: f(t, x)
@@ -20,30 +19,30 @@ def simulate(model, time=0, steps=100, t_steps=None, parameters=None, integrator
     return t_steps, X
 
 
-# def simulate2(model, time, n_steps=100, method='vode', integrator_args=None):
-#     #simulation based on scipy.integrate.ode (for some reason much slower than odeint)
-#
-#     f = model.get_ODEs()
-#     x0 = model.concentrations.values()
-#
-#     if not integrator_args:
-#         if method == 'vode':
-#             integrator_args = {'method': 'bdf', 'order': 15}
-#         else:
-#             integrator_args = {}
-#
-#     integrator = ode(f).set_integrator(method, **integrator_args)
-#     integrator.set_initial_value(x0)
-#
-#     dt = float(time)/n_steps
-#     t = [0]
-#     X = [x0]
-#     while integrator.successful() and integrator.t < time:
-#         integrator.integrate(integrator.t + dt)
-#         t.append(integrator.t)
-#         X.append(integrator.y)
-#
-#     return t, array(X)
+def simulate2(model, time, n_steps=100, method='vode', integrator_args=None):
+    #simulation based on scipy.integrate.ode (for some reason much slower than odeint)
+
+    f = model.get_ODEs()
+    x0 = model.concentrations.values()
+
+    if not integrator_args:
+        if method == 'vode':
+            integrator_args = {'method': 'bdf', 'order': 15}
+        else:
+            integrator_args = {}
+
+    integrator = ode(f).set_integrator(method, **integrator_args)
+    integrator.set_initial_value(x0)
+
+    dt = float(time)/n_steps
+    t = [0]
+    X = [x0]
+    while integrator.successful() and integrator.t < time:
+        integrator.integrate(integrator.t + dt)
+        t.append(integrator.t)
+        X.append(integrator.y)
+
+    return t, array(X)
 
 
 def find_steady_state(model, parameters=None, endtime=1e9, abstol=1e-6):

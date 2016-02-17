@@ -1,8 +1,6 @@
 ''' This module implements methods for reading and writing models from a plain text format.
 
-TODO: Add support for coefficients in scientific notation e.g: 1.2e-05 
 TODO: Add support for compartments.
-TODO: Add support for GPRConstrainedModel (problem GPRs can't be parsed with regex).
 
 @author: Daniel Machado
 
@@ -64,10 +62,10 @@ def read_model_from_file(filename, kind=None):
     
     Arguments:
         filename : str -- file path
-        kind: {STOICHIOMETRIC (default), CONSTRAINT_BASED} -- define kind of model to read (optional)
+        kind: None or 'cb' -- define kind of model to read (optional)
 
     Returns:
-        StoichiometricModel -- Stoichiometric model or respective subclass
+        Model -- simple model or subclass
     """
 
     try:
@@ -96,7 +94,7 @@ def add_reaction_from_str(model, reaction_str):
     """ Parse a reaction from a string and add it to the model.
     
     Arguments:
-        model : StoichiometricModel -- model
+        model : Model -- model
         reaction_str: str -- string representation a the reaction
     """
 
@@ -162,7 +160,7 @@ def write_model_to_file(model, filename):
     """ Writes a model to a file.
     
     Arguments:
-        model: StoichiometricModel -- Stoichiometric model (or subclass)
+        model: Model -- Model (or CBModel)
         filename : str -- file path
     """
     try:

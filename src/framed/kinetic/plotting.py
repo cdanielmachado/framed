@@ -5,6 +5,7 @@ from matplotlib.pyplot import figure, subplot2grid
 from seaborn import kdeplot
 from numpy import array
 
+
 def plot_simulation(model, time, steps=100, parameters=None, metabolites=None, xlabel=None, ylabel=None):
     t, X = simulate(model, time, steps=steps, parameters=parameters)
     fig = figure()
@@ -36,7 +37,7 @@ def plot_simulation_vs_data(model, t_steps, data, parameters=None, metabolites=N
 
 
 def plot_sampling_results(model, sample, reactions=None):
-    # TODO: this is generic enough to be a kinetic/cobra compatible (move to core.plotting ?)
+    # TODO: this is generic enough to be kinetic/cobra compatible (move to core.plotting ?)
 
     if not reactions:
         reactions = model.reactions.keys()
@@ -78,6 +79,5 @@ def plot_sampling_results(model, sample, reactions=None):
 
             ax.set_xlim(x_lim)
             if i != j:
-                #TODO: PROBLEMA QUANDO i=j=0 e o plot e o de densidade...
                 ax.set_ylim(y_lim)
 

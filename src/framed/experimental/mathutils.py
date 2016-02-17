@@ -4,6 +4,7 @@ from scipy.linalg import svd
 from scipy import compress
 from numpy import ones, concatenate, array
 
+
 def nullspace(M, eps=1e-12):
     M = array(M)
     u, s, vh = svd(M)

@@ -33,12 +33,12 @@ def combinatorial_gene_deletion(model, objective, max_dels, targets=None, method
     """ Compute solutions for a set of combinatorial gene deletions.
     
     Arguments:
-        model : GPRConstrainedModel -- model
+        model : CBModel -- model
         objective : dict (of str to float) -- optimization objective (reaction ids and coefficients)
         max_dels : maximum number of deletions
         method : str -- simulation method: FBA (default) or MOMA
         targets : list (of str) -- deletion targets (default: all)
-        min_growth : float -- minimum percentage of growth rate to consider a deletion non-letal (default: 0.01)
+        min_growth : float -- minimum fraction of growth rate to consider a deletion non-letal (default: 0.01)
         abstol : float -- minimum objective function value (default: 1e-4)
 
     Returns:
@@ -53,12 +53,12 @@ def combinatorial_reaction_deletion(model, objective, max_dels, targets=None, me
     """ Compute solutions for a set of combinatorial reaction deletions.
     
     Arguments:
-        model : ConstraintBasedModel -- model
+        model : CBModel -- model
         objective : dict (of str to float) -- optimization objective (reaction ids and coefficients)
         max_dels : maximum number of deletions
         method : str -- simulation method: FBA (default) or MOMA
         targets : list (of str) -- deletion targets (default: all)
-        min_growth : float -- minimum percentage of growth rate to consider a deletion non-letal (default: 0.01)
+        min_growth : float -- minimum fraction of growth rate to consider a deletion non-letal (default: 0.01)
         abstol : float -- minimum objective function value (default: 1e-4)
 
     Returns:
@@ -74,13 +74,13 @@ def combinatorial_deletion(model, fobj, max_dels, kind='reactions', targets=None
     """ Generic interface for computing for a set of combinatorial gene or reaction deletions.
     
     Arguments:
-        model : ConstraintBasedModel -- model
+        model : CBModel -- model
         objective : dict (of str to float) -- optimization objective (reaction ids and coefficients)
         max_dels : maximum number of deletions
         kind : str -- genes or reactions (default)
         method : str -- simulation method: FBA (default) or MOMA
         targets : list (of str) -- deletion targets (default: all)
-        min_growth : float -- minimum percentage of growth rate to consider a deletion non-letal (default: 0.01)
+        min_growth : float -- minimum fraction of growth rate to consider a deletion non-letal (default: 0.01)
         abstol : float -- minimum objective function value (default: 1e-4)
 
     Returns:

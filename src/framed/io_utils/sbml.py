@@ -1,6 +1,6 @@
 """ This module implements methods for reading and writing SBML files.
 
-TODO: Import/export of bounds and GPR follows the BiGG model format, consider changing to the new SBML fbc package.
+TODO: Add support for sbml-fbc package.
 
 @author: Daniel Machado
 
@@ -45,10 +45,10 @@ def load_sbml_model(filename, kind=None):
     
     Arguments:
         filename : String -- SBML file path
-        kind : {STOICHIOMETRIC (default), CONSTRAINT_BASED, GPR_CONSTRAINED} -- define kind of model to load (optional)
+        kind : {None (default), CB_MODEL, ODE_MODEL} -- define kind of model to load (optional)
     
     Returns:
-        StoichiometricModel -- Stoichiometric model or respective subclass
+        Model -- Simple model or respective subclass
     """
     reader = SBMLReader()
     document = reader.readSBML(filename)
@@ -233,7 +233,7 @@ def save_sbml_model(model, filename):
     """ Save a model to an SBML file.
     
     Arguments:
-        model : StoichiometricModel (or any subclass) -- Stoichiometric model (or subclass)
+        model : Model (or any subclass) -- model
         filename : String -- SBML file path
     """
 

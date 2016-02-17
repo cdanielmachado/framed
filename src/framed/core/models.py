@@ -53,6 +53,9 @@ class Reaction:
         Arguments:
             elem_id : String -- a valid unique identifier
             name : String -- common reaction name
+            reversible : bool -- reaction reversibility (default: True)
+            stoichiometry : dict of str to float -- stoichiometry
+            modifiers : -- list of reaction modifiers
         """
         self.id = elem_id
         self.name = name
@@ -269,45 +272,6 @@ class Model:
                                          if metabolite.compartment == c_id])
 
 
-    # def get_reaction_substrates(self, r_id):
-    #     """ Return the list of substrates for one reaction
-    #
-    #     Arguments:
-    #         r_id: str -- reaction id
-    #
-    #     Returns:
-    #         list [of str] -- substrates list
-    #     """
-    #     table = self.reaction_metabolite_lookup_table()
-    #     return [m_id for m_id, coeff in table[r_id].items() if coeff < 0]
-    #
-    #
-    # def get_reaction_products(self, r_id):
-    #     """ Return the list of products for one reaction
-    #
-    #     Arguments:
-    #         r_id: str -- reaction id
-    #
-    #     Returns:
-    #         list [of str] -- products list
-    #     """
-    #     table = self.reaction_metabolite_lookup_table()
-    #     return [m_id for m_id, coeff in table[r_id].items() if coeff > 0]
-
-
-    # def get_reaction_neighbours(self, r_id):
-    #     """ Return the list of metabolites connected to a reaction
-    #
-    #     Arguments:
-    #         r_id: str -- reaction id
-    #
-    #     Returns:
-    #         list [of str] -- metabolites list
-    #     """
-    #     table = self.reaction_metabolite_lookup_table()
-    #     return [m_id for m_id, coeff in table[r_id].items() if coeff != 0]
-
-
     def get_metabolite_sources(self, m_id):
         """ Return the list of input reactions for one metabolite
 
@@ -334,19 +298,6 @@ class Model:
         return [r_id for r_id, coeff in table[m_id].items() if coeff < 0]
 
 
-    # def get_metabolite_neighbours(self, m_id):
-    #     """ Return the list of reactions connected to a metabolite
-    #
-    #     Arguments:
-    #         m_id: str -- metabolite id
-    #
-    #     Returns:
-    #         list [of str] -- reactions list
-    #     """
-    #     table = self.metabolite_reaction_lookup_table()
-    #     return [r_id for r_id, coeff in table[m_id].items() if coeff != 0]
-
-
     def metabolite_reaction_lookup_table(self):
         """ Return the network topology as a nested map: metabolite id -> reaction id -> coefficient
 
@@ -362,22 +313,6 @@ class Model:
                     self._m_r_lookup[m_id][r_id] = coeff
 
         return self._m_r_lookup
-
-
-    # def reaction_metabolite_lookup_table(self):
-    #     """ Return the network topology as a nested map: reaction id -> metabolite id -> coefficient
-    #
-    #     Returns:
-    #         OrderedDict (of str to OrderedDict of str to float) -- lookup table
-    #     """
-    #
-    #     if not self._r_m_lookup:
-    #         self._r_m_lookup = OrderedDict([(r_id, OrderedDict()) for r_id in self.reactions])
-    #
-    #         for (m_id, r_id), coeff in self.stoichiometry.items():
-    #             self._r_m_lookup[r_id][m_id] = coeff
-    #
-    #     return self._r_m_lookup
 
 
     def stoichiometric_matrix(self):
@@ -433,9 +368,6 @@ class Model:
 
 
 class CBModel(Model):
-    """ Base class for constraint-based models.
-    Extends StoichiometricModel with flux bounds.
-    """
 
     def __init__(self, model_id):
         """
@@ -450,8 +382,6 @@ class CBModel(Model):
         self.rules = OrderedDict()
         self.rule_functions = OrderedDict()
         self.biomass_reaction = None
-
-
 
     def set_multiple_bounds(self, bounds):
         """ Define flux bounds for a set of reactions
@@ -620,7 +550,7 @@ class CBModel(Model):
 
     def remove_genes(self, gene_list):
         """ Remove a set of genes from the model.
-            TO DO: When switching to a GPR class representation, make sure to clean up rules as well
+            TODO: When switching to a GPR class representation, make sure to clean up rules as well
 
         Arguments:
             list of str : Gene ids

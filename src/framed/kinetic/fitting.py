@@ -4,6 +4,7 @@ from scipy.optimize import minimize
 
 __author__ = 'daniel'
 
+
 def fit_from_metabolomics(model, t_steps, data, parameters=None, bounds=None, method=None, update_model=False):
 
     model_params = model.get_parameters(exclude_compartments=True)

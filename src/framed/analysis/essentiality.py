@@ -30,8 +30,8 @@ def essential_genes(model, min_growth=0.01, constraints=None):
     """ Compute the set of essential genes.
     
     Arguments:
-        model : GPRConstrainedModel -- model
-        min_growth : float -- minimum percentage of growth rate to consider a deletion non-letal (default: 0.01)
+        model : CBModel -- model
+        min_growth : float -- minimum fraction of growth rate to consider a deletion non-letal (default: 0.01)
         constraints: dict (of str to float) -- environmental or additional constraints (optional)
 
     Returns:
@@ -44,8 +44,8 @@ def essential_reactions(model, min_growth=0.01, constraints=None):
     """ Compute the set of essential reactions.
     
     Arguments:
-        model : ConstraintBasedModel -- model
-        min_growth : float -- minimum percentage of growth rate to consider a deletion non-letal (default: 0.01)
+        model : CBModel -- model
+        min_growth : float -- minimum fraction of growth rate to consider a deletion non-letal (default: 0.01)
         constraints: dict (of str to float) -- environmental or additional constraints (optional)
 
     Returns:
@@ -59,9 +59,9 @@ def essentiality(model, kind='reactions', min_growth=0.01, constraints=None):
     """ Generic interface for computing gene or reaction essentiality.
     
     Arguments:
-        model : ConstraintBasedModel -- model (GPRConstrainedModel is required for gene essentiality)
+        model : CBModel -- model
         kind : str -- genes or reactions (default)
-        min_growth : float -- minimum percentage of growth rate to consider a deletion non-letal (default: 0.01)
+        min_growth : float -- minimum fraction of growth rate to consider a deletion non-letal (default: 0.01)
         constraints: dict (of str to float) -- environmental or additional constraints (optional)
 
     Returns:

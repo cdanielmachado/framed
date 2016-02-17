@@ -29,9 +29,11 @@ def plot_flux_envelope(model, r_x, r_y, substrate=None, constraints=None, refere
     """ Plots the flux envelope for a pair of reactions.
     
     Arguments:
-        model : ConstraintBasedModel -- the model
+        model : CBModel -- the model
         r_x : str -- reaction on x-axis
         r_y : str -- reaction on y-axis
+        substrate: str -- compute yields instead of rates (optional)
+        constraints : dict (of str to (float, float)) -- additional constraints
         filename : str -- filename to save image (optional), otherwise display on screen (default)
         steps : int -- number of steps to compute (default: 10)
         

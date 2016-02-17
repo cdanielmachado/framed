@@ -31,7 +31,7 @@ def greedy_deletion(model, fobj, max_dels, kind='reactions', targets=None, metho
     """ Generic interface for finding an optimal set of gene or reaction deletions using a greedy approach.
     
     Arguments:
-        model : ConstraintBasedModel -- model
+        model : CBModel -- model
         objective : dict (of str to float) -- optimization objective (reaction ids and coefficients)
         max_dels : maximum number of deletions
         kind : str -- genes or reactions (default)

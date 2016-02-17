@@ -30,7 +30,7 @@ def FVA(model, obj_percentage=0, reactions=None, constraints=None, loopless=Fals
     """ Run Flux Variability Analysis (FVA).
     
     Arguments:
-        model : ConstraintBasedModel -- a constraint-based model
+        model : CBModel -- a constraint-based model
         obj_percentage : float -- minimum percentage of growth rate (default 0.0, max: 1.0)
         reactions : list (of str) -- list of reactions to analyze (default: all)
         
@@ -88,7 +88,7 @@ def blocked_reactions(model, abstol=1e-9):
     """ Find all blocked reactions in a model
     
     Arguments:
-        model : ConstraintBasedModel -- a constraint-based model
+        model : CBModel -- a constraint-based model
         
     Returns:
         list (of str) -- blocked reactions
@@ -104,7 +104,7 @@ def flux_envelope(model, r_x, r_y, steps=10, constraints=None):
     """ Calculate the flux envelope for a pair of reactions.
 
     Arguments:
-        model : ConstraintBasedModel -- the model
+        model : CBModel -- the model
         r_x : str -- reaction on x-axis
         r_y : str -- reaction on y-axis
         steps : int -- number of steps to compute (default: 10)
@@ -137,7 +137,7 @@ def production_envelope(model, r_target, r_biomass=None, steps=10, constraints=N
     """ Calculate the production envelope of the target reaction
 
     Arguments:
-        model : ConstraintBasedModel -- the model
+        model : CBModel -- the model
         r_target: str -- the target reaction id
         steps: int -- number of steps along the envelope to be calculated (default: 10)
         r_biomass: str -- the biomass reaction id (default: None)
@@ -156,7 +156,7 @@ def flux_envelope_3d(model, r_x, r_y, r_z, steps=10, constraints=None):
     """ Calculate the flux envelope for a triplet of reactions.
 
     Arguments:
-        model : ConstraintBasedModel -- the model
+        model : CBModel -- the model
         r_x : str -- reaction on x-axis
         r_y : str -- reaction on y-axis
         r_z : str -- reaction on z-axis

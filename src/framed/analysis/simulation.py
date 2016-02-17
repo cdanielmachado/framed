@@ -29,7 +29,7 @@ def FBA(model, objective=None, maximize=True, constraints=None, solver=None, get
     """ Run a Flux Balance Analysis (FBA) simulation:
     
     Arguments:
-        model : ConstraintBasedModel -- a constraint-based model
+        model : CBModel -- a constraint-based model
         objective : dict (of str to float) -- objective coefficients (optional)
         maximize : bool (True) -- sense of optimization (maximize by default)
         constraints: dict (of str to (float, float)) -- environmental or additional constraints (optional)
@@ -59,7 +59,7 @@ def pFBA(model, objective=None, maximize=True, constraints=None, reactions=None,
     """ Run a parsimonious Flux Balance Analysis (pFBA) simulation:
     
     Arguments:
-        model : ConstraintBasedModel -- a constraint-based model
+        model : CBModel -- a constraint-based model
         objective : dict (of str to float) -- objective coefficients (optional)
         maximize : bool (True) -- sense of optimization (maximize by default)
         constraints: dict (of str to (float, float)) -- environmental or additional constraints (optional)
@@ -137,7 +137,7 @@ def qpFBA(model, objective=None, maximize=True, constraints=None, solver=None):
     """ Run a (quadratic version of) parsimonious Flux Balance Analysis (pFBA) simulation:
     
     Arguments:
-        model : ConstraintBasedModel -- a constraint-based model
+        model : CBModel -- a constraint-based model
         objective : dict (of str to float) -- objective coefficients (optional)
         maximize : bool (True) -- sense of optimization (maximize by default)
         constraints: dict (of str to (float, float)) -- environmental or additional constraints (optional)
@@ -237,7 +237,7 @@ def MOMA(model, reference=None, constraints=None, solver=None):
     """ Run a Minimization Of Metabolic Adjustment (MOMA) simulation:
     
     Arguments:
-        model : ConstraintBasedModel -- a constraint-based model
+        model : CBModel -- a constraint-based model
         reference : dict (of str to float) -- reference flux distribution (optional)
         constraints: dict (of str to (float, float)) -- environmental or additional constraints (optional)
         solver : Solver -- solver instance instantiated with the model, for speed (optional)
@@ -266,7 +266,7 @@ def lMOMA(model, reference=None, constraints=None, solver=None):
     """ Run a (linear version of) Minimization Of Metabolic Adjustment (lMOMA) simulation:
     
     Arguments:
-        model : ConstraintBasedModel -- a constraint-based model
+        model : CBModel -- a constraint-based model
         reference : dict (of str to float) -- reference flux distribution (optional)
         constraints: dict (of str to (float, float)) -- environmental or additional constraints (optional)
         solver : Solver -- solver instance instantiated with the model, for speed (optional)
@@ -318,7 +318,7 @@ def ROOM(model, reference=None, constraints=None, solver=None, delta=0.03, epsil
     """ Run a Regulatory On/Off Minimization (ROOM) simulation:
     
     Arguments:
-        model : ConstraintBasedModel -- a constraint-based model
+        model : CBModel -- a constraint-based model
         reference : dict (of str to float) -- reference flux distribution (optional)
         constraints: dict (of str to (float, float)) -- environmental or additional constraints (optional)
         solver : Solver -- solver instance instantiated with the model, for speed (optional)

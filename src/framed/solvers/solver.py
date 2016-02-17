@@ -122,7 +122,7 @@ class Solution:
 
         Arguments:
             m_id: str - metabolite id
-            model: ConstraintBasedModel - model that generated the solution
+            model: CBModel - model that generated the solution
             zeros: bool - show zero entries (default: False)
             sort: bool - sort reactions by flux (default: False)
             percentage: bool - show percentage of carried flux instead of absolute flux (default: False)
@@ -282,7 +282,7 @@ class Solver:
         """ Create problem structure for a given model.
 
         Arguments:
-            model : ConstraintBasedModel
+            model : CBModel
         """
 
         for r_id, (lb, ub) in model.bounds.items():
@@ -300,7 +300,7 @@ class Solver:
         Arguments:
             objective : dict (of str to float) -- reaction ids in the objective function and respective
                         coefficients, the sense is maximization by default
-            model : ConstraintBasedModel -- model (optional, leave blank to reuse previous model structure)
+            model : CBModel -- model (optional, leave blank to reuse previous model structure)
             constraints : dict (of str to (float, float)) -- environmental or additional constraints (optional)
             get_shadow_prices : bool -- return shadow price information if available (optional, default: False)
             get_reduced_costs : bool -- return reduced costs information if available (optional, default: False)
@@ -319,7 +319,7 @@ class Solver:
         Arguments:
             quad_obj : dict (of (str, str) to float) -- map reaction pairs to respective coefficients
             lin_obj : dict (of str to float) -- map single reaction ids to respective linear coefficients
-            model : ConstraintBasedModel -- model (optional, leave blank to reuse previous model structure)
+            model : CBModel -- model (optional, leave blank to reuse previous model structure)
             constraints : dict (of str to (float, float)) -- overriding constraints (optional)
             get_shadow_prices : bool -- return shadow price information if available (default: False)
             get_reduced_costs : bool -- return reduced costs information if available (default: False)
