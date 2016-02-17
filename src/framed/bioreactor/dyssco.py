@@ -22,11 +22,11 @@ titer, and productivity.
    limitations under the License.
 """
 
-from ..solvers import solver_instance
-from ..analysis.dfba import dFBA
-from ..analysis.variability import production_envelope
-from base import *
 import numpy
+
+from base import *
+from framed.bioreactor.dfba import dFBA
+from ..analysis.variability import production_envelope
 
 
 def make_envelope_strains(base_organism, r_substrate, r_target, N=10, constraints=None):
