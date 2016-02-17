@@ -17,6 +17,6 @@ This package is under development (no stable release yet). Some of the current f
 
 ### Credits and License
 
-Development initially performed at the Novo Nordisk Fundation Center for Biosustainability (Technical University of Denmark)
-and currently the Centre of Biological Engineering (University of Minho). Released under an Apache License.
+Initial development at the Novo Nordisk Fundation Center for Biosustainability (Technical University of Denmark)
+and currently at the Centre of Biological Engineering (University of Minho). Released under an Apache License.
 
