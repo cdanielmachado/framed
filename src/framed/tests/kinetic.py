@@ -1,16 +1,14 @@
 from framed.io_utils.sbml import load_odemodel
-#import seaborn
-from matplotlib.pyplot import show, subplot
+from matplotlib.pyplot import show
 from framed.kinetic.fitting import fit_from_metabolomics
 from framed.kinetic.plotting import plot_simulation, plot_sampling_results, plot_simulation_vs_data
-from framed.kinetic.simulation import find_steady_state, simulate
+from framed.kinetic.simulation import simulate
 
 from framed.kinetic.sampling import sample
 __author__ = 'daniel'
 
 
-KINETIC_MODEL = '../../../examples/models/Chassagnole2002_fixed.xml'
-
+KINETIC_MODEL = '../../../examples/models/BIOMD0000000051.xml'
 PREY_PREDATOR = '../../../examples/models/prey_predator.xml'
 
 
@@ -19,6 +17,7 @@ def run_simulation_and_plot():
     plot_simulation(model, 1e3, metabolites=['cglcex', 'cg6p', 'cpep', 'cpyr'],
                     xlabel='time', ylabel='concentration', parameters={'Dil': 0.2/3600})
     show()
+
 
 def run_sampling():
     model = load_odemodel(KINETIC_MODEL)
@@ -42,9 +41,9 @@ def run_calibration():
 
 
 def main():
-    run_sampling()
-    #run_calibration()
-
+    #run_simulation_and_plot()
+    #run_sampling()
+    run_calibration()
 
 
 if __name__ == '__main__':

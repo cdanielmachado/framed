@@ -1,4 +1,4 @@
-from models import Reaction, CBModel
+from framed.core.models import Reaction, CBModel
 from uuid import uuid4
 
 

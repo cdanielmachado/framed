@@ -5,14 +5,12 @@ __author__ = 'kaizhuang'
 
 import unittest
 
-from framed.io_utils.sbml import load_sbml_model, CONSTRAINT_BASED
+from framed.io_utils.sbml import load_cbmodel
 from framed.bioreactor.base import *
 from framed.analysis.simulation import FBA
-from framed.core.fixes import fix_bigg_model
 
 SMALL_TEST_MODEL = '../../../examples/models/ecoli_core_model.xml'
-ec_core_model = load_sbml_model(SMALL_TEST_MODEL, kind=CONSTRAINT_BASED)
-fix_bigg_model(ec_core_model)
+ec_core_model = load_cbmodel(SMALL_TEST_MODEL, flavor='bigg')
 
 
 class OrganismTest(unittest.TestCase):
@@ -24,7 +22,7 @@ class OrganismTest(unittest.TestCase):
         self.assertEqual(ec_core_model.id, self.ec1.model.id)
         self.assertListEqual(ec_core_model.metabolites.keys(), self.ec1.model.metabolites.keys())
         self.assertListEqual(ec_core_model.reactions.keys(), self.ec1.model.reactions.keys())
-        self.assertDictEqual(ec_core_model.stoichiometry, self.ec1.model.stoichiometry)
+        self.assertListEqual(ec_core_model.stoichiometric_matrix(), self.ec1.model.stoichiometric_matrix())
         self.assertDictEqual(ec_core_model.bounds, self.ec1.model.bounds)
         self.assertEqual(self.ec1.fba_objective, {'R_Biomass_Ecoli_core_w_GAM': 1})
 

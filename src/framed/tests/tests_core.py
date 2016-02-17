@@ -16,7 +16,7 @@ from framed.core.transformation import make_irreversible, simplify, add_ratio_co
 
 
 SMALL_TEST_MODEL = '../../../examples/models/ecoli_core_model.xml'
-LARGE_TEST_MODEL = '../../../examples/models/Ec_iAF1260_gene_names.xml'
+LARGE_TEST_MODEL = '../../../examples/models/Ec_iAF1260_flux1.xml'
 TEST_MODEL_COPY = '../../../examples/models/cbmodel_copy.xml'
 PLAIN_TEXT_COPY = '../../../examples/models/cbmodel_copy.txt'
 KINETIC_MODEL = '../../../examples/models/BIOMD0000000051.xml'
@@ -37,8 +37,8 @@ LMOMA_GROWTH_RATE = 0.5066
 LMOMA_SUCC_EX = 5.311
 
 ROOM_GENE_KO = ['b0721']
-ROOM_GROWTH_RATE = 0.3606
-ROOM_SUCC_EX = 6.131
+ROOM_GROWTH_RATE = 0.3120
+ROOM_SUCC_EX = 2.932
 
 ESSENTIAL_GENES = ['b0720', 'b1136', 'b1779', 'b2415', 'b2416', 'b2779', 'b2926']
 
@@ -279,7 +279,7 @@ def suite():
     tests = [SBMLTest, PlainTextIOTest, FBATest, pFBATest, qpFBATest, FBAFromPlainTextTest, FVATest, IrreversibleModelFBATest,
              SimplifiedModelFBATest, TransformationCommutativityTest, GeneDeletionFBATest, GeneDeletionMOMATest,
              GeneEssentialityTest, GeneDeletionLMOMATest, GeneDeletionROOMTest, SBMLTestODE]
-    #tests = [FBAFromPlainTextTest]
+#    tests = [SBMLTestODE]
 
     test_suite = unittest.TestSuite()
     for test in tests:

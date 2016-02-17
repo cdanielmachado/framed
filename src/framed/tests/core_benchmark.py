@@ -21,14 +21,13 @@
 
 from framed.analysis.deletion import reaction_deletion
 from framed.design.combinatorial import combinatorial_gene_deletion
-from framed.io_utils.sbml import load_sbml_model, GPR_CONSTRAINED
-from framed.core.fixes import fix_bigg_model
+from framed.io_utils.sbml import load_cbmodel
 from framed.solvers import solver_instance
-from framed.analysis.simulation import FBA, pFBA
+from framed.analysis.simulation import FBA
 from time import time
 
 SMALL_TEST_MODEL = '../../../examples/models/ecoli_core_model.xml'
-LARGE_TEST_MODEL = '../../../examples/models/Ec_iAF1260_gene_names.xml'
+LARGE_TEST_MODEL = '../../../examples/models/Ec_iAF1260_flux1.xml'
 
 
 def benchmark_combinatorial(method, model):
@@ -40,9 +39,9 @@ def benchmark_combinatorial(method, model):
     tend = time()
     print 'took', tend - tstart
 
+
 def benchmark_methods_combinatorial(modelpath):
-    model = load_sbml_model(modelpath, GPR_CONSTRAINED)
-    fix_bigg_model(model)
+    model = load_cbmodel(modelpath, flavor='bigg')
     benchmark_combinatorial('FBA', model)
     benchmark_combinatorial('pFBA', model)
     benchmark_combinatorial('qpFBA', model)
@@ -50,16 +49,17 @@ def benchmark_methods_combinatorial(modelpath):
     benchmark_combinatorial('lMOMA', model)
     benchmark_combinatorial('ROOM', model)
 
+
 def benchmark_method(method, model):
     print 'benchmarking', method,
     tstart = time()
     reaction_deletion(model, [], method)
     tend = time()
     print 'took', tend - tstart
-    
+
+
 def benchmark_methods(modelpath):
-    model = load_sbml_model(modelpath, GPR_CONSTRAINED)
-    fix_bigg_model(model)
+    model = load_cbmodel(modelpath, flavor='bigg')
     benchmark_method('FBA', model)
     benchmark_method('pFBA', model)
     benchmark_method('qpFBA', model)
@@ -67,9 +67,9 @@ def benchmark_methods(modelpath):
     benchmark_method('lMOMA', model)
     benchmark_method('ROOM', model)
 
+
 def benchmark_build_problem(modelpath, n=10):
-    model = load_sbml_model(modelpath, GPR_CONSTRAINED)
-    fix_bigg_model(model)
+    model = load_cbmodel(modelpath, flavor='bigg')
     print 'benchmarking build problem for', n, 'instances:',
     tstart = time()
             
@@ -78,10 +78,10 @@ def benchmark_build_problem(modelpath, n=10):
         solver.build_problem(model)
     tend = time()
     print 'took', tend - tstart
-    
-def benchmark_solving_stage(modelpath, n=10):
-    model = load_sbml_model(modelpath, GPR_CONSTRAINED)
-    fix_bigg_model(model)
+
+
+def benchmark_solving_stage(modelpath, n=100):
+    model = load_cbmodel(modelpath, flavor='bigg')
     print 'benchmarking solving stage for', n, 'repetitions:',
     solver = solver_instance()
     solver.build_problem(model)
@@ -93,12 +93,14 @@ def benchmark_solving_stage(modelpath, n=10):
 
     tend = time()
     print 'took', tend - tstart
-                
+
+
 def main():
 #    benchmark_methods_combinatorial(SMALL_TEST_MODEL)
 #    benchmark_methods(LARGE_TEST_MODEL)
-    benchmark_build_problem(LARGE_TEST_MODEL, n=100)
-    benchmark_solving_stage(LARGE_TEST_MODEL, n=100)
+#    benchmark_build_problem(LARGE_TEST_MODEL)
+    benchmark_solving_stage(LARGE_TEST_MODEL)
+
 
 if __name__ == '__main__':
     main()

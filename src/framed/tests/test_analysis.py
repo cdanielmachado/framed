@@ -5,14 +5,12 @@ __author__ = 'kaizhuang'
 
 import unittest
 
-from framed.io_utils.sbml import load_sbml_model, CONSTRAINT_BASED, GPR_CONSTRAINED
-from framed.core.fixes import fix_bigg_model
+from framed.io_utils.sbml import load_cbmodel
 from framed.analysis.variability import FVA, flux_envelope, production_envelope
 from framed.bioreactor import *
 
 SMALL_TEST_MODEL = '../../../examples/models/ecoli_core_model.xml'
-ec_core_model = load_sbml_model(SMALL_TEST_MODEL, kind=CONSTRAINT_BASED)
-fix_bigg_model(ec_core_model)
+ec_core_model = load_cbmodel(SMALL_TEST_MODEL, flavor='bigg')
 
 
 class FVATest(unittest.TestCase):
