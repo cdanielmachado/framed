@@ -84,7 +84,7 @@ def reaction_deletion(model, reactions, method='FBA', reference=None, constraint
         constraints = {}
 
     for r_id in reactions:
-        constraints[r_id] = (0, 0)
+        constraints[r_id] = 0
 
     if method == 'FBA':
         solution = FBA(model, constraints=constraints, solver=solver)

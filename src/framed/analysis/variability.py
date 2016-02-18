@@ -126,7 +126,7 @@ def flux_envelope(model, r_x, r_y, steps=10, constraints=None):
         _constraints.update(constraints)
 
     for i, xval in enumerate(xvals):
-        _constraints[r_x] = (xval, xval)
+        _constraints[r_x] = xval
         y_range = FVA(model, reactions=[r_y], constraints=_constraints)
         ymins[i], ymaxs[i] = y_range[r_y]
 
@@ -183,8 +183,8 @@ def flux_envelope_3d(model, r_x, r_y, r_z, steps=10, constraints=None):
         for j, yval in enumerate(yvals[i]):
             x_coors[i][j] = xval
             y_coors[i][j] = yval
-            x_constraint = {r_x: (xval, xval)}
-            y_constraint = {r_y: (yval, yval)}
+            x_constraint = {r_x: xval}
+            y_constraint = {r_y: yval}
             constraints.update(x_constraint)
             constraints.update(y_constraint)
             z_range = FVA(model, reactions=[r_z], constraints=constraints)

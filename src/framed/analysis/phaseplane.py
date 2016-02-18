@@ -145,7 +145,7 @@ def PhPP(model, rxn_x, rxn_y, rxn_x_range, rxn_y_range, target=None, maximize=Tr
 
     for i, v_x in enumerate(rxn_x_range):
         for j, v_y in enumerate(rxn_y_range):
-            constraints = {rxn_x: (v_x, v_x), rxn_y: (v_y, v_y)}
+            constraints = {rxn_x: v_x, rxn_y: v_y}
             solution = FBA(model, constraints=constraints, target=target, maximize=maximize, solver=solver,
                            get_shadow_prices=True)
 

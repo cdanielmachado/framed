@@ -23,15 +23,15 @@ def evaluate(method, model, dataset, condition, **kwargs):
         input_fluxes = dataset.get_fluxomics(measured_fluxes, condition).to_dict()
 
         if fit_fluxes:
-            fit_constraints = {biomass: (growth, growth)} if fit_growth else None
+            fit_constraints = {biomass: growth} if fit_growth else None
             input_fluxes = fit_fluxes_to_model(fit_model, input_fluxes, fit_constraints, quadratic=fit_quadratic)
     else:
         input_fluxes = {}
 
-    constraints = {r_id: (val, val) for r_id, val in input_fluxes.items()}
+    constraints = {r_id: val for r_id, val in input_fluxes.items()}
 
     if fit_growth:
-        constraints[biomass] = (growth, growth)
+        constraints[biomass] = growth
 
     sol, sim_fluxes = method(model, constraints, dataset, condition, **kwargs)
 

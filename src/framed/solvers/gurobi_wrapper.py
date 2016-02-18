@@ -153,7 +153,7 @@ class GurobiSolver(Solver):
                         coefficients, the sense is maximization by default
             model : CBModel -- model (optional, leave blank to reuse previous model structure)
             minimize : bool -- minimization problem (default: True) set False to maximize
-            constraints : dict (of str to (float, float)) -- environmental or additional constraints (optional)
+            constraints : dict (of str to float or (float, float)) -- environmental or additional constraints (optional)
             get_shadow_prices : bool -- return shadow price information if available (optional, default: False)
             get_reduced_costs : bool -- return reduced costs information if available (optional, default: False)
         Returns:
@@ -172,7 +172,7 @@ class GurobiSolver(Solver):
             lin_obj : dict (of str to float) -- map single reaction ids to respective linear coefficients
             model : CBModel -- model (optional, leave blank to reuse previous model structure)
             minimize : bool -- minimization problem (default: True) set False to maximize
-            constraints : dict (of str to (float, float)) -- overriding constraints (optional)
+            constraints : dict (of str to float or (float, float)) -- environmental or additional constraints (optional)
             get_shadow_prices : bool -- return shadow price information if available (default: False)
             get_reduced_costs : bool -- return reduced costs information if available (default: False)
 
@@ -194,7 +194,8 @@ class GurobiSolver(Solver):
 
         if constraints:
             old_constraints = {}
-            for r_id, (lb, ub) in constraints.items():
+            for r_id, x in constraints.items():
+                lb, ub = x if isinstance(x, tuple) else (x, x)
                 if r_id in self.var_ids:
                     lpvar = problem.getVarByName(r_id)
                     old_constraints[r_id] = (lpvar.lb, lpvar.ub)

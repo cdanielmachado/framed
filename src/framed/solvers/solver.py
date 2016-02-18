@@ -302,7 +302,7 @@ class Solver:
                         coefficients, the sense is maximization by default
             model : CBModel -- model (optional, leave blank to reuse previous model structure)
             minimize : bool -- minimization problem (default: True) set False to maximize
-            constraints : dict (of str to (float, float)) -- environmental or additional constraints (optional)
+            constraints : dict (of str to float or (float, float)) -- environmental or additional constraints (optional)
             get_shadow_prices : bool -- return shadow price information if available (optional, default: False)
             get_reduced_costs : bool -- return reduced costs information if available (optional, default: False)
             
@@ -322,7 +322,7 @@ class Solver:
             lin_obj : dict (of str to float) -- map single reaction ids to respective linear coefficients
             model : CBModel -- model (optional, leave blank to reuse previous model structure)
             minimize : bool -- minimization problem (default: True) set False to maximize
-            constraints : dict (of str to (float, float)) -- overriding constraints (optional)
+            constraints : dict (of str to float or (float, float)) -- environmental or additional constraints (optional)
             get_shadow_prices : bool -- return shadow price information if available (default: False)
             get_reduced_costs : bool -- return reduced costs information if available (default: False)
         

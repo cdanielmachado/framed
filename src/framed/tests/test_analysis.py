@@ -51,7 +51,7 @@ class EnvelopeTest(unittest.TestCase):
         r_biomass = ec_core_model.detect_biomass_reaction()
 
         xvals0, ymins0, ymaxs0 = production_envelope(ec_core_model, r_target, steps=5,
-                                                     constraints={'R_EX_o2_e': (0, 0)})
+                                                     constraints={'R_EX_o2_e': 0})
 
         ec_core_model.bounds['R_EX_o2_e'] = (0, 0)
         xvals1, ymins1, ymaxs1 = production_envelope(ec_core_model, r_target, steps=5)
@@ -165,7 +165,7 @@ class AcetateUser(Organism):
     def update(self):
         BR = self.environment
 
-        self.fba_constraints['R_EX_glc_e'] = (0, 0)
+        self.fba_constraints['R_EX_glc_e'] = 0
 
         rid = BR.metabolites.index('R_EX_ac_e')
         vlb_ac = float(-10 * BR.S[rid] / (BR.S[rid] + 1))

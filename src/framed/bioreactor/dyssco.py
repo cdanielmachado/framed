@@ -63,7 +63,7 @@ def make_envelope_strains(base_organism, r_substrate, r_target, N=10, constraint
     for i, mu in enumerate(xvals):
         # creating a new strain
         strain = deepcopy(base_organism)                        # create a deepcopy of the base_organism
-        strain.fba_constraints[r_target] = (ymaxs[i], ymaxs[i])   # fix target production at ymax[i]
+        strain.fba_constraints[r_target] = ymaxs[i]   # fix target production at ymax[i]
         #strain.Y = float(-ymaxs[i]/vSmax)                       # store the yield of the strain
         #strain.mu = mu                                          # store the growth rate of the strain
         strain.id = base_organism.id + '_mu_' + str(round(mu, 3))

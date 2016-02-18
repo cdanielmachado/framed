@@ -18,7 +18,7 @@ fix_bigg_model(ec_core_model)
 
 
 ### Make the production envelope, and plot it
-biomass, target_mins2, target_maxs2 = production_envelope(ec_core_model, 'R_EX_ac_e', steps=10, constraints={'R_EX_o2_e': (0, 0)})
+biomass, target_mins2, target_maxs2 = production_envelope(ec_core_model, 'R_EX_ac_e', steps=10, constraints={'R_EX_o2_e': 0})
 
 print target_maxs2
 
