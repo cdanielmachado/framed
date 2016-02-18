@@ -91,7 +91,7 @@ def GapFill(model, reactions_db, solver, output_reaction, flux_ouput, DB_type, t
     #add binary variables and constraints for database reactions
     for r_id in db_reactions:
         binary_variable = 'z_' + r_id
-        objective_coeffs[binary_variable] = -1
+        objective_coeffs[binary_variable] = 1
         # add binary variables
         solver.add_variable(binary_variable, 0, 1, VarType.BINARY)
         # add constraint (2)
@@ -107,7 +107,7 @@ def GapFill(model, reactions_db, solver, output_reaction, flux_ouput, DB_type, t
     solver.update()
 
     # solve the MILP problem
-    solution = solver.solve_lp(objective_coeffs)
+    solution = solver.solve_lp(objective_coeffs, minimize=True)
 
 
     if (solution.status == Status.OPTIMAL or solution.status == Status.SUBOPTIMAL) and solution.values != None:

@@ -24,14 +24,14 @@ from ..solvers import solver_instance
 from ..solvers.solver import Status, VarType
 
 
-def FBA(model, objective=None, maximize=True, constraints=None, solver=None, get_shadow_prices=False,
+def FBA(model, objective=None, minimize=False, constraints=None, solver=None, get_shadow_prices=False,
         get_reduced_costs=False):
     """ Run a Flux Balance Analysis (FBA) simulation:
     
     Arguments:
         model : CBModel -- a constraint-based model
         objective : dict (of str to float) -- objective coefficients (optional)
-        maximize : bool (True) -- sense of optimization (maximize by default)
+        minimize : bool (False) -- sense of optimization (maximize by default)
         constraints: dict (of str to (float, float)) -- environmental or additional constraints (optional)
         solver : Solver -- solver instance instantiated with the model, for speed (optional)
         get_shadow_prices : Bool -- retrieve shadow prices (default: False)
@@ -43,25 +43,22 @@ def FBA(model, objective=None, maximize=True, constraints=None, solver=None, get
 
     if not objective:
         objective = model.objective
-        
-    if not maximize:
-        objective = {r_id : -1 * coeff for r_id, coeff in objective.items()}
 
     if not solver:
         solver = solver_instance()
         solver.build_problem(model)
 
-    solution = solver.solve_lp(objective, None, constraints, get_shadow_prices, get_reduced_costs)
+    solution = solver.solve_lp(objective, minimize, None, constraints, get_shadow_prices, get_reduced_costs)
     return solution
 
 
-def pFBA(model, objective=None, maximize=True, constraints=None, reactions=None, solver=None):
+def pFBA(model, objective=None, minimize=False, constraints=None, reactions=None, solver=None):
     """ Run a parsimonious Flux Balance Analysis (pFBA) simulation:
     
     Arguments:
         model : CBModel -- a constraint-based model
         objective : dict (of str to float) -- objective coefficients (optional)
-        maximize : bool (True) -- sense of optimization (maximize by default)
+        minimize : bool (False) -- sense of optimization (maximize by default)
         constraints: dict (of str to (float, float)) -- environmental or additional constraints (optional)
         reactions: list of str -- list of reactions to be minimized (optional, default: all)
         solver : Solver -- solver instance instantiated with the model, for speed (optional)
@@ -77,17 +74,12 @@ def pFBA(model, objective=None, maximize=True, constraints=None, reactions=None,
     if not objective:
         objective = model.objective
 
-    pre_solution = FBA(model, objective, maximize, constraints, solver)
+    pre_solution = FBA(model, objective, minimize, constraints, solver)
 
     if pre_solution.status != Status.OPTIMAL:
         return pre_solution
 
-    if maximize:
-        obj_value = pre_solution.fobj
-    else:
-        obj_value = -1 * pre_solution.fobj
-        
-    solver.add_constraint('obj', objective.items(), '=', obj_value)
+    solver.add_constraint('obj', objective.items(), '=', pre_solution.fobj)
 
     if not reactions:
         reactions = model.reactions.keys()
@@ -111,12 +103,12 @@ def pFBA(model, objective=None, maximize=True, constraints=None, reactions=None,
     for r_id in reactions:
         if model.reactions[r_id].reversible:
             pos, neg = r_id + '+', r_id + '-'
-            objective[pos] = -1
-            objective[neg] = -1
+            objective[pos] = 1
+            objective[neg] = 1
         else:
-            objective[r_id] = -1
+            objective[r_id] = 1
 
-    solution = solver.solve_lp(objective, constraints=constraints)
+    solution = solver.solve_lp(objective, minimize=True, constraints=constraints)
 
     #post process
     
@@ -133,50 +125,7 @@ def pFBA(model, objective=None, maximize=True, constraints=None, reactions=None,
     return solution
 
 
-def qpFBA(model, objective=None, maximize=True, constraints=None, solver=None):
-    """ Run a (quadratic version of) parsimonious Flux Balance Analysis (pFBA) simulation:
-    
-    Arguments:
-        model : CBModel -- a constraint-based model
-        objective : dict (of str to float) -- objective coefficients (optional)
-        maximize : bool (True) -- sense of optimization (maximize by default)
-        constraints: dict (of str to (float, float)) -- environmental or additional constraints (optional)
-        solver : Solver -- solver instance instantiated with the model, for speed (optional)
-       
-    Returns:
-        Solution -- solution
-    """
-
-    if not solver:
-        solver = solver_instance()
-        solver.build_problem(model)
-
-    if not objective:
-        objective = model.objective
-        
-    pre_solution = FBA(model, objective, maximize, constraints, solver)
-
-    if pre_solution.status != Status.OPTIMAL:
-        return pre_solution
-
-    if not constraints:
-        constraints = dict()
-
-    if maximize:
-        obj_value = pre_solution.fobj
-    else:
-        obj_value = -1 * pre_solution.fobj
-        
-    solver.add_constraint('obj', objective.items(), '=', obj_value)
-    quad_obj = {(r_id, r_id): 1 for r_id in model.reactions}
-    
-    solution = solver.solve_qp(quad_obj, None, constraints=constraints)
-    solver.remove_constraint('obj')
-
-    return solution
-
-
-def looplessFBA(model, objective=None, maximize=True, constraints=None, internal=None, solver=None):
+def looplessFBA(model, objective=None, minimize=False, constraints=None, internal=None, solver=None):
 
     M = 1e4
 
@@ -186,9 +135,6 @@ def looplessFBA(model, objective=None, maximize=True, constraints=None, internal
 
     if not objective:
         objective = model.objective
-
-    if not maximize:
-        objective = {r_id : -1 * coeff for r_id, coeff in objective.items()}
 
     if not hasattr(solver, 'll_FBA_flag'):
         solver.ll_FBA_flag = True
@@ -228,7 +174,7 @@ def looplessFBA(model, objective=None, maximize=True, constraints=None, internal
     if not constraints:
         constraints = dict()
 
-    solution = solver.solve_lp(objective, constraints=constraints)
+    solution = solver.solve_lp(objective, minimize=minimize, constraints=constraints)
 
     return solution
 
@@ -257,7 +203,7 @@ def MOMA(model, reference=None, constraints=None, solver=None):
         solver = solver_instance()
         solver.build_problem(model)
 
-    solution = solver.solve_qp(quad_obj, lin_obj, constraints=constraints)
+    solution = solver.solve_qp(quad_obj, lin_obj, minimize=True, constraints=constraints)
 
     return solution
 
@@ -299,10 +245,10 @@ def lMOMA(model, reference=None, constraints=None, solver=None):
     objective = dict()
     for r_id in reference.keys():
         d_pos, d_neg = r_id + '_d+', r_id + '_d-'
-        objective[d_pos] = -1
-        objective[d_neg] = -1
+        objective[d_pos] = 1
+        objective[d_neg] = 1
 
-    solution = solver.solve_lp(objective, constraints=constraints)
+    solution = solver.solve_lp(objective, minimize=True, constraints=constraints)
 
     #post process
     if solution.status == Status.OPTIMAL:
@@ -343,11 +289,13 @@ def ROOM(model, reference=None, constraints=None, solver=None, delta=0.03, epsil
     objective = dict()
     if not hasattr(solver, 'ROOM_flag'): #for speed (a LOT faster)
         solver.ROOM_flag = True
+
         for r_id in model.reactions.keys():
             y_i = 'y_' + r_id
             solver.add_variable(y_i, 0, 1, vartype=VarType.BINARY, persistent=False, update_problem=False)
-            objective[y_i] = -1
+            objective[y_i] = 1
         solver.update()
+
         for r_id in model.reactions.keys():
             y_i = 'y_' + r_id
             w_i = reference[r_id]
@@ -357,7 +305,7 @@ def ROOM(model, reference=None, constraints=None, solver=None, delta=0.03, epsil
             solver.add_constraint('c' + r_id + '_l', [(r_id, 1), (y_i, (w_l - L))], '>', w_l, persistent=False, update_problem=False)
         solver.update()
 
-    solution = solver.solve_lp(objective, constraints=constraints)
+    solution = solver.solve_lp(objective, minimize=True, constraints=constraints)
     
     #post process
     if solution.status == Status.OPTIMAL:

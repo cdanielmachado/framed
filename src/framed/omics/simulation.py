@@ -49,8 +49,7 @@ def GIMME(model, gene_exp, cutoff=25, growth_frac=0.9, constraints=None, parsimo
     constraints[biomass] = (growth_frac * wt_solution.values[biomass], None)
 
     if not parsimonious:
-        objective = {r_id: -val for r_id, val in coeffs.items()}
-        solution = solver.solve_lp(objective, constraints=constraints)
+        solution = solver.solve_lp(coeffs, minimize=True, constraints=constraints)
 
     else:
         for r_id in model.reactions:
@@ -71,24 +70,24 @@ def GIMME(model, gene_exp, cutoff=25, growth_frac=0.9, constraints=None, parsimo
         for r_id, val in coeffs.items():
             if model.reactions[r_id].reversible:
                 pos, neg = r_id + '+', r_id + '-'
-                objective[pos] = -val
-                objective[neg] = -val
+                objective[pos] = val
+                objective[neg] = val
             else:
-                objective[r_id] = -val
+                objective[r_id] = val
 
-        pre_solution = solver.solve_lp(objective, constraints=constraints)
+        pre_solution = solver.solve_lp(objective, minimize=True, constraints=constraints)
         solver.add_constraint('obj', objective.items(), '=', pre_solution.fobj)
         objective = dict()
 
         for r_id in model.reactions:
             if model.reactions[r_id].reversible:
                 pos, neg = r_id + '+', r_id + '-'
-                objective[pos] = -1
-                objective[neg] = -1
+                objective[pos] = 1
+                objective[neg] = 1
             else:
-                objective[r_id] = -1
+                objective[r_id] = 1
 
-        solution = solver.solve_lp(objective, constraints=constraints)
+        solution = solver.solve_lp(objective, minimize=True, constraints=constraints)
         solver.remove_constraint('obj')
         solution.pre_solution = pre_solution
 

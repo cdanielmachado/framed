@@ -6,7 +6,7 @@ Unit testing module for core features.
 import unittest
 
 from framed.io_utils.sbml import load_cbmodel, load_odemodel, save_sbml_model
-from framed.analysis.simulation import FBA, pFBA, qpFBA
+from framed.analysis.simulation import FBA, pFBA
 from framed.analysis.variability import FVA
 from framed.io_utils.plaintext import read_model_from_file, write_model_to_file
 from framed.analysis.deletion import gene_deletion
@@ -113,22 +113,6 @@ class pFBATest(unittest.TestCase):
         norm1 = sum([abs(solution1.values[r_id]) for r_id in model.reactions])
         norm2 = sum([abs(solution2.values[r_id]) for r_id in model.reactions])
         self.assertLessEqual(norm1, norm2 + 1e-6)
-
-class qpFBATest(unittest.TestCase):
-    """ Test qpFBA simulation. """
-
-    def testRun(self):
-        model = load_cbmodel(SMALL_TEST_MODEL, flavor='bigg')
-        solution1 = qpFBA(model)
-        solution2 = FBA(model)
-        self.assertEqual(solution1.status, Status.OPTIMAL)
-        self.assertEqual(solution2.status, Status.OPTIMAL)
-        growth1 = solution1.values[model.detect_biomass_reaction()]
-        growth2 = solution2.values[model.detect_biomass_reaction()]
-        self.assertAlmostEqual(growth1, growth2, places=4)
-        norm1 = sum([abs(solution1.values[r_id]) for r_id in model.reactions])
-        norm2 = sum([abs(solution2.values[r_id]) for r_id in model.reactions])
-        self.assertLessEqual(norm1, norm2 + 1e-5)
 
 class FBAFromPlainTextTest(unittest.TestCase):
     """ Test FBA simulation from plain text model. """
@@ -273,13 +257,11 @@ class SBMLTestODE(unittest.TestCase):
             self.assertDictEqual(p1, p2)
 
 
-
-
 def suite():
-    tests = [SBMLTest, PlainTextIOTest, FBATest, pFBATest, qpFBATest, FBAFromPlainTextTest, FVATest, IrreversibleModelFBATest,
+    tests = [SBMLTest, PlainTextIOTest, FBATest, pFBATest, FBAFromPlainTextTest, FVATest, IrreversibleModelFBATest,
              SimplifiedModelFBATest, TransformationCommutativityTest, GeneDeletionFBATest, GeneDeletionMOMATest,
              GeneEssentialityTest, GeneDeletionLMOMATest, GeneDeletionROOMTest, SBMLTestODE]
-#    tests = [SBMLTestODE]
+    tests = [FVATest]
 
     test_suite = unittest.TestSuite()
     for test in tests:

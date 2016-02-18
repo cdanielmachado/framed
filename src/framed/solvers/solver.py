@@ -294,13 +294,14 @@ class Solver:
             self.add_constraint(m_id, table[m_id].items(), update_problem=False)
         self.update()
             
-    def solve_lp(self, objective, model=None, constraints=None, get_shadow_prices=False, get_reduced_costs=False):
+    def solve_lp(self, objective, minimize=True, model=None, constraints=None, get_shadow_prices=False, get_reduced_costs=False):
         """ Solve an LP optimization problem.
         
         Arguments:
             objective : dict (of str to float) -- reaction ids in the objective function and respective
                         coefficients, the sense is maximization by default
             model : CBModel -- model (optional, leave blank to reuse previous model structure)
+            minimize : bool -- minimization problem (default: True) set False to maximize
             constraints : dict (of str to (float, float)) -- environmental or additional constraints (optional)
             get_shadow_prices : bool -- return shadow price information if available (optional, default: False)
             get_reduced_costs : bool -- return reduced costs information if available (optional, default: False)
@@ -312,7 +313,7 @@ class Solver:
         # An exception is raised if the subclass does not implement this method.
         raise Exception('Not implemented for this solver.')
 
-    def solve_qp(self, quad_obj, lin_obj, model=None, constraints=None, get_shadow_prices=False,
+    def solve_qp(self, quad_obj, lin_obj,  minimize=True, model=None, constraints=None, get_shadow_prices=False,
                  get_reduced_costs=False):
         """ Solve an LP optimization problem.
         
@@ -320,6 +321,7 @@ class Solver:
             quad_obj : dict (of (str, str) to float) -- map reaction pairs to respective coefficients
             lin_obj : dict (of str to float) -- map single reaction ids to respective linear coefficients
             model : CBModel -- model (optional, leave blank to reuse previous model structure)
+            minimize : bool -- minimization problem (default: True) set False to maximize
             constraints : dict (of str to (float, float)) -- overriding constraints (optional)
             get_shadow_prices : bool -- return shadow price information if available (default: False)
             get_reduced_costs : bool -- return reduced costs information if available (default: False)

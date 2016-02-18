@@ -1,6 +1,5 @@
 from .fluxutils import fit_fluxes_to_model, flux_distance
 from ..analysis.deletion import gene_deletion
-from .simulation import gene_pFBA, gene_lMOMA, gene_MOMA
 
 
 def evaluate(method, model, dataset, condition, **kwargs):

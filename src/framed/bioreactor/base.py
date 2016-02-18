@@ -322,7 +322,7 @@ class Bioreactor(Environment, DynamicSystem):
                 organism.solver = solver_instance()
                 organism.solver.build_problem(organism.model)
 
-            organism.fba_solution = organism.solver.solve_lp(organism.fba_objective,
+            organism.fba_solution = organism.solver.solve_lp(organism.fba_objective, minimize=False,
                                                              constraints=organism.fba_constraints)
 
             if organism.fba_solution.status == Status.OPTIMAL:

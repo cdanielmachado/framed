@@ -140,11 +140,11 @@ def calculate_performance(strain, bioreactor, r_substrate, r_target, t0, tf, dt,
     if verbose:
         print 'Performing FBA simulation.'
     if hasattr(strain, 'solver'):
-        fba_solution = strain.solver.solve_lp(strain.fba_objective, constraints=strain.fba_constraints)
+        fba_solution = strain.solver.solve_lp(strain.fba_objective, minimize=False, constraints=strain.fba_constraints)
     else:
         strain.solver = solver_instance()
         strain.solver.build_problem(strain.model)
-        fba_solution = strain.solver.solve_lp(strain.fba_objective, constraints=strain.fba_constraints)
+        fba_solution = strain.solver.solve_lp(strain.fba_objective, minimize=False, constraints=strain.fba_constraints)
 
     # growth, substrate uptake, and target production rates from FBA solution
     v_biomass = fba_solution.values[r_biomass]

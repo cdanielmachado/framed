@@ -170,7 +170,7 @@ def GapFind(model, solver, root_gaps_only=False, tol=1e-5):
         solver.update()
 
         # solve problem
-        solution = solver.solve_lp(objective_coeffs)
+        solution = solver.solve_lp(objective_coeffs, minimize=False)
 
 
         if solution.status == Status.OPTIMAL or solution.status == Status.SUBOPTIMAL:
