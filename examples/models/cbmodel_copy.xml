@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<sbml xmlns="http://www.sbml.org/sbml/level2" level="2" version="1">
+<sbml xmlns="http://www.sbml.org/sbml/level3/version1/core" level="3" version="1">
   <model id="Ecoli_core_model">
     <listOfCompartments>
       <compartment id="C_c" name="Cytoplasm" size="1"/>
@@ -120,11 +120,11 @@
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <cn type="integer"> 0 </cn>
           </math>
-          <listOfParameters>
-            <parameter id="LOWER_BOUND" value="-1000"/>
-            <parameter id="UPPER_BOUND" value="1000"/>
-            <parameter id="OBJECTIVE_COEFFICIENT" value="0"/>
-          </listOfParameters>
+          <listOfLocalParameters>
+            <localParameter id="LOWER_BOUND" value="-1000"/>
+            <localParameter id="UPPER_BOUND" value="1000"/>
+            <localParameter id="OBJECTIVE_COEFFICIENT" value="0"/>
+          </listOfLocalParameters>
         </kineticLaw>
       </reaction>
       <reaction id="R_ACALDt" name="acetaldehyde reversible transport" reversible="true">
@@ -143,11 +143,11 @@
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <cn type="integer"> 0 </cn>
           </math>
-          <listOfParameters>
-            <parameter id="LOWER_BOUND" value="-1000"/>
-            <parameter id="UPPER_BOUND" value="1000"/>
-            <parameter id="OBJECTIVE_COEFFICIENT" value="0"/>
-          </listOfParameters>
+          <listOfLocalParameters>
+            <localParameter id="LOWER_BOUND" value="-1000"/>
+            <localParameter id="UPPER_BOUND" value="1000"/>
+            <localParameter id="OBJECTIVE_COEFFICIENT" value="0"/>
+          </listOfLocalParameters>
         </kineticLaw>
       </reaction>
       <reaction id="R_ACKr" name="acetate kinase" reversible="true">
@@ -168,11 +168,11 @@
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <cn type="integer"> 0 </cn>
           </math>
-          <listOfParameters>
-            <parameter id="LOWER_BOUND" value="-1000"/>
-            <parameter id="UPPER_BOUND" value="1000"/>
-            <parameter id="OBJECTIVE_COEFFICIENT" value="0"/>
-          </listOfParameters>
+          <listOfLocalParameters>
+            <localParameter id="LOWER_BOUND" value="-1000"/>
+            <localParameter id="UPPER_BOUND" value="1000"/>
+            <localParameter id="OBJECTIVE_COEFFICIENT" value="0"/>
+          </listOfLocalParameters>
         </kineticLaw>
       </reaction>
       <reaction id="R_ACONTa" name="aconitase (half-reaction A, Citrate hydro-lyase)" reversible="true">
@@ -192,11 +192,11 @@
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <cn type="integer"> 0 </cn>
           </math>
-          <listOfParameters>
-            <parameter id="LOWER_BOUND" value="-1000"/>
-            <parameter id="UPPER_BOUND" value="1000"/>
-            <parameter id="OBJECTIVE_COEFFICIENT" value="0"/>
-          </listOfParameters>
+          <listOfLocalParameters>
+            <localParameter id="LOWER_BOUND" value="-1000"/>
+            <localParameter id="UPPER_BOUND" value="1000"/>
+            <localParameter id="OBJECTIVE_COEFFICIENT" value="0"/>
+          </listOfLocalParameters>
         </kineticLaw>
       </reaction>
       <reaction id="R_ACONTb" name="aconitase (half-reaction B, Isocitrate hydro-lyase)" reversible="true">
@@ -216,11 +216,11 @@
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <cn type="integer"> 0 </cn>
           </math>
-          <listOfParameters>
-            <parameter id="LOWER_BOUND" value="-1000"/>
-            <parameter id="UPPER_BOUND" value="1000"/>
-            <parameter id="OBJECTIVE_COEFFICIENT" value="0"/>
-          </listOfParameters>
+          <listOfLocalParameters>
+            <localParameter id="LOWER_BOUND" value="-1000"/>
+            <localParameter id="UPPER_BOUND" value="1000"/>
+            <localParameter id="OBJECTIVE_COEFFICIENT" value="0"/>
+          </listOfLocalParameters>
         </kineticLaw>
       </reaction>
       <reaction id="R_ACt2r" name="acetate reversible transport via proton symport" reversible="true">
@@ -241,11 +241,11 @@
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <cn type="integer"> 0 </cn>
           </math>
-          <listOfParameters>
-            <parameter id="LOWER_BOUND" value="-1000"/>
-            <parameter id="UPPER_BOUND" value="1000"/>
-            <parameter id="OBJECTIVE_COEFFICIENT" value="0"/>
-          </listOfParameters>
+          <listOfLocalParameters>
+            <localParameter id="LOWER_BOUND" value="-1000"/>
+            <localParameter id="UPPER_BOUND" value="1000"/>
+            <localParameter id="OBJECTIVE_COEFFICIENT" value="0"/>
+          </listOfLocalParameters>
         </kineticLaw>
       </reaction>
       <reaction id="R_ADK1" name="adenylate kinase" reversible="true">
@@ -265,11 +265,11 @@
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <cn type="integer"> 0 </cn>
           </math>
-          <listOfParameters>
-            <parameter id="LOWER_BOUND" value="-1000"/>
-            <parameter id="UPPER_BOUND" value="1000"/>
-            <parameter id="OBJECTIVE_COEFFICIENT" value="0"/>
-          </listOfParameters>
+          <listOfLocalParameters>
+            <localParameter id="LOWER_BOUND" value="-1000"/>
+            <localParameter id="UPPER_BOUND" value="1000"/>
+            <localParameter id="OBJECTIVE_COEFFICIENT" value="0"/>
+          </listOfLocalParameters>
         </kineticLaw>
       </reaction>
       <reaction id="R_AKGDH" name="2-Oxoglutarate dehydrogenase" reversible="false">
@@ -292,11 +292,11 @@
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <cn type="integer"> 0 </cn>
           </math>
-          <listOfParameters>
-            <parameter id="LOWER_BOUND" value="0"/>
-            <parameter id="UPPER_BOUND" value="1000"/>
-            <parameter id="OBJECTIVE_COEFFICIENT" value="0"/>
-          </listOfParameters>
+          <listOfLocalParameters>
+            <localParameter id="LOWER_BOUND" value="0"/>
+            <localParameter id="UPPER_BOUND" value="1000"/>
+            <localParameter id="OBJECTIVE_COEFFICIENT" value="0"/>
+          </listOfLocalParameters>
         </kineticLaw>
       </reaction>
       <reaction id="R_AKGt2r" name="2-oxoglutarate reversible transport via symport" reversible="true">
@@ -317,11 +317,11 @@
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <cn type="integer"> 0 </cn>
           </math>
-          <listOfParameters>
-            <parameter id="LOWER_BOUND" value="-1000"/>
-            <parameter id="UPPER_BOUND" value="1000"/>
-            <parameter id="OBJECTIVE_COEFFICIENT" value="0"/>
-          </listOfParameters>
+          <listOfLocalParameters>
+            <localParameter id="LOWER_BOUND" value="-1000"/>
+            <localParameter id="UPPER_BOUND" value="1000"/>
+            <localParameter id="OBJECTIVE_COEFFICIENT" value="0"/>
+          </listOfLocalParameters>
         </kineticLaw>
       </reaction>
       <reaction id="R_ALCD2x" name="alcohol dehydrogenase (ethanol)" reversible="true">
@@ -343,11 +343,11 @@
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <cn type="integer"> 0 </cn>
           </math>
-          <listOfParameters>
-            <parameter id="LOWER_BOUND" value="-1000"/>
-            <parameter id="UPPER_BOUND" value="1000"/>
-            <parameter id="OBJECTIVE_COEFFICIENT" value="0"/>
-          </listOfParameters>
+          <listOfLocalParameters>
+            <localParameter id="LOWER_BOUND" value="-1000"/>
+            <localParameter id="UPPER_BOUND" value="1000"/>
+            <localParameter id="OBJECTIVE_COEFFICIENT" value="0"/>
+          </listOfLocalParameters>
         </kineticLaw>
       </reaction>
       <reaction id="R_ATPM" name="ATP maintenance requirement" reversible="false">
@@ -369,11 +369,11 @@
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <cn type="integer"> 0 </cn>
           </math>
-          <listOfParameters>
-            <parameter id="LOWER_BOUND" value="8.39"/>
-            <parameter id="UPPER_BOUND" value="1000"/>
-            <parameter id="OBJECTIVE_COEFFICIENT" value="0"/>
-          </listOfParameters>
+          <listOfLocalParameters>
+            <localParameter id="LOWER_BOUND" value="8.39"/>
+            <localParameter id="UPPER_BOUND" value="1000"/>
+            <localParameter id="OBJECTIVE_COEFFICIENT" value="0"/>
+          </listOfLocalParameters>
         </kineticLaw>
       </reaction>
       <reaction id="R_ATPS4r" name="ATP synthase (four protons for one ATP)" reversible="true">
@@ -396,11 +396,11 @@
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <cn type="integer"> 0 </cn>
           </math>
-          <listOfParameters>
-            <parameter id="LOWER_BOUND" value="-1000"/>
-            <parameter id="UPPER_BOUND" value="1000"/>
-            <parameter id="OBJECTIVE_COEFFICIENT" value="0"/>
-          </listOfParameters>
+          <listOfLocalParameters>
+            <localParameter id="LOWER_BOUND" value="-1000"/>
+            <localParameter id="UPPER_BOUND" value="1000"/>
+            <localParameter id="OBJECTIVE_COEFFICIENT" value="0"/>
+          </listOfLocalParameters>
         </kineticLaw>
       </reaction>
       <reaction id="R_Biomass_Ecoli_core_w_GAM" name="Biomass Objective Function with GAM" reversible="false">
@@ -440,11 +440,11 @@
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <cn type="integer"> 0 </cn>
           </math>
-          <listOfParameters>
-            <parameter id="LOWER_BOUND" value="0"/>
-            <parameter id="UPPER_BOUND" value="1000"/>
-            <parameter id="OBJECTIVE_COEFFICIENT" value="1"/>
-          </listOfParameters>
+          <listOfLocalParameters>
+            <localParameter id="LOWER_BOUND" value="0"/>
+            <localParameter id="UPPER_BOUND" value="1000"/>
+            <localParameter id="OBJECTIVE_COEFFICIENT" value="1"/>
+          </listOfLocalParameters>
         </kineticLaw>
       </reaction>
       <reaction id="R_CO2t" name="CO2 transporter via diffusion" reversible="true">
@@ -463,11 +463,11 @@
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <cn type="integer"> 0 </cn>
           </math>
-          <listOfParameters>
-            <parameter id="LOWER_BOUND" value="-1000"/>
-            <parameter id="UPPER_BOUND" value="1000"/>
-            <parameter id="OBJECTIVE_COEFFICIENT" value="0"/>
-          </listOfParameters>
+          <listOfLocalParameters>
+            <localParameter id="LOWER_BOUND" value="-1000"/>
+            <localParameter id="UPPER_BOUND" value="1000"/>
+            <localParameter id="OBJECTIVE_COEFFICIENT" value="0"/>
+          </listOfLocalParameters>
         </kineticLaw>
       </reaction>
       <reaction id="R_CS" name="citrate synthase" reversible="false">
@@ -490,11 +490,11 @@
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <cn type="integer"> 0 </cn>
           </math>
-          <listOfParameters>
-            <parameter id="LOWER_BOUND" value="0"/>
-            <parameter id="UPPER_BOUND" value="1000"/>
-            <parameter id="OBJECTIVE_COEFFICIENT" value="0"/>
-          </listOfParameters>
+          <listOfLocalParameters>
+            <localParameter id="LOWER_BOUND" value="0"/>
+            <localParameter id="UPPER_BOUND" value="1000"/>
+            <localParameter id="OBJECTIVE_COEFFICIENT" value="0"/>
+          </listOfLocalParameters>
         </kineticLaw>
       </reaction>
       <reaction id="R_CYTBD" name="cytochrome oxidase bd (ubiquinol-8: 2 protons)" reversible="false">
@@ -517,11 +517,11 @@
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <cn type="integer"> 0 </cn>
           </math>
-          <listOfParameters>
-            <parameter id="LOWER_BOUND" value="0"/>
-            <parameter id="UPPER_BOUND" value="1000"/>
-            <parameter id="OBJECTIVE_COEFFICIENT" value="0"/>
-          </listOfParameters>
+          <listOfLocalParameters>
+            <localParameter id="LOWER_BOUND" value="0"/>
+            <localParameter id="UPPER_BOUND" value="1000"/>
+            <localParameter id="OBJECTIVE_COEFFICIENT" value="0"/>
+          </listOfLocalParameters>
         </kineticLaw>
       </reaction>
       <reaction id="R_D_LACt2" name="D-lactate transport via proton symport" reversible="true">
@@ -542,11 +542,11 @@
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <cn type="integer"> 0 </cn>
           </math>
-          <listOfParameters>
-            <parameter id="LOWER_BOUND" value="-1000"/>
-            <parameter id="UPPER_BOUND" value="1000"/>
-            <parameter id="OBJECTIVE_COEFFICIENT" value="0"/>
-          </listOfParameters>
+          <listOfLocalParameters>
+            <localParameter id="LOWER_BOUND" value="-1000"/>
+            <localParameter id="UPPER_BOUND" value="1000"/>
+            <localParameter id="OBJECTIVE_COEFFICIENT" value="0"/>
+          </listOfLocalParameters>
         </kineticLaw>
       </reaction>
       <reaction id="R_ENO" name="enolase" reversible="true">
@@ -566,11 +566,11 @@
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <cn type="integer"> 0 </cn>
           </math>
-          <listOfParameters>
-            <parameter id="LOWER_BOUND" value="-1000"/>
-            <parameter id="UPPER_BOUND" value="1000"/>
-            <parameter id="OBJECTIVE_COEFFICIENT" value="0"/>
-          </listOfParameters>
+          <listOfLocalParameters>
+            <localParameter id="LOWER_BOUND" value="-1000"/>
+            <localParameter id="UPPER_BOUND" value="1000"/>
+            <localParameter id="OBJECTIVE_COEFFICIENT" value="0"/>
+          </listOfLocalParameters>
         </kineticLaw>
       </reaction>
       <reaction id="R_ETOHt2r" name="ethanol reversible transport via proton symport" reversible="true">
@@ -591,11 +591,11 @@
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <cn type="integer"> 0 </cn>
           </math>
-          <listOfParameters>
-            <parameter id="LOWER_BOUND" value="-1000"/>
-            <parameter id="UPPER_BOUND" value="1000"/>
-            <parameter id="OBJECTIVE_COEFFICIENT" value="0"/>
-          </listOfParameters>
+          <listOfLocalParameters>
+            <localParameter id="LOWER_BOUND" value="-1000"/>
+            <localParameter id="UPPER_BOUND" value="1000"/>
+            <localParameter id="OBJECTIVE_COEFFICIENT" value="0"/>
+          </listOfLocalParameters>
         </kineticLaw>
       </reaction>
       <reaction id="R_EX_ac_e" name="Acetate exchange" reversible="true">
@@ -614,11 +614,11 @@
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <cn type="integer"> 0 </cn>
           </math>
-          <listOfParameters>
-            <parameter id="LOWER_BOUND" value="0"/>
-            <parameter id="UPPER_BOUND" value="1000"/>
-            <parameter id="OBJECTIVE_COEFFICIENT" value="0"/>
-          </listOfParameters>
+          <listOfLocalParameters>
+            <localParameter id="LOWER_BOUND" value="0"/>
+            <localParameter id="UPPER_BOUND" value="1000"/>
+            <localParameter id="OBJECTIVE_COEFFICIENT" value="0"/>
+          </listOfLocalParameters>
         </kineticLaw>
       </reaction>
       <reaction id="R_EX_acald_e" name="Acetaldehyde exchange" reversible="true">
@@ -637,11 +637,11 @@
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <cn type="integer"> 0 </cn>
           </math>
-          <listOfParameters>
-            <parameter id="LOWER_BOUND" value="0"/>
-            <parameter id="UPPER_BOUND" value="1000"/>
-            <parameter id="OBJECTIVE_COEFFICIENT" value="0"/>
-          </listOfParameters>
+          <listOfLocalParameters>
+            <localParameter id="LOWER_BOUND" value="0"/>
+            <localParameter id="UPPER_BOUND" value="1000"/>
+            <localParameter id="OBJECTIVE_COEFFICIENT" value="0"/>
+          </listOfLocalParameters>
         </kineticLaw>
       </reaction>
       <reaction id="R_EX_akg_e" name="2-Oxoglutarate exchange" reversible="true">
@@ -660,11 +660,11 @@
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <cn type="integer"> 0 </cn>
           </math>
-          <listOfParameters>
-            <parameter id="LOWER_BOUND" value="0"/>
-            <parameter id="UPPER_BOUND" value="1000"/>
-            <parameter id="OBJECTIVE_COEFFICIENT" value="0"/>
-          </listOfParameters>
+          <listOfLocalParameters>
+            <localParameter id="LOWER_BOUND" value="0"/>
+            <localParameter id="UPPER_BOUND" value="1000"/>
+            <localParameter id="OBJECTIVE_COEFFICIENT" value="0"/>
+          </listOfLocalParameters>
         </kineticLaw>
       </reaction>
       <reaction id="R_EX_co2_e" name="CO2 exchange" reversible="true">
@@ -683,11 +683,11 @@
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <cn type="integer"> 0 </cn>
           </math>
-          <listOfParameters>
-            <parameter id="LOWER_BOUND" value="-1000"/>
-            <parameter id="UPPER_BOUND" value="1000"/>
-            <parameter id="OBJECTIVE_COEFFICIENT" value="0"/>
-          </listOfParameters>
+          <listOfLocalParameters>
+            <localParameter id="LOWER_BOUND" value="-1000"/>
+            <localParameter id="UPPER_BOUND" value="1000"/>
+            <localParameter id="OBJECTIVE_COEFFICIENT" value="0"/>
+          </listOfLocalParameters>
         </kineticLaw>
       </reaction>
       <reaction id="R_EX_etoh_e" name="Ethanol exchange" reversible="true">
@@ -706,11 +706,11 @@
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <cn type="integer"> 0 </cn>
           </math>
-          <listOfParameters>
-            <parameter id="LOWER_BOUND" value="0"/>
-            <parameter id="UPPER_BOUND" value="1000"/>
-            <parameter id="OBJECTIVE_COEFFICIENT" value="0"/>
-          </listOfParameters>
+          <listOfLocalParameters>
+            <localParameter id="LOWER_BOUND" value="0"/>
+            <localParameter id="UPPER_BOUND" value="1000"/>
+            <localParameter id="OBJECTIVE_COEFFICIENT" value="0"/>
+          </listOfLocalParameters>
         </kineticLaw>
       </reaction>
       <reaction id="R_EX_for_e" name="Formate exchange" reversible="true">
@@ -729,11 +729,11 @@
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <cn type="integer"> 0 </cn>
           </math>
-          <listOfParameters>
-            <parameter id="LOWER_BOUND" value="0"/>
-            <parameter id="UPPER_BOUND" value="1000"/>
-            <parameter id="OBJECTIVE_COEFFICIENT" value="0"/>
-          </listOfParameters>
+          <listOfLocalParameters>
+            <localParameter id="LOWER_BOUND" value="0"/>
+            <localParameter id="UPPER_BOUND" value="1000"/>
+            <localParameter id="OBJECTIVE_COEFFICIENT" value="0"/>
+          </listOfLocalParameters>
         </kineticLaw>
       </reaction>
       <reaction id="R_EX_fru_e" name="D-Fructose exchange" reversible="true">
@@ -752,11 +752,11 @@
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <cn type="integer"> 0 </cn>
           </math>
-          <listOfParameters>
-            <parameter id="LOWER_BOUND" value="0"/>
-            <parameter id="UPPER_BOUND" value="1000"/>
-            <parameter id="OBJECTIVE_COEFFICIENT" value="0"/>
-          </listOfParameters>
+          <listOfLocalParameters>
+            <localParameter id="LOWER_BOUND" value="0"/>
+            <localParameter id="UPPER_BOUND" value="1000"/>
+            <localParameter id="OBJECTIVE_COEFFICIENT" value="0"/>
+          </listOfLocalParameters>
         </kineticLaw>
       </reaction>
       <reaction id="R_EX_fum_e" name="Fumarate exchange" reversible="true">
@@ -775,11 +775,11 @@
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <cn type="integer"> 0 </cn>
           </math>
-          <listOfParameters>
-            <parameter id="LOWER_BOUND" value="0"/>
-            <parameter id="UPPER_BOUND" value="1000"/>
-            <parameter id="OBJECTIVE_COEFFICIENT" value="0"/>
-          </listOfParameters>
+          <listOfLocalParameters>
+            <localParameter id="LOWER_BOUND" value="0"/>
+            <localParameter id="UPPER_BOUND" value="1000"/>
+            <localParameter id="OBJECTIVE_COEFFICIENT" value="0"/>
+          </listOfLocalParameters>
         </kineticLaw>
       </reaction>
       <reaction id="R_EX_glc_e" name="D-Glucose exchange" reversible="true">
@@ -798,11 +798,11 @@
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <cn type="integer"> 0 </cn>
           </math>
-          <listOfParameters>
-            <parameter id="LOWER_BOUND" value="-10"/>
-            <parameter id="UPPER_BOUND" value="1000"/>
-            <parameter id="OBJECTIVE_COEFFICIENT" value="0"/>
-          </listOfParameters>
+          <listOfLocalParameters>
+            <localParameter id="LOWER_BOUND" value="-10"/>
+            <localParameter id="UPPER_BOUND" value="1000"/>
+            <localParameter id="OBJECTIVE_COEFFICIENT" value="0"/>
+          </listOfLocalParameters>
         </kineticLaw>
       </reaction>
       <reaction id="R_EX_gln_L_e" name="L-Glutamine exchange" reversible="true">
@@ -821,11 +821,11 @@
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <cn type="integer"> 0 </cn>
           </math>
-          <listOfParameters>
-            <parameter id="LOWER_BOUND" value="0"/>
-            <parameter id="UPPER_BOUND" value="1000"/>
-            <parameter id="OBJECTIVE_COEFFICIENT" value="0"/>
-          </listOfParameters>
+          <listOfLocalParameters>
+            <localParameter id="LOWER_BOUND" value="0"/>
+            <localParameter id="UPPER_BOUND" value="1000"/>
+            <localParameter id="OBJECTIVE_COEFFICIENT" value="0"/>
+          </listOfLocalParameters>
         </kineticLaw>
       </reaction>
       <reaction id="R_EX_glu_L_e" name="L-Glutamate exchange" reversible="true">
@@ -844,11 +844,11 @@
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <cn type="integer"> 0 </cn>
           </math>
-          <listOfParameters>
-            <parameter id="LOWER_BOUND" value="0"/>
-            <parameter id="UPPER_BOUND" value="1000"/>
-            <parameter id="OBJECTIVE_COEFFICIENT" value="0"/>
-          </listOfParameters>
+          <listOfLocalParameters>
+            <localParameter id="LOWER_BOUND" value="0"/>
+            <localParameter id="UPPER_BOUND" value="1000"/>
+            <localParameter id="OBJECTIVE_COEFFICIENT" value="0"/>
+          </listOfLocalParameters>
         </kineticLaw>
       </reaction>
       <reaction id="R_EX_h_e" name="H+ exchange" reversible="true">
@@ -867,11 +867,11 @@
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <cn type="integer"> 0 </cn>
           </math>
-          <listOfParameters>
-            <parameter id="LOWER_BOUND" value="-1000"/>
-            <parameter id="UPPER_BOUND" value="1000"/>
-            <parameter id="OBJECTIVE_COEFFICIENT" value="0"/>
-          </listOfParameters>
+          <listOfLocalParameters>
+            <localParameter id="LOWER_BOUND" value="-1000"/>
+            <localParameter id="UPPER_BOUND" value="1000"/>
+            <localParameter id="OBJECTIVE_COEFFICIENT" value="0"/>
+          </listOfLocalParameters>
         </kineticLaw>
       </reaction>
       <reaction id="R_EX_h2o_e" name="H2O exchange" reversible="true">
@@ -890,11 +890,11 @@
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <cn type="integer"> 0 </cn>
           </math>
-          <listOfParameters>
-            <parameter id="LOWER_BOUND" value="-1000"/>
-            <parameter id="UPPER_BOUND" value="1000"/>
-            <parameter id="OBJECTIVE_COEFFICIENT" value="0"/>
-          </listOfParameters>
+          <listOfLocalParameters>
+            <localParameter id="LOWER_BOUND" value="-1000"/>
+            <localParameter id="UPPER_BOUND" value="1000"/>
+            <localParameter id="OBJECTIVE_COEFFICIENT" value="0"/>
+          </listOfLocalParameters>
         </kineticLaw>
       </reaction>
       <reaction id="R_EX_lac_D_e" name="D-Lactate exchange" reversible="true">
@@ -913,11 +913,11 @@
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <cn type="integer"> 0 </cn>
           </math>
-          <listOfParameters>
-            <parameter id="LOWER_BOUND" value="0"/>
-            <parameter id="UPPER_BOUND" value="1000"/>
-            <parameter id="OBJECTIVE_COEFFICIENT" value="0"/>
-          </listOfParameters>
+          <listOfLocalParameters>
+            <localParameter id="LOWER_BOUND" value="0"/>
+            <localParameter id="UPPER_BOUND" value="1000"/>
+            <localParameter id="OBJECTIVE_COEFFICIENT" value="0"/>
+          </listOfLocalParameters>
         </kineticLaw>
       </reaction>
       <reaction id="R_EX_mal_L_e" name="L-Malate exchange" reversible="true">
@@ -936,11 +936,11 @@
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <cn type="integer"> 0 </cn>
           </math>
-          <listOfParameters>
-            <parameter id="LOWER_BOUND" value="0"/>
-            <parameter id="UPPER_BOUND" value="1000"/>
-            <parameter id="OBJECTIVE_COEFFICIENT" value="0"/>
-          </listOfParameters>
+          <listOfLocalParameters>
+            <localParameter id="LOWER_BOUND" value="0"/>
+            <localParameter id="UPPER_BOUND" value="1000"/>
+            <localParameter id="OBJECTIVE_COEFFICIENT" value="0"/>
+          </listOfLocalParameters>
         </kineticLaw>
       </reaction>
       <reaction id="R_EX_nh4_e" name="Ammonium exchange" reversible="true">
@@ -959,11 +959,11 @@
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <cn type="integer"> 0 </cn>
           </math>
-          <listOfParameters>
-            <parameter id="LOWER_BOUND" value="-1000"/>
-            <parameter id="UPPER_BOUND" value="1000"/>
-            <parameter id="OBJECTIVE_COEFFICIENT" value="0"/>
-          </listOfParameters>
+          <listOfLocalParameters>
+            <localParameter id="LOWER_BOUND" value="-1000"/>
+            <localParameter id="UPPER_BOUND" value="1000"/>
+            <localParameter id="OBJECTIVE_COEFFICIENT" value="0"/>
+          </listOfLocalParameters>
         </kineticLaw>
       </reaction>
       <reaction id="R_EX_o2_e" name="O2 exchange" reversible="true">
@@ -982,11 +982,11 @@
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <cn type="integer"> 0 </cn>
           </math>
-          <listOfParameters>
-            <parameter id="LOWER_BOUND" value="-1000"/>
-            <parameter id="UPPER_BOUND" value="1000"/>
-            <parameter id="OBJECTIVE_COEFFICIENT" value="0"/>
-          </listOfParameters>
+          <listOfLocalParameters>
+            <localParameter id="LOWER_BOUND" value="-1000"/>
+            <localParameter id="UPPER_BOUND" value="1000"/>
+            <localParameter id="OBJECTIVE_COEFFICIENT" value="0"/>
+          </listOfLocalParameters>
         </kineticLaw>
       </reaction>
       <reaction id="R_EX_pi_e" name="Phosphate exchange" reversible="true">
@@ -1005,11 +1005,11 @@
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <cn type="integer"> 0 </cn>
           </math>
-          <listOfParameters>
-            <parameter id="LOWER_BOUND" value="-1000"/>
-            <parameter id="UPPER_BOUND" value="1000"/>
-            <parameter id="OBJECTIVE_COEFFICIENT" value="0"/>
-          </listOfParameters>
+          <listOfLocalParameters>
+            <localParameter id="LOWER_BOUND" value="-1000"/>
+            <localParameter id="UPPER_BOUND" value="1000"/>
+            <localParameter id="OBJECTIVE_COEFFICIENT" value="0"/>
+          </listOfLocalParameters>
         </kineticLaw>
       </reaction>
       <reaction id="R_EX_pyr_e" name="Pyruvate exchange" reversible="true">
@@ -1028,11 +1028,11 @@
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <cn type="integer"> 0 </cn>
           </math>
-          <listOfParameters>
-            <parameter id="LOWER_BOUND" value="0"/>
-            <parameter id="UPPER_BOUND" value="1000"/>
-            <parameter id="OBJECTIVE_COEFFICIENT" value="0"/>
-          </listOfParameters>
+          <listOfLocalParameters>
+            <localParameter id="LOWER_BOUND" value="0"/>
+            <localParameter id="UPPER_BOUND" value="1000"/>
+            <localParameter id="OBJECTIVE_COEFFICIENT" value="0"/>
+          </listOfLocalParameters>
         </kineticLaw>
       </reaction>
       <reaction id="R_EX_succ_e" name="Succinate exchange" reversible="true">
@@ -1051,11 +1051,11 @@
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <cn type="integer"> 0 </cn>
           </math>
-          <listOfParameters>
-            <parameter id="LOWER_BOUND" value="0"/>
-            <parameter id="UPPER_BOUND" value="1000"/>
-            <parameter id="OBJECTIVE_COEFFICIENT" value="0"/>
-          </listOfParameters>
+          <listOfLocalParameters>
+            <localParameter id="LOWER_BOUND" value="0"/>
+            <localParameter id="UPPER_BOUND" value="1000"/>
+            <localParameter id="OBJECTIVE_COEFFICIENT" value="0"/>
+          </listOfLocalParameters>
         </kineticLaw>
       </reaction>
       <reaction id="R_FBA" name="fructose-bisphosphate aldolase" reversible="true">
@@ -1075,11 +1075,11 @@
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <cn type="integer"> 0 </cn>
           </math>
-          <listOfParameters>
-            <parameter id="LOWER_BOUND" value="-1000"/>
-            <parameter id="UPPER_BOUND" value="1000"/>
-            <parameter id="OBJECTIVE_COEFFICIENT" value="0"/>
-          </listOfParameters>
+          <listOfLocalParameters>
+            <localParameter id="LOWER_BOUND" value="-1000"/>
+            <localParameter id="UPPER_BOUND" value="1000"/>
+            <localParameter id="OBJECTIVE_COEFFICIENT" value="0"/>
+          </listOfLocalParameters>
         </kineticLaw>
       </reaction>
       <reaction id="R_FBP" name="fructose-bisphosphatase" reversible="false">
@@ -1100,11 +1100,11 @@
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <cn type="integer"> 0 </cn>
           </math>
-          <listOfParameters>
-            <parameter id="LOWER_BOUND" value="0"/>
-            <parameter id="UPPER_BOUND" value="1000"/>
-            <parameter id="OBJECTIVE_COEFFICIENT" value="0"/>
-          </listOfParameters>
+          <listOfLocalParameters>
+            <localParameter id="LOWER_BOUND" value="0"/>
+            <localParameter id="UPPER_BOUND" value="1000"/>
+            <localParameter id="OBJECTIVE_COEFFICIENT" value="0"/>
+          </listOfLocalParameters>
         </kineticLaw>
       </reaction>
       <reaction id="R_FORt2" name="formate transport via proton symport (uptake only)" reversible="false">
@@ -1125,11 +1125,11 @@
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <cn type="integer"> 0 </cn>
           </math>
-          <listOfParameters>
-            <parameter id="LOWER_BOUND" value="0"/>
-            <parameter id="UPPER_BOUND" value="1000"/>
-            <parameter id="OBJECTIVE_COEFFICIENT" value="0"/>
-          </listOfParameters>
+          <listOfLocalParameters>
+            <localParameter id="LOWER_BOUND" value="0"/>
+            <localParameter id="UPPER_BOUND" value="1000"/>
+            <localParameter id="OBJECTIVE_COEFFICIENT" value="0"/>
+          </listOfLocalParameters>
         </kineticLaw>
       </reaction>
       <reaction id="R_FORti" name="formate transport via diffusion" reversible="false">
@@ -1148,11 +1148,11 @@
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <cn type="integer"> 0 </cn>
           </math>
-          <listOfParameters>
-            <parameter id="LOWER_BOUND" value="0"/>
-            <parameter id="UPPER_BOUND" value="1000"/>
-            <parameter id="OBJECTIVE_COEFFICIENT" value="0"/>
-          </listOfParameters>
+          <listOfLocalParameters>
+            <localParameter id="LOWER_BOUND" value="0"/>
+            <localParameter id="UPPER_BOUND" value="1000"/>
+            <localParameter id="OBJECTIVE_COEFFICIENT" value="0"/>
+          </listOfLocalParameters>
         </kineticLaw>
       </reaction>
       <reaction id="R_FRD7" name="fumarate reductase" reversible="false">
@@ -1173,11 +1173,11 @@
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <cn type="integer"> 0 </cn>
           </math>
-          <listOfParameters>
-            <parameter id="LOWER_BOUND" value="0"/>
-            <parameter id="UPPER_BOUND" value="1000"/>
-            <parameter id="OBJECTIVE_COEFFICIENT" value="0"/>
-          </listOfParameters>
+          <listOfLocalParameters>
+            <localParameter id="LOWER_BOUND" value="0"/>
+            <localParameter id="UPPER_BOUND" value="1000"/>
+            <localParameter id="OBJECTIVE_COEFFICIENT" value="0"/>
+          </listOfLocalParameters>
         </kineticLaw>
       </reaction>
       <reaction id="R_FRUpts2" name="Fructose transport via PEP:Pyr PTS (f6p generating)" reversible="false">
@@ -1198,11 +1198,11 @@
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <cn type="integer"> 0 </cn>
           </math>
-          <listOfParameters>
-            <parameter id="LOWER_BOUND" value="0"/>
-            <parameter id="UPPER_BOUND" value="1000"/>
-            <parameter id="OBJECTIVE_COEFFICIENT" value="0"/>
-          </listOfParameters>
+          <listOfLocalParameters>
+            <localParameter id="LOWER_BOUND" value="0"/>
+            <localParameter id="UPPER_BOUND" value="1000"/>
+            <localParameter id="OBJECTIVE_COEFFICIENT" value="0"/>
+          </listOfLocalParameters>
         </kineticLaw>
       </reaction>
       <reaction id="R_FUM" name="fumarase" reversible="true">
@@ -1222,11 +1222,11 @@
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <cn type="integer"> 0 </cn>
           </math>
-          <listOfParameters>
-            <parameter id="LOWER_BOUND" value="-1000"/>
-            <parameter id="UPPER_BOUND" value="1000"/>
-            <parameter id="OBJECTIVE_COEFFICIENT" value="0"/>
-          </listOfParameters>
+          <listOfLocalParameters>
+            <localParameter id="LOWER_BOUND" value="-1000"/>
+            <localParameter id="UPPER_BOUND" value="1000"/>
+            <localParameter id="OBJECTIVE_COEFFICIENT" value="0"/>
+          </listOfLocalParameters>
         </kineticLaw>
       </reaction>
       <reaction id="R_FUMt2_2" name="Fumarate transport via proton symport (2 H)" reversible="false">
@@ -1247,11 +1247,11 @@
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <cn type="integer"> 0 </cn>
           </math>
-          <listOfParameters>
-            <parameter id="LOWER_BOUND" value="0"/>
-            <parameter id="UPPER_BOUND" value="1000"/>
-            <parameter id="OBJECTIVE_COEFFICIENT" value="0"/>
-          </listOfParameters>
+          <listOfLocalParameters>
+            <localParameter id="LOWER_BOUND" value="0"/>
+            <localParameter id="UPPER_BOUND" value="1000"/>
+            <localParameter id="OBJECTIVE_COEFFICIENT" value="0"/>
+          </listOfLocalParameters>
         </kineticLaw>
       </reaction>
       <reaction id="R_G6PDH2r" name="glucose 6-phosphate dehydrogenase" reversible="true">
@@ -1273,11 +1273,11 @@
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <cn type="integer"> 0 </cn>
           </math>
-          <listOfParameters>
-            <parameter id="LOWER_BOUND" value="-1000"/>
-            <parameter id="UPPER_BOUND" value="1000"/>
-            <parameter id="OBJECTIVE_COEFFICIENT" value="0"/>
-          </listOfParameters>
+          <listOfLocalParameters>
+            <localParameter id="LOWER_BOUND" value="-1000"/>
+            <localParameter id="UPPER_BOUND" value="1000"/>
+            <localParameter id="OBJECTIVE_COEFFICIENT" value="0"/>
+          </listOfLocalParameters>
         </kineticLaw>
       </reaction>
       <reaction id="R_GAPD" name="glyceraldehyde-3-phosphate dehydrogenase" reversible="true">
@@ -1300,11 +1300,11 @@
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <cn type="integer"> 0 </cn>
           </math>
-          <listOfParameters>
-            <parameter id="LOWER_BOUND" value="-1000"/>
-            <parameter id="UPPER_BOUND" value="1000"/>
-            <parameter id="OBJECTIVE_COEFFICIENT" value="0"/>
-          </listOfParameters>
+          <listOfLocalParameters>
+            <localParameter id="LOWER_BOUND" value="-1000"/>
+            <localParameter id="UPPER_BOUND" value="1000"/>
+            <localParameter id="OBJECTIVE_COEFFICIENT" value="0"/>
+          </listOfLocalParameters>
         </kineticLaw>
       </reaction>
       <reaction id="R_GLCpts" name="D-glucose transport via PEP:Pyr PTS" reversible="false">
@@ -1325,11 +1325,11 @@
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <cn type="integer"> 0 </cn>
           </math>
-          <listOfParameters>
-            <parameter id="LOWER_BOUND" value="0"/>
-            <parameter id="UPPER_BOUND" value="1000"/>
-            <parameter id="OBJECTIVE_COEFFICIENT" value="0"/>
-          </listOfParameters>
+          <listOfLocalParameters>
+            <localParameter id="LOWER_BOUND" value="0"/>
+            <localParameter id="UPPER_BOUND" value="1000"/>
+            <localParameter id="OBJECTIVE_COEFFICIENT" value="0"/>
+          </listOfLocalParameters>
         </kineticLaw>
       </reaction>
       <reaction id="R_GLNS" name="glutamine synthetase" reversible="false">
@@ -1353,11 +1353,11 @@
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <cn type="integer"> 0 </cn>
           </math>
-          <listOfParameters>
-            <parameter id="LOWER_BOUND" value="0"/>
-            <parameter id="UPPER_BOUND" value="1000"/>
-            <parameter id="OBJECTIVE_COEFFICIENT" value="0"/>
-          </listOfParameters>
+          <listOfLocalParameters>
+            <localParameter id="LOWER_BOUND" value="0"/>
+            <localParameter id="UPPER_BOUND" value="1000"/>
+            <localParameter id="OBJECTIVE_COEFFICIENT" value="0"/>
+          </listOfLocalParameters>
         </kineticLaw>
       </reaction>
       <reaction id="R_GLNabc" name="L-glutamine transport via ABC system" reversible="false">
@@ -1381,11 +1381,11 @@
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <cn type="integer"> 0 </cn>
           </math>
-          <listOfParameters>
-            <parameter id="LOWER_BOUND" value="0"/>
-            <parameter id="UPPER_BOUND" value="1000"/>
-            <parameter id="OBJECTIVE_COEFFICIENT" value="0"/>
-          </listOfParameters>
+          <listOfLocalParameters>
+            <localParameter id="LOWER_BOUND" value="0"/>
+            <localParameter id="UPPER_BOUND" value="1000"/>
+            <localParameter id="OBJECTIVE_COEFFICIENT" value="0"/>
+          </listOfLocalParameters>
         </kineticLaw>
       </reaction>
       <reaction id="R_GLUDy" name="glutamate dehydrogenase (NADP)" reversible="true">
@@ -1409,11 +1409,11 @@
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <cn type="integer"> 0 </cn>
           </math>
-          <listOfParameters>
-            <parameter id="LOWER_BOUND" value="-1000"/>
-            <parameter id="UPPER_BOUND" value="1000"/>
-            <parameter id="OBJECTIVE_COEFFICIENT" value="0"/>
-          </listOfParameters>
+          <listOfLocalParameters>
+            <localParameter id="LOWER_BOUND" value="-1000"/>
+            <localParameter id="UPPER_BOUND" value="1000"/>
+            <localParameter id="OBJECTIVE_COEFFICIENT" value="0"/>
+          </listOfLocalParameters>
         </kineticLaw>
       </reaction>
       <reaction id="R_GLUN" name="glutaminase" reversible="false">
@@ -1434,11 +1434,11 @@
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <cn type="integer"> 0 </cn>
           </math>
-          <listOfParameters>
-            <parameter id="LOWER_BOUND" value="0"/>
-            <parameter id="UPPER_BOUND" value="1000"/>
-            <parameter id="OBJECTIVE_COEFFICIENT" value="0"/>
-          </listOfParameters>
+          <listOfLocalParameters>
+            <localParameter id="LOWER_BOUND" value="0"/>
+            <localParameter id="UPPER_BOUND" value="1000"/>
+            <localParameter id="OBJECTIVE_COEFFICIENT" value="0"/>
+          </listOfLocalParameters>
         </kineticLaw>
       </reaction>
       <reaction id="R_GLUSy" name="glutamate synthase (NADPH)" reversible="false">
@@ -1461,11 +1461,11 @@
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <cn type="integer"> 0 </cn>
           </math>
-          <listOfParameters>
-            <parameter id="LOWER_BOUND" value="0"/>
-            <parameter id="UPPER_BOUND" value="1000"/>
-            <parameter id="OBJECTIVE_COEFFICIENT" value="0"/>
-          </listOfParameters>
+          <listOfLocalParameters>
+            <localParameter id="LOWER_BOUND" value="0"/>
+            <localParameter id="UPPER_BOUND" value="1000"/>
+            <localParameter id="OBJECTIVE_COEFFICIENT" value="0"/>
+          </listOfLocalParameters>
         </kineticLaw>
       </reaction>
       <reaction id="R_GLUt2r" name="L-glutamate transport via proton symport, reversible (periplasm)" reversible="true">
@@ -1486,11 +1486,11 @@
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <cn type="integer"> 0 </cn>
           </math>
-          <listOfParameters>
-            <parameter id="LOWER_BOUND" value="-1000"/>
-            <parameter id="UPPER_BOUND" value="1000"/>
-            <parameter id="OBJECTIVE_COEFFICIENT" value="0"/>
-          </listOfParameters>
+          <listOfLocalParameters>
+            <localParameter id="LOWER_BOUND" value="-1000"/>
+            <localParameter id="UPPER_BOUND" value="1000"/>
+            <localParameter id="OBJECTIVE_COEFFICIENT" value="0"/>
+          </listOfLocalParameters>
         </kineticLaw>
       </reaction>
       <reaction id="R_GND" name="phosphogluconate dehydrogenase" reversible="false">
@@ -1512,11 +1512,11 @@
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <cn type="integer"> 0 </cn>
           </math>
-          <listOfParameters>
-            <parameter id="LOWER_BOUND" value="0"/>
-            <parameter id="UPPER_BOUND" value="1000"/>
-            <parameter id="OBJECTIVE_COEFFICIENT" value="0"/>
-          </listOfParameters>
+          <listOfLocalParameters>
+            <localParameter id="LOWER_BOUND" value="0"/>
+            <localParameter id="UPPER_BOUND" value="1000"/>
+            <localParameter id="OBJECTIVE_COEFFICIENT" value="0"/>
+          </listOfLocalParameters>
         </kineticLaw>
       </reaction>
       <reaction id="R_H2Ot" name="H2O transport via diffusion" reversible="true">
@@ -1535,11 +1535,11 @@
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <cn type="integer"> 0 </cn>
           </math>
-          <listOfParameters>
-            <parameter id="LOWER_BOUND" value="-1000"/>
-            <parameter id="UPPER_BOUND" value="1000"/>
-            <parameter id="OBJECTIVE_COEFFICIENT" value="0"/>
-          </listOfParameters>
+          <listOfLocalParameters>
+            <localParameter id="LOWER_BOUND" value="-1000"/>
+            <localParameter id="UPPER_BOUND" value="1000"/>
+            <localParameter id="OBJECTIVE_COEFFICIENT" value="0"/>
+          </listOfLocalParameters>
         </kineticLaw>
       </reaction>
       <reaction id="R_ICDHyr" name="isocitrate dehydrogenase (NADP)" reversible="true">
@@ -1561,11 +1561,11 @@
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <cn type="integer"> 0 </cn>
           </math>
-          <listOfParameters>
-            <parameter id="LOWER_BOUND" value="-1000"/>
-            <parameter id="UPPER_BOUND" value="1000"/>
-            <parameter id="OBJECTIVE_COEFFICIENT" value="0"/>
-          </listOfParameters>
+          <listOfLocalParameters>
+            <localParameter id="LOWER_BOUND" value="-1000"/>
+            <localParameter id="UPPER_BOUND" value="1000"/>
+            <localParameter id="OBJECTIVE_COEFFICIENT" value="0"/>
+          </listOfLocalParameters>
         </kineticLaw>
       </reaction>
       <reaction id="R_ICL" name="Isocitrate lyase" reversible="false">
@@ -1585,11 +1585,11 @@
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <cn type="integer"> 0 </cn>
           </math>
-          <listOfParameters>
-            <parameter id="LOWER_BOUND" value="0"/>
-            <parameter id="UPPER_BOUND" value="1000"/>
-            <parameter id="OBJECTIVE_COEFFICIENT" value="0"/>
-          </listOfParameters>
+          <listOfLocalParameters>
+            <localParameter id="LOWER_BOUND" value="0"/>
+            <localParameter id="UPPER_BOUND" value="1000"/>
+            <localParameter id="OBJECTIVE_COEFFICIENT" value="0"/>
+          </listOfLocalParameters>
         </kineticLaw>
       </reaction>
       <reaction id="R_LDH_D" name="D lactate dehydrogenase" reversible="true">
@@ -1611,11 +1611,11 @@
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <cn type="integer"> 0 </cn>
           </math>
-          <listOfParameters>
-            <parameter id="LOWER_BOUND" value="-1000"/>
-            <parameter id="UPPER_BOUND" value="1000"/>
-            <parameter id="OBJECTIVE_COEFFICIENT" value="0"/>
-          </listOfParameters>
+          <listOfLocalParameters>
+            <localParameter id="LOWER_BOUND" value="-1000"/>
+            <localParameter id="UPPER_BOUND" value="1000"/>
+            <localParameter id="OBJECTIVE_COEFFICIENT" value="0"/>
+          </listOfLocalParameters>
         </kineticLaw>
       </reaction>
       <reaction id="R_MALS" name="malate synthase" reversible="false">
@@ -1638,11 +1638,11 @@
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <cn type="integer"> 0 </cn>
           </math>
-          <listOfParameters>
-            <parameter id="LOWER_BOUND" value="0"/>
-            <parameter id="UPPER_BOUND" value="1000"/>
-            <parameter id="OBJECTIVE_COEFFICIENT" value="0"/>
-          </listOfParameters>
+          <listOfLocalParameters>
+            <localParameter id="LOWER_BOUND" value="0"/>
+            <localParameter id="UPPER_BOUND" value="1000"/>
+            <localParameter id="OBJECTIVE_COEFFICIENT" value="0"/>
+          </listOfLocalParameters>
         </kineticLaw>
       </reaction>
       <reaction id="R_MALt2_2" name="Malate transport via proton symport (2 H)" reversible="false">
@@ -1663,11 +1663,11 @@
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <cn type="integer"> 0 </cn>
           </math>
-          <listOfParameters>
-            <parameter id="LOWER_BOUND" value="0"/>
-            <parameter id="UPPER_BOUND" value="1000"/>
-            <parameter id="OBJECTIVE_COEFFICIENT" value="0"/>
-          </listOfParameters>
+          <listOfLocalParameters>
+            <localParameter id="LOWER_BOUND" value="0"/>
+            <localParameter id="UPPER_BOUND" value="1000"/>
+            <localParameter id="OBJECTIVE_COEFFICIENT" value="0"/>
+          </listOfLocalParameters>
         </kineticLaw>
       </reaction>
       <reaction id="R_MDH" name="malate dehydrogenase" reversible="true">
@@ -1689,11 +1689,11 @@
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <cn type="integer"> 0 </cn>
           </math>
-          <listOfParameters>
-            <parameter id="LOWER_BOUND" value="-1000"/>
-            <parameter id="UPPER_BOUND" value="1000"/>
-            <parameter id="OBJECTIVE_COEFFICIENT" value="0"/>
-          </listOfParameters>
+          <listOfLocalParameters>
+            <localParameter id="LOWER_BOUND" value="-1000"/>
+            <localParameter id="UPPER_BOUND" value="1000"/>
+            <localParameter id="OBJECTIVE_COEFFICIENT" value="0"/>
+          </listOfLocalParameters>
         </kineticLaw>
       </reaction>
       <reaction id="R_ME1" name="malic enzyme (NAD)" reversible="false">
@@ -1715,11 +1715,11 @@
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <cn type="integer"> 0 </cn>
           </math>
-          <listOfParameters>
-            <parameter id="LOWER_BOUND" value="0"/>
-            <parameter id="UPPER_BOUND" value="1000"/>
-            <parameter id="OBJECTIVE_COEFFICIENT" value="0"/>
-          </listOfParameters>
+          <listOfLocalParameters>
+            <localParameter id="LOWER_BOUND" value="0"/>
+            <localParameter id="UPPER_BOUND" value="1000"/>
+            <localParameter id="OBJECTIVE_COEFFICIENT" value="0"/>
+          </listOfLocalParameters>
         </kineticLaw>
       </reaction>
       <reaction id="R_ME2" name="malic enzyme (NADP)" reversible="false">
@@ -1741,11 +1741,11 @@
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <cn type="integer"> 0 </cn>
           </math>
-          <listOfParameters>
-            <parameter id="LOWER_BOUND" value="0"/>
-            <parameter id="UPPER_BOUND" value="1000"/>
-            <parameter id="OBJECTIVE_COEFFICIENT" value="0"/>
-          </listOfParameters>
+          <listOfLocalParameters>
+            <localParameter id="LOWER_BOUND" value="0"/>
+            <localParameter id="UPPER_BOUND" value="1000"/>
+            <localParameter id="OBJECTIVE_COEFFICIENT" value="0"/>
+          </listOfLocalParameters>
         </kineticLaw>
       </reaction>
       <reaction id="R_NADH16" name="NADH dehydrogenase (ubiquinone-8 &amp; 3 protons)" reversible="false">
@@ -1768,11 +1768,11 @@
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <cn type="integer"> 0 </cn>
           </math>
-          <listOfParameters>
-            <parameter id="LOWER_BOUND" value="0"/>
-            <parameter id="UPPER_BOUND" value="1000"/>
-            <parameter id="OBJECTIVE_COEFFICIENT" value="0"/>
-          </listOfParameters>
+          <listOfLocalParameters>
+            <localParameter id="LOWER_BOUND" value="0"/>
+            <localParameter id="UPPER_BOUND" value="1000"/>
+            <localParameter id="OBJECTIVE_COEFFICIENT" value="0"/>
+          </listOfLocalParameters>
         </kineticLaw>
       </reaction>
       <reaction id="R_NADTRHD" name="NAD transhydrogenase" reversible="false">
@@ -1793,11 +1793,11 @@
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <cn type="integer"> 0 </cn>
           </math>
-          <listOfParameters>
-            <parameter id="LOWER_BOUND" value="0"/>
-            <parameter id="UPPER_BOUND" value="1000"/>
-            <parameter id="OBJECTIVE_COEFFICIENT" value="0"/>
-          </listOfParameters>
+          <listOfLocalParameters>
+            <localParameter id="LOWER_BOUND" value="0"/>
+            <localParameter id="UPPER_BOUND" value="1000"/>
+            <localParameter id="OBJECTIVE_COEFFICIENT" value="0"/>
+          </listOfLocalParameters>
         </kineticLaw>
       </reaction>
       <reaction id="R_NH4t" name="ammonia reversible transport" reversible="true">
@@ -1816,11 +1816,11 @@
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <cn type="integer"> 0 </cn>
           </math>
-          <listOfParameters>
-            <parameter id="LOWER_BOUND" value="-1000"/>
-            <parameter id="UPPER_BOUND" value="1000"/>
-            <parameter id="OBJECTIVE_COEFFICIENT" value="0"/>
-          </listOfParameters>
+          <listOfLocalParameters>
+            <localParameter id="LOWER_BOUND" value="-1000"/>
+            <localParameter id="UPPER_BOUND" value="1000"/>
+            <localParameter id="OBJECTIVE_COEFFICIENT" value="0"/>
+          </listOfLocalParameters>
         </kineticLaw>
       </reaction>
       <reaction id="R_O2t" name="o2 transport via diffusion" reversible="true">
@@ -1839,11 +1839,11 @@
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <cn type="integer"> 0 </cn>
           </math>
-          <listOfParameters>
-            <parameter id="LOWER_BOUND" value="-1000"/>
-            <parameter id="UPPER_BOUND" value="1000"/>
-            <parameter id="OBJECTIVE_COEFFICIENT" value="0"/>
-          </listOfParameters>
+          <listOfLocalParameters>
+            <localParameter id="LOWER_BOUND" value="-1000"/>
+            <localParameter id="UPPER_BOUND" value="1000"/>
+            <localParameter id="OBJECTIVE_COEFFICIENT" value="0"/>
+          </listOfLocalParameters>
         </kineticLaw>
       </reaction>
       <reaction id="R_PDH" name="pyruvate dehydrogenase" reversible="false">
@@ -1866,11 +1866,11 @@
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <cn type="integer"> 0 </cn>
           </math>
-          <listOfParameters>
-            <parameter id="LOWER_BOUND" value="0"/>
-            <parameter id="UPPER_BOUND" value="1000"/>
-            <parameter id="OBJECTIVE_COEFFICIENT" value="0"/>
-          </listOfParameters>
+          <listOfLocalParameters>
+            <localParameter id="LOWER_BOUND" value="0"/>
+            <localParameter id="UPPER_BOUND" value="1000"/>
+            <localParameter id="OBJECTIVE_COEFFICIENT" value="0"/>
+          </listOfLocalParameters>
         </kineticLaw>
       </reaction>
       <reaction id="R_PFK" name="phosphofructokinase" reversible="false">
@@ -1892,11 +1892,11 @@
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <cn type="integer"> 0 </cn>
           </math>
-          <listOfParameters>
-            <parameter id="LOWER_BOUND" value="0"/>
-            <parameter id="UPPER_BOUND" value="1000"/>
-            <parameter id="OBJECTIVE_COEFFICIENT" value="0"/>
-          </listOfParameters>
+          <listOfLocalParameters>
+            <localParameter id="LOWER_BOUND" value="0"/>
+            <localParameter id="UPPER_BOUND" value="1000"/>
+            <localParameter id="OBJECTIVE_COEFFICIENT" value="0"/>
+          </listOfLocalParameters>
         </kineticLaw>
       </reaction>
       <reaction id="R_PFL" name="pyruvate formate lyase" reversible="false">
@@ -1917,11 +1917,11 @@
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <cn type="integer"> 0 </cn>
           </math>
-          <listOfParameters>
-            <parameter id="LOWER_BOUND" value="0"/>
-            <parameter id="UPPER_BOUND" value="1000"/>
-            <parameter id="OBJECTIVE_COEFFICIENT" value="0"/>
-          </listOfParameters>
+          <listOfLocalParameters>
+            <localParameter id="LOWER_BOUND" value="0"/>
+            <localParameter id="UPPER_BOUND" value="1000"/>
+            <localParameter id="OBJECTIVE_COEFFICIENT" value="0"/>
+          </listOfLocalParameters>
         </kineticLaw>
       </reaction>
       <reaction id="R_PGI" name="glucose-6-phosphate isomerase" reversible="true">
@@ -1940,11 +1940,11 @@
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <cn type="integer"> 0 </cn>
           </math>
-          <listOfParameters>
-            <parameter id="LOWER_BOUND" value="-1000"/>
-            <parameter id="UPPER_BOUND" value="1000"/>
-            <parameter id="OBJECTIVE_COEFFICIENT" value="0"/>
-          </listOfParameters>
+          <listOfLocalParameters>
+            <localParameter id="LOWER_BOUND" value="-1000"/>
+            <localParameter id="UPPER_BOUND" value="1000"/>
+            <localParameter id="OBJECTIVE_COEFFICIENT" value="0"/>
+          </listOfLocalParameters>
         </kineticLaw>
       </reaction>
       <reaction id="R_PGK" name="phosphoglycerate kinase" reversible="true">
@@ -1965,11 +1965,11 @@
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <cn type="integer"> 0 </cn>
           </math>
-          <listOfParameters>
-            <parameter id="LOWER_BOUND" value="-1000"/>
-            <parameter id="UPPER_BOUND" value="1000"/>
-            <parameter id="OBJECTIVE_COEFFICIENT" value="0"/>
-          </listOfParameters>
+          <listOfLocalParameters>
+            <localParameter id="LOWER_BOUND" value="-1000"/>
+            <localParameter id="UPPER_BOUND" value="1000"/>
+            <localParameter id="OBJECTIVE_COEFFICIENT" value="0"/>
+          </listOfLocalParameters>
         </kineticLaw>
       </reaction>
       <reaction id="R_PGL" name="6-phosphogluconolactonase" reversible="false">
@@ -1990,11 +1990,11 @@
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <cn type="integer"> 0 </cn>
           </math>
-          <listOfParameters>
-            <parameter id="LOWER_BOUND" value="0"/>
-            <parameter id="UPPER_BOUND" value="1000"/>
-            <parameter id="OBJECTIVE_COEFFICIENT" value="0"/>
-          </listOfParameters>
+          <listOfLocalParameters>
+            <localParameter id="LOWER_BOUND" value="0"/>
+            <localParameter id="UPPER_BOUND" value="1000"/>
+            <localParameter id="OBJECTIVE_COEFFICIENT" value="0"/>
+          </listOfLocalParameters>
         </kineticLaw>
       </reaction>
       <reaction id="R_PGM" name="phosphoglycerate mutase" reversible="true">
@@ -2013,11 +2013,11 @@
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <cn type="integer"> 0 </cn>
           </math>
-          <listOfParameters>
-            <parameter id="LOWER_BOUND" value="-1000"/>
-            <parameter id="UPPER_BOUND" value="1000"/>
-            <parameter id="OBJECTIVE_COEFFICIENT" value="0"/>
-          </listOfParameters>
+          <listOfLocalParameters>
+            <localParameter id="LOWER_BOUND" value="-1000"/>
+            <localParameter id="UPPER_BOUND" value="1000"/>
+            <localParameter id="OBJECTIVE_COEFFICIENT" value="0"/>
+          </listOfLocalParameters>
         </kineticLaw>
       </reaction>
       <reaction id="R_PIt2r" name="phosphate reversible transport via proton symport" reversible="true">
@@ -2038,11 +2038,11 @@
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <cn type="integer"> 0 </cn>
           </math>
-          <listOfParameters>
-            <parameter id="LOWER_BOUND" value="-1000"/>
-            <parameter id="UPPER_BOUND" value="1000"/>
-            <parameter id="OBJECTIVE_COEFFICIENT" value="0"/>
-          </listOfParameters>
+          <listOfLocalParameters>
+            <localParameter id="LOWER_BOUND" value="-1000"/>
+            <localParameter id="UPPER_BOUND" value="1000"/>
+            <localParameter id="OBJECTIVE_COEFFICIENT" value="0"/>
+          </listOfLocalParameters>
         </kineticLaw>
       </reaction>
       <reaction id="R_PPC" name="phosphoenolpyruvate carboxylase" reversible="false">
@@ -2065,11 +2065,11 @@
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <cn type="integer"> 0 </cn>
           </math>
-          <listOfParameters>
-            <parameter id="LOWER_BOUND" value="0"/>
-            <parameter id="UPPER_BOUND" value="1000"/>
-            <parameter id="OBJECTIVE_COEFFICIENT" value="0"/>
-          </listOfParameters>
+          <listOfLocalParameters>
+            <localParameter id="LOWER_BOUND" value="0"/>
+            <localParameter id="UPPER_BOUND" value="1000"/>
+            <localParameter id="OBJECTIVE_COEFFICIENT" value="0"/>
+          </listOfLocalParameters>
         </kineticLaw>
       </reaction>
       <reaction id="R_PPCK" name="phosphoenolpyruvate carboxykinase" reversible="false">
@@ -2091,11 +2091,11 @@
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <cn type="integer"> 0 </cn>
           </math>
-          <listOfParameters>
-            <parameter id="LOWER_BOUND" value="0"/>
-            <parameter id="UPPER_BOUND" value="1000"/>
-            <parameter id="OBJECTIVE_COEFFICIENT" value="0"/>
-          </listOfParameters>
+          <listOfLocalParameters>
+            <localParameter id="LOWER_BOUND" value="0"/>
+            <localParameter id="UPPER_BOUND" value="1000"/>
+            <localParameter id="OBJECTIVE_COEFFICIENT" value="0"/>
+          </listOfLocalParameters>
         </kineticLaw>
       </reaction>
       <reaction id="R_PPS" name="phosphoenolpyruvate synthase" reversible="false">
@@ -2119,11 +2119,11 @@
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <cn type="integer"> 0 </cn>
           </math>
-          <listOfParameters>
-            <parameter id="LOWER_BOUND" value="0"/>
-            <parameter id="UPPER_BOUND" value="1000"/>
-            <parameter id="OBJECTIVE_COEFFICIENT" value="0"/>
-          </listOfParameters>
+          <listOfLocalParameters>
+            <localParameter id="LOWER_BOUND" value="0"/>
+            <localParameter id="UPPER_BOUND" value="1000"/>
+            <localParameter id="OBJECTIVE_COEFFICIENT" value="0"/>
+          </listOfLocalParameters>
         </kineticLaw>
       </reaction>
       <reaction id="R_PTAr" name="phosphotransacetylase" reversible="true">
@@ -2144,11 +2144,11 @@
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <cn type="integer"> 0 </cn>
           </math>
-          <listOfParameters>
-            <parameter id="LOWER_BOUND" value="-1000"/>
-            <parameter id="UPPER_BOUND" value="1000"/>
-            <parameter id="OBJECTIVE_COEFFICIENT" value="0"/>
-          </listOfParameters>
+          <listOfLocalParameters>
+            <localParameter id="LOWER_BOUND" value="-1000"/>
+            <localParameter id="UPPER_BOUND" value="1000"/>
+            <localParameter id="OBJECTIVE_COEFFICIENT" value="0"/>
+          </listOfLocalParameters>
         </kineticLaw>
       </reaction>
       <reaction id="R_PYK" name="pyruvate kinase" reversible="false">
@@ -2170,11 +2170,11 @@
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <cn type="integer"> 0 </cn>
           </math>
-          <listOfParameters>
-            <parameter id="LOWER_BOUND" value="0"/>
-            <parameter id="UPPER_BOUND" value="1000"/>
-            <parameter id="OBJECTIVE_COEFFICIENT" value="0"/>
-          </listOfParameters>
+          <listOfLocalParameters>
+            <localParameter id="LOWER_BOUND" value="0"/>
+            <localParameter id="UPPER_BOUND" value="1000"/>
+            <localParameter id="OBJECTIVE_COEFFICIENT" value="0"/>
+          </listOfLocalParameters>
         </kineticLaw>
       </reaction>
       <reaction id="R_PYRt2r" name="pyruvate reversible transport via proton symport" reversible="true">
@@ -2195,11 +2195,11 @@
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <cn type="integer"> 0 </cn>
           </math>
-          <listOfParameters>
-            <parameter id="LOWER_BOUND" value="-1000"/>
-            <parameter id="UPPER_BOUND" value="1000"/>
-            <parameter id="OBJECTIVE_COEFFICIENT" value="0"/>
-          </listOfParameters>
+          <listOfLocalParameters>
+            <localParameter id="LOWER_BOUND" value="-1000"/>
+            <localParameter id="UPPER_BOUND" value="1000"/>
+            <localParameter id="OBJECTIVE_COEFFICIENT" value="0"/>
+          </listOfLocalParameters>
         </kineticLaw>
       </reaction>
       <reaction id="R_RPE" name="ribulose 5-phosphate 3-epimerase" reversible="true">
@@ -2218,11 +2218,11 @@
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <cn type="integer"> 0 </cn>
           </math>
-          <listOfParameters>
-            <parameter id="LOWER_BOUND" value="-1000"/>
-            <parameter id="UPPER_BOUND" value="1000"/>
-            <parameter id="OBJECTIVE_COEFFICIENT" value="0"/>
-          </listOfParameters>
+          <listOfLocalParameters>
+            <localParameter id="LOWER_BOUND" value="-1000"/>
+            <localParameter id="UPPER_BOUND" value="1000"/>
+            <localParameter id="OBJECTIVE_COEFFICIENT" value="0"/>
+          </listOfLocalParameters>
         </kineticLaw>
       </reaction>
       <reaction id="R_RPI" name="ribose-5-phosphate isomerase" reversible="true">
@@ -2241,11 +2241,11 @@
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <cn type="integer"> 0 </cn>
           </math>
-          <listOfParameters>
-            <parameter id="LOWER_BOUND" value="-1000"/>
-            <parameter id="UPPER_BOUND" value="1000"/>
-            <parameter id="OBJECTIVE_COEFFICIENT" value="0"/>
-          </listOfParameters>
+          <listOfLocalParameters>
+            <localParameter id="LOWER_BOUND" value="-1000"/>
+            <localParameter id="UPPER_BOUND" value="1000"/>
+            <localParameter id="OBJECTIVE_COEFFICIENT" value="0"/>
+          </listOfLocalParameters>
         </kineticLaw>
       </reaction>
       <reaction id="R_SUCCt2_2" name="succinate transport via proton symport (2 H)" reversible="false">
@@ -2266,11 +2266,11 @@
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <cn type="integer"> 0 </cn>
           </math>
-          <listOfParameters>
-            <parameter id="LOWER_BOUND" value="0"/>
-            <parameter id="UPPER_BOUND" value="1000"/>
-            <parameter id="OBJECTIVE_COEFFICIENT" value="0"/>
-          </listOfParameters>
+          <listOfLocalParameters>
+            <localParameter id="LOWER_BOUND" value="0"/>
+            <localParameter id="UPPER_BOUND" value="1000"/>
+            <localParameter id="OBJECTIVE_COEFFICIENT" value="0"/>
+          </listOfLocalParameters>
         </kineticLaw>
       </reaction>
       <reaction id="R_SUCCt3" name="succinate transport out via proton antiport" reversible="false">
@@ -2291,11 +2291,11 @@
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <cn type="integer"> 0 </cn>
           </math>
-          <listOfParameters>
-            <parameter id="LOWER_BOUND" value="0"/>
-            <parameter id="UPPER_BOUND" value="1000"/>
-            <parameter id="OBJECTIVE_COEFFICIENT" value="0"/>
-          </listOfParameters>
+          <listOfLocalParameters>
+            <localParameter id="LOWER_BOUND" value="0"/>
+            <localParameter id="UPPER_BOUND" value="1000"/>
+            <localParameter id="OBJECTIVE_COEFFICIENT" value="0"/>
+          </listOfLocalParameters>
         </kineticLaw>
       </reaction>
       <reaction id="R_SUCDi" name="succinate dehydrogenase (irreversible)" reversible="false">
@@ -2316,11 +2316,11 @@
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <cn type="integer"> 0 </cn>
           </math>
-          <listOfParameters>
-            <parameter id="LOWER_BOUND" value="0"/>
-            <parameter id="UPPER_BOUND" value="1000"/>
-            <parameter id="OBJECTIVE_COEFFICIENT" value="0"/>
-          </listOfParameters>
+          <listOfLocalParameters>
+            <localParameter id="LOWER_BOUND" value="0"/>
+            <localParameter id="UPPER_BOUND" value="1000"/>
+            <localParameter id="OBJECTIVE_COEFFICIENT" value="0"/>
+          </listOfLocalParameters>
         </kineticLaw>
       </reaction>
       <reaction id="R_SUCOAS" name="succinyl-CoA synthetase (ADP-forming)" reversible="true">
@@ -2343,11 +2343,11 @@
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <cn type="integer"> 0 </cn>
           </math>
-          <listOfParameters>
-            <parameter id="LOWER_BOUND" value="-1000"/>
-            <parameter id="UPPER_BOUND" value="1000"/>
-            <parameter id="OBJECTIVE_COEFFICIENT" value="0"/>
-          </listOfParameters>
+          <listOfLocalParameters>
+            <localParameter id="LOWER_BOUND" value="-1000"/>
+            <localParameter id="UPPER_BOUND" value="1000"/>
+            <localParameter id="OBJECTIVE_COEFFICIENT" value="0"/>
+          </listOfLocalParameters>
         </kineticLaw>
       </reaction>
       <reaction id="R_TALA" name="transaldolase" reversible="true">
@@ -2368,11 +2368,11 @@
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <cn type="integer"> 0 </cn>
           </math>
-          <listOfParameters>
-            <parameter id="LOWER_BOUND" value="-1000"/>
-            <parameter id="UPPER_BOUND" value="1000"/>
-            <parameter id="OBJECTIVE_COEFFICIENT" value="0"/>
-          </listOfParameters>
+          <listOfLocalParameters>
+            <localParameter id="LOWER_BOUND" value="-1000"/>
+            <localParameter id="UPPER_BOUND" value="1000"/>
+            <localParameter id="OBJECTIVE_COEFFICIENT" value="0"/>
+          </listOfLocalParameters>
         </kineticLaw>
       </reaction>
       <reaction id="R_THD2" name="NAD(P) transhydrogenase" reversible="false">
@@ -2395,11 +2395,11 @@
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <cn type="integer"> 0 </cn>
           </math>
-          <listOfParameters>
-            <parameter id="LOWER_BOUND" value="0"/>
-            <parameter id="UPPER_BOUND" value="1000"/>
-            <parameter id="OBJECTIVE_COEFFICIENT" value="0"/>
-          </listOfParameters>
+          <listOfLocalParameters>
+            <localParameter id="LOWER_BOUND" value="0"/>
+            <localParameter id="UPPER_BOUND" value="1000"/>
+            <localParameter id="OBJECTIVE_COEFFICIENT" value="0"/>
+          </listOfLocalParameters>
         </kineticLaw>
       </reaction>
       <reaction id="R_TKT1" name="transketolase" reversible="true">
@@ -2420,11 +2420,11 @@
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <cn type="integer"> 0 </cn>
           </math>
-          <listOfParameters>
-            <parameter id="LOWER_BOUND" value="-1000"/>
-            <parameter id="UPPER_BOUND" value="1000"/>
-            <parameter id="OBJECTIVE_COEFFICIENT" value="0"/>
-          </listOfParameters>
+          <listOfLocalParameters>
+            <localParameter id="LOWER_BOUND" value="-1000"/>
+            <localParameter id="UPPER_BOUND" value="1000"/>
+            <localParameter id="OBJECTIVE_COEFFICIENT" value="0"/>
+          </listOfLocalParameters>
         </kineticLaw>
       </reaction>
       <reaction id="R_TKT2" name="transketolase" reversible="true">
@@ -2445,11 +2445,11 @@
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <cn type="integer"> 0 </cn>
           </math>
-          <listOfParameters>
-            <parameter id="LOWER_BOUND" value="-1000"/>
-            <parameter id="UPPER_BOUND" value="1000"/>
-            <parameter id="OBJECTIVE_COEFFICIENT" value="0"/>
-          </listOfParameters>
+          <listOfLocalParameters>
+            <localParameter id="LOWER_BOUND" value="-1000"/>
+            <localParameter id="UPPER_BOUND" value="1000"/>
+            <localParameter id="OBJECTIVE_COEFFICIENT" value="0"/>
+          </listOfLocalParameters>
         </kineticLaw>
       </reaction>
       <reaction id="R_TPI" name="triose-phosphate isomerase" reversible="true">
@@ -2468,11 +2468,11 @@
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <cn type="integer"> 0 </cn>
           </math>
-          <listOfParameters>
-            <parameter id="LOWER_BOUND" value="-1000"/>
-            <parameter id="UPPER_BOUND" value="1000"/>
-            <parameter id="OBJECTIVE_COEFFICIENT" value="0"/>
-          </listOfParameters>
+          <listOfLocalParameters>
+            <localParameter id="LOWER_BOUND" value="-1000"/>
+            <localParameter id="UPPER_BOUND" value="1000"/>
+            <localParameter id="OBJECTIVE_COEFFICIENT" value="0"/>
+          </listOfLocalParameters>
         </kineticLaw>
       </reaction>
     </listOfReactions>

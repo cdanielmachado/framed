@@ -20,11 +20,13 @@ TODO: Add support for sbml-fbc package.
    limitations under the License.
    
 """
-from ..core.models import Model, CBModel, ODEModel, Metabolite, Reaction, Gene, Compartment
+from ..core.model import Model, Metabolite, Reaction, Compartment
+from ..core.odemodel import ODEModel
+from ..core.cbmodel import CBModel, Gene
 from ..core.fixes import fix_bigg_model
 
 from collections import OrderedDict
-from libsbml import SBMLReader, SBMLWriter, SBMLDocument, XMLNode
+from libsbml import SBMLReader, SBMLWriter, SBMLDocument, XMLNode, AssignmentRule, parseL3FormulaWithModel
 
 CB_MODEL = 'cb'
 ODE_MODEL = 'ode'
@@ -36,7 +38,7 @@ UB_TAG = 'UPPER_BOUND'
 OBJ_TAG = 'OBJECTIVE_COEFFICIENT'
 GPR_TAG = 'GENE_ASSOCIATION:'
 
-DEFAULT_SBML_LEVEL = 2
+DEFAULT_SBML_LEVEL = 3
 DEFAULT_SBML_VERSION = 1
 
 
@@ -203,6 +205,7 @@ def _load_odemodel(sbml_model):
     model.set_global_parameters(_load_global_parameters(sbml_model))
     model.set_local_parameters(_load_local_parameters(sbml_model))
     model.set_ratelaws(_load_ratelaws(sbml_model))
+    model.set_assignment_rules(_load_assignment_rules(sbml_model))
 
     return model
 
@@ -228,6 +231,10 @@ def _load_ratelaws(sbml_model):
     return [(reaction.getId(), reaction.getKineticLaw().getFormula())
             for reaction in sbml_model.getListOfReactions()]
 
+def _load_assignment_rules(sbml_model):
+    return [(rule.getVariable(), rule.getFormula()) for rule in sbml_model.getListOfRules()
+            if isinstance(rule, AssignmentRule)]
+
 
 def save_sbml_model(model, filename):
     """ Save a model to an SBML file.
@@ -249,6 +256,7 @@ def save_sbml_model(model, filename):
         _save_concentrations(model, sbml_model)
         _save_global_parameters(model, sbml_model)
         _save_kineticlaws(model, sbml_model)
+        _save_assignment_rules(model, sbml_model)
     writer = SBMLWriter()
     writer.writeSBML(document, filename)
 
@@ -347,8 +355,16 @@ def _save_kineticlaws(model, sbml_model):
     for r_id, ratelaw in model.ratelaws.items():
         sbml_reaction = sbml_model.getReaction(r_id)
         kineticLaw = sbml_reaction.createKineticLaw()
-        kineticLaw.setFormula(ratelaw)
+        #kineticLaw.setFormula(ratelaw)
+        kineticLaw.setMath(parseL3FormulaWithModel(ratelaw, sbml_model)) #avoids conversion of Pi to pi
         for p_id, value in model.local_parameters[r_id].items():
             parameter = kineticLaw.createParameter()
             parameter.setId(p_id)
             parameter.setValue(value)
+
+def _save_assignment_rules(model, sbml_model):
+    for p_id, formula in model.assignment_rules.items():
+        rule = sbml_model.createAssignmentRule()
+        rule.setVariable(p_id)
+        rule.setFormula(formula)
+        sbml_model.getParameter(p_id).setConstant(False)

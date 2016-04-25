@@ -20,7 +20,8 @@ Module for model transformation operations.
    
 '''
 
-from models import Metabolite, Reaction, CBModel
+from model import Metabolite, Reaction
+from framed.core.cbmodel import CBModel
 from ..analysis.variability import blocked_reactions
 
 

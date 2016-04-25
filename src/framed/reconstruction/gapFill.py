@@ -18,7 +18,7 @@
    limitations under the License.
    
 '''
-from framed.core.models import Reaction, Compartment, Metabolite
+from framed.core.model import Reaction, Compartment, Metabolite
 from framed.io_utils.plaintext import _parse_bounds, _parse_coefficients, _parse_objective, id_re, pos_float_re, float_re, compound, expression, bounds, reaction, regex_compound, regex_bounds, regex_reaction, objective
 from framed.io_utils.sbml import LB_TAG, UB_TAG, OBJ_TAG
 from framed.solvers.solver import VarType, Status

@@ -107,7 +107,8 @@ def eflux(model, gene_exp, scale_rxn, scale_value, constraints=None, parsimoniou
         bounds[r_id] = (lb2, ub2)
 
     if constraints:
-        for r_id, (lb, ub) in constraints.items():
+        for r_id, x in constraints.items():
+            lb, ub = x if isinstance(x, tuple) else (x, x)            
             lb2 = -1 if lb is None or lb < 0 else 0
             ub2 = 1 if ub is None or ub > 0 else 0
             bounds[r_id] = (lb2, ub2)

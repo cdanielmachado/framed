@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<sbml xmlns="http://www.sbml.org/sbml/level2" level="2" version="1">
+<sbml xmlns="http://www.sbml.org/sbml/level3/version1/core" level="3" version="1">
   <model id="Chassagnole2002_Carbon_Metabolism">
     <listOfCompartments>
       <compartment id="extracellular" size="1"/>
@@ -26,14 +26,367 @@
       <species id="cribu5p" name="Ribulose-5-phosphate" compartment="cytosol" initialConcentration="0.111"/>
     </listOfSpecies>
     <listOfParameters>
-      <parameter id="catp" value="4.27"/>
-      <parameter id="cadp" value="0.595"/>
-      <parameter id="camp" value="0.955"/>
-      <parameter id="cnadp" value="0.195"/>
-      <parameter id="cnadph" value="0.062"/>
-      <parameter id="cnad" value="1.47"/>
-      <parameter id="cnadh" value="0.1"/>
+      <parameter id="catp" value="4.27" constant="false"/>
+      <parameter id="cadp" value="0.595" constant="false"/>
+      <parameter id="camp" value="0.955" constant="false"/>
+      <parameter id="cnadp" value="0.195" constant="false"/>
+      <parameter id="cnadph" value="0.062" constant="false"/>
+      <parameter id="cnad" value="1.47" constant="false"/>
+      <parameter id="cnadh" value="0.1" constant="false"/>
     </listOfParameters>
+    <listOfRules>
+      <assignmentRule variable="catp">
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <apply>
+            <minus/>
+            <cn> 4.27 </cn>
+            <apply>
+              <times/>
+              <cn> 4.163 </cn>
+              <apply>
+                <divide/>
+                <ci> t </ci>
+                <apply>
+                  <plus/>
+                  <cn> 0.657 </cn>
+                  <apply>
+                    <times/>
+                    <cn> 1.43 </cn>
+                    <ci> t </ci>
+                  </apply>
+                  <apply>
+                    <times/>
+                    <cn> 0.0364 </cn>
+                    <apply>
+                      <power/>
+                      <ci> t </ci>
+                      <cn type="integer"> 2 </cn>
+                    </apply>
+                  </apply>
+                </apply>
+              </apply>
+            </apply>
+          </apply>
+        </math>
+      </assignmentRule>
+      <assignmentRule variable="cadp">
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <apply>
+            <plus/>
+            <cn> 0.582 </cn>
+            <apply>
+              <times/>
+              <cn> 1.73 </cn>
+              <apply>
+                <power/>
+                <cn> 2.731 </cn>
+                <apply>
+                  <times/>
+                  <cn> -0.15 </cn>
+                  <ci> t </ci>
+                </apply>
+              </apply>
+              <apply>
+                <plus/>
+                <apply>
+                  <times/>
+                  <cn> 0.12 </cn>
+                  <ci> t </ci>
+                </apply>
+                <apply>
+                  <times/>
+                  <cn> 0.000214 </cn>
+                  <apply>
+                    <power/>
+                    <ci> t </ci>
+                    <cn type="integer"> 3 </cn>
+                  </apply>
+                </apply>
+              </apply>
+            </apply>
+          </apply>
+        </math>
+      </assignmentRule>
+      <assignmentRule variable="camp">
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <apply>
+            <plus/>
+            <cn> 0.123 </cn>
+            <apply>
+              <times/>
+              <cn> 7.25 </cn>
+              <apply>
+                <divide/>
+                <ci> t </ci>
+                <apply>
+                  <plus/>
+                  <cn> 7.25 </cn>
+                  <apply>
+                    <times/>
+                    <cn> 1.47 </cn>
+                    <ci> t </ci>
+                  </apply>
+                  <apply>
+                    <times/>
+                    <cn> 0.17 </cn>
+                    <apply>
+                      <power/>
+                      <ci> t </ci>
+                      <cn type="integer"> 2 </cn>
+                    </apply>
+                  </apply>
+                </apply>
+              </apply>
+            </apply>
+            <apply>
+              <divide/>
+              <cn> 1.073 </cn>
+              <apply>
+                <plus/>
+                <cn> 1.29 </cn>
+                <apply>
+                  <times/>
+                  <cn> 8.05 </cn>
+                  <ci> t </ci>
+                </apply>
+              </apply>
+            </apply>
+          </apply>
+        </math>
+      </assignmentRule>
+      <assignmentRule variable="cnadph">
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <apply>
+            <plus/>
+            <cn> 0.062 </cn>
+            <apply>
+              <times/>
+              <cn> 0.332 </cn>
+              <apply>
+                <power/>
+                <cn> 2.718 </cn>
+                <apply>
+                  <times/>
+                  <cn> -0.464 </cn>
+                  <ci> t </ci>
+                </apply>
+              </apply>
+              <apply>
+                <plus/>
+                <apply>
+                  <times/>
+                  <cn> 0.0166 </cn>
+                  <apply>
+                    <power/>
+                    <ci> t </ci>
+                    <cn> 1.58 </cn>
+                  </apply>
+                </apply>
+                <apply>
+                  <times/>
+                  <cn> 0.000166 </cn>
+                  <apply>
+                    <power/>
+                    <ci> t </ci>
+                    <cn> 4.73 </cn>
+                  </apply>
+                </apply>
+                <apply>
+                  <times/>
+                  <cn> 0.1312 </cn>
+                  <apply>
+                    <power/>
+                    <cn type="integer"> 10 </cn>
+                    <cn type="integer"> -9 </cn>
+                  </apply>
+                  <apply>
+                    <power/>
+                    <ci> t </ci>
+                    <cn> 7.89 </cn>
+                  </apply>
+                </apply>
+                <apply>
+                  <times/>
+                  <cn> 0.1362 </cn>
+                  <apply>
+                    <power/>
+                    <cn type="integer"> 10 </cn>
+                    <cn type="integer"> -12 </cn>
+                  </apply>
+                  <apply>
+                    <power/>
+                    <ci> t </ci>
+                    <cn type="integer"> 11 </cn>
+                  </apply>
+                </apply>
+                <apply>
+                  <times/>
+                  <cn> 0.1233 </cn>
+                  <apply>
+                    <power/>
+                    <cn type="integer"> 10 </cn>
+                    <cn type="integer"> -15 </cn>
+                  </apply>
+                  <apply>
+                    <power/>
+                    <ci> t </ci>
+                    <cn> 14.2 </cn>
+                  </apply>
+                </apply>
+              </apply>
+            </apply>
+          </apply>
+        </math>
+      </assignmentRule>
+      <assignmentRule variable="cnadp">
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <apply>
+            <plus/>
+            <apply>
+              <minus/>
+              <cn> 0.159 </cn>
+              <apply>
+                <times/>
+                <cn> 0.00554 </cn>
+                <apply>
+                  <divide/>
+                  <ci> t </ci>
+                  <apply>
+                    <plus/>
+                    <apply>
+                      <minus/>
+                      <cn> 2.8 </cn>
+                      <apply>
+                        <times/>
+                        <cn> 0.271 </cn>
+                        <ci> t </ci>
+                      </apply>
+                    </apply>
+                    <apply>
+                      <times/>
+                      <cn> 0.01 </cn>
+                      <apply>
+                        <power/>
+                        <ci> t </ci>
+                        <cn type="integer"> 2 </cn>
+                      </apply>
+                    </apply>
+                  </apply>
+                </apply>
+              </apply>
+            </apply>
+            <apply>
+              <divide/>
+              <cn> 0.182 </cn>
+              <apply>
+                <plus/>
+                <cn> 4.82 </cn>
+                <apply>
+                  <times/>
+                  <cn> 0.526 </cn>
+                  <ci> t </ci>
+                </apply>
+              </apply>
+            </apply>
+          </apply>
+        </math>
+      </assignmentRule>
+      <assignmentRule variable="cnadh">
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <apply>
+            <plus/>
+            <cn> 0.0934 </cn>
+            <apply>
+              <times/>
+              <cn> 0.00111 </cn>
+              <apply>
+                <power/>
+                <cn> 2.371 </cn>
+                <apply>
+                  <times/>
+                  <cn> -0.123 </cn>
+                  <ci> t </ci>
+                </apply>
+              </apply>
+              <apply>
+                <plus/>
+                <apply>
+                  <times/>
+                  <cn> 0.844 </cn>
+                  <ci> t </ci>
+                </apply>
+                <apply>
+                  <times/>
+                  <cn> 0.104 </cn>
+                  <apply>
+                    <power/>
+                    <ci> t </ci>
+                    <cn type="integer"> 3 </cn>
+                  </apply>
+                </apply>
+              </apply>
+            </apply>
+          </apply>
+        </math>
+      </assignmentRule>
+      <assignmentRule variable="cnad">
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <apply>
+            <minus/>
+            <apply>
+              <plus/>
+              <cn> 1.314 </cn>
+              <apply>
+                <times/>
+                <cn> 1.314 </cn>
+                <apply>
+                  <power/>
+                  <cn> 2.73 </cn>
+                  <apply>
+                    <minus/>
+                    <apply>
+                      <times/>
+                      <cn> -0.0435 </cn>
+                      <ci> t </ci>
+                    </apply>
+                    <cn> 0.342 </cn>
+                  </apply>
+                </apply>
+              </apply>
+            </apply>
+            <apply>
+              <times/>
+              <apply>
+                <plus/>
+                <ci> t </ci>
+                <cn> 7.871 </cn>
+              </apply>
+              <apply>
+                <divide/>
+                <apply>
+                  <power/>
+                  <cn> 2.73 </cn>
+                  <apply>
+                    <minus/>
+                    <apply>
+                      <times/>
+                      <cn> -0.0218 </cn>
+                      <ci> t </ci>
+                    </apply>
+                    <cn> 0.171 </cn>
+                  </apply>
+                </apply>
+                <apply>
+                  <plus/>
+                  <cn> 8.481 </cn>
+                  <ci> t </ci>
+                </apply>
+              </apply>
+            </apply>
+          </apply>
+        </math>
+      </assignmentRule>
+    </listOfRules>
     <listOfReactions>
       <reaction id="vPTS" name="Phosphotransferase system" reversible="true">
         <listOfReactants>
@@ -104,14 +457,14 @@
               </apply>
             </apply>
           </math>
-          <listOfParameters>
-            <parameter id="rmaxPTS" value="7829.78"/>
-            <parameter id="KPTSa1" value="3082.3"/>
-            <parameter id="KPTSa2" value="0.01"/>
-            <parameter id="KPTSa3" value="245.3"/>
-            <parameter id="nPTSg6p" value="3.66"/>
-            <parameter id="KPTSg6p" value="2.15"/>
-          </listOfParameters>
+          <listOfLocalParameters>
+            <localParameter id="rmaxPTS" value="7829.78"/>
+            <localParameter id="KPTSa1" value="3082.3"/>
+            <localParameter id="KPTSa2" value="0.01"/>
+            <localParameter id="KPTSa3" value="245.3"/>
+            <localParameter id="nPTSg6p" value="3.66"/>
+            <localParameter id="KPTSg6p" value="2.15"/>
+          </listOfLocalParameters>
         </kineticLaw>
       </reaction>
       <reaction id="vPGI" name="Glucose-6-phosphate isomerase" reversible="true">
@@ -178,14 +531,14 @@
               </apply>
             </apply>
           </math>
-          <listOfParameters>
-            <parameter id="rmaxPGI" value="650.9878687"/>
-            <parameter id="KPGIeq" value="0.1725"/>
-            <parameter id="KPGIg6p" value="2.9"/>
-            <parameter id="KPGIf6p" value="0.266"/>
-            <parameter id="KPGIf6ppginh" value="0.2"/>
-            <parameter id="KPGIg6ppginh" value="0.2"/>
-          </listOfParameters>
+          <listOfLocalParameters>
+            <localParameter id="rmaxPGI" value="650.9878687"/>
+            <localParameter id="KPGIeq" value="0.1725"/>
+            <localParameter id="KPGIg6p" value="2.9"/>
+            <localParameter id="KPGIf6p" value="0.266"/>
+            <localParameter id="KPGIf6ppginh" value="0.2"/>
+            <localParameter id="KPGIg6ppginh" value="0.2"/>
+          </listOfLocalParameters>
         </kineticLaw>
       </reaction>
       <reaction id="vPGM" name="Phosphoglucomutase" reversible="true">
@@ -232,12 +585,12 @@
               </apply>
             </apply>
           </math>
-          <listOfParameters>
-            <parameter id="rmaxPGM" value="0.8398242773"/>
-            <parameter id="KPGMeq" value="0.196"/>
-            <parameter id="KPGMg6p" value="1.038"/>
-            <parameter id="KPGMg1p" value="0.0136"/>
-          </listOfParameters>
+          <listOfLocalParameters>
+            <localParameter id="rmaxPGM" value="0.8398242773"/>
+            <localParameter id="KPGMeq" value="0.196"/>
+            <localParameter id="KPGMg6p" value="1.038"/>
+            <localParameter id="KPGMg1p" value="0.0136"/>
+          </listOfLocalParameters>
         </kineticLaw>
       </reaction>
       <reaction id="vG6PDH" name="Glucose-6-phosphate dehydrogenase" reversible="true">
@@ -294,13 +647,13 @@
               </apply>
             </apply>
           </math>
-          <listOfParameters>
-            <parameter id="rmaxG6PDH" value="1.380196955"/>
-            <parameter id="KG6PDHg6p" value="14.4"/>
-            <parameter id="KG6PDHnadphg6pinh" value="6.43"/>
-            <parameter id="KG6PDHnadp" value="0.0246"/>
-            <parameter id="KG6PDHnadphnadpinh" value="0.01"/>
-          </listOfParameters>
+          <listOfLocalParameters>
+            <localParameter id="rmaxG6PDH" value="1.380196955"/>
+            <localParameter id="KG6PDHg6p" value="14.4"/>
+            <localParameter id="KG6PDHnadphg6pinh" value="6.43"/>
+            <localParameter id="KG6PDHnadp" value="0.0246"/>
+            <localParameter id="KG6PDHnadphnadpinh" value="0.01"/>
+          </listOfLocalParameters>
         </kineticLaw>
       </reaction>
       <reaction id="vPFK" name="Phosphofructokinase" reversible="true">
@@ -450,19 +803,19 @@
               </apply>
             </apply>
           </math>
-          <listOfParameters>
-            <parameter id="rmaxPFK" value="1840.584747"/>
-            <parameter id="KPFKatps" value="0.123"/>
-            <parameter id="KPFKadpc" value="4.14"/>
-            <parameter id="KPFKf6ps" value="0.325"/>
-            <parameter id="KPFKpep" value="3.26"/>
-            <parameter id="KPFKadpb" value="3.89"/>
-            <parameter id="KPFKampb" value="3.2"/>
-            <parameter id="KPFKadpa" value="128"/>
-            <parameter id="KPFKampa" value="19.1"/>
-            <parameter id="LPFK" value="5629067"/>
-            <parameter id="nPFK" value="11.1"/>
-          </listOfParameters>
+          <listOfLocalParameters>
+            <localParameter id="rmaxPFK" value="1840.584747"/>
+            <localParameter id="KPFKatps" value="0.123"/>
+            <localParameter id="KPFKadpc" value="4.14"/>
+            <localParameter id="KPFKf6ps" value="0.325"/>
+            <localParameter id="KPFKpep" value="3.26"/>
+            <localParameter id="KPFKadpb" value="3.89"/>
+            <localParameter id="KPFKampb" value="3.2"/>
+            <localParameter id="KPFKadpa" value="128"/>
+            <localParameter id="KPFKampa" value="19.1"/>
+            <localParameter id="LPFK" value="5629067"/>
+            <localParameter id="nPFK" value="11.1"/>
+          </listOfLocalParameters>
         </kineticLaw>
       </reaction>
       <reaction id="vTA" name="Transaldolase" reversible="true">
@@ -499,10 +852,10 @@
               </apply>
             </apply>
           </math>
-          <listOfParameters>
-            <parameter id="rmaxTA" value="10.87164108"/>
-            <parameter id="KTAeq" value="1.05"/>
-          </listOfParameters>
+          <listOfLocalParameters>
+            <localParameter id="rmaxTA" value="10.87164108"/>
+            <localParameter id="KTAeq" value="1.05"/>
+          </listOfLocalParameters>
         </kineticLaw>
       </reaction>
       <reaction id="vTKA" name="Transketolase a" reversible="true">
@@ -539,10 +892,10 @@
               </apply>
             </apply>
           </math>
-          <listOfParameters>
-            <parameter id="rmaxTKa" value="9.473384783"/>
-            <parameter id="KTKaeq" value="1.2"/>
-          </listOfParameters>
+          <listOfLocalParameters>
+            <localParameter id="rmaxTKa" value="9.473384783"/>
+            <localParameter id="KTKaeq" value="1.2"/>
+          </listOfLocalParameters>
         </kineticLaw>
       </reaction>
       <reaction id="vTKB" name="Transketolase b" reversible="true">
@@ -579,10 +932,10 @@
               </apply>
             </apply>
           </math>
-          <listOfParameters>
-            <parameter id="rmaxTKb" value="86.55855855"/>
-            <parameter id="KTKbeq" value="10"/>
-          </listOfParameters>
+          <listOfLocalParameters>
+            <localParameter id="rmaxTKb" value="86.55855855"/>
+            <localParameter id="KTKbeq" value="10"/>
+          </listOfLocalParameters>
         </kineticLaw>
       </reaction>
       <reaction id="vMURSyNTH" name="Mureine synthesis" reversible="true">
@@ -597,9 +950,9 @@
               <ci> rmaxMurSynth </ci>
             </apply>
           </math>
-          <listOfParameters>
-            <parameter id="rmaxMurSynth" value="0.00043711"/>
-          </listOfParameters>
+          <listOfLocalParameters>
+            <localParameter id="rmaxMurSynth" value="0.00043711"/>
+          </listOfLocalParameters>
         </kineticLaw>
       </reaction>
       <reaction id="vALDO" name="Aldolase" reversible="true">
@@ -687,15 +1040,15 @@
               </apply>
             </apply>
           </math>
-          <listOfParameters>
-            <parameter id="rmaxALDO" value="17.41464425"/>
-            <parameter id="kALDOeq" value="0.144"/>
-            <parameter id="kALDOfdp" value="1.75"/>
-            <parameter id="kALDOgap" value="0.088"/>
-            <parameter id="VALDOblf" value="2"/>
-            <parameter id="kALDOdhap" value="0.088"/>
-            <parameter id="kALDOgapinh" value="0.6"/>
-          </listOfParameters>
+          <listOfLocalParameters>
+            <localParameter id="rmaxALDO" value="17.41464425"/>
+            <localParameter id="kALDOeq" value="0.144"/>
+            <localParameter id="kALDOfdp" value="1.75"/>
+            <localParameter id="kALDOgap" value="0.088"/>
+            <localParameter id="VALDOblf" value="2"/>
+            <localParameter id="kALDOdhap" value="0.088"/>
+            <localParameter id="kALDOgapinh" value="0.6"/>
+          </listOfLocalParameters>
         </kineticLaw>
       </reaction>
       <reaction id="vGAPDH" name="Glyceraldehyde-3-phosphate dehydrogenase" reversible="true">
@@ -770,14 +1123,14 @@
               </apply>
             </apply>
           </math>
-          <listOfParameters>
-            <parameter id="rmaxGAPDH" value="921.5942861"/>
-            <parameter id="KGAPDHeq" value="0.63"/>
-            <parameter id="KGAPDHgap" value="0.683"/>
-            <parameter id="KGAPDHpgp" value="1.04e-05"/>
-            <parameter id="KGAPDHnad" value="0.252"/>
-            <parameter id="KGAPDHnadh" value="1.09"/>
-          </listOfParameters>
+          <listOfLocalParameters>
+            <localParameter id="rmaxGAPDH" value="921.5942861"/>
+            <localParameter id="KGAPDHeq" value="0.63"/>
+            <localParameter id="KGAPDHgap" value="0.683"/>
+            <localParameter id="KGAPDHpgp" value="1.04e-05"/>
+            <localParameter id="KGAPDHnad" value="0.252"/>
+            <localParameter id="KGAPDHnadh" value="1.09"/>
+          </listOfLocalParameters>
         </kineticLaw>
       </reaction>
       <reaction id="vTIS" name="Triosephosphate isomerase" reversible="true">
@@ -824,12 +1177,12 @@
               </apply>
             </apply>
           </math>
-          <listOfParameters>
-            <parameter id="rmaxTIS" value="68.67474392"/>
-            <parameter id="kTISeq" value="1.39"/>
-            <parameter id="kTISdhap" value="2.8"/>
-            <parameter id="kTISgap" value="0.3"/>
-          </listOfParameters>
+          <listOfLocalParameters>
+            <localParameter id="rmaxTIS" value="68.67474392"/>
+            <localParameter id="kTISeq" value="1.39"/>
+            <localParameter id="kTISdhap" value="2.8"/>
+            <localParameter id="kTISgap" value="0.3"/>
+          </listOfLocalParameters>
         </kineticLaw>
       </reaction>
       <reaction id="vTRPSYNTH" name="Tryptophan synthesis" reversible="true">
@@ -845,9 +1198,9 @@
               <ci> rmaxTrpSynth </ci>
             </apply>
           </math>
-          <listOfParameters>
-            <parameter id="rmaxTrpSynth" value="0.001037"/>
-          </listOfParameters>
+          <listOfLocalParameters>
+            <localParameter id="rmaxTrpSynth" value="0.001037"/>
+          </listOfLocalParameters>
         </kineticLaw>
       </reaction>
       <reaction id="vG3PDH" name="Glycerol-3-phosphate dehydrogenase" reversible="true">
@@ -871,10 +1224,10 @@
               </apply>
             </apply>
           </math>
-          <listOfParameters>
-            <parameter id="rmaxG3PDH" value="0.01162042696"/>
-            <parameter id="KG3PDHdhap" value="1"/>
-          </listOfParameters>
+          <listOfLocalParameters>
+            <localParameter id="rmaxG3PDH" value="0.01162042696"/>
+            <localParameter id="KG3PDHdhap" value="1"/>
+          </listOfLocalParameters>
         </kineticLaw>
       </reaction>
       <reaction id="vPGK" name="Phosphoglycerate kinase" reversible="true">
@@ -949,14 +1302,14 @@
               </apply>
             </apply>
           </math>
-          <listOfParameters>
-            <parameter id="rmaxPGK" value="3021.773771"/>
-            <parameter id="KPGKeq" value="1934.4"/>
-            <parameter id="KPGKadp" value="0.185"/>
-            <parameter id="KPGKatp" value="0.653"/>
-            <parameter id="KPGKpgp" value="0.0468"/>
-            <parameter id="KPGKpg3" value="0.473"/>
-          </listOfParameters>
+          <listOfLocalParameters>
+            <localParameter id="rmaxPGK" value="3021.773771"/>
+            <localParameter id="KPGKeq" value="1934.4"/>
+            <localParameter id="KPGKadp" value="0.185"/>
+            <localParameter id="KPGKatp" value="0.653"/>
+            <localParameter id="KPGKpgp" value="0.0468"/>
+            <localParameter id="KPGKpg3" value="0.473"/>
+          </listOfLocalParameters>
         </kineticLaw>
       </reaction>
       <reaction id="vsersynth" name="Serine synthesis" reversible="true">
@@ -980,10 +1333,10 @@
               </apply>
             </apply>
           </math>
-          <listOfParameters>
-            <parameter id="rmaxSerSynth" value="0.025712107"/>
-            <parameter id="KSerSynthpg3" value="1"/>
-          </listOfParameters>
+          <listOfLocalParameters>
+            <localParameter id="rmaxSerSynth" value="0.025712107"/>
+            <localParameter id="KSerSynthpg3" value="1"/>
+          </listOfLocalParameters>
         </kineticLaw>
       </reaction>
       <reaction id="vrpGluMu" name="Phosphoglycerate mutase" reversible="true">
@@ -1030,12 +1383,12 @@
               </apply>
             </apply>
           </math>
-          <listOfParameters>
-            <parameter id="rmaxPGluMu" value="89.04965407"/>
-            <parameter id="KPGluMueq" value="0.188"/>
-            <parameter id="KPGluMupg3" value="0.2"/>
-            <parameter id="KPGluMupg2" value="0.369"/>
-          </listOfParameters>
+          <listOfLocalParameters>
+            <localParameter id="rmaxPGluMu" value="89.04965407"/>
+            <localParameter id="KPGluMueq" value="0.188"/>
+            <localParameter id="KPGluMupg3" value="0.2"/>
+            <localParameter id="KPGluMupg2" value="0.369"/>
+          </listOfLocalParameters>
         </kineticLaw>
       </reaction>
       <reaction id="vENO" name="Enolase" reversible="true">
@@ -1082,12 +1435,12 @@
               </apply>
             </apply>
           </math>
-          <listOfParameters>
-            <parameter id="rmaxENO" value="330.4476151"/>
-            <parameter id="KENOeq" value="6.73"/>
-            <parameter id="KENOpg2" value="0.1"/>
-            <parameter id="KENOpep" value="0.135"/>
-          </listOfParameters>
+          <listOfLocalParameters>
+            <localParameter id="rmaxENO" value="330.4476151"/>
+            <localParameter id="KENOeq" value="6.73"/>
+            <localParameter id="KENOpg2" value="0.1"/>
+            <localParameter id="KENOpep" value="0.135"/>
+          </listOfLocalParameters>
         </kineticLaw>
       </reaction>
       <reaction id="vPK" name="Pyruvate kinase" reversible="true">
@@ -1189,16 +1542,16 @@
               </apply>
             </apply>
           </math>
-          <listOfParameters>
-            <parameter id="rmaxPK" value="0.06113150238"/>
-            <parameter id="KPKpep" value="0.31"/>
-            <parameter id="nPK" value="4"/>
-            <parameter id="LPK" value="1000"/>
-            <parameter id="KPKatp" value="22.5"/>
-            <parameter id="KPKfdp" value="0.19"/>
-            <parameter id="KPKamp" value="0.2"/>
-            <parameter id="KPKadp" value="0.26"/>
-          </listOfParameters>
+          <listOfLocalParameters>
+            <localParameter id="rmaxPK" value="0.06113150238"/>
+            <localParameter id="KPKpep" value="0.31"/>
+            <localParameter id="nPK" value="4"/>
+            <localParameter id="LPK" value="1000"/>
+            <localParameter id="KPKatp" value="22.5"/>
+            <localParameter id="KPKfdp" value="0.19"/>
+            <localParameter id="KPKamp" value="0.2"/>
+            <localParameter id="KPKadp" value="0.26"/>
+          </listOfLocalParameters>
         </kineticLaw>
       </reaction>
       <reaction id="vpepCxylase" name="PEP carboxylase" reversible="true">
@@ -1238,12 +1591,12 @@
               </apply>
             </apply>
           </math>
-          <listOfParameters>
-            <parameter id="rmaxpepCxylase" value="0.1070205858"/>
-            <parameter id="KpepCxylasefdp" value="0.7"/>
-            <parameter id="npepCxylasefdp" value="4.21"/>
-            <parameter id="KpepCxylasepep" value="4.07"/>
-          </listOfParameters>
+          <listOfLocalParameters>
+            <localParameter id="rmaxpepCxylase" value="0.1070205858"/>
+            <localParameter id="KpepCxylasefdp" value="0.7"/>
+            <localParameter id="npepCxylasefdp" value="4.21"/>
+            <localParameter id="KpepCxylasepep" value="4.07"/>
+          </listOfLocalParameters>
         </kineticLaw>
       </reaction>
       <reaction id="vSynth1" name="Synthesis 1" reversible="true">
@@ -1267,10 +1620,10 @@
               </apply>
             </apply>
           </math>
-          <listOfParameters>
-            <parameter id="rmaxSynth1" value="0.01953897003"/>
-            <parameter id="KSynth1pep" value="1"/>
-          </listOfParameters>
+          <listOfLocalParameters>
+            <localParameter id="rmaxSynth1" value="0.01953897003"/>
+            <localParameter id="KSynth1pep" value="1"/>
+          </listOfLocalParameters>
         </kineticLaw>
       </reaction>
       <reaction id="vSynth2" name="Synthesis 2" reversible="true">
@@ -1294,10 +1647,10 @@
               </apply>
             </apply>
           </math>
-          <listOfParameters>
-            <parameter id="rmaxSynth2" value="0.07361855055"/>
-            <parameter id="KSynth2pyr" value="1"/>
-          </listOfParameters>
+          <listOfLocalParameters>
+            <localParameter id="rmaxSynth2" value="0.07361855055"/>
+            <localParameter id="KSynth2pyr" value="1"/>
+          </listOfLocalParameters>
         </kineticLaw>
       </reaction>
       <reaction id="vDAHPS" name="DAHP synthesis" reversible="true">
@@ -1347,13 +1700,13 @@
               </apply>
             </apply>
           </math>
-          <listOfParameters>
-            <parameter id="rmaxDAHPS" value="0.1079531227"/>
-            <parameter id="nDAHPSe4p" value="2.6"/>
-            <parameter id="nDAHPSpep" value="2.2"/>
-            <parameter id="KDAHPSe4p" value="0.035"/>
-            <parameter id="KDAHPSpep" value="0.0053"/>
-          </listOfParameters>
+          <listOfLocalParameters>
+            <localParameter id="rmaxDAHPS" value="0.1079531227"/>
+            <localParameter id="nDAHPSe4p" value="2.6"/>
+            <localParameter id="nDAHPSpep" value="2.2"/>
+            <localParameter id="KDAHPSe4p" value="0.035"/>
+            <localParameter id="KDAHPSpep" value="0.0053"/>
+          </listOfLocalParameters>
         </kineticLaw>
       </reaction>
       <reaction id="vPDH" name="Pyruvate dehydrogenase" reversible="true">
@@ -1385,11 +1738,11 @@
               </apply>
             </apply>
           </math>
-          <listOfParameters>
-            <parameter id="rmaxPDH" value="6.059531017"/>
-            <parameter id="nPDH" value="3.68"/>
-            <parameter id="KPDHpyr" value="1159"/>
-          </listOfParameters>
+          <listOfLocalParameters>
+            <localParameter id="rmaxPDH" value="6.059531017"/>
+            <localParameter id="nPDH" value="3.68"/>
+            <localParameter id="KPDHpyr" value="1159"/>
+          </listOfLocalParameters>
         </kineticLaw>
       </reaction>
       <reaction id="vMethSynth" name="Methionine synthesis" reversible="true">
@@ -1404,9 +1757,9 @@
               <ci> rmaxMetSynth </ci>
             </apply>
           </math>
-          <listOfParameters>
-            <parameter id="rmaxMetSynth" value="0.0022627"/>
-          </listOfParameters>
+          <listOfLocalParameters>
+            <localParameter id="rmaxMetSynth" value="0.0022627"/>
+          </listOfLocalParameters>
         </kineticLaw>
       </reaction>
       <reaction id="vPGDH" name="6-Phosphogluconate dehydrogenase" reversible="true">
@@ -1463,13 +1816,13 @@
               </apply>
             </apply>
           </math>
-          <listOfParameters>
-            <parameter id="rmaxPGDH" value="16.23235977"/>
-            <parameter id="KPGDHpg" value="37.5"/>
-            <parameter id="KPGDHnadp" value="0.0506"/>
-            <parameter id="KPGDHnadphinh" value="0.0138"/>
-            <parameter id="KPGDHatpinh" value="208"/>
-          </listOfParameters>
+          <listOfLocalParameters>
+            <localParameter id="rmaxPGDH" value="16.23235977"/>
+            <localParameter id="KPGDHpg" value="37.5"/>
+            <localParameter id="KPGDHnadp" value="0.0506"/>
+            <localParameter id="KPGDHnadphinh" value="0.0138"/>
+            <localParameter id="KPGDHatpinh" value="208"/>
+          </listOfLocalParameters>
         </kineticLaw>
       </reaction>
       <reaction id="vR5PI" name="Ribose-phosphate isomerase" reversible="true">
@@ -1496,10 +1849,10 @@
               </apply>
             </apply>
           </math>
-          <listOfParameters>
-            <parameter id="rmaxR5PI" value="4.83841193"/>
-            <parameter id="KR5PIeq" value="4"/>
-          </listOfParameters>
+          <listOfLocalParameters>
+            <localParameter id="rmaxR5PI" value="4.83841193"/>
+            <localParameter id="KR5PIeq" value="4"/>
+          </listOfLocalParameters>
         </kineticLaw>
       </reaction>
       <reaction id="vRu5P" name="Ribulose-phosphate epimerase" reversible="true">
@@ -1526,10 +1879,10 @@
               </apply>
             </apply>
           </math>
-          <listOfParameters>
-            <parameter id="rmaxRu5P" value="6.739029475"/>
-            <parameter id="KRu5Peq" value="1.4"/>
-          </listOfParameters>
+          <listOfLocalParameters>
+            <localParameter id="rmaxRu5P" value="6.739029475"/>
+            <localParameter id="KRu5Peq" value="1.4"/>
+          </listOfLocalParameters>
         </kineticLaw>
       </reaction>
       <reaction id="vPPK" name="Ribose phosphate pyrophosphokinase" reversible="true">
@@ -1553,10 +1906,10 @@
               </apply>
             </apply>
           </math>
-          <listOfParameters>
-            <parameter id="rmaxRPPK" value="0.01290045226"/>
-            <parameter id="KRPPKrib5p" value="0.1"/>
-          </listOfParameters>
+          <listOfLocalParameters>
+            <localParameter id="rmaxRPPK" value="0.01290045226"/>
+            <localParameter id="KRPPKrib5p" value="0.1"/>
+          </listOfLocalParameters>
         </kineticLaw>
       </reaction>
       <reaction id="vG1PAT" name="Glucose-1-phosphate adenyltransferase" reversible="true">
@@ -1605,13 +1958,13 @@
               </apply>
             </apply>
           </math>
-          <listOfParameters>
-            <parameter id="rmaxG1PAT" value="0.007525458026"/>
-            <parameter id="KG1PATfdp" value="0.119"/>
-            <parameter id="nG1PATfdp" value="1.2"/>
-            <parameter id="KG1PATatp" value="4.42"/>
-            <parameter id="KG1PATg1p" value="3.2"/>
-          </listOfParameters>
+          <listOfLocalParameters>
+            <localParameter id="rmaxG1PAT" value="0.007525458026"/>
+            <localParameter id="KG1PATfdp" value="0.119"/>
+            <localParameter id="nG1PATfdp" value="1.2"/>
+            <localParameter id="KG1PATatp" value="4.42"/>
+            <localParameter id="KG1PATg1p" value="3.2"/>
+          </listOfLocalParameters>
         </kineticLaw>
       </reaction>
       <reaction id="vG6P" name="G6P degradation" reversible="true">
@@ -1627,9 +1980,9 @@
               <ci> cg6p </ci>
             </apply>
           </math>
-          <listOfParameters>
-            <parameter id="mu" value="2.78e-05"/>
-          </listOfParameters>
+          <listOfLocalParameters>
+            <localParameter id="mu" value="2.78e-05"/>
+          </listOfLocalParameters>
         </kineticLaw>
       </reaction>
       <reaction id="vf6P" name="F6P degradation" reversible="true">
@@ -1645,9 +1998,9 @@
               <ci> cf6p </ci>
             </apply>
           </math>
-          <listOfParameters>
-            <parameter id="mu" value="2.78e-05"/>
-          </listOfParameters>
+          <listOfLocalParameters>
+            <localParameter id="mu" value="2.78e-05"/>
+          </listOfLocalParameters>
         </kineticLaw>
       </reaction>
       <reaction id="vfdP" name="FDP degradation" reversible="true">
@@ -1663,9 +2016,9 @@
               <ci> cfdp </ci>
             </apply>
           </math>
-          <listOfParameters>
-            <parameter id="mu" value="2.78e-05"/>
-          </listOfParameters>
+          <listOfLocalParameters>
+            <localParameter id="mu" value="2.78e-05"/>
+          </listOfLocalParameters>
         </kineticLaw>
       </reaction>
       <reaction id="vGAP" name="GAP degradation" reversible="true">
@@ -1681,9 +2034,9 @@
               <ci> cgap </ci>
             </apply>
           </math>
-          <listOfParameters>
-            <parameter id="mu" value="2.78e-05"/>
-          </listOfParameters>
+          <listOfLocalParameters>
+            <localParameter id="mu" value="2.78e-05"/>
+          </listOfLocalParameters>
         </kineticLaw>
       </reaction>
       <reaction id="vDHAP" name="DHAP degradation" reversible="true">
@@ -1699,9 +2052,9 @@
               <ci> cdhap </ci>
             </apply>
           </math>
-          <listOfParameters>
-            <parameter id="mu" value="2.78e-05"/>
-          </listOfParameters>
+          <listOfLocalParameters>
+            <localParameter id="mu" value="2.78e-05"/>
+          </listOfLocalParameters>
         </kineticLaw>
       </reaction>
       <reaction id="vPGP" name="PGP degradation" reversible="true">
@@ -1717,9 +2070,9 @@
               <ci> cpgp </ci>
             </apply>
           </math>
-          <listOfParameters>
-            <parameter id="mu" value="2.78e-05"/>
-          </listOfParameters>
+          <listOfLocalParameters>
+            <localParameter id="mu" value="2.78e-05"/>
+          </listOfLocalParameters>
         </kineticLaw>
       </reaction>
       <reaction id="vPG3" name="PG3 degradation" reversible="true">
@@ -1735,9 +2088,9 @@
               <ci> cpg3 </ci>
             </apply>
           </math>
-          <listOfParameters>
-            <parameter id="mu" value="2.78e-05"/>
-          </listOfParameters>
+          <listOfLocalParameters>
+            <localParameter id="mu" value="2.78e-05"/>
+          </listOfLocalParameters>
         </kineticLaw>
       </reaction>
       <reaction id="vpg2" name="PG2 degradation" reversible="true">
@@ -1753,9 +2106,9 @@
               <ci> cpg2 </ci>
             </apply>
           </math>
-          <listOfParameters>
-            <parameter id="mu" value="2.78e-05"/>
-          </listOfParameters>
+          <listOfLocalParameters>
+            <localParameter id="mu" value="2.78e-05"/>
+          </listOfLocalParameters>
         </kineticLaw>
       </reaction>
       <reaction id="vPEP" name="PEP degradation" reversible="true">
@@ -1771,9 +2124,9 @@
               <ci> cpep </ci>
             </apply>
           </math>
-          <listOfParameters>
-            <parameter id="mu" value="2.78e-05"/>
-          </listOfParameters>
+          <listOfLocalParameters>
+            <localParameter id="mu" value="2.78e-05"/>
+          </listOfLocalParameters>
         </kineticLaw>
       </reaction>
       <reaction id="vRibu5p" name="Ribu5P dilution" reversible="true">
@@ -1789,9 +2142,9 @@
               <ci> cribu5p </ci>
             </apply>
           </math>
-          <listOfParameters>
-            <parameter id="mu" value="2.78e-05"/>
-          </listOfParameters>
+          <listOfLocalParameters>
+            <localParameter id="mu" value="2.78e-05"/>
+          </listOfLocalParameters>
         </kineticLaw>
       </reaction>
       <reaction id="vRIB5P" name="Rib5P dilution" reversible="true">
@@ -1807,9 +2160,9 @@
               <ci> crib5p </ci>
             </apply>
           </math>
-          <listOfParameters>
-            <parameter id="mu" value="2.78e-05"/>
-          </listOfParameters>
+          <listOfLocalParameters>
+            <localParameter id="mu" value="2.78e-05"/>
+          </listOfLocalParameters>
         </kineticLaw>
       </reaction>
       <reaction id="vXYL5P" name="XYL5P dilution" reversible="true">
@@ -1825,9 +2178,9 @@
               <ci> cxyl5p </ci>
             </apply>
           </math>
-          <listOfParameters>
-            <parameter id="mu" value="2.78e-05"/>
-          </listOfParameters>
+          <listOfLocalParameters>
+            <localParameter id="mu" value="2.78e-05"/>
+          </listOfLocalParameters>
         </kineticLaw>
       </reaction>
       <reaction id="vSED7P" name="SED7P dilution" reversible="true">
@@ -1843,9 +2196,9 @@
               <ci> csed7p </ci>
             </apply>
           </math>
-          <listOfParameters>
-            <parameter id="mu" value="2.78e-05"/>
-          </listOfParameters>
+          <listOfLocalParameters>
+            <localParameter id="mu" value="2.78e-05"/>
+          </listOfLocalParameters>
         </kineticLaw>
       </reaction>
       <reaction id="vpyr" name="Pyruvate dilution" reversible="true">
@@ -1861,9 +2214,9 @@
               <ci> cpyr </ci>
             </apply>
           </math>
-          <listOfParameters>
-            <parameter id="mu" value="2.78e-05"/>
-          </listOfParameters>
+          <listOfLocalParameters>
+            <localParameter id="mu" value="2.78e-05"/>
+          </listOfLocalParameters>
         </kineticLaw>
       </reaction>
       <reaction id="vPG" name="PG dilution" reversible="true">
@@ -1879,9 +2232,9 @@
               <ci> cpg </ci>
             </apply>
           </math>
-          <listOfParameters>
-            <parameter id="mu" value="2.78e-05"/>
-          </listOfParameters>
+          <listOfLocalParameters>
+            <localParameter id="mu" value="2.78e-05"/>
+          </listOfLocalParameters>
         </kineticLaw>
       </reaction>
       <reaction id="vE4P" name="E4P dilution" reversible="true">
@@ -1897,9 +2250,9 @@
               <ci> ce4p </ci>
             </apply>
           </math>
-          <listOfParameters>
-            <parameter id="mu" value="2.78e-05"/>
-          </listOfParameters>
+          <listOfLocalParameters>
+            <localParameter id="mu" value="2.78e-05"/>
+          </listOfLocalParameters>
         </kineticLaw>
       </reaction>
       <reaction id="vGLP" name="GLP dilution" reversible="true">
@@ -1915,9 +2268,9 @@
               <ci> cg1p </ci>
             </apply>
           </math>
-          <listOfParameters>
-            <parameter id="mu" value="2.78e-05"/>
-          </listOfParameters>
+          <listOfLocalParameters>
+            <localParameter id="mu" value="2.78e-05"/>
+          </listOfLocalParameters>
         </kineticLaw>
       </reaction>
       <reaction id="vEXTER" name="Extracellular glucose kinetics" reversible="true">
@@ -1937,10 +2290,10 @@
               </apply>
             </apply>
           </math>
-          <listOfParameters>
-            <parameter id="Dil" value="2.78e-05"/>
-            <parameter id="cfeed" value="110.96"/>
-          </listOfParameters>
+          <listOfLocalParameters>
+            <localParameter id="Dil" value="2.78e-05"/>
+            <localParameter id="cfeed" value="110.96"/>
+          </listOfLocalParameters>
         </kineticLaw>
       </reaction>
     </listOfReactions>

@@ -21,7 +21,8 @@ TODO: Add support for compartments.
    
 '''
 
-from ..core.models import Metabolite, Reaction, Model, CBModel
+from ..core.model import Metabolite, Reaction, Model
+from framed.core.cbmodel import CBModel
 from re import compile
 from os.path import splitext, basename
 
