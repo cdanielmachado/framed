@@ -8,7 +8,7 @@ from warnings import warn
 
 
 def simulate(model, time=0, steps=100, t_steps=None, parameters=None, integrator_args=None):
-    f = model.get_ODEs(parameters)
+    f = model.get_ode(parameters)
     f2 = lambda x, t: f(t, x)
     x0 = model.concentrations.values()
     if t_steps is None:
@@ -22,7 +22,7 @@ def simulate(model, time=0, steps=100, t_steps=None, parameters=None, integrator
 def simulate2(model, time, n_steps=100, method='vode', integrator_args=None):
     #simulation based on scipy.integrate.ode (for some reason much slower than odeint)
 
-    f = model.get_ODEs()
+    f = model.get_ode()
     x0 = model.concentrations.values()
 
     if not integrator_args:

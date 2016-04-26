@@ -202,7 +202,8 @@ def _load_odemodel(sbml_model):
     model.add_metabolites(_load_metabolites(sbml_model))
     model.add_reactions(_load_reactions(sbml_model))
     model.set_concentrations(_load_concentrations(sbml_model))
-    model.set_global_parameters(_load_global_parameters(sbml_model))
+    model.set_constant_parameters(_load_constant_parameters(sbml_model))
+    model.set_variable_parameters(_load_variable_parameters(sbml_model))
     model.set_local_parameters(_load_local_parameters(sbml_model))
     model.set_ratelaws(_load_ratelaws(sbml_model))
     model.set_assignment_rules(_load_assignment_rules(sbml_model))
@@ -215,9 +216,13 @@ def _load_concentrations(sbml_model):
             for species in sbml_model.getListOfSpecies()]
 
 
-def _load_global_parameters(sbml_model):
+def _load_constant_parameters(sbml_model):
     return [(parameter.getId(), parameter.getValue())
-            for parameter in sbml_model.getListOfParameters()]
+            for parameter in sbml_model.getListOfParameters() if parameter.getConstant()]
+
+def _load_variable_parameters(sbml_model):
+    return [(parameter.getId(), parameter.getValue())
+            for parameter in sbml_model.getListOfParameters() if parameter.getConstant() == False]
 
 def _load_local_parameters(sbml_model):
     params = OrderedDict()
