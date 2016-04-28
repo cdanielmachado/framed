@@ -7,11 +7,11 @@ from numpy.random import rand, randn
 
 def sample(model, size, parameters=None, scale='log', dist='normal', dist_args=(0, 1)):
 
-    model_params = model.get_parameters()
+    model_params = model.get_parameters(exclude_compartments=True)
     if parameters:
         p0 = array([model_params[key] for key in parameters])
     else:
-        parameters = model.model_params.keys()
+        parameters = model_params.keys()
         p0 = array(model_params.values())
 
     p_sample = []
@@ -19,7 +19,7 @@ def sample(model, size, parameters=None, scale='log', dist='normal', dist_args=(
     for i in range(size):
         p = parameter_perturbation(p0, scale, dist, dist_args)
         new_params = dict(zip(parameters, p))
-        _, v = find_steady_state(model, parameters=new_params)
+        v = find_steady_state(model, parameters=new_params)
         if v:
             p_sample.append(p)
             v_sample.append(v.values())
