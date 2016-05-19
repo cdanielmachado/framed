@@ -287,6 +287,11 @@ class Model:
         table = self.metabolite_reaction_lookup_table()
         return [r_id for r_id, coeff in table[m_id].items() if coeff < 0]
 
+    def get_reaction_compartments(self, r_id):
+        reaction = self.reactions[r_id]
+        compounds = reaction.get_substrates() + reaction.get_products()
+        compartments = [self.metabolites[m_id].compartment for m_id in compounds]
+        return set(compartments)
 
     def metabolite_reaction_lookup_table(self):
         """ Return the network topology as a nested map: metabolite id -> reaction id -> coefficient
