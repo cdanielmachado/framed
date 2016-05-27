@@ -48,24 +48,25 @@ class Metabolite:
 class Reaction:
     """ Base class for modeling reactions. """
 
-    def __init__(self, elem_id, name=None, reversible=True, stoichiometry=None, modifiers=None):
+    def __init__(self, elem_id, name=None, reversible=True, stoichiometry=None, regulators=None):
         """
         Arguments:
             elem_id : String -- a valid unique identifier
             name : String -- common reaction name
             reversible : bool -- reaction reversibility (default: True)
             stoichiometry : dict of str to float -- stoichiometry
-            modifiers : -- list of reaction modifiers
+            regulators : dict of str to str -- reaction regulators
         """
         self.id = elem_id
         self.name = name
         self.reversible = reversible
         self.stoichiometry = OrderedDict()
-        self.modifiers = []
+        self.regulators =  OrderedDict()
+
         if stoichiometry:
             self.stoichiometry.update(stoichiometry)
-        if modifiers:
-            self.modifiers.extend(modifiers)
+        if regulators:
+            self.regulators.update(regulators)
 
 
     def __str__(self):
@@ -76,6 +77,12 @@ class Reaction:
 
     def get_products(self):
         return [m_id for m_id, coeff in self.stoichiometry.items() if coeff > 0]
+
+    def get_activators(self):
+        return [m_id for m_id, kind in self.regulators.items() if kind == '+']
+
+    def get_inhibitors(self):
+        return [m_id for m_id, kind in self.regulators.items() if kind == '-']
 
 
 class Compartment:
@@ -113,6 +120,7 @@ class Model:
 
     def _clear_temp(self):
         self._m_r_lookup = None
+        self._reg_lookup = None
         self._s_matrix = None
 
     def copy(self):
@@ -192,8 +200,22 @@ class Model:
                 del self.reactions[r_id].stoichiometry[m_id]
             else:
                 self.reactions[r_id].stoichiometry[m_id] = coeff
+        else:
+            print 'Failed to set stoichiometry of', m_id, r_id, '(invalid identifier)'
 
         self._clear_temp()
+
+    def add_reaction_regulator(self, r_id, m_id, kind='?'):
+        if m_id in self.metabolites and r_id in self.reactions:
+            self.reactions[r_id].regulators[m_id] = kind
+        else:
+            print 'Failed to set stoichiometry of', m_id, r_id, '(invalid identifier)'
+
+    def add_reaction_activator(self, r_id, m_id):
+        self.add_reaction_regulator(r_id, m_id, '+')
+
+    def add_reaction_inhibitor(self, r_id, m_id):
+        self.add_reaction_regulator(r_id, m_id, '-')
 
     def remove_metabolites(self, id_list):
         """ Remove a list of metabolites from the model.
@@ -274,7 +296,6 @@ class Model:
         table = self.metabolite_reaction_lookup_table()
         return [r_id for r_id, coeff in table[m_id].items() if coeff > 0]
 
-
     def get_metabolite_sinks(self, m_id):
         """ Return the list of output reactions for one metabolite
 
@@ -286,6 +307,14 @@ class Model:
         """
         table = self.metabolite_reaction_lookup_table()
         return [r_id for r_id, coeff in table[m_id].items() if coeff < 0]
+
+    def get_activation_targets(self, m_id):
+        table = self.regulatory_lookup_table()
+        return [r_id for r_id, kind in table[m_id].items() if kind == '+']
+
+    def get_inhibition_targets(self, m_id):
+        table = self.regulatory_lookup_table()
+        return [r_id for r_id, kind in table[m_id].items() if kind == '-']
 
     def get_reaction_compartments(self, r_id):
         reaction = self.reactions[r_id]
@@ -308,6 +337,16 @@ class Model:
                     self._m_r_lookup[m_id][r_id] = coeff
 
         return self._m_r_lookup
+
+    def regulatory_lookup_table(self):
+        if not self._reg_lookup:
+            self._reg_lookup = OrderedDict([(m_id, OrderedDict()) for m_id in self.metabolites])
+
+            for r_id, reaction in self.reactions.items():
+                for m_id, kind in reaction.regulators.items():
+                    self._reg_lookup[m_id][r_id] = kind
+
+        return self._reg_lookup
 
 
     def stoichiometric_matrix(self):
