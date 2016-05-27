@@ -23,7 +23,7 @@ class CBModel(Model):
         """ Define flux bounds for a set of reactions
 
         """
-        for r_id, (lb, ub) in bounds:
+        for r_id, (lb, ub) in bounds.items():
             self.set_flux_bounds(r_id, lb, ub)
 
     def set_flux_bounds(self, r_id, lb, ub):
@@ -69,7 +69,7 @@ class CBModel(Model):
         """ Define objective coefficients for a list of reactions
 
         """
-        for r_id, coeff, in coefficients:
+        for r_id, coeff, in coefficients.items():
             self.set_reaction_objective(r_id, coeff)
 
     def set_reaction_objective(self, r_id, coeff=0):
@@ -211,7 +211,7 @@ class CBModel(Model):
         Arguments:
             rules : list (of (str, str)) -- reaction id, rule
         """
-        for r_id, rule in rules:
+        for r_id, rule in rules.items():
             self.set_rule(r_id, rule)
 
     def set_rule(self, r_id, rule):
