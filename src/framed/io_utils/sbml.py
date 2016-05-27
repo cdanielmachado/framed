@@ -38,6 +38,9 @@ UB_TAG = 'UPPER_BOUND'
 OBJ_TAG = 'OBJECTIVE_COEFFICIENT'
 GPR_TAG = 'GENE_ASSOCIATION:'
 
+ACTIVATOR_TAG = 'SBO:0000459'
+INHIBITOR_TAG = 'SBO:0000020'
+
 DEFAULT_SBML_LEVEL = 3
 DEFAULT_SBML_VERSION = 1
 
@@ -113,6 +116,7 @@ def _load_reactions(sbml_model):
 def _load_reaction(reaction):
 
     stoichiometry = OrderedDict()
+    modifiers = OrderedDict()
 
     for reactant in reaction.getListOfReactants():
         m_id = reactant.getSpecies()
@@ -132,7 +136,15 @@ def _load_reaction(reaction):
         if stoichiometry[m_id] == 0.0:
             del stoichiometry[m_id]
 
-    modifiers = [modifier.getSpecies() for modifier in reaction.getListOfModifiers()]
+    for modifier in reaction.getListOfModifiers():
+        m_id = modifier.getSpecies()
+        kind = '?'
+        sboterm = modifier.getSBOTermID()
+        if sboterm == ACTIVATOR_TAG:
+            kind = '+'
+        if sboterm == INHIBITOR_TAG:
+            kind = '-'
+        modifiers[m_id] = kind
 
     return Reaction(reaction.getId(), reaction.getName(), reaction.getReversible(), stoichiometry, modifiers)
 
@@ -312,9 +324,13 @@ def _save_reactions(model, sbml_model):
                 speciesReference = sbml_reaction.createProduct()
                 speciesReference.setSpecies(m_id)
                 speciesReference.setStoichiometry(coeff)
-        for m_id in reaction.modifiers:
+        for m_id, kind in reaction.regulators.items():
             speciesReference = sbml_reaction.createModifier()
             speciesReference.setSpecies(m_id)
+            if kind == '+':
+                speciesReference.setSBOTerm(ACTIVATOR_TAG)
+            if kind == '-':
+                speciesReference.setSBOTerm(INHIBITOR_TAG)
 
 
 def _save_cb_parameters(model, sbml_model):
