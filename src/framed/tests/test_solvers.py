@@ -11,7 +11,7 @@ from framed.solvers.gurobi_wrapper import GurobiSolver
 from framed.solvers.glpk_wrapper import GlpkSolver
 from framed.solvers.glpk_wrapper_lazy import GlpkSolverLazy
 from framed.analysis.simulation import FBA
-from framed.core.fixes import fix_bigg_model
+from framed.core.fixes import fix_cobra_model
 from test_glpk_alone import *
 
 SMALL_TEST_MODEL = '../../../examples/models/ecoli_core_model.xml'
@@ -21,7 +21,7 @@ class SolverPickleTest(unittest.TestCase):
     """docstring for SolverPickleTest"""
 
     def setUp(self):
-        self.model = load_cbmodel(SMALL_TEST_MODEL, flavor='bigg')
+        self.model = load_cbmodel(SMALL_TEST_MODEL, flavor='cobra')
 
     def test_gurobi_solver_pickle(self):
 
@@ -45,8 +45,8 @@ class SolverPickleTest(unittest.TestCase):
 class SolverGLPKTest(unittest.TestCase):
 
     def setUp(self):
-        self.model = load_cbmodel(SMALL_TEST_MODEL, flavor='bigg')
-        fix_bigg_model(self.model)
+        self.model = load_cbmodel(SMALL_TEST_MODEL, flavor='cobra')
+        fix_cobra_model(self.model)
 
     def test_glpk_alone(self):
         result = solve_lp_prob_glpk()
@@ -144,7 +144,7 @@ if __name__ == "__main__":
     runner.run(suite())
 
 # model = load_sbml_model(SMALL_TEST_MODEL, kind=CONSTRAINT_BASED)
-# fix_bigg_model(model)
+# fix_cobra_model(model)
 # solver=solver_instance()
 # solver.build_problem(model)
 

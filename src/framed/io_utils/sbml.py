@@ -23,7 +23,7 @@ TODO: Add support for sbml-fbc package.
 from ..core.model import Model, Metabolite, Reaction, Compartment
 from ..core.odemodel import ODEModel
 from ..core.cbmodel import CBModel, Gene
-from ..core.fixes import fix_bigg_model
+from ..core.fixes import fix_cobra_model
 
 from collections import OrderedDict
 from libsbml import SBMLReader, SBMLWriter, SBMLDocument, XMLNode, AssignmentRule, parseL3FormulaWithModel
@@ -31,7 +31,7 @@ from libsbml import SBMLReader, SBMLWriter, SBMLDocument, XMLNode, AssignmentRul
 CB_MODEL = 'cb'
 ODE_MODEL = 'ode'
 
-BIGG_MODEL = 'bigg'
+COBRA_MODEL = 'cobra'
 
 LB_TAG = 'LOWER_BOUND'
 UB_TAG = 'UPPER_BOUND'
@@ -75,8 +75,8 @@ def load_sbml_model(filename, kind=None):
 def load_cbmodel(filename, flavor=None):
     model = load_sbml_model(filename, kind=CB_MODEL)
 
-    if flavor and flavor.lower() == BIGG_MODEL:
-        fix_bigg_model(model)
+    if flavor and flavor.lower() == COBRA_MODEL:
+        fix_cobra_model(model)
 
     return model
 
@@ -281,7 +281,7 @@ def save_sbml_model(model, filename):
 
 def save_cbmodel(model, filename, flavor=None):
 
-    if flavor and flavor.lower() == BIGG_MODEL:
+    if flavor and flavor.lower() == COBRA_MODEL:
         old_bounds = model.bounds.copy()
         for r_id, (lb, ub) in model.bounds.items():
             lb = -1000 if lb is None else lb
@@ -368,10 +368,16 @@ def _save_concentrations(model, sbml_model):
         species.setInitialConcentration(value)
 
 def _save_global_parameters(model, sbml_model):
-    for p_id, value in model.global_parameters.items():
+    for p_id, value in model.constant_params.items():
         parameter = sbml_model.createParameter()
         parameter.setId(p_id)
         parameter.setValue(value)
+        parameter.setConstant(True)
+    for p_id, value in model.variable_params.items():
+        parameter = sbml_model.createParameter()
+        parameter.setId(p_id)
+        parameter.setValue(value)
+        parameter.setConstant(False)
 
 def _save_kineticlaws(model, sbml_model):
     for r_id, ratelaw in model.ratelaws.items():
@@ -379,7 +385,7 @@ def _save_kineticlaws(model, sbml_model):
         kineticLaw = sbml_reaction.createKineticLaw()
         #kineticLaw.setFormula(ratelaw)
         kineticLaw.setMath(parseL3FormulaWithModel(ratelaw, sbml_model)) #avoids conversion of Pi to pi
-        for p_id, value in model.local_parameters[r_id].items():
+        for p_id, value in model.local_params[r_id].items():
             parameter = kineticLaw.createParameter()
             parameter.setId(p_id)
             parameter.setValue(value)

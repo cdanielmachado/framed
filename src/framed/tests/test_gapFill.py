@@ -5,7 +5,7 @@ Unit testing for gap filling algorithm.
 '''
 import unittest
 
-from framed.core.fixes import fix_bigg_model
+from framed.core.fixes import fix_cobra_model
 from framed.io_utils.plaintext import read_model_from_file
 from framed.io_utils.sbml import load_cbmodel
 from framed.solvers.glpk_wrapper import GlpkSolver
@@ -24,7 +24,7 @@ class GapFillTest_glpk(unittest.TestCase):
         model = '../../../examples/reconstruction/gapFill/ecoli_core_model_test.xml'
         reactionsDB = '../../../examples/reconstruction/gapFill/ecoli_core_model_2.txt'
 
-        self.model = load_cbmodel(model, flavor='bigg')
+        self.model = load_cbmodel(model, flavor='cobra')
 
         framed_result = GapFill(self.model, reactionsDB, solver, "R_Biomass_Ecoli_core_w_GAM", 0.05, 'txt')
         self.assertEquals(framed_result[1], ['R_PGK', 'R_PGM', 'R_PYK'])
@@ -35,7 +35,7 @@ class GapFillTest_glpk(unittest.TestCase):
         model = '../../../examples/reconstruction/gapFill/ecoli_core_model_test.xml'
         reactionsDB = '../../../examples/reconstruction/gapFill/ecoli_core_model.xml'
 
-        self.model = load_cbmodel(model, flavor='bigg')
+        self.model = load_cbmodel(model, flavor='cobra')
 
         framed_result = GapFill(self.model, reactionsDB, solver, "R_Biomass_Ecoli_core_w_GAM", 0.05, 'sbml')
         self.assertEquals(framed_result[1], ['R_PGK', 'R_PGM', 'R_PYK'])
@@ -46,7 +46,7 @@ class GapFillTest_glpk(unittest.TestCase):
         model = '../../../examples/reconstruction/gapFill/ecoli_core_model_test.xml'
         reactionsDB = '../../../examples/reconstruction/gapFill/ecoli_core_model.xml'
 
-        self.model = load_cbmodel(model, flavor='bigg')
+        self.model = load_cbmodel(model, flavor='cobra')
 
         framed_result = GapFill(self.model, reactionsDB, solver, "R_Biomass_Ecoli_core_w_GAM", 0.87, 'sbml')
         self.assertEquals(framed_result[1], ['R_ATPS4r', 'R_PGK', 'R_PGM', 'R_PYK', 'R_SUCOAS'])
@@ -57,7 +57,7 @@ class GapFillTest_glpk(unittest.TestCase):
         model = '../../../examples/reconstruction/gapFill/ecoli_core_model_test.xml'
         reactionsDB = '../../../examples/reconstruction/gapFill/iAF1260.xml'
 
-        self.model = load_cbmodel(model, flavor='bigg')
+        self.model = load_cbmodel(model, flavor='cobra')
 
         framed_result = GapFill(self.model, reactionsDB, solver, "R_Biomass_Ecoli_core_w_GAM", 0.87, 'sbml')
         # R_Htex is required to produce M_h_p, which is a reactant in R_ATPS4rpp
@@ -75,7 +75,7 @@ class GapFillTest_glpk_lazy(unittest.TestCase):
         model = '../../../examples/reconstruction/gapFill/ecoli_core_model_test.xml'
         reactionsDB = '../../../examples/reconstruction/gapFill/ecoli_core_model_2.txt'
 
-        self.model = load_cbmodel(model, flavor='bigg')
+        self.model = load_cbmodel(model, flavor='cobra')
 
         framed_result = GapFill(self.model, reactionsDB, solver, "R_Biomass_Ecoli_core_w_GAM", 0.05, 'txt')
         self.assertEquals(framed_result[1], ['R_PGK', 'R_PGM', 'R_PYK'])
@@ -86,7 +86,7 @@ class GapFillTest_glpk_lazy(unittest.TestCase):
         model = '../../../examples/reconstruction/gapFill/ecoli_core_model_test.xml'
         reactionsDB = '../../../examples/reconstruction/gapFill/ecoli_core_model.xml'
 
-        self.model = load_cbmodel(model, flavor='bigg')
+        self.model = load_cbmodel(model, flavor='cobra')
 
         framed_result = GapFill(self.model, reactionsDB, solver, "R_Biomass_Ecoli_core_w_GAM", 0.05, 'sbml')
         self.assertEquals(framed_result[1], ['R_PGK', 'R_PGM', 'R_PYK'])
@@ -97,7 +97,7 @@ class GapFillTest_glpk_lazy(unittest.TestCase):
         model = '../../../examples/reconstruction/gapFill/ecoli_core_model_test.xml'
         reactionsDB = '../../../examples/reconstruction/gapFill/ecoli_core_model.xml'
 
-        self.model = load_cbmodel(model, flavor='bigg')
+        self.model = load_cbmodel(model, flavor='cobra')
 
         framed_result = GapFill(self.model, reactionsDB, solver, "R_Biomass_Ecoli_core_w_GAM", 0.87, 'sbml')
         self.assertEquals(framed_result[1], ['R_ATPS4r', 'R_PGK', 'R_PGM', 'R_PYK', 'R_SUCOAS'])
@@ -108,7 +108,7 @@ class GapFillTest_glpk_lazy(unittest.TestCase):
         model = '../../../examples/reconstruction/gapFill/ecoli_core_model_test.xml'
         reactionsDB = '../../../examples/reconstruction/gapFill/iAF1260.xml'
 
-        self.model = load_cbmodel(model, flavor='bigg')
+        self.model = load_cbmodel(model, flavor='cobra')
 
         framed_result = GapFill(self.model, reactionsDB, solver, "R_Biomass_Ecoli_core_w_GAM", 0.87, 'sbml')
         # R_Htex is required to produce M_h_p, which is a reactant in R_ATPS4rpp
@@ -125,7 +125,7 @@ class GapFillTest_toy_model(unittest.TestCase):
         reactionsDB = '../../../examples/reconstruction/gapFill/toy_model_simple_DB'
 
         self.model = read_model_from_file(model, kind='cb')
-        fix_bigg_model(self.model)
+        fix_cobra_model(self.model)
 
         framed_result = GapFill(self.model, reactionsDB, solver, 'R_EX_Biomass', 0.05, 'txt')
         self.assertEquals(framed_result[1], ['R_EX_gluc1', 'R_gluc1_A', 'R_A_B'])
@@ -136,7 +136,7 @@ class GapFillTest_toy_model(unittest.TestCase):
         reactionsDB = '../../../examples/reconstruction/gapFill/toy_model_simple_DB'
 
         self.model = read_model_from_file(model, kind='cb')
-        fix_bigg_model(self.model)
+        fix_cobra_model(self.model)
 
         framed_result = GapFill(self.model, reactionsDB, solver, 'R_EX_Biomass', 0.05, 'txt')
         self.assertEquals(framed_result[1], ['R_EX_gluc1', 'R_gluc1_A', 'R_A_B'])

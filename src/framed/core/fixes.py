@@ -21,8 +21,8 @@ Fixes to clean up common models from different sources/groups.
 '''
 
 
-def fix_bigg_model(model, boundary_metabolites=True, reversibility=True, bounds=True, bigg_ids=True):
-    """ Fix models from BiGG.
+def fix_cobra_model(model, boundary_metabolites=True, reversibility=True, bounds=True, bigg_ids=True):
+    """ Fix models from Cobra.
     
     Arguments:
         boundary_metabolites : bool -- remove boundary metabolites (ending with '_b') (default: True) 

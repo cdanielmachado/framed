@@ -7,14 +7,14 @@ __author__ = 'kaizhuang'
 
 from framed.analysis.variability import production_envelope, flux_envelope
 from framed.io_utils.sbml import load_sbml_model, CONSTRAINT_BASED
-from framed.core.fixes import fix_bigg_model
+from framed.core.fixes import fix_cobra_model
 
 import matplotlib.pyplot as plt
 
 ### Basic Setup
 SMALL_TEST_MODEL = 'models/ecoli_core_model.xml'
 ec_core_model = load_sbml_model(SMALL_TEST_MODEL, kind=CONSTRAINT_BASED)
-fix_bigg_model(ec_core_model)
+fix_cobra_model(ec_core_model)
 
 
 ### Make the production envelope, and plot it

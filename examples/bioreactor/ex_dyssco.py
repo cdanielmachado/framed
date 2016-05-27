@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 
 from framed.io_utils.sbml import load_sbml_model, CONSTRAINT_BASED
 from framed.io_utils.plaintext import add_reaction_from_str
-from framed.core.fixes import fix_bigg_model
+from framed.core.fixes import fix_cobra_model
 from framed.bioreactor import *
 
 import framed.bioreactor.dyssco as dyssco
@@ -28,7 +28,7 @@ class Ecoli(Organism):
 ### Setup
 EC_1260_MODEL = 'models/Ec_iAF1260_gene_names.xml'
 ec1260 = load_sbml_model(EC_1260_MODEL, kind=CONSTRAINT_BASED)
-fix_bigg_model(ec1260)
+fix_cobra_model(ec1260)
 
 # Add 1-3-PDO pathway
 add_reaction_from_str(ec1260, 'R_glycerol_dehydratase: M_glyc_c + M_nadh_c + M_h_c --> M_1_3_pdo_c + M_nad_c')

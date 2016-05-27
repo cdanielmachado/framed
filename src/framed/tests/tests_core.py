@@ -80,7 +80,7 @@ class FBATest(unittest.TestCase):
     """ Test FBA simulation. """
 
     def testRun(self):
-        model = load_cbmodel(SMALL_TEST_MODEL, flavor='bigg')
+        model = load_cbmodel(SMALL_TEST_MODEL, flavor='cobra')
         solution = FBA(model, get_shadow_prices=True, get_reduced_costs=True)
         self.assertEqual(solution.status, Status.OPTIMAL)
         self.assertAlmostEqual(solution.fobj, GROWTH_RATE, places=2)
@@ -89,7 +89,7 @@ class FBAwithRatioTest(unittest.TestCase):
     """ Test FBA with ratio constraints simulation. """
 
     def testRun(self):
-        model = load_cbmodel(SMALL_TEST_MODEL, flavor='bigg')
+        model = load_cbmodel(SMALL_TEST_MODEL, flavor='cobra')
         r_id1 = 'R_PGI'
         r_id2 = 'R_G6PDH2r'
         ratio = 2.0
@@ -102,7 +102,7 @@ class pFBATest(unittest.TestCase):
     """ Test pFBA simulation. """
 
     def testRun(self):
-        model = load_cbmodel(SMALL_TEST_MODEL, flavor='bigg')
+        model = load_cbmodel(SMALL_TEST_MODEL, flavor='cobra')
         solution1 = pFBA(model)
         solution2 = FBA(model)
         self.assertEqual(solution1.status, Status.OPTIMAL)
@@ -118,7 +118,7 @@ class FBAFromPlainTextTest(unittest.TestCase):
     """ Test FBA simulation from plain text model. """
 
     def testRun(self):
-        model = load_cbmodel(SMALL_TEST_MODEL, flavor='bigg')
+        model = load_cbmodel(SMALL_TEST_MODEL, flavor='cobra')
         write_model_to_file(model, PLAIN_TEXT_COPY)
         model_copy = read_model_from_file(PLAIN_TEXT_COPY, kind='cb')
         solution = FBA(model_copy)
@@ -130,7 +130,7 @@ class IrreversibleModelFBATest(unittest.TestCase):
     """ Test FBA simulation after reversible decomposition. """
 
     def testRun(self):
-        model = load_cbmodel(SMALL_TEST_MODEL, flavor='bigg')
+        model = load_cbmodel(SMALL_TEST_MODEL, flavor='cobra')
         make_irreversible(model)
         self.assertTrue(all([not reaction.reversible for reaction in model.reactions.values()]))
         solution = FBA(model)
@@ -142,7 +142,7 @@ class SimplifiedModelFBATest(unittest.TestCase):
     """ Test FBA simulation after model simplification. """
 
     def testRun(self):
-        model = load_cbmodel(SMALL_TEST_MODEL, flavor='bigg')
+        model = load_cbmodel(SMALL_TEST_MODEL, flavor='cobra')
         simplify(model)
         solution = FBA(model)
         self.assertEqual(solution.status, Status.OPTIMAL)
@@ -153,12 +153,12 @@ class TransformationCommutativityTest(unittest.TestCase):
     """ Test commutativity between transformations. """
 
     def testRun(self):
-        model = load_cbmodel(SMALL_TEST_MODEL, flavor='bigg')
+        model = load_cbmodel(SMALL_TEST_MODEL, flavor='cobra')
         simplify(model)
         make_irreversible(model)
         simplify(model) #remove directionally blocked reactions
 
-        model2 = load_cbmodel(SMALL_TEST_MODEL, flavor='bigg')
+        model2 = load_cbmodel(SMALL_TEST_MODEL, flavor='cobra')
         make_irreversible(model2)
         simplify(model2)
 
@@ -174,7 +174,7 @@ class FVATest(unittest.TestCase):
     """ Test flux variability analysis """
 
     def testRun(self):
-        model = load_cbmodel(SMALL_TEST_MODEL, flavor='bigg')
+        model = load_cbmodel(SMALL_TEST_MODEL, flavor='cobra')
         variability = FVA(model)
         self.assertTrue(all([lb <= ub if lb is not None and ub is not None else True
                              for lb, ub in variability.values()]))
@@ -184,7 +184,7 @@ class GeneDeletionFBATest(unittest.TestCase):
     """ Test gene deletion with FBA. """
 
     def testRun(self):
-        model = load_cbmodel(SMALL_TEST_MODEL, flavor='bigg')
+        model = load_cbmodel(SMALL_TEST_MODEL, flavor='cobra')
         solution = gene_deletion(model, DOUBLE_GENE_KO)
         self.assertEqual(solution.status, Status.OPTIMAL)
         self.assertAlmostEqual(solution.values[model.detect_biomass_reaction()], DOUBLE_KO_GROWTH_RATE, 3)
@@ -195,7 +195,7 @@ class GeneDeletionMOMATest(unittest.TestCase):
     """ Test gene deletion with MOMA. """
 
     def testRun(self):
-        model = load_cbmodel(SMALL_TEST_MODEL, flavor='bigg')
+        model = load_cbmodel(SMALL_TEST_MODEL, flavor='cobra')
         solution = gene_deletion(model, MOMA_GENE_KO, 'MOMA')
         self.assertEqual(solution.status, Status.OPTIMAL)
         self.assertAlmostEqual(solution.values[model.detect_biomass_reaction()], MOMA_GROWTH_RATE, 3)
@@ -206,7 +206,7 @@ class GeneDeletionLMOMATest(unittest.TestCase):
     """ Test gene deletion with MOMA. """
 
     def testRun(self):
-        model = load_cbmodel(SMALL_TEST_MODEL, flavor='bigg')
+        model = load_cbmodel(SMALL_TEST_MODEL, flavor='cobra')
         solution = gene_deletion(model, LMOMA_GENE_KO, 'lMOMA')
         self.assertEqual(solution.status, Status.OPTIMAL)
         self.assertAlmostEqual(solution.values[model.detect_biomass_reaction()], LMOMA_GROWTH_RATE, 3)
@@ -216,7 +216,7 @@ class GeneDeletionROOMTest(unittest.TestCase):
     """ Test gene deletion with ROOM. """
 
     def testRun(self):
-        model = load_cbmodel(SMALL_TEST_MODEL, flavor='bigg')
+        model = load_cbmodel(SMALL_TEST_MODEL, flavor='cobra')
         solution = gene_deletion(model, ROOM_GENE_KO, 'ROOM')
         self.assertEqual(solution.status, Status.OPTIMAL)
         self.assertAlmostEqual(solution.values[model.detect_biomass_reaction()], ROOM_GROWTH_RATE, 3)
@@ -227,7 +227,7 @@ class GeneEssentialityTest(unittest.TestCase):
     """ Test gene essentiality. """
 
     def testRun(self):
-        model = load_cbmodel(SMALL_TEST_MODEL, flavor='bigg')
+        model = load_cbmodel(SMALL_TEST_MODEL, flavor='cobra')
         essential = essential_genes(model)
         self.assertListEqual(essential, ESSENTIAL_GENES)
 
@@ -250,10 +250,11 @@ class SBMLTestODE(unittest.TestCase):
             self.assertEqual(r1.name, r2.name)
             self.assertEqual(r1.reversible, r2.reversible)
             self.assertDictEqual(r1.stoichiometry, r2.stoichiometry)
-            self.assertListEqual(r1.modifiers, r2.modifiers)
+            self.assertDictEqual(r1.regulators, r2.regulators)
         self.assertDictEqual(model.ratelaws, model_copy.ratelaws)
-        self.assertDictEqual(model.global_parameters, model_copy.global_parameters)
-        for p1, p2 in zip(model.local_parameters.values(), model_copy.local_parameters.values()):
+        self.assertDictEqual(model.constant_params, model_copy.constant_params)
+        self.assertDictEqual(model.variable_params, model_copy.variable_params)
+        for p1, p2 in zip(model.local_params.values(), model_copy.local_params.values()):
             self.assertDictEqual(p1, p2)
 
 

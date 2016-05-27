@@ -8,14 +8,14 @@ __author__ = 'kaizhuang'
 import matplotlib.pyplot as plt
 
 from framed.bioreactor import *
-from framed.core.fixes import fix_bigg_model
+from framed.core.fixes import fix_cobra_model
 from framed.io_utils.sbml import load_sbml_model, CONSTRAINT_BASED
 
 
 ### Basic Setup
 SMALL_TEST_MODEL = 'models/Ec_iAF1260_gene_names.xml'
 ec1260 = load_sbml_model(SMALL_TEST_MODEL, kind=CONSTRAINT_BASED)
-fix_bigg_model(ec1260)
+fix_cobra_model(ec1260)
 
 
 ### Defining the Ecoli class

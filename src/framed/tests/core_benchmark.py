@@ -41,7 +41,7 @@ def benchmark_combinatorial(method, model):
 
 
 def benchmark_methods_combinatorial(modelpath):
-    model = load_cbmodel(modelpath, flavor='bigg')
+    model = load_cbmodel(modelpath, flavor='cobra')
     benchmark_combinatorial('FBA', model)
     benchmark_combinatorial('pFBA', model)
     benchmark_combinatorial('qpFBA', model)
@@ -59,7 +59,7 @@ def benchmark_method(method, model):
 
 
 def benchmark_methods(modelpath):
-    model = load_cbmodel(modelpath, flavor='bigg')
+    model = load_cbmodel(modelpath, flavor='cobra')
     benchmark_method('FBA', model)
     benchmark_method('pFBA', model)
     benchmark_method('qpFBA', model)
@@ -69,7 +69,7 @@ def benchmark_methods(modelpath):
 
 
 def benchmark_build_problem(modelpath, n=10):
-    model = load_cbmodel(modelpath, flavor='bigg')
+    model = load_cbmodel(modelpath, flavor='cobra')
     print 'benchmarking build problem for', n, 'instances:',
     tstart = time()
             
@@ -81,7 +81,7 @@ def benchmark_build_problem(modelpath, n=10):
 
 
 def benchmark_solving_stage(modelpath, n=100):
-    model = load_cbmodel(modelpath, flavor='bigg')
+    model = load_cbmodel(modelpath, flavor='cobra')
     print 'benchmarking solving stage for', n, 'repetitions:',
     solver = solver_instance()
     solver.build_problem(model)
