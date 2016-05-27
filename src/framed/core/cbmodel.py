@@ -3,6 +3,47 @@ from collections import OrderedDict
 from framed.core.model import Model
 
 
+class Gene:
+    """ Base class for modeling genes. """
+
+    def __init__(self, elem_id, name=None):
+        """
+        Arguments:
+            elem_id : String -- a valid unique identifier
+            name : String -- common gene name
+        """
+        self.id = elem_id
+        self.name = name
+
+    def __str__(self):
+        return self.name if self.name else self.id
+
+
+class Protein:
+
+    def __init__(self):
+        self.genes = []
+
+    def __str__(self):
+        if len(self.genes) > 1:
+            return '(' + ' and '.join(self.genes) + ')'
+        else:
+            return str(self.genes[0])
+
+
+class GPRAssociation:
+
+    def __init__(self):
+        self.proteins = []
+
+    def __str__(self):
+        gpr_str = ' or '.join(map(str, self.proteins))
+        if len(self.proteins) > 1:
+            return '(' + gpr_str + ')'
+        else:
+            return gpr_str
+
+
 class CBModel(Model):
 
     def __init__(self, model_id):
@@ -14,8 +55,7 @@ class CBModel(Model):
         self.bounds = OrderedDict()
         self.objective = OrderedDict()
         self.genes = OrderedDict()
-        self.reaction_genes = OrderedDict()
-        self.rules = OrderedDict()
+        self.gpr_associations = OrderedDict()
         self.rule_functions = OrderedDict()
         self.biomass_reaction = None
 
@@ -101,9 +141,7 @@ class CBModel(Model):
 
         self.bounds[reaction.id] = (lb, ub)
         self.objective[reaction.id] = coeff
-        self.set_rule(reaction.id, '')
-        self.reaction_genes[reaction.id] = set()
-
+        self.set_gpr_association(reaction.id, GPRAssociation())
 
 
     def remove_reactions(self, id_list):
@@ -117,9 +155,8 @@ class CBModel(Model):
         for r_id in id_list:
             del self.bounds[r_id]
             del self.objective[r_id]
-            del self.rules[r_id]
+            del self.gpr_associations[r_id]
             del self.rule_functions[r_id]
-            del self.reaction_genes[r_id]
 
     def print_reaction(self, r_id, reaction_names=False, metabolite_names=False):
         """ Print a reaction to a text based representation.
@@ -200,30 +237,21 @@ class CBModel(Model):
         """
 
         for gene_id in gene_list:
-            del self.genes[gene_id]
-        else:
-            print 'No such gene', gene_id
+            if gene_id in self.genes:
+                del self.genes[gene_id]
+            else:
+                print 'No such gene', gene_id
 
+    def set_gpr_associations(self, gprs):
 
-    def set_rules(self, rules):
-        """ Define GPR association rules for a set of reactions
+        for r_id, gpr in gprs.items():
+            self.set_gpr_association(r_id, gpr)
 
-        Arguments:
-            rules : list (of (str, str)) -- reaction id, rule
-        """
-        for r_id, rule in rules.items():
-            self.set_rule(r_id, rule)
+    def set_gpr_association(self, r_id, gpr):
 
-    def set_rule(self, r_id, rule):
-        """ Define GPR association rule for one reaction
-
-        Arguments:
-            r_id : str -- reaction id
-            rule : str -- GPR association rule
-        """
         if r_id in self.reactions:
-            self.rules[r_id] = rule
-            self.rule_functions[r_id] = self._rule_to_function(rule)
+            self.gpr_associations[r_id] = gpr
+            self.rule_functions[r_id] = self._rule_to_function(gpr)
         else:
             print 'No such reaction', r_id
 
@@ -239,8 +267,8 @@ class CBModel(Model):
         genes_state = {gene: gene in active_genes for gene in self.genes}
         return [r_id for r_id, f in self.rule_functions.items() if f(genes_state)]
 
-
-    def _rule_to_function(self, rule):
+    def _rule_to_function(self, gpr):
+        rule = str(gpr)
         if not rule:
             rule = 'True'
         else:
@@ -249,18 +277,3 @@ class CBModel(Model):
                 rule = rule.replace(' ' + gene + ' ', ' x[\'' + gene + '\'] ')
         return eval('lambda x: ' + rule)
 
-
-class Gene:
-    """ Base class for modeling genes. """
-
-    def __init__(self, elem_id, name=None):
-        """
-        Arguments:
-            elem_id : String -- a valid unique identifier
-            name : String -- common gene name
-        """
-        self.id = elem_id
-        self.name = name
-
-    def __str__(self):
-        return self.name if self.name else self.id

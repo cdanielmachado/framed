@@ -22,10 +22,12 @@ TODO: Add support for sbml-fbc package.
 """
 from ..core.model import Model, Metabolite, Reaction, Compartment
 from ..core.odemodel import ODEModel
-from ..core.cbmodel import CBModel, Gene
+from ..core.cbmodel import CBModel, Gene, Protein, GPRAssociation
 from ..core.fixes import fix_cobra_model
 
 from collections import OrderedDict
+from sympy.parsing.sympy_parser import parse_expr
+from sympy import to_dnf, Or, And
 from libsbml import SBMLReader, SBMLWriter, SBMLDocument, XMLNode, AssignmentRule, parseL3FormulaWithModel
 
 CB_MODEL = 'cb'
@@ -158,21 +160,18 @@ def _load_cbmodel(sbml_model, flavor):
     if flavor == COBRA_MODEL:
         bounds = _load_cobra_bounds(sbml_model)
         objective = _load_cobra_objective(sbml_model)
-        genes, rules, reaction_genes = _load_cobra_gpr(sbml_model)
+        genes, gprs = _load_cobra_gpr(sbml_model)
     elif flavor == FBC2_MODEL:
         bounds = _load_fbc2_bounds(sbml_model)
         objective = _load_fbc2_objective(sbml_model)
-        genes, rules, reaction_genes = _load_fbc2_gpr(sbml_model)
+        genes, gprs = _load_fbc2_gpr(sbml_model)
     else:
         print 'unsupported SBML flavor', flavor
 
     model.set_multiple_bounds(bounds)
     model.set_objective(objective)
     model.add_genes(genes)
-    model.set_rules(rules)
-
-    for r_id, gene_set in reaction_genes.items():
-        model.reaction_genes[r_id] = gene_set
+    model.set_gpr_associations(gprs)
 
     return model
 
@@ -180,8 +179,8 @@ def _load_cbmodel(sbml_model, flavor):
 def _load_cobra_bounds(sbml_model):
     bounds = OrderedDict()
     for reaction in sbml_model.getListOfReactions():
-        lb =_get_cb_parameter(reaction, LB_TAG)
-        ub =_get_cb_parameter(reaction, UB_TAG)
+        lb = _get_cb_parameter(reaction, LB_TAG)
+        ub = _get_cb_parameter(reaction, UB_TAG)
         bounds[reaction.getId()] = (lb, ub)
     return bounds
 
@@ -207,16 +206,15 @@ def _get_cb_parameter(reaction, tag, default_value=None):
 
 def _load_cobra_gpr(sbml_model):
     genes = set()
-    rules = OrderedDict()
-    reaction_genes = OrderedDict()
+    gprs = OrderedDict()
     for reaction in sbml_model.getListOfReactions():
         rule = _extract_rule(reaction)
-        new_genes = rule.replace('(', '').replace(')', '').replace(' and ', ' ').replace(' or ', ' ').split()
-        genes = genes | set(new_genes)
-        rules[reaction.getId()] = rule
-        reaction_genes[reaction.getId()] = set(new_genes)
+        gpr = _parse_gpr_rule(rule)
+        for protein in gpr.proteins:
+            genes |= set(protein.genes)
+        gprs[reaction.getId()] = gpr
     genes = [Gene(gene) for gene in sorted(genes)]
-    return genes, rules, reaction_genes
+    return genes, gprs
 
 
 def _extract_rule(reaction):
@@ -226,6 +224,35 @@ def _extract_rule(reaction):
     else:
         rule = ''
     return rule
+
+
+def _parse_gpr_rule(rule):
+    rule = rule.replace(' and ', ' & ').replace(' or ', ' | ').strip()
+    gpr = GPRAssociation()
+
+    if not rule:
+        return gpr
+
+    expr = to_dnf(parse_expr(rule))
+
+    if type(expr) is Or:
+        for sub_expr in expr.args:
+            protein = Protein()
+            if type(sub_expr) is And:
+                protein.genes = [str(gene) for gene in sub_expr.args]
+            else:
+                protein.genes = [str(sub_expr)]
+            gpr.proteins.append(protein)
+    elif type(expr) is And:
+        protein = Protein()
+        protein.genes = [str(gene) for gene in expr.args]
+        gpr.proteins = [protein]
+    else:
+        protein = Protein()
+        protein.genes = [str(expr)]
+        gpr.proteins = [protein]
+
+    return gpr
 
 
 def _load_fbc2_bounds(sbml_model):
@@ -257,49 +284,55 @@ def _load_fbc2_gpr(sbml_model):
     #TODO: Temporary solution (converting to old GPR format) until adopting GPR Association classes
     fbcmodel = sbml_model.getPlugin('fbc')
     genes = [Gene(gene.getId(), gene.getName()) for gene in fbcmodel.getListOfGeneProducts()]
-    rules = OrderedDict()
-    reaction_genes = OrderedDict()
+    gprs = OrderedDict()
 
     for reaction in sbml_model.getListOfReactions():
         fbcrxn = reaction.getPlugin('fbc')
         gpr_assoc = fbcrxn.getGeneProductAssociation()
         if gpr_assoc:
             gpr_assoc = gpr_assoc.getAssociation()
-            rule, rxn_genes = _parse_fbc_association(gpr_assoc)
-            rules[reaction.getId()] = rule
-            reaction_genes[reaction.getId()] = rxn_genes
+            gprs[reaction.getId()] = _parse_fbc_association(gpr_assoc)
         else:
-            rules[reaction.getId()] = ''
-            reaction_genes[reaction.getId()] = set()
+            gprs[reaction.getId()] = GPRAssociation()
 
-    return genes, rules, reaction_genes
+    return genes, gprs
 
 
-def _parse_fbc_association(gpr_assoc, genes=None):
-    if not genes:
-        genes = set()
+def _parse_fbc_association(gpr_assoc):
+
+    gpr = GPRAssociation()
+
     if gpr_assoc.isFbcOr():
-        sub_items = gpr_assoc.getListOfAssociations()
-        parsed = [_parse_fbc_association(item) for item in sub_items]
-        rules2, genes2 = zip(*parsed)
-        rule = '( ' + ' or '.join(rules2) + ' )'
-        for gene_set in genes2:
-            genes |= gene_set
+        for item in gpr_assoc.getListOfAssociations():
+            protein = Protein()
+            if item.isFbcAnd():
+                for subitem in item.getListOfAssociations():
+                    if subitem.isGeneProductRef():
+                        protein.genes.append(subitem.getGeneProduct())
+                    else:
+                        print 'Gene association is not DNF'
+            elif item.isGeneProductRef:
+                protein.genes.append(item.getGeneProduct())
+            else:
+                print 'Gene association is not DNF'
+            gpr.proteins.append(protein)
 
-    if gpr_assoc.isFbcAnd():
-        sub_items = gpr_assoc.getListOfAssociations()
-        parsed = [_parse_fbc_association(item) for item in sub_items]
-        rules2, genes2 = zip(*parsed)
-        rule = '( ' + ' and '.join(rules2) + ' )'
-        for gene_set in genes2:
-            genes |= gene_set
+    elif gpr_assoc.isFbcAnd():
+        protein = Protein()
+        for item in gpr_assoc.getListOfAssociations():
+            if item.isGeneProductRef():
+                protein.genes.append(item.getGeneProduct())
+            else:
+                print 'Gene association is not DNF'
+        gpr.proteins = [protein]
+    elif gpr_assoc.isGeneProductRef():
+        protein = Protein()
+        protein.genes = [gpr_assoc.getGeneProduct()]
+        gpr.proteins = [protein]
+    else:
+        print 'Gene association is not DNF'
 
-    if gpr_assoc.isGeneProductRef():
-        gene_id = gpr_assoc.getGeneProduct()
-        rule = gene_id
-        genes.add(gene_id)
-
-    return rule, genes
+    return gpr
 
 
 def _load_odemodel(sbml_model):
@@ -453,7 +486,8 @@ def _save_gpr(model, sbml_model):
     for r_id in model.reactions:
         sbml_reaction = sbml_model.getReaction(r_id)
         #sbml_reaction.appendNotes(GPR_TAG + ' ' + model.rules[r_id])
-        note = XMLNode.convertStringToXMLNode('<html><p>' + GPR_TAG + ' ' + model.rules[r_id] + '</p></html>')
+        association = str(model.gpr_associations[r_id])
+        note = XMLNode.convertStringToXMLNode('<html><p>' + GPR_TAG + ' ' + association + '</p></html>')
         note.getNamespaces().add('http://www.w3.org/1999/xhtml')
         sbml_reaction.setNotes(note)
 

@@ -78,10 +78,8 @@ def clean_bigg_ids(model):
         key_replace(model.reactions, r_id, reaction.id)
         key_replace(model.bounds, r_id, reaction.id)
         key_replace(model.objective, r_id, reaction.id)
-
-        key_replace(model.rules, r_id, reaction.id)
+        key_replace(model.gpr_associations, r_id, reaction.id)
         key_replace(model.rule_functions, r_id, reaction.id)
-        key_replace(model.reaction_genes, r_id, reaction.id)
 
         for m_id in reaction.stoichiometry.keys():
             key_replace(reaction.stoichiometry, m_id, clean(m_id))

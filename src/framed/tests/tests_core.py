@@ -37,10 +37,10 @@ LMOMA_GROWTH_RATE = 0.5066
 LMOMA_SUCC_EX = 5.311
 
 ROOM_GENE_KO = ['b0721']
-#ROOM_GROWTH_RATE = 0.3120
-#ROOM_SUCC_EX = 2.932
-ROOM_GROWTH_RATE = 0.6293
-ROOM_SUCC_EX = 0.001
+ROOM_GROWTH_RATE = 0.3120
+ROOM_SUCC_EX = 2.932
+#ROOM_GROWTH_RATE = 0.6293
+#ROOM_SUCC_EX = 0.001
 
 ESSENTIAL_GENES = ['b0720', 'b1136', 'b1779', 'b2415', 'b2416', 'b2779', 'b2926']
 
@@ -62,7 +62,8 @@ class SBMLTest(unittest.TestCase):
             self.assertDictEqual(r1.stoichiometry, r2.stoichiometry)
             self.assertDictEqual(model.bounds, model_copy.bounds)
         self.assertListEqual(model.genes.keys(), model_copy.genes.keys())
-        self.assertDictEqual(model.rules, model_copy.rules)
+        for gpr1, gpr2 in zip(model.gpr_associations.values(), model_copy.gpr_associations.values()):
+            self.assertEqual(str(gpr1), str(gpr2))
 
 
 class PlainTextIOTest(unittest.TestCase):
@@ -169,8 +170,8 @@ class TransformationCommutativityTest(unittest.TestCase):
         self.assertListEqual(model.reactions.keys(), model2.reactions.keys())
         self.assertDictEqual(model.bounds, model2.bounds)
         self.assertListEqual(model.genes.keys(), model2.genes.keys())
-        self.assertDictEqual(model.rules, model2.rules)
-
+        for gpr1, gpr2 in zip(model.gpr_associations.values(), model2.gpr_associations.values()):
+            self.assertEqual(str(gpr1), str(gpr2))
 
 class FVATest(unittest.TestCase):
     """ Test flux variability analysis """
