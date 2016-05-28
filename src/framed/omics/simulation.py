@@ -1,11 +1,9 @@
 from framed.solvers import solver_instance
-from framed.solvers.solver import Status
-from framed.omics.gpr import parse_rule
 from framed.analysis.simulation import FBA, pFBA
 from numpy import percentile
 
 
-def gene2rxn(rule, gene_exp, and_func=min, or_func=sum):
+def gene2rxn(gpr, gene_exp, and_func=min, or_func=sum):
 
     def f_and(x):
         x2 = [xi for xi in x if xi is not None]
@@ -15,18 +13,17 @@ def gene2rxn(rule, gene_exp, and_func=min, or_func=sum):
         x2 = [xi for xi in x if xi is not None]
         return or_func(x2) if x2 else None
 
-    gpr = parse_rule(rule)
     level = f_or([f_and([gene_exp[gene]
-                         for gene in complex.genes if gene in gene_exp])
-                  for complex in gpr.complexes])
+                         for gene in protein.genes if gene in gene_exp])
+                  for protein in gpr.proteins])
 
     return level
 
 
 def gene_to_reaction_expression(model, gene_exp, and_func=min, or_func=sum):
     rxn_exp = {}
-    for r_id, rule in model.rules.items():
-        level = gene2rxn(rule, gene_exp, and_func, or_func)
+    for r_id, gpr in model.gpr_associations.items():
+        level = gene2rxn(gpr, gene_exp, and_func, or_func)
         if level is not None:
             rxn_exp[r_id] = level
     return rxn_exp

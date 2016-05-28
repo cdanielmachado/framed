@@ -10,7 +10,7 @@ from framed.bioreactor.base import *
 from framed.analysis.simulation import FBA
 
 SMALL_TEST_MODEL = '../../../examples/models/ecoli_core_model.xml'
-ec_core_model = load_cbmodel(SMALL_TEST_MODEL, flavor='bigg')
+ec_core_model = load_cbmodel(SMALL_TEST_MODEL, flavor='cobra')
 
 
 class OrganismTest(unittest.TestCase):

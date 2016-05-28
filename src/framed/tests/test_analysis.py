@@ -10,7 +10,7 @@ from framed.analysis.variability import FVA, flux_envelope, production_envelope
 from framed.bioreactor import *
 
 SMALL_TEST_MODEL = '../../../examples/models/ecoli_core_model.xml'
-ec_core_model = load_cbmodel(SMALL_TEST_MODEL, flavor='bigg')
+ec_core_model = load_cbmodel(SMALL_TEST_MODEL, flavor='cobra')
 
 
 class FVATest(unittest.TestCase):

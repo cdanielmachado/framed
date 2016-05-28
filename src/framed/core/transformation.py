@@ -67,8 +67,8 @@ def make_irreversible(model):
             bwd_id = reaction.id + '_b'
             mapping[r_id] = (fwd_id, bwd_id)
             bwd_stoichiometry = [(m_id, -coeff) for m_id, coeff in reaction.stoichiometry.items()]
-            model.add_reaction(Reaction(fwd_id, reaction.name, False, reaction.stoichiometry, reaction.modifiers))
-            model.add_reaction(Reaction(bwd_id, reaction.name, False, bwd_stoichiometry, reaction.modifiers))
+            model.add_reaction(Reaction(fwd_id, reaction.name, False, reaction.stoichiometry, reaction.regulators))
+            model.add_reaction(Reaction(bwd_id, reaction.name, False, bwd_stoichiometry, reaction.regulators))
 
             if isinstance(model, CBModel):
                 lb, ub = model.bounds[r_id]
@@ -81,8 +81,8 @@ def make_irreversible(model):
                 obj = model.objective[r_id]
                 model.set_reaction_objective(fwd_id, obj if obj >= 0 else 0)
                 model.set_reaction_objective(bwd_id, -obj if obj < 0 else 0)
-                model.set_rule(fwd_id, model.rules[r_id])
-                model.set_rule(bwd_id, model.rules[r_id])
+                model.set_gpr_association(fwd_id, model.gpr_associations[r_id])
+                model.set_gpr_association(bwd_id, model.gpr_associations[r_id])
 
             model.remove_reaction(r_id)
 
@@ -114,6 +114,10 @@ def _disconnected_metabolites(model):
     m_r_table = model.metabolite_reaction_lookup_table()
     return [m_id for m_id, edges in m_r_table.items() if not edges]
 
+
 def _disconnected_genes(model):
-    connected_genes = reduce(set.__or__, model.reaction_genes.values())
-    return set(model.genes) - connected_genes
+    disconnected = set(model.genes)
+    for gpr in model.gpr_associations.values():
+        if gpr:
+            disconnected -= set(gpr.get_genes())
+    return disconnected

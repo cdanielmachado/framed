@@ -6,7 +6,7 @@ Unit testing for gap finding.
 import re
 import unittest
 
-from framed.core.fixes import fix_bigg_model
+from framed.core.fixes import fix_cobra_model
 from framed.io_utils.plaintext import read_model_from_file
 from framed.io_utils.sbml import load_cbmodel
 from framed.solvers.glpk_wrapper_lazy import GlpkSolverLazy
@@ -59,7 +59,7 @@ class GapFindTest(unittest.TestCase):
 # 
 #             model = '../../../examples/reconstruction/gapFind/ecoli_core_model' + str(i) + '.xml'
 #             self.model = load_sbml_model(model, kind=CONSTRAINT_BASED)
-#             fix_bigg_model(self.model)
+#             fix_cobra_model(self.model)
 # 
 #             framed_result = GapFind(self.model, solver)
 #             COBRA_mets_result_filename = '../../../examples/reconstruction/gapFind/gapFind_results/ecoli0' + str(i) + '_mets_glpk.txt'
@@ -76,7 +76,7 @@ class GapFindTest(unittest.TestCase):
             solver = GlpkSolverLazy(tol_int="default")
  
             model = '../../../examples/reconstruction/gapFind/ecoli_core_model' + str(i) + '.xml'
-            self.model = load_cbmodel(model, flavor='bigg')
+            self.model = load_cbmodel(model, flavor='cobra')
 
             framed_result = GapFind(self.model, solver)
             COBRA_mets_result_filename = '../../../examples/reconstruction/gapFind/gapFind_results/ecoli0' + str(i) + '_mets_glpk.txt'
@@ -95,7 +95,7 @@ class GapFindTest(unittest.TestCase):
             solver = GurobiSolver()
 
             model = '../../../examples/reconstruction/gapFind/ecoli_core_model' + str(i) + '.xml'
-            self.model = load_cbmodel(model, flavor='bigg')
+            self.model = load_cbmodel(model, flavor='cobra')
 
             framed_result = GapFind(self.model, solver)
             COBRA_mets_result_filename = '../../../examples/reconstruction/gapFind/gapFind_results/ecoli0' + str(i) + '_mets_gurobi.txt'
@@ -113,7 +113,7 @@ class GapFind_exp(unittest.TestCase):
         solver = GlpkSolverLazy()
         model = '../../../examples/reconstruction/toy_model'
         self.model = read_model_from_file(model, kind='cb')
-        fix_bigg_model(self.model)
+        fix_cobra_model(self.model)
         print self.model
         framed_result = GapFind(self.model, solver, root_gaps_only=True)
         print framed_result

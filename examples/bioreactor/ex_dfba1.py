@@ -9,14 +9,14 @@ __author__ = 'kaizhuang'
 import matplotlib.pyplot as plt
 
 from framed.io_utils.sbml import load_sbml_model, CONSTRAINT_BASED
-from framed.core.fixes import fix_bigg_model
+from framed.core.fixes import fix_cobra_model
 from framed.bioreactor import *
 from framed.bioreactor.bioreactors import *
 
 ### Basic Setup
 SMALL_TEST_MODEL = 'models/ecoli_core_model.xml'
 ec_core_model = load_sbml_model(SMALL_TEST_MODEL, kind=CONSTRAINT_BASED)
-fix_bigg_model(ec_core_model)
+fix_cobra_model(ec_core_model)
 
 
 ### Defining the Ecoli class
