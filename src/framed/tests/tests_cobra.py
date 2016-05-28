@@ -5,7 +5,7 @@ Unit testing module for core features.
 """
 import unittest
 
-from framed.io_utils.sbml import load_cbmodel, load_odemodel, save_sbml_model
+from framed.io_utils.sbml import load_cbmodel
 from framed.analysis.simulation import FBA, pFBA
 from framed.analysis.variability import FVA
 from framed.io_utils.plaintext import read_model_from_file, write_model_to_file
@@ -43,40 +43,6 @@ ROOM_SUCC_EX = 2.932
 #ROOM_SUCC_EX = 0.001
 
 ESSENTIAL_GENES = ['b0720', 'b1136', 'b1779', 'b2415', 'b2416', 'b2779', 'b2926']
-
-
-class SBMLTest(unittest.TestCase):
-    """ Test SBML import and export. """
-
-    def testRun(self):
-        model = load_cbmodel(SMALL_TEST_MODEL)
-        save_sbml_model(model, TEST_MODEL_COPY)
-        model_copy = load_cbmodel(TEST_MODEL_COPY)
-        self.assertEqual(model.id, model_copy.id)
-        self.assertListEqual(model.compartments.keys(), model_copy.compartments.keys())
-        self.assertListEqual(model.metabolites.keys(), model_copy.metabolites.keys())
-        self.assertListEqual(model.reactions.keys(), model_copy.reactions.keys())
-        for r1, r2 in zip(model.reactions.values(), model_copy.reactions.values()):
-            self.assertEqual(r1.name, r2.name)
-            self.assertEqual(r1.reversible, r2.reversible)
-            self.assertDictEqual(r1.stoichiometry, r2.stoichiometry)
-            self.assertDictEqual(model.bounds, model_copy.bounds)
-        self.assertListEqual(model.genes.keys(), model_copy.genes.keys())
-        for gpr1, gpr2 in zip(model.gpr_associations.values(), model_copy.gpr_associations.values()):
-            self.assertEqual(str(gpr1), str(gpr2))
-
-
-class PlainTextIOTest(unittest.TestCase):
-    """ Test plain text import and export. """
-
-    def testRun(self):
-        model = load_cbmodel(SMALL_TEST_MODEL)
-        write_model_to_file(model, PLAIN_TEXT_COPY)
-        model_copy = read_model_from_file(PLAIN_TEXT_COPY, kind='cb')
-        self.assertListEqual(sorted(model.metabolites.keys()),
-                             sorted(model_copy.metabolites.keys()))
-        self.assertListEqual(model.reactions.keys(), model_copy.reactions.keys())
-        self.assertDictEqual(model.bounds, model_copy.bounds)
 
 
 class FBATest(unittest.TestCase):
@@ -236,36 +202,10 @@ class GeneEssentialityTest(unittest.TestCase):
 
 
 
-class SBMLTestODE(unittest.TestCase):
-    """ Test SBML import and export. """
-
-    def testRun(self):
-        model = load_odemodel(KINETIC_MODEL)
-        save_sbml_model(model, KINETIC_MODEL_COPY)
-        model_copy = load_odemodel(KINETIC_MODEL_COPY)
-        self.assertEqual(model.id, model_copy.id)
-        self.assertListEqual(model.compartments.keys(), model_copy.compartments.keys())
-        for c1, c2 in zip(model.compartments.values(), model_copy.compartments.values()):
-            self.assertEqual(c1.size, c2.size)
-        self.assertListEqual(model.metabolites.keys(), model_copy.metabolites.keys())
-        self.assertListEqual(model.reactions.keys(), model_copy.reactions.keys())
-        for r1, r2 in zip(model.reactions.values(), model_copy.reactions.values()):
-            self.assertEqual(r1.name, r2.name)
-            self.assertEqual(r1.reversible, r2.reversible)
-            self.assertDictEqual(r1.stoichiometry, r2.stoichiometry)
-            self.assertDictEqual(r1.regulators, r2.regulators)
-        self.assertDictEqual(model.ratelaws, model_copy.ratelaws)
-        self.assertDictEqual(model.constant_params, model_copy.constant_params)
-        self.assertDictEqual(model.variable_params, model_copy.variable_params)
-        for p1, p2 in zip(model.local_params.values(), model_copy.local_params.values()):
-            self.assertDictEqual(p1, p2)
-
-
 def suite():
-    tests = [SBMLTest, PlainTextIOTest, FBATest, pFBATest, FBAFromPlainTextTest, FVATest, IrreversibleModelFBATest,
+    tests = [FBATest, pFBATest, FBAFromPlainTextTest, FVATest, IrreversibleModelFBATest,
              SimplifiedModelFBATest, TransformationCommutativityTest, GeneDeletionFBATest, GeneDeletionMOMATest,
-             GeneEssentialityTest, GeneDeletionLMOMATest, GeneDeletionROOMTest, SBMLTestODE]
-    tests = [FVATest]
+             GeneEssentialityTest, GeneDeletionLMOMATest, GeneDeletionROOMTest]
 
     test_suite = unittest.TestSuite()
     for test in tests:

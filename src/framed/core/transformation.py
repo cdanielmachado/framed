@@ -118,6 +118,6 @@ def _disconnected_metabolites(model):
 def _disconnected_genes(model):
     disconnected = set(model.genes)
     for gpr in model.gpr_associations.values():
-        for protein in gpr.proteins:
-            disconnected -= set(protein.genes)
+        if gpr:
+            disconnected -= set(gpr.get_genes())
     return disconnected

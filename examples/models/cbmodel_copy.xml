@@ -101,6 +101,8 @@
             <cn type="integer"> 0 </cn>
           </math>
           <listOfLocalParameters>
+            <localParameter id="LOWER_BOUND" value="-1000"/>
+            <localParameter id="UPPER_BOUND" value="1000"/>
             <localParameter id="OBJECTIVE_COEFFICIENT" value="0"/>
           </listOfLocalParameters>
         </kineticLaw>
@@ -122,6 +124,8 @@
             <cn type="integer"> 0 </cn>
           </math>
           <listOfLocalParameters>
+            <localParameter id="LOWER_BOUND" value="-1000"/>
+            <localParameter id="UPPER_BOUND" value="1000"/>
             <localParameter id="OBJECTIVE_COEFFICIENT" value="0"/>
           </listOfLocalParameters>
         </kineticLaw>
@@ -145,6 +149,8 @@
             <cn type="integer"> 0 </cn>
           </math>
           <listOfLocalParameters>
+            <localParameter id="LOWER_BOUND" value="-1000"/>
+            <localParameter id="UPPER_BOUND" value="1000"/>
             <localParameter id="OBJECTIVE_COEFFICIENT" value="0"/>
           </listOfLocalParameters>
         </kineticLaw>
@@ -167,6 +173,8 @@
             <cn type="integer"> 0 </cn>
           </math>
           <listOfLocalParameters>
+            <localParameter id="LOWER_BOUND" value="-1000"/>
+            <localParameter id="UPPER_BOUND" value="1000"/>
             <localParameter id="OBJECTIVE_COEFFICIENT" value="0"/>
           </listOfLocalParameters>
         </kineticLaw>
@@ -189,16 +197,13 @@
             <cn type="integer"> 0 </cn>
           </math>
           <listOfLocalParameters>
+            <localParameter id="LOWER_BOUND" value="-1000"/>
+            <localParameter id="UPPER_BOUND" value="1000"/>
             <localParameter id="OBJECTIVE_COEFFICIENT" value="0"/>
           </listOfLocalParameters>
         </kineticLaw>
       </reaction>
       <reaction id="R_ACt2r" name="acetate reversible transport via proton symport" reversible="true">
-        <notes>
-          <html xmlns="http://www.w3.org/1999/xhtml">
-            <p>GENE_ASSOCIATION: </p>
-          </html>
-        </notes>
         <listOfReactants>
           <speciesReference species="M_ac_e" stoichiometry="1"/>
           <speciesReference species="M_h_e" stoichiometry="1"/>
@@ -212,6 +217,8 @@
             <cn type="integer"> 0 </cn>
           </math>
           <listOfLocalParameters>
+            <localParameter id="LOWER_BOUND" value="-1000"/>
+            <localParameter id="UPPER_BOUND" value="1000"/>
             <localParameter id="OBJECTIVE_COEFFICIENT" value="0"/>
           </listOfLocalParameters>
         </kineticLaw>
@@ -234,6 +241,8 @@
             <cn type="integer"> 0 </cn>
           </math>
           <listOfLocalParameters>
+            <localParameter id="LOWER_BOUND" value="-1000"/>
+            <localParameter id="UPPER_BOUND" value="1000"/>
             <localParameter id="OBJECTIVE_COEFFICIENT" value="0"/>
           </listOfLocalParameters>
         </kineticLaw>
@@ -260,6 +269,7 @@
           </math>
           <listOfLocalParameters>
             <localParameter id="LOWER_BOUND" value="0"/>
+            <localParameter id="UPPER_BOUND" value="1000"/>
             <localParameter id="OBJECTIVE_COEFFICIENT" value="0"/>
           </listOfLocalParameters>
         </kineticLaw>
@@ -283,6 +293,8 @@
             <cn type="integer"> 0 </cn>
           </math>
           <listOfLocalParameters>
+            <localParameter id="LOWER_BOUND" value="-1000"/>
+            <localParameter id="UPPER_BOUND" value="1000"/>
             <localParameter id="OBJECTIVE_COEFFICIENT" value="0"/>
           </listOfLocalParameters>
         </kineticLaw>
@@ -307,16 +319,13 @@
             <cn type="integer"> 0 </cn>
           </math>
           <listOfLocalParameters>
+            <localParameter id="LOWER_BOUND" value="-1000"/>
+            <localParameter id="UPPER_BOUND" value="1000"/>
             <localParameter id="OBJECTIVE_COEFFICIENT" value="0"/>
           </listOfLocalParameters>
         </kineticLaw>
       </reaction>
       <reaction id="R_ATPM" name="ATP maintenance requirement" reversible="false">
-        <notes>
-          <html xmlns="http://www.w3.org/1999/xhtml">
-            <p>GENE_ASSOCIATION: </p>
-          </html>
-        </notes>
         <listOfReactants>
           <speciesReference species="M_atp_c" stoichiometry="1"/>
           <speciesReference species="M_h2o_c" stoichiometry="1"/>
@@ -332,6 +341,7 @@
           </math>
           <listOfLocalParameters>
             <localParameter id="LOWER_BOUND" value="8.39"/>
+            <localParameter id="UPPER_BOUND" value="1000"/>
             <localParameter id="OBJECTIVE_COEFFICIENT" value="0"/>
           </listOfLocalParameters>
         </kineticLaw>
@@ -357,16 +367,13 @@
             <cn type="integer"> 0 </cn>
           </math>
           <listOfLocalParameters>
+            <localParameter id="LOWER_BOUND" value="-1000"/>
+            <localParameter id="UPPER_BOUND" value="1000"/>
             <localParameter id="OBJECTIVE_COEFFICIENT" value="0"/>
           </listOfLocalParameters>
         </kineticLaw>
       </reaction>
       <reaction id="R_Biomass_Ecoli_core_w_GAM" name="Biomass Objective Function with GAM" reversible="false">
-        <notes>
-          <html xmlns="http://www.w3.org/1999/xhtml">
-            <p>GENE_ASSOCIATION: </p>
-          </html>
-        </notes>
         <listOfReactants>
           <speciesReference species="M_3pg_c" stoichiometry="1.496"/>
           <speciesReference species="M_accoa_c" stoichiometry="3.7478"/>
@@ -400,6 +407,7 @@
           </math>
           <listOfLocalParameters>
             <localParameter id="LOWER_BOUND" value="0"/>
+            <localParameter id="UPPER_BOUND" value="1000"/>
             <localParameter id="OBJECTIVE_COEFFICIENT" value="1"/>
           </listOfLocalParameters>
         </kineticLaw>
@@ -421,6 +429,8 @@
             <cn type="integer"> 0 </cn>
           </math>
           <listOfLocalParameters>
+            <localParameter id="LOWER_BOUND" value="-1000"/>
+            <localParameter id="UPPER_BOUND" value="1000"/>
             <localParameter id="OBJECTIVE_COEFFICIENT" value="0"/>
           </listOfLocalParameters>
         </kineticLaw>
@@ -447,6 +457,7 @@
           </math>
           <listOfLocalParameters>
             <localParameter id="LOWER_BOUND" value="0"/>
+            <localParameter id="UPPER_BOUND" value="1000"/>
             <localParameter id="OBJECTIVE_COEFFICIENT" value="0"/>
           </listOfLocalParameters>
         </kineticLaw>
@@ -473,6 +484,7 @@
           </math>
           <listOfLocalParameters>
             <localParameter id="LOWER_BOUND" value="0"/>
+            <localParameter id="UPPER_BOUND" value="1000"/>
             <localParameter id="OBJECTIVE_COEFFICIENT" value="0"/>
           </listOfLocalParameters>
         </kineticLaw>
@@ -496,6 +508,8 @@
             <cn type="integer"> 0 </cn>
           </math>
           <listOfLocalParameters>
+            <localParameter id="LOWER_BOUND" value="-1000"/>
+            <localParameter id="UPPER_BOUND" value="1000"/>
             <localParameter id="OBJECTIVE_COEFFICIENT" value="0"/>
           </listOfLocalParameters>
         </kineticLaw>
@@ -518,16 +532,13 @@
             <cn type="integer"> 0 </cn>
           </math>
           <listOfLocalParameters>
+            <localParameter id="LOWER_BOUND" value="-1000"/>
+            <localParameter id="UPPER_BOUND" value="1000"/>
             <localParameter id="OBJECTIVE_COEFFICIENT" value="0"/>
           </listOfLocalParameters>
         </kineticLaw>
       </reaction>
       <reaction id="R_ETOHt2r" name="ethanol reversible transport via proton symport" reversible="true">
-        <notes>
-          <html xmlns="http://www.w3.org/1999/xhtml">
-            <p>GENE_ASSOCIATION: </p>
-          </html>
-        </notes>
         <listOfReactants>
           <speciesReference species="M_etoh_e" stoichiometry="1"/>
           <speciesReference species="M_h_e" stoichiometry="1"/>
@@ -541,16 +552,13 @@
             <cn type="integer"> 0 </cn>
           </math>
           <listOfLocalParameters>
+            <localParameter id="LOWER_BOUND" value="-1000"/>
+            <localParameter id="UPPER_BOUND" value="1000"/>
             <localParameter id="OBJECTIVE_COEFFICIENT" value="0"/>
           </listOfLocalParameters>
         </kineticLaw>
       </reaction>
       <reaction id="R_EX_ac_e" name="Acetate exchange" reversible="true">
-        <notes>
-          <html xmlns="http://www.w3.org/1999/xhtml">
-            <p>GENE_ASSOCIATION: </p>
-          </html>
-        </notes>
         <listOfReactants>
           <speciesReference species="M_ac_e" stoichiometry="1"/>
         </listOfReactants>
@@ -560,16 +568,12 @@
           </math>
           <listOfLocalParameters>
             <localParameter id="LOWER_BOUND" value="0"/>
+            <localParameter id="UPPER_BOUND" value="1000"/>
             <localParameter id="OBJECTIVE_COEFFICIENT" value="0"/>
           </listOfLocalParameters>
         </kineticLaw>
       </reaction>
       <reaction id="R_EX_acald_e" name="Acetaldehyde exchange" reversible="true">
-        <notes>
-          <html xmlns="http://www.w3.org/1999/xhtml">
-            <p>GENE_ASSOCIATION: </p>
-          </html>
-        </notes>
         <listOfReactants>
           <speciesReference species="M_acald_e" stoichiometry="1"/>
         </listOfReactants>
@@ -579,16 +583,12 @@
           </math>
           <listOfLocalParameters>
             <localParameter id="LOWER_BOUND" value="0"/>
+            <localParameter id="UPPER_BOUND" value="1000"/>
             <localParameter id="OBJECTIVE_COEFFICIENT" value="0"/>
           </listOfLocalParameters>
         </kineticLaw>
       </reaction>
       <reaction id="R_EX_akg_e" name="2-Oxoglutarate exchange" reversible="true">
-        <notes>
-          <html xmlns="http://www.w3.org/1999/xhtml">
-            <p>GENE_ASSOCIATION: </p>
-          </html>
-        </notes>
         <listOfReactants>
           <speciesReference species="M_akg_e" stoichiometry="1"/>
         </listOfReactants>
@@ -598,16 +598,12 @@
           </math>
           <listOfLocalParameters>
             <localParameter id="LOWER_BOUND" value="0"/>
+            <localParameter id="UPPER_BOUND" value="1000"/>
             <localParameter id="OBJECTIVE_COEFFICIENT" value="0"/>
           </listOfLocalParameters>
         </kineticLaw>
       </reaction>
       <reaction id="R_EX_co2_e" name="CO2 exchange" reversible="true">
-        <notes>
-          <html xmlns="http://www.w3.org/1999/xhtml">
-            <p>GENE_ASSOCIATION: </p>
-          </html>
-        </notes>
         <listOfReactants>
           <speciesReference species="M_co2_e" stoichiometry="1"/>
         </listOfReactants>
@@ -616,16 +612,13 @@
             <cn type="integer"> 0 </cn>
           </math>
           <listOfLocalParameters>
+            <localParameter id="LOWER_BOUND" value="-1000"/>
+            <localParameter id="UPPER_BOUND" value="1000"/>
             <localParameter id="OBJECTIVE_COEFFICIENT" value="0"/>
           </listOfLocalParameters>
         </kineticLaw>
       </reaction>
       <reaction id="R_EX_etoh_e" name="Ethanol exchange" reversible="true">
-        <notes>
-          <html xmlns="http://www.w3.org/1999/xhtml">
-            <p>GENE_ASSOCIATION: </p>
-          </html>
-        </notes>
         <listOfReactants>
           <speciesReference species="M_etoh_e" stoichiometry="1"/>
         </listOfReactants>
@@ -635,16 +628,12 @@
           </math>
           <listOfLocalParameters>
             <localParameter id="LOWER_BOUND" value="0"/>
+            <localParameter id="UPPER_BOUND" value="1000"/>
             <localParameter id="OBJECTIVE_COEFFICIENT" value="0"/>
           </listOfLocalParameters>
         </kineticLaw>
       </reaction>
       <reaction id="R_EX_for_e" name="Formate exchange" reversible="true">
-        <notes>
-          <html xmlns="http://www.w3.org/1999/xhtml">
-            <p>GENE_ASSOCIATION: </p>
-          </html>
-        </notes>
         <listOfReactants>
           <speciesReference species="M_for_e" stoichiometry="1"/>
         </listOfReactants>
@@ -654,16 +643,12 @@
           </math>
           <listOfLocalParameters>
             <localParameter id="LOWER_BOUND" value="0"/>
+            <localParameter id="UPPER_BOUND" value="1000"/>
             <localParameter id="OBJECTIVE_COEFFICIENT" value="0"/>
           </listOfLocalParameters>
         </kineticLaw>
       </reaction>
       <reaction id="R_EX_fru_e" name="D-Fructose exchange" reversible="true">
-        <notes>
-          <html xmlns="http://www.w3.org/1999/xhtml">
-            <p>GENE_ASSOCIATION: </p>
-          </html>
-        </notes>
         <listOfReactants>
           <speciesReference species="M_fru_e" stoichiometry="1"/>
         </listOfReactants>
@@ -673,16 +658,12 @@
           </math>
           <listOfLocalParameters>
             <localParameter id="LOWER_BOUND" value="0"/>
+            <localParameter id="UPPER_BOUND" value="1000"/>
             <localParameter id="OBJECTIVE_COEFFICIENT" value="0"/>
           </listOfLocalParameters>
         </kineticLaw>
       </reaction>
       <reaction id="R_EX_fum_e" name="Fumarate exchange" reversible="true">
-        <notes>
-          <html xmlns="http://www.w3.org/1999/xhtml">
-            <p>GENE_ASSOCIATION: </p>
-          </html>
-        </notes>
         <listOfReactants>
           <speciesReference species="M_fum_e" stoichiometry="1"/>
         </listOfReactants>
@@ -692,16 +673,12 @@
           </math>
           <listOfLocalParameters>
             <localParameter id="LOWER_BOUND" value="0"/>
+            <localParameter id="UPPER_BOUND" value="1000"/>
             <localParameter id="OBJECTIVE_COEFFICIENT" value="0"/>
           </listOfLocalParameters>
         </kineticLaw>
       </reaction>
       <reaction id="R_EX_glc_e" name="D-Glucose exchange" reversible="true">
-        <notes>
-          <html xmlns="http://www.w3.org/1999/xhtml">
-            <p>GENE_ASSOCIATION: </p>
-          </html>
-        </notes>
         <listOfReactants>
           <speciesReference species="M_glc_D_e" stoichiometry="1"/>
         </listOfReactants>
@@ -711,16 +688,12 @@
           </math>
           <listOfLocalParameters>
             <localParameter id="LOWER_BOUND" value="-10"/>
+            <localParameter id="UPPER_BOUND" value="1000"/>
             <localParameter id="OBJECTIVE_COEFFICIENT" value="0"/>
           </listOfLocalParameters>
         </kineticLaw>
       </reaction>
       <reaction id="R_EX_gln_L_e" name="L-Glutamine exchange" reversible="true">
-        <notes>
-          <html xmlns="http://www.w3.org/1999/xhtml">
-            <p>GENE_ASSOCIATION: </p>
-          </html>
-        </notes>
         <listOfReactants>
           <speciesReference species="M_gln_L_e" stoichiometry="1"/>
         </listOfReactants>
@@ -730,16 +703,12 @@
           </math>
           <listOfLocalParameters>
             <localParameter id="LOWER_BOUND" value="0"/>
+            <localParameter id="UPPER_BOUND" value="1000"/>
             <localParameter id="OBJECTIVE_COEFFICIENT" value="0"/>
           </listOfLocalParameters>
         </kineticLaw>
       </reaction>
       <reaction id="R_EX_glu_L_e" name="L-Glutamate exchange" reversible="true">
-        <notes>
-          <html xmlns="http://www.w3.org/1999/xhtml">
-            <p>GENE_ASSOCIATION: </p>
-          </html>
-        </notes>
         <listOfReactants>
           <speciesReference species="M_glu_L_e" stoichiometry="1"/>
         </listOfReactants>
@@ -749,16 +718,12 @@
           </math>
           <listOfLocalParameters>
             <localParameter id="LOWER_BOUND" value="0"/>
+            <localParameter id="UPPER_BOUND" value="1000"/>
             <localParameter id="OBJECTIVE_COEFFICIENT" value="0"/>
           </listOfLocalParameters>
         </kineticLaw>
       </reaction>
       <reaction id="R_EX_h_e" name="H+ exchange" reversible="true">
-        <notes>
-          <html xmlns="http://www.w3.org/1999/xhtml">
-            <p>GENE_ASSOCIATION: </p>
-          </html>
-        </notes>
         <listOfReactants>
           <speciesReference species="M_h_e" stoichiometry="1"/>
         </listOfReactants>
@@ -767,16 +732,13 @@
             <cn type="integer"> 0 </cn>
           </math>
           <listOfLocalParameters>
+            <localParameter id="LOWER_BOUND" value="-1000"/>
+            <localParameter id="UPPER_BOUND" value="1000"/>
             <localParameter id="OBJECTIVE_COEFFICIENT" value="0"/>
           </listOfLocalParameters>
         </kineticLaw>
       </reaction>
       <reaction id="R_EX_h2o_e" name="H2O exchange" reversible="true">
-        <notes>
-          <html xmlns="http://www.w3.org/1999/xhtml">
-            <p>GENE_ASSOCIATION: </p>
-          </html>
-        </notes>
         <listOfReactants>
           <speciesReference species="M_h2o_e" stoichiometry="1"/>
         </listOfReactants>
@@ -785,16 +747,13 @@
             <cn type="integer"> 0 </cn>
           </math>
           <listOfLocalParameters>
+            <localParameter id="LOWER_BOUND" value="-1000"/>
+            <localParameter id="UPPER_BOUND" value="1000"/>
             <localParameter id="OBJECTIVE_COEFFICIENT" value="0"/>
           </listOfLocalParameters>
         </kineticLaw>
       </reaction>
       <reaction id="R_EX_lac_D_e" name="D-Lactate exchange" reversible="true">
-        <notes>
-          <html xmlns="http://www.w3.org/1999/xhtml">
-            <p>GENE_ASSOCIATION: </p>
-          </html>
-        </notes>
         <listOfReactants>
           <speciesReference species="M_lac_D_e" stoichiometry="1"/>
         </listOfReactants>
@@ -804,16 +763,12 @@
           </math>
           <listOfLocalParameters>
             <localParameter id="LOWER_BOUND" value="0"/>
+            <localParameter id="UPPER_BOUND" value="1000"/>
             <localParameter id="OBJECTIVE_COEFFICIENT" value="0"/>
           </listOfLocalParameters>
         </kineticLaw>
       </reaction>
       <reaction id="R_EX_mal_L_e" name="L-Malate exchange" reversible="true">
-        <notes>
-          <html xmlns="http://www.w3.org/1999/xhtml">
-            <p>GENE_ASSOCIATION: </p>
-          </html>
-        </notes>
         <listOfReactants>
           <speciesReference species="M_mal_L_e" stoichiometry="1"/>
         </listOfReactants>
@@ -823,16 +778,12 @@
           </math>
           <listOfLocalParameters>
             <localParameter id="LOWER_BOUND" value="0"/>
+            <localParameter id="UPPER_BOUND" value="1000"/>
             <localParameter id="OBJECTIVE_COEFFICIENT" value="0"/>
           </listOfLocalParameters>
         </kineticLaw>
       </reaction>
       <reaction id="R_EX_nh4_e" name="Ammonium exchange" reversible="true">
-        <notes>
-          <html xmlns="http://www.w3.org/1999/xhtml">
-            <p>GENE_ASSOCIATION: </p>
-          </html>
-        </notes>
         <listOfReactants>
           <speciesReference species="M_nh4_e" stoichiometry="1"/>
         </listOfReactants>
@@ -841,16 +792,13 @@
             <cn type="integer"> 0 </cn>
           </math>
           <listOfLocalParameters>
+            <localParameter id="LOWER_BOUND" value="-1000"/>
+            <localParameter id="UPPER_BOUND" value="1000"/>
             <localParameter id="OBJECTIVE_COEFFICIENT" value="0"/>
           </listOfLocalParameters>
         </kineticLaw>
       </reaction>
       <reaction id="R_EX_o2_e" name="O2 exchange" reversible="true">
-        <notes>
-          <html xmlns="http://www.w3.org/1999/xhtml">
-            <p>GENE_ASSOCIATION: </p>
-          </html>
-        </notes>
         <listOfReactants>
           <speciesReference species="M_o2_e" stoichiometry="1"/>
         </listOfReactants>
@@ -859,16 +807,13 @@
             <cn type="integer"> 0 </cn>
           </math>
           <listOfLocalParameters>
+            <localParameter id="LOWER_BOUND" value="-1000"/>
+            <localParameter id="UPPER_BOUND" value="1000"/>
             <localParameter id="OBJECTIVE_COEFFICIENT" value="0"/>
           </listOfLocalParameters>
         </kineticLaw>
       </reaction>
       <reaction id="R_EX_pi_e" name="Phosphate exchange" reversible="true">
-        <notes>
-          <html xmlns="http://www.w3.org/1999/xhtml">
-            <p>GENE_ASSOCIATION: </p>
-          </html>
-        </notes>
         <listOfReactants>
           <speciesReference species="M_pi_e" stoichiometry="1"/>
         </listOfReactants>
@@ -877,16 +822,13 @@
             <cn type="integer"> 0 </cn>
           </math>
           <listOfLocalParameters>
+            <localParameter id="LOWER_BOUND" value="-1000"/>
+            <localParameter id="UPPER_BOUND" value="1000"/>
             <localParameter id="OBJECTIVE_COEFFICIENT" value="0"/>
           </listOfLocalParameters>
         </kineticLaw>
       </reaction>
       <reaction id="R_EX_pyr_e" name="Pyruvate exchange" reversible="true">
-        <notes>
-          <html xmlns="http://www.w3.org/1999/xhtml">
-            <p>GENE_ASSOCIATION: </p>
-          </html>
-        </notes>
         <listOfReactants>
           <speciesReference species="M_pyr_e" stoichiometry="1"/>
         </listOfReactants>
@@ -896,16 +838,12 @@
           </math>
           <listOfLocalParameters>
             <localParameter id="LOWER_BOUND" value="0"/>
+            <localParameter id="UPPER_BOUND" value="1000"/>
             <localParameter id="OBJECTIVE_COEFFICIENT" value="0"/>
           </listOfLocalParameters>
         </kineticLaw>
       </reaction>
       <reaction id="R_EX_succ_e" name="Succinate exchange" reversible="true">
-        <notes>
-          <html xmlns="http://www.w3.org/1999/xhtml">
-            <p>GENE_ASSOCIATION: </p>
-          </html>
-        </notes>
         <listOfReactants>
           <speciesReference species="M_succ_e" stoichiometry="1"/>
         </listOfReactants>
@@ -915,6 +853,7 @@
           </math>
           <listOfLocalParameters>
             <localParameter id="LOWER_BOUND" value="0"/>
+            <localParameter id="UPPER_BOUND" value="1000"/>
             <localParameter id="OBJECTIVE_COEFFICIENT" value="0"/>
           </listOfLocalParameters>
         </kineticLaw>
@@ -937,6 +876,8 @@
             <cn type="integer"> 0 </cn>
           </math>
           <listOfLocalParameters>
+            <localParameter id="LOWER_BOUND" value="-1000"/>
+            <localParameter id="UPPER_BOUND" value="1000"/>
             <localParameter id="OBJECTIVE_COEFFICIENT" value="0"/>
           </listOfLocalParameters>
         </kineticLaw>
@@ -961,6 +902,7 @@
           </math>
           <listOfLocalParameters>
             <localParameter id="LOWER_BOUND" value="0"/>
+            <localParameter id="UPPER_BOUND" value="1000"/>
             <localParameter id="OBJECTIVE_COEFFICIENT" value="0"/>
           </listOfLocalParameters>
         </kineticLaw>
@@ -985,6 +927,7 @@
           </math>
           <listOfLocalParameters>
             <localParameter id="LOWER_BOUND" value="0"/>
+            <localParameter id="UPPER_BOUND" value="1000"/>
             <localParameter id="OBJECTIVE_COEFFICIENT" value="0"/>
           </listOfLocalParameters>
         </kineticLaw>
@@ -1007,6 +950,7 @@
           </math>
           <listOfLocalParameters>
             <localParameter id="LOWER_BOUND" value="0"/>
+            <localParameter id="UPPER_BOUND" value="1000"/>
             <localParameter id="OBJECTIVE_COEFFICIENT" value="0"/>
           </listOfLocalParameters>
         </kineticLaw>
@@ -1031,6 +975,7 @@
           </math>
           <listOfLocalParameters>
             <localParameter id="LOWER_BOUND" value="0"/>
+            <localParameter id="UPPER_BOUND" value="1000"/>
             <localParameter id="OBJECTIVE_COEFFICIENT" value="0"/>
           </listOfLocalParameters>
         </kineticLaw>
@@ -1055,6 +1000,7 @@
           </math>
           <listOfLocalParameters>
             <localParameter id="LOWER_BOUND" value="0"/>
+            <localParameter id="UPPER_BOUND" value="1000"/>
             <localParameter id="OBJECTIVE_COEFFICIENT" value="0"/>
           </listOfLocalParameters>
         </kineticLaw>
@@ -1077,6 +1023,8 @@
             <cn type="integer"> 0 </cn>
           </math>
           <listOfLocalParameters>
+            <localParameter id="LOWER_BOUND" value="-1000"/>
+            <localParameter id="UPPER_BOUND" value="1000"/>
             <localParameter id="OBJECTIVE_COEFFICIENT" value="0"/>
           </listOfLocalParameters>
         </kineticLaw>
@@ -1101,6 +1049,7 @@
           </math>
           <listOfLocalParameters>
             <localParameter id="LOWER_BOUND" value="0"/>
+            <localParameter id="UPPER_BOUND" value="1000"/>
             <localParameter id="OBJECTIVE_COEFFICIENT" value="0"/>
           </listOfLocalParameters>
         </kineticLaw>
@@ -1125,6 +1074,8 @@
             <cn type="integer"> 0 </cn>
           </math>
           <listOfLocalParameters>
+            <localParameter id="LOWER_BOUND" value="-1000"/>
+            <localParameter id="UPPER_BOUND" value="1000"/>
             <localParameter id="OBJECTIVE_COEFFICIENT" value="0"/>
           </listOfLocalParameters>
         </kineticLaw>
@@ -1150,6 +1101,8 @@
             <cn type="integer"> 0 </cn>
           </math>
           <listOfLocalParameters>
+            <localParameter id="LOWER_BOUND" value="-1000"/>
+            <localParameter id="UPPER_BOUND" value="1000"/>
             <localParameter id="OBJECTIVE_COEFFICIENT" value="0"/>
           </listOfLocalParameters>
         </kineticLaw>
@@ -1174,6 +1127,7 @@
           </math>
           <listOfLocalParameters>
             <localParameter id="LOWER_BOUND" value="0"/>
+            <localParameter id="UPPER_BOUND" value="1000"/>
             <localParameter id="OBJECTIVE_COEFFICIENT" value="0"/>
           </listOfLocalParameters>
         </kineticLaw>
@@ -1201,6 +1155,7 @@
           </math>
           <listOfLocalParameters>
             <localParameter id="LOWER_BOUND" value="0"/>
+            <localParameter id="UPPER_BOUND" value="1000"/>
             <localParameter id="OBJECTIVE_COEFFICIENT" value="0"/>
           </listOfLocalParameters>
         </kineticLaw>
@@ -1228,6 +1183,7 @@
           </math>
           <listOfLocalParameters>
             <localParameter id="LOWER_BOUND" value="0"/>
+            <localParameter id="UPPER_BOUND" value="1000"/>
             <localParameter id="OBJECTIVE_COEFFICIENT" value="0"/>
           </listOfLocalParameters>
         </kineticLaw>
@@ -1254,6 +1210,8 @@
             <cn type="integer"> 0 </cn>
           </math>
           <listOfLocalParameters>
+            <localParameter id="LOWER_BOUND" value="-1000"/>
+            <localParameter id="UPPER_BOUND" value="1000"/>
             <localParameter id="OBJECTIVE_COEFFICIENT" value="0"/>
           </listOfLocalParameters>
         </kineticLaw>
@@ -1278,6 +1236,7 @@
           </math>
           <listOfLocalParameters>
             <localParameter id="LOWER_BOUND" value="0"/>
+            <localParameter id="UPPER_BOUND" value="1000"/>
             <localParameter id="OBJECTIVE_COEFFICIENT" value="0"/>
           </listOfLocalParameters>
         </kineticLaw>
@@ -1304,6 +1263,7 @@
           </math>
           <listOfLocalParameters>
             <localParameter id="LOWER_BOUND" value="0"/>
+            <localParameter id="UPPER_BOUND" value="1000"/>
             <localParameter id="OBJECTIVE_COEFFICIENT" value="0"/>
           </listOfLocalParameters>
         </kineticLaw>
@@ -1327,6 +1287,8 @@
             <cn type="integer"> 0 </cn>
           </math>
           <listOfLocalParameters>
+            <localParameter id="LOWER_BOUND" value="-1000"/>
+            <localParameter id="UPPER_BOUND" value="1000"/>
             <localParameter id="OBJECTIVE_COEFFICIENT" value="0"/>
           </listOfLocalParameters>
         </kineticLaw>
@@ -1352,6 +1314,7 @@
           </math>
           <listOfLocalParameters>
             <localParameter id="LOWER_BOUND" value="0"/>
+            <localParameter id="UPPER_BOUND" value="1000"/>
             <localParameter id="OBJECTIVE_COEFFICIENT" value="0"/>
           </listOfLocalParameters>
         </kineticLaw>
@@ -1373,6 +1336,8 @@
             <cn type="integer"> 0 </cn>
           </math>
           <listOfLocalParameters>
+            <localParameter id="LOWER_BOUND" value="-1000"/>
+            <localParameter id="UPPER_BOUND" value="1000"/>
             <localParameter id="OBJECTIVE_COEFFICIENT" value="0"/>
           </listOfLocalParameters>
         </kineticLaw>
@@ -1397,6 +1362,8 @@
             <cn type="integer"> 0 </cn>
           </math>
           <listOfLocalParameters>
+            <localParameter id="LOWER_BOUND" value="-1000"/>
+            <localParameter id="UPPER_BOUND" value="1000"/>
             <localParameter id="OBJECTIVE_COEFFICIENT" value="0"/>
           </listOfLocalParameters>
         </kineticLaw>
@@ -1420,6 +1387,7 @@
           </math>
           <listOfLocalParameters>
             <localParameter id="LOWER_BOUND" value="0"/>
+            <localParameter id="UPPER_BOUND" value="1000"/>
             <localParameter id="OBJECTIVE_COEFFICIENT" value="0"/>
           </listOfLocalParameters>
         </kineticLaw>
@@ -1444,6 +1412,8 @@
             <cn type="integer"> 0 </cn>
           </math>
           <listOfLocalParameters>
+            <localParameter id="LOWER_BOUND" value="-1000"/>
+            <localParameter id="UPPER_BOUND" value="1000"/>
             <localParameter id="OBJECTIVE_COEFFICIENT" value="0"/>
           </listOfLocalParameters>
         </kineticLaw>
@@ -1470,6 +1440,7 @@
           </math>
           <listOfLocalParameters>
             <localParameter id="LOWER_BOUND" value="0"/>
+            <localParameter id="UPPER_BOUND" value="1000"/>
             <localParameter id="OBJECTIVE_COEFFICIENT" value="0"/>
           </listOfLocalParameters>
         </kineticLaw>
@@ -1494,6 +1465,7 @@
           </math>
           <listOfLocalParameters>
             <localParameter id="LOWER_BOUND" value="0"/>
+            <localParameter id="UPPER_BOUND" value="1000"/>
             <localParameter id="OBJECTIVE_COEFFICIENT" value="0"/>
           </listOfLocalParameters>
         </kineticLaw>
@@ -1518,6 +1490,8 @@
             <cn type="integer"> 0 </cn>
           </math>
           <listOfLocalParameters>
+            <localParameter id="LOWER_BOUND" value="-1000"/>
+            <localParameter id="UPPER_BOUND" value="1000"/>
             <localParameter id="OBJECTIVE_COEFFICIENT" value="0"/>
           </listOfLocalParameters>
         </kineticLaw>
@@ -1543,6 +1517,7 @@
           </math>
           <listOfLocalParameters>
             <localParameter id="LOWER_BOUND" value="0"/>
+            <localParameter id="UPPER_BOUND" value="1000"/>
             <localParameter id="OBJECTIVE_COEFFICIENT" value="0"/>
           </listOfLocalParameters>
         </kineticLaw>
@@ -1568,6 +1543,7 @@
           </math>
           <listOfLocalParameters>
             <localParameter id="LOWER_BOUND" value="0"/>
+            <localParameter id="UPPER_BOUND" value="1000"/>
             <localParameter id="OBJECTIVE_COEFFICIENT" value="0"/>
           </listOfLocalParameters>
         </kineticLaw>
@@ -1594,6 +1570,7 @@
           </math>
           <listOfLocalParameters>
             <localParameter id="LOWER_BOUND" value="0"/>
+            <localParameter id="UPPER_BOUND" value="1000"/>
             <localParameter id="OBJECTIVE_COEFFICIENT" value="0"/>
           </listOfLocalParameters>
         </kineticLaw>
@@ -1618,6 +1595,7 @@
           </math>
           <listOfLocalParameters>
             <localParameter id="LOWER_BOUND" value="0"/>
+            <localParameter id="UPPER_BOUND" value="1000"/>
             <localParameter id="OBJECTIVE_COEFFICIENT" value="0"/>
           </listOfLocalParameters>
         </kineticLaw>
@@ -1639,6 +1617,8 @@
             <cn type="integer"> 0 </cn>
           </math>
           <listOfLocalParameters>
+            <localParameter id="LOWER_BOUND" value="-1000"/>
+            <localParameter id="UPPER_BOUND" value="1000"/>
             <localParameter id="OBJECTIVE_COEFFICIENT" value="0"/>
           </listOfLocalParameters>
         </kineticLaw>
@@ -1660,6 +1640,8 @@
             <cn type="integer"> 0 </cn>
           </math>
           <listOfLocalParameters>
+            <localParameter id="LOWER_BOUND" value="-1000"/>
+            <localParameter id="UPPER_BOUND" value="1000"/>
             <localParameter id="OBJECTIVE_COEFFICIENT" value="0"/>
           </listOfLocalParameters>
         </kineticLaw>
@@ -1686,6 +1668,7 @@
           </math>
           <listOfLocalParameters>
             <localParameter id="LOWER_BOUND" value="0"/>
+            <localParameter id="UPPER_BOUND" value="1000"/>
             <localParameter id="OBJECTIVE_COEFFICIENT" value="0"/>
           </listOfLocalParameters>
         </kineticLaw>
@@ -1711,6 +1694,7 @@
           </math>
           <listOfLocalParameters>
             <localParameter id="LOWER_BOUND" value="0"/>
+            <localParameter id="UPPER_BOUND" value="1000"/>
             <localParameter id="OBJECTIVE_COEFFICIENT" value="0"/>
           </listOfLocalParameters>
         </kineticLaw>
@@ -1735,6 +1719,7 @@
           </math>
           <listOfLocalParameters>
             <localParameter id="LOWER_BOUND" value="0"/>
+            <localParameter id="UPPER_BOUND" value="1000"/>
             <localParameter id="OBJECTIVE_COEFFICIENT" value="0"/>
           </listOfLocalParameters>
         </kineticLaw>
@@ -1756,6 +1741,8 @@
             <cn type="integer"> 0 </cn>
           </math>
           <listOfLocalParameters>
+            <localParameter id="LOWER_BOUND" value="-1000"/>
+            <localParameter id="UPPER_BOUND" value="1000"/>
             <localParameter id="OBJECTIVE_COEFFICIENT" value="0"/>
           </listOfLocalParameters>
         </kineticLaw>
@@ -1779,6 +1766,8 @@
             <cn type="integer"> 0 </cn>
           </math>
           <listOfLocalParameters>
+            <localParameter id="LOWER_BOUND" value="-1000"/>
+            <localParameter id="UPPER_BOUND" value="1000"/>
             <localParameter id="OBJECTIVE_COEFFICIENT" value="0"/>
           </listOfLocalParameters>
         </kineticLaw>
@@ -1803,6 +1792,7 @@
           </math>
           <listOfLocalParameters>
             <localParameter id="LOWER_BOUND" value="0"/>
+            <localParameter id="UPPER_BOUND" value="1000"/>
             <localParameter id="OBJECTIVE_COEFFICIENT" value="0"/>
           </listOfLocalParameters>
         </kineticLaw>
@@ -1824,6 +1814,8 @@
             <cn type="integer"> 0 </cn>
           </math>
           <listOfLocalParameters>
+            <localParameter id="LOWER_BOUND" value="-1000"/>
+            <localParameter id="UPPER_BOUND" value="1000"/>
             <localParameter id="OBJECTIVE_COEFFICIENT" value="0"/>
           </listOfLocalParameters>
         </kineticLaw>
@@ -1847,6 +1839,8 @@
             <cn type="integer"> 0 </cn>
           </math>
           <listOfLocalParameters>
+            <localParameter id="LOWER_BOUND" value="-1000"/>
+            <localParameter id="UPPER_BOUND" value="1000"/>
             <localParameter id="OBJECTIVE_COEFFICIENT" value="0"/>
           </listOfLocalParameters>
         </kineticLaw>
@@ -1873,6 +1867,7 @@
           </math>
           <listOfLocalParameters>
             <localParameter id="LOWER_BOUND" value="0"/>
+            <localParameter id="UPPER_BOUND" value="1000"/>
             <localParameter id="OBJECTIVE_COEFFICIENT" value="0"/>
           </listOfLocalParameters>
         </kineticLaw>
@@ -1898,6 +1893,7 @@
           </math>
           <listOfLocalParameters>
             <localParameter id="LOWER_BOUND" value="0"/>
+            <localParameter id="UPPER_BOUND" value="1000"/>
             <localParameter id="OBJECTIVE_COEFFICIENT" value="0"/>
           </listOfLocalParameters>
         </kineticLaw>
@@ -1925,6 +1921,7 @@
           </math>
           <listOfLocalParameters>
             <localParameter id="LOWER_BOUND" value="0"/>
+            <localParameter id="UPPER_BOUND" value="1000"/>
             <localParameter id="OBJECTIVE_COEFFICIENT" value="0"/>
           </listOfLocalParameters>
         </kineticLaw>
@@ -1948,6 +1945,8 @@
             <cn type="integer"> 0 </cn>
           </math>
           <listOfLocalParameters>
+            <localParameter id="LOWER_BOUND" value="-1000"/>
+            <localParameter id="UPPER_BOUND" value="1000"/>
             <localParameter id="OBJECTIVE_COEFFICIENT" value="0"/>
           </listOfLocalParameters>
         </kineticLaw>
@@ -1973,16 +1972,12 @@
           </math>
           <listOfLocalParameters>
             <localParameter id="LOWER_BOUND" value="0"/>
+            <localParameter id="UPPER_BOUND" value="1000"/>
             <localParameter id="OBJECTIVE_COEFFICIENT" value="0"/>
           </listOfLocalParameters>
         </kineticLaw>
       </reaction>
       <reaction id="R_PYRt2r" name="pyruvate reversible transport via proton symport" reversible="true">
-        <notes>
-          <html xmlns="http://www.w3.org/1999/xhtml">
-            <p>GENE_ASSOCIATION: </p>
-          </html>
-        </notes>
         <listOfReactants>
           <speciesReference species="M_h_e" stoichiometry="1"/>
           <speciesReference species="M_pyr_e" stoichiometry="1"/>
@@ -1996,6 +1991,8 @@
             <cn type="integer"> 0 </cn>
           </math>
           <listOfLocalParameters>
+            <localParameter id="LOWER_BOUND" value="-1000"/>
+            <localParameter id="UPPER_BOUND" value="1000"/>
             <localParameter id="OBJECTIVE_COEFFICIENT" value="0"/>
           </listOfLocalParameters>
         </kineticLaw>
@@ -2017,6 +2014,8 @@
             <cn type="integer"> 0 </cn>
           </math>
           <listOfLocalParameters>
+            <localParameter id="LOWER_BOUND" value="-1000"/>
+            <localParameter id="UPPER_BOUND" value="1000"/>
             <localParameter id="OBJECTIVE_COEFFICIENT" value="0"/>
           </listOfLocalParameters>
         </kineticLaw>
@@ -2038,6 +2037,8 @@
             <cn type="integer"> 0 </cn>
           </math>
           <listOfLocalParameters>
+            <localParameter id="LOWER_BOUND" value="-1000"/>
+            <localParameter id="UPPER_BOUND" value="1000"/>
             <localParameter id="OBJECTIVE_COEFFICIENT" value="0"/>
           </listOfLocalParameters>
         </kineticLaw>
@@ -2062,16 +2063,12 @@
           </math>
           <listOfLocalParameters>
             <localParameter id="LOWER_BOUND" value="0"/>
+            <localParameter id="UPPER_BOUND" value="1000"/>
             <localParameter id="OBJECTIVE_COEFFICIENT" value="0"/>
           </listOfLocalParameters>
         </kineticLaw>
       </reaction>
       <reaction id="R_SUCCt3" name="succinate transport out via proton antiport" reversible="false">
-        <notes>
-          <html xmlns="http://www.w3.org/1999/xhtml">
-            <p>GENE_ASSOCIATION: </p>
-          </html>
-        </notes>
         <listOfReactants>
           <speciesReference species="M_h_e" stoichiometry="1"/>
           <speciesReference species="M_succ_c" stoichiometry="1"/>
@@ -2086,6 +2083,7 @@
           </math>
           <listOfLocalParameters>
             <localParameter id="LOWER_BOUND" value="0"/>
+            <localParameter id="UPPER_BOUND" value="1000"/>
             <localParameter id="OBJECTIVE_COEFFICIENT" value="0"/>
           </listOfLocalParameters>
         </kineticLaw>
@@ -2110,6 +2108,7 @@
           </math>
           <listOfLocalParameters>
             <localParameter id="LOWER_BOUND" value="0"/>
+            <localParameter id="UPPER_BOUND" value="1000"/>
             <localParameter id="OBJECTIVE_COEFFICIENT" value="0"/>
           </listOfLocalParameters>
         </kineticLaw>
@@ -2135,6 +2134,8 @@
             <cn type="integer"> 0 </cn>
           </math>
           <listOfLocalParameters>
+            <localParameter id="LOWER_BOUND" value="-1000"/>
+            <localParameter id="UPPER_BOUND" value="1000"/>
             <localParameter id="OBJECTIVE_COEFFICIENT" value="0"/>
           </listOfLocalParameters>
         </kineticLaw>
@@ -2158,6 +2159,8 @@
             <cn type="integer"> 0 </cn>
           </math>
           <listOfLocalParameters>
+            <localParameter id="LOWER_BOUND" value="-1000"/>
+            <localParameter id="UPPER_BOUND" value="1000"/>
             <localParameter id="OBJECTIVE_COEFFICIENT" value="0"/>
           </listOfLocalParameters>
         </kineticLaw>
@@ -2184,6 +2187,7 @@
           </math>
           <listOfLocalParameters>
             <localParameter id="LOWER_BOUND" value="0"/>
+            <localParameter id="UPPER_BOUND" value="1000"/>
             <localParameter id="OBJECTIVE_COEFFICIENT" value="0"/>
           </listOfLocalParameters>
         </kineticLaw>
@@ -2207,6 +2211,8 @@
             <cn type="integer"> 0 </cn>
           </math>
           <listOfLocalParameters>
+            <localParameter id="LOWER_BOUND" value="-1000"/>
+            <localParameter id="UPPER_BOUND" value="1000"/>
             <localParameter id="OBJECTIVE_COEFFICIENT" value="0"/>
           </listOfLocalParameters>
         </kineticLaw>
@@ -2230,6 +2236,8 @@
             <cn type="integer"> 0 </cn>
           </math>
           <listOfLocalParameters>
+            <localParameter id="LOWER_BOUND" value="-1000"/>
+            <localParameter id="UPPER_BOUND" value="1000"/>
             <localParameter id="OBJECTIVE_COEFFICIENT" value="0"/>
           </listOfLocalParameters>
         </kineticLaw>
@@ -2251,6 +2259,8 @@
             <cn type="integer"> 0 </cn>
           </math>
           <listOfLocalParameters>
+            <localParameter id="LOWER_BOUND" value="-1000"/>
+            <localParameter id="UPPER_BOUND" value="1000"/>
             <localParameter id="OBJECTIVE_COEFFICIENT" value="0"/>
           </listOfLocalParameters>
         </kineticLaw>

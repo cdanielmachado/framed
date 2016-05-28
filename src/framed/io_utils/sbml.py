@@ -28,7 +28,11 @@ from ..core.fixes import fix_cobra_model
 from collections import OrderedDict
 from sympy.parsing.sympy_parser import parse_expr
 from sympy import to_dnf, Or, And
-from libsbml import SBMLReader, SBMLWriter, SBMLDocument, XMLNode, AssignmentRule, parseL3FormulaWithModel
+from sympy.logic.boolalg import is_dnf
+from libsbml import SBMLReader, SBMLWriter, SBMLDocument, XMLNode, AssignmentRule, parseL3FormulaWithModel, FbcExtension
+
+DEFAULT_SBML_LEVEL = 3
+DEFAULT_SBML_VERSION = 1
 
 CB_MODEL = 'cb'
 ODE_MODEL = 'ode'
@@ -41,11 +45,15 @@ UB_TAG = 'UPPER_BOUND'
 OBJ_TAG = 'OBJECTIVE_COEFFICIENT'
 GPR_TAG = 'GENE_ASSOCIATION:'
 
+DEFAULT_LOWER_BOUND_ID = 'cobra_default_lb'
+DEFAULT_UPPER_BOUND_ID = 'cobra_default_ub'
+DEFAULT_ZERO_BOUND_ID = 'cobra_0_bound'
+
+DEFAULT_LOWER_BOUND = -1000
+DEFAULT_UPPER_BOUND = 1000
+
 ACTIVATOR_TAG = 'SBO:0000459'
 INHIBITOR_TAG = 'SBO:0000020'
-
-DEFAULT_SBML_LEVEL = 3
-DEFAULT_SBML_VERSION = 1
 
 
 def load_sbml_model(filename, kind=None, flavor=None):
@@ -75,10 +83,10 @@ def load_sbml_model(filename, kind=None, flavor=None):
     return model
 
 
-def load_cbmodel(filename, flavor=COBRA_MODEL):
+def load_cbmodel(filename, flavor=COBRA_MODEL, apply_fixes=True):
     model = load_sbml_model(filename, kind=CB_MODEL, flavor=flavor)
 
-    if flavor and flavor.lower() == COBRA_MODEL:
+    if apply_fixes:
         fix_cobra_model(model)
 
     return model
@@ -209,10 +217,13 @@ def _load_cobra_gpr(sbml_model):
     gprs = OrderedDict()
     for reaction in sbml_model.getListOfReactions():
         rule = _extract_rule(reaction)
-        gpr = _parse_gpr_rule(rule)
-        for protein in gpr.proteins:
-            genes |= set(protein.genes)
-        gprs[reaction.getId()] = gpr
+        if rule:
+            gpr = _parse_gpr_rule(rule)
+            for protein in gpr.proteins:
+                genes |= set(protein.genes)
+            gprs[reaction.getId()] = gpr
+        else:
+            gprs[reaction.getId()] = None
     genes = [Gene(gene) for gene in sorted(genes)]
     return genes, gprs
 
@@ -233,7 +244,10 @@ def _parse_gpr_rule(rule):
     if not rule:
         return gpr
 
-    expr = to_dnf(parse_expr(rule))
+    expr = parse_expr(rule)
+
+    if not is_dnf(expr):
+        expr = to_dnf(expr)
 
     if type(expr) is Or:
         for sub_expr in expr.args:
@@ -293,7 +307,7 @@ def _load_fbc2_gpr(sbml_model):
             gpr_assoc = gpr_assoc.getAssociation()
             gprs[reaction.getId()] = _parse_fbc_association(gpr_assoc)
         else:
-            gprs[reaction.getId()] = GPRAssociation()
+            gprs[reaction.getId()] = None
 
     return genes, gprs
 
@@ -381,7 +395,7 @@ def _load_assignment_rules(sbml_model):
             if isinstance(rule, AssignmentRule)]
 
 
-def save_sbml_model(model, filename):
+def save_sbml_model(model, filename, flavor=None):
     """ Save a model to an SBML file.
     
     Arguments:
@@ -390,13 +404,15 @@ def save_sbml_model(model, filename):
     """
 
     document = SBMLDocument(DEFAULT_SBML_LEVEL, DEFAULT_SBML_VERSION)
+    if flavor == FBC2_MODEL:
+        document.enablePackage(FbcExtension.getXmlnsL3V1V2(), 'fbc', True)
     sbml_model = document.createModel(model.id)
     _save_compartments(model, sbml_model)
     _save_metabolites(model, sbml_model)
     _save_reactions(model, sbml_model)
     if isinstance(model, CBModel):
-        _save_cb_parameters(model, sbml_model)
-        _save_gpr(model, sbml_model)
+        _save_cb_parameters(model, sbml_model, flavor)
+        _save_gpr_associations(model, sbml_model, flavor)
     if isinstance(model, ODEModel):
         _save_concentrations(model, sbml_model)
         _save_global_parameters(model, sbml_model)
@@ -406,20 +422,8 @@ def save_sbml_model(model, filename):
     writer.writeSBML(document, filename)
 
 
-def save_cbmodel(model, filename, flavor=None):
-
-    if flavor and flavor.lower() == COBRA_MODEL:
-        old_bounds = model.bounds.copy()
-        for r_id, (lb, ub) in model.bounds.items():
-            lb = -1000 if lb is None else lb
-            ub = 1000 if ub is None else ub
-            model.set_flux_bounds(r_id, lb, ub)
-        save_sbml_model(model, filename)
-        model.bounds = old_bounds
-    if flavor and flavor.lower() == FBC2_MODEL:
-        print 'Exporting fbc2 SBML not supported yet'
-    else:
-         save_sbml_model(model, filename)       
+def save_cbmodel(model, filename, flavor=COBRA_MODEL):
+     save_sbml_model(model, filename, flavor)
 
 
 def _save_compartments(model, sbml_model):
@@ -462,13 +466,34 @@ def _save_reactions(model, sbml_model):
                 speciesReference.setSBOTerm(INHIBITOR_TAG)
 
 
-def _save_cb_parameters(model, sbml_model):
+def _save_cb_parameters(model, sbml_model, flavor):
+
+    if flavor == COBRA_MODEL:
+        _save_cobra_parameters(model, sbml_model, set_default_bounds=True)
+    elif flavor == FBC2_MODEL:
+        _save_fbc_fluxbounds(model, sbml_model)
+        _save_fbc_objective(model, sbml_model)
+    else:
+        _save_cobra_parameters(model, sbml_model)
+
+
+def _save_gpr_associations(model, sbml_model, flavor):
+    if flavor == FBC2_MODEL:
+        _save_fbc_gprs(model, sbml_model)
+    else:
+        _save_cobra_gprs(model, sbml_model)
+
+
+def _save_cobra_parameters(model, sbml_model, set_default_bounds=False):
     for r_id in model.reactions:
         lb, ub = model.bounds[r_id]
         coeff = model.objective[r_id]
         sbml_reaction = sbml_model.getReaction(r_id)
         kineticLaw = sbml_reaction.createKineticLaw()
         kineticLaw.setFormula('0')
+        if set_default_bounds:
+            lb = DEFAULT_LOWER_BOUND if lb is None else lb
+            ub = DEFAULT_UPPER_BOUND if ub is None else ub
         if lb is not None:
             lbParameter = kineticLaw.createParameter()
             lbParameter.setId(LB_TAG)
@@ -481,21 +506,99 @@ def _save_cb_parameters(model, sbml_model):
         objParameter.setId(OBJ_TAG)
         objParameter.setValue(coeff)
 
-                
-def _save_gpr(model, sbml_model):
-    for r_id in model.reactions:
-        sbml_reaction = sbml_model.getReaction(r_id)
-        #sbml_reaction.appendNotes(GPR_TAG + ' ' + model.rules[r_id])
-        association = str(model.gpr_associations[r_id])
-        note = XMLNode.convertStringToXMLNode('<html><p>' + GPR_TAG + ' ' + association + '</p></html>')
-        note.getNamespaces().add('http://www.w3.org/1999/xhtml')
-        sbml_reaction.setNotes(note)
+
+def _save_cobra_gprs(model, sbml_model):
+    for r_id, gpr in model.gpr_associations.items():
+        if gpr:
+            sbml_reaction = sbml_model.getReaction(r_id)
+            #sbml_reaction.appendNotes(GPR_TAG + ' ' + model.rules[r_id])
+            association = str(gpr)
+            note = XMLNode.convertStringToXMLNode('<html><p>' + GPR_TAG + ' ' + association + '</p></html>')
+            note.getNamespaces().add('http://www.w3.org/1999/xhtml')
+            sbml_reaction.setNotes(note)
+
+
+def _save_fbc_fluxbounds(model, sbml_model):
+
+    default_lb = sbml_model.createParameter()
+    default_lb.setId(DEFAULT_LOWER_BOUND_ID)
+    default_lb.setValue(DEFAULT_LOWER_BOUND)
+
+    default_ub = sbml_model.createParameter()
+    default_ub.setId(DEFAULT_UPPER_BOUND_ID)
+    default_ub.setValue(DEFAULT_UPPER_BOUND)
+
+    zero_bound = sbml_model.createParameter()
+    zero_bound.setId(DEFAULT_ZERO_BOUND_ID)
+    zero_bound.setValue(0)
+
+    for r_id, (lb, ub) in model.bounds.items():
+        fbcrxn = sbml_model.getReaction(r_id).getPlugin('fbc')
+
+        if lb is None or lb <= DEFAULT_LOWER_BOUND:
+            fbcrxn.setLowerFluxBound(DEFAULT_LOWER_BOUND_ID)
+        elif lb == 0:
+            fbcrxn.setLowerFluxBound(DEFAULT_ZERO_BOUND_ID)
+        else:
+            lb_id = '{}_lower_bound'.format(r_id)
+            lb_param = sbml_model.createParameter()
+            lb_param.setId(lb_id)
+            lb_param.setValue(lb)
+            fbcrxn.setLowerFluxBound(lb_id)
+
+        if ub is None or ub >= DEFAULT_UPPER_BOUND:
+            fbcrxn.setUpperFluxBound(DEFAULT_UPPER_BOUND_ID)
+        elif lb == 0:
+            fbcrxn.setUpperFluxBound(DEFAULT_ZERO_BOUND_ID)
+        else:
+            ub_id = '{}_upper_bound'.format(r_id)
+            ub_param = sbml_model.createParameter()
+            ub_param.setId(ub_id)
+            ub_param.setValue(ub)
+            fbcrxn.setUpperFluxBound(ub_id)
+
+
+def _save_fbc_objective(model, sbml_model):
+    fbcmodel = sbml_model.getPlugin('fbc')
+    obj = fbcmodel.createObjective()
+    for r_id, coeff in model.objective.items():
+        if coeff:
+            r_obj = obj.createFluxObjective()
+            r_obj.setReaction(r_id)
+            r_obj.setCoefficient(coeff)
+
+
+def _save_fbc_gprs(model, sbml_model):
+    fbcmodel = sbml_model.getPlugin('fbc')
+    for gene in model.genes.values():
+        gene_prod = fbcmodel.createGeneProduct()
+        gene_prod.setId(gene.id)
+        gene_prod.setName(gene.name)
+
+    for r_id, gpr in model.gpr_associations.items():
+        if gpr:
+            fbcrxn = sbml_model.getReaction(r_id).getPlugin('fbc')
+            gpr_assoc = fbcrxn.createGeneProductAssociation()
+
+            if len(gpr.proteins) > 1:
+                gpr_assoc = gpr_assoc.createOr()
+
+            for protein in gpr.proteins:
+                if len(protein.genes) > 1:
+                    protein_assoc = gpr_assoc.createAnd()
+                else:
+                    protein_assoc = gpr_assoc
+
+                for gene in protein.genes:
+                    gene_ref = protein_assoc.createGeneProductRef()
+                    gene_ref.setGeneProduct(gene)
 
 
 def _save_concentrations(model, sbml_model):
     for m_id, value in model.concentrations.items():
         species = sbml_model.getSpecies(m_id)
         species.setInitialConcentration(value)
+
 
 def _save_global_parameters(model, sbml_model):
     for p_id, value in model.constant_params.items():
@@ -509,6 +612,7 @@ def _save_global_parameters(model, sbml_model):
         parameter.setValue(value)
         parameter.setConstant(False)
 
+
 def _save_kineticlaws(model, sbml_model):
     for r_id, ratelaw in model.ratelaws.items():
         sbml_reaction = sbml_model.getReaction(r_id)
@@ -519,6 +623,7 @@ def _save_kineticlaws(model, sbml_model):
             parameter = kineticLaw.createParameter()
             parameter.setId(p_id)
             parameter.setValue(value)
+
 
 def _save_assignment_rules(model, sbml_model):
     for p_id, formula in model.assignment_rules.items():

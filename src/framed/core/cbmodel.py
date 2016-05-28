@@ -13,10 +13,10 @@ class Gene:
             name : String -- common gene name
         """
         self.id = elem_id
-        self.name = name
+        self.name = name if name is not None else elem_id
 
     def __str__(self):
-        return self.name if self.name else self.id
+        return self.name
 
 
 class Protein:
@@ -43,6 +43,11 @@ class GPRAssociation:
         else:
             return gpr_str
 
+    def get_genes(self):
+        genes = set()
+        for protein in self.proteins:
+            genes |= set(protein.genes)
+        return genes
 
 class CBModel(Model):
 
@@ -268,7 +273,7 @@ class CBModel(Model):
         return [r_id for r_id, f in self.rule_functions.items() if f(genes_state)]
 
     def _rule_to_function(self, gpr):
-        rule = str(gpr)
+        rule = str(gpr) if gpr else None
         if not rule:
             rule = 'True'
         else:
