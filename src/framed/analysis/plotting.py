@@ -81,8 +81,6 @@ def plot_flux_envelope(model, r_x, r_y, substrate=None, constraints=None, refere
 
     if filename:
         savefig(filename)
-    else:
-        show()
 
 
 def _normalize_list(values, x):

@@ -238,7 +238,7 @@ def _extract_rule(reaction):
 
 
 def _parse_gpr_rule(rule):
-    rule = rule.replace(' and ', ' & ').replace(' or ', ' | ').strip()
+    rule = rule.replace(' and ', ' & ').replace(' or ', ' | ').replace('-', '_').strip()
     gpr = GPRAssociation()
 
     if not rule:
