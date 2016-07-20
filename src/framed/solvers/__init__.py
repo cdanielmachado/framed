@@ -53,6 +53,14 @@ try:
 except:
     pass
 
+
+try:
+    from .cplex_wrapper import CplexSolver
+
+    solvers['cplex'] = CplexSolver
+except:
+    pass
+
 default_solver = 'gurobi'
 
 

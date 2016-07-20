@@ -1,48 +1,26 @@
-'''
-Implementation of a Gurobi based solver interface.
-
-@author: Daniel Machado
-
-   Copyright 2013 Novo Nordisk Foundation Center for Biosustainability,
-   Technical University of Denmark.
-
-   Licensed under the Apache License, Version 2.0 (the "License");
-   you may not use this file except in compliance with the License.
-   You may obtain a copy of the License at
-
-       http://www.apache.org/licenses/LICENSE-2.0
-
-   Unless required by applicable law or agreed to in writing, software
-   distributed under the License is distributed on an "AS IS" BASIS,
-   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   See the License for the specific language governing permissions and
-   limitations under the License.
-
-'''
-
 from collections import OrderedDict
 from .solver import Solver, Solution, Status, VarType
-from gurobipy import setParam, Model as GurobiModel, GRB, quicksum, read
-
-setParam("OutputFlag", 0)
-setParam('IntFeasTol', 1e-9)
-
-status_mapping = {GRB.OPTIMAL: Status.OPTIMAL,
-                  GRB.UNBOUNDED: Status.UNBOUNDED,
-                  GRB.INFEASIBLE: Status.INFEASIBLE}
+from cplex import Cplex, infinity, SparsePair
 
 
-class GurobiSolver(Solver):
-    """ Implements the solver interface using gurobipy. """
+class CplexSolver(Solver):
+    """ Implements the solver interface using cplex. """
 
     def __init__(self):
         Solver.__init__(self)
-        self.problem = GurobiModel()
+        self.problem = Cplex()
 
-            
+        self.status_mapping = {self.problem.solution.status.optimal: Status.OPTIMAL,
+                               self.problem.solution.status.unbounded: Status.UNBOUNDED,
+                               self.problem.solution.status.infeasible: Status.INFEASIBLE}
+
+        self.map_types = {VarType.BINARY: self.problem.variables.type.binary,
+                          VarType.INTEGER: self.problem.variables.type.integer,
+                          VarType.CONTINUOUS: self.problem.variables.type.continuous}
+
     def add_variable(self, var_id, lb=None, ub=None, vartype=VarType.CONTINUOUS, persistent=True, update_problem=True):
         """ Add a variable to the current problem.
-        
+
         Arguments:
             var_id : str -- variable identifier
             lb : float -- lower bound
@@ -51,31 +29,26 @@ class GurobiSolver(Solver):
             persistent : bool -- if the variable should be reused for multiple calls (default: true)
             update_problem : bool -- update problem immediately (default: True)
         """
-        lb = lb if lb is not None else -GRB.INFINITY
-        ub = ub if ub is not None else GRB.INFINITY
-        
-        map_types = {VarType.BINARY: GRB.BINARY,
-                     VarType.INTEGER: GRB.INTEGER,
-                     VarType.CONTINUOUS: GRB.CONTINUOUS}
+        lb = lb if lb is not None else -infinity
+        ub = ub if ub is not None else infinity
 
         if var_id in self.var_ids:
-            var = self.problem.getVarByName(var_id)
-            var.setAttr('lb', lb)
-            var.setAttr('ub', ub)
-            var.setAttr('vtype', map_types[vartype])
+            self.problem.variables.set_lower_bounds(var_id, lb)
+            self.problem.variables.set_upper_bounds(var_id, ub)
+            self.problem.variables.set_types(var_id, self.map_types[vartype])
         else:
-            self.problem.addVar(name=var_id, lb=lb, ub=ub, vtype=map_types[vartype])
+            self.problem.variables.add(names=[var_id], lb=[lb], ub=[ub], types=[self.map_types[vartype]])
             self.var_ids.append(var_id)
-            
+
         if not persistent:
             self.temp_vars.add(var_id)
-        
-        if update_problem:
-            self.problem.update()
+
+        if not update_problem:
+            self.update()
 
     def add_constraint(self, constr_id, lhs, sense='=', rhs=0, persistent=True, update_problem=True):
         """ Add a variable to the current problem.
-        
+
         Arguments:
             constr_id : str -- constraint identifier
             lhs : list [of (str, float)] -- variables and respective coefficients
@@ -85,49 +58,55 @@ class GurobiSolver(Solver):
             update_problem : bool -- update problem immediately (default: True)
         """
 
-        grb_sense = {'=': GRB.EQUAL,
-                     '<': GRB.LESS_EQUAL,
-                     '>': GRB.GREATER_EQUAL}
+        map_sense = {'=': 'E',
+                     '<': 'L',
+                     '>': 'G'}
+
+        lhs = dict(lhs)
+        expr = SparsePair(ind=lhs.keys(), val=lhs.values())
 
         if constr_id in self.constr_ids:
-            constr = self.problem.getConstrByName(constr_id)
-            self.problem.remove(constr)
+            self.problem.linear_constraints.set_linear_components(constr_id, expr)
+            self.problem.linear_constraints.set_rhs(constr_id, rhs)
+            self.problem.linear_constraints.set_senses(constr_id, map_sense[sense])
+        else:
+            self.problem.linear_constraints.add(lin_expr=[expr],
+                                                senses=[map_sense[sense]],
+                                                rhs=[rhs],
+                                                names=[constr_id])
+            self.constr_ids.append(constr_id)
 
-        expr = quicksum([coeff * self.problem.getVarByName(r_id) for r_id, coeff in lhs if coeff])
-        self.problem.addConstr(expr, grb_sense[sense], rhs, constr_id)
-        self.constr_ids.append(constr_id)
-            
         if not persistent:
             self.temp_constrs.add(constr_id)
 
         if update_problem:
-            self.problem.update()
-                                
+            self.update()
+
     def remove_variable(self, var_id):
         """ Remove a variable from the current problem.
-        
+
         Arguments:
             var_id : str -- variable identifier
         """
         if var_id in self.var_ids:
-            self.problem.remove(self.problem.getVarByName(var_id))
+            self.problem.remove(self.problem.variables.delete(var_id))
             self.var_ids.remove(var_id)
-    
+
     def remove_constraint(self, constr_id):
         """ Remove a constraint from the current problem.
-        
+
         Arguments:
             constr_id : str -- constraint identifier
         """
         if constr_id in self.constr_ids:
-            self.problem.remove(self.problem.getConstrByName(constr_id))
+            self.problem.remove(self.problem.linear_constraints.delete(constr_id))
             self.constr_ids.remove(constr_id)
-    
+
     def update(self):
         """ Update internal structure. Used for efficient lazy updating. """
-        self.problem.update()
+        print 'Cplex solver does not allow lazy updating.'
 
-        
+
     def solve_lp(self, objective, minimize=True, model=None, constraints=None, get_shadow_prices=False, get_reduced_costs=False):
         """ Solve an LP optimization problem.
 
@@ -175,62 +154,64 @@ class GurobiSolver(Solver):
 
         problem = self.problem
 
+        #TODO: update all simultaneously
         if constraints:
             old_constraints = {}
             for r_id, x in constraints.items():
                 lb, ub = x if isinstance(x, tuple) else (x, x)
                 if r_id in self.var_ids:
-                    lpvar = problem.getVarByName(r_id)
-                    old_constraints[r_id] = (lpvar.lb, lpvar.ub)
-                    lpvar.lb = lb if lb is not None else -GRB.INFINITY
-                    lpvar.ub = ub if ub is not None else GRB.INFINITY
+                    old_lb = problem.variables.get_lower_bounds(r_id)
+                    old_ub = problem.variables.get_upper_bounds(r_id)
+                    old_constraints[r_id] = (old_lb, old_ub)
+                    lb = lb if lb is not None else -infinity
+                    ub = ub if ub is not None else infinity
+                    problem.variables.set_lower_bounds(r_id, lb)
+                    problem.variables.set_upper_bounds(r_id, ub)
                 else:
                     print 'Error: constrained variable not previously declared', r_id
             problem.update()
 
         #create objective function
-        quad_obj_expr = [q * problem.getVarByName(r_id1) * problem.getVarByName(r_id2)
-                         for (r_id1, r_id2), q in quad_obj.items() if q] if quad_obj else []
+        quad_coeffs = [(r_id1, r_id2, coeff) for (r_id1, r_id2), coeff in quad_obj.items()]
+        problem.objective.set_quadratic_coefficients(quad_coeffs)
 
-        lin_obj_expr = [f * problem.getVarByName(r_id)
-                        for r_id, f in lin_obj.items() if f] if lin_obj else []
+        problem.objective.set_linear(lin_obj.items())
 
-        obj_expr = quicksum(quad_obj_expr + lin_obj_expr)
-        sense = GRB.MINIMIZE if minimize else GRB.MAXIMIZE
-
-        problem.setObjective(obj_expr, sense)
-        problem.update()
-
-        #from datetime import datetime
-        #self.problem.write("problem_{}.lp".format(str(datetime.now())))
+        if minimize:
+            problem.objective.set_sense(problem.objective.sense.minimize)
+        else:
+            problem.objective.set_sense(problem.objective.sense.maximize)
 
         #run the optimization
         problem.optimize()
 
-        status = status_mapping[problem.status] if problem.status in status_mapping else Status.UNKNOWN
+        status = self.status_mapping[problem.status] if problem.status in self.status_mapping else Status.UNKNOWN
         message = str(problem.status)
 
         if status == Status.OPTIMAL:
-            fobj = problem.ObjVal
-            values = OrderedDict([(r_id, problem.getVarByName(r_id).X) for r_id in self.var_ids])
+            fobj = problem.solution.get_objective_value()
+            values = OrderedDict(zip(self.var_ids, problem.solution.get_values(self.var_ids)))
 
-            #if metabolite is disconnected no constraint will exist
-            shadow_prices = OrderedDict([(m_id, problem.getConstrByName(m_id).Pi)
-                                         for m_id in self.constr_ids
-                                         if problem.getConstrByName(m_id)]) if get_shadow_prices else None
+            if get_shadow_prices:
+                shadow_prices = OrderedDict(zip(self.constr_ids,
+                                                problem.solution.get_dual_values(self.constr_ids)))
+            else:
+                shadow_prices = None
 
-            reduced_costs = OrderedDict([(r_id, problem.getVarByName(r_id).RC)
-                                         for r_id in self.var_ids]) if get_reduced_costs else None
+            if get_reduced_costs:
+                reduced_costs = OrderedDict(zip(self.var_ids,
+                                                problem.solution.get_reduced_costs(self.var_ids)))
+            else:
+                reduced_costs = None
 
             solution = Solution(status, message, fobj, values, shadow_prices, reduced_costs)
         else:
             solution = Solution(status, message)
 
-        #reset old constraints because temporary constraints should not be persistent
+        #TODO: update all simultaneously
         if constraints:
             for r_id, (lb, ub) in old_constraints.items():
-                lpvar = problem.getVarByName(r_id)
-                lpvar.lb, lpvar.ub = lb, ub
-            problem.update()
+                problem.variables.set_lower_bounds(r_id, lb)
+                problem.variables.set_upper_bounds(r_id, ub)
 
         return solution
