@@ -57,26 +57,32 @@ def FVA(model, obj_percentage=0, reactions=None, constraints=None, loopless=Fals
 
     for r_id in reactions:
         if loopless:
-            solution = looplessFBA(model, {r_id: 1}, True, constraints=_constraints, internal=internal, solver=solver)
+            solution = looplessFBA(model, {r_id: 1}, True, constraints=_constraints, internal=internal,
+                                   solver=solver, get_values=False)
         else:
-             solution = FBA(model, {r_id: 1}, True, constraints=_constraints, solver=solver)
+            solution = FBA(model, {r_id: 1}, True, constraints=_constraints, solver=solver, get_values=False)
 
         if solution.status == Status.OPTIMAL:
             variability[r_id][0] = solution.fobj
         elif solution.status == Status.UNBOUNDED:
+            variability[r_id][0] = None
+        elif solution.status == Status.INF_OR_UNB: #taking a wild guess here!
             variability[r_id][0] = None
         else:
             variability[r_id][0] = 0
 
     for r_id in reactions:
         if loopless:
-            solution = looplessFBA(model, {r_id: 1}, False, constraints=_constraints, internal=internal, solver=solver)
+            solution = looplessFBA(model, {r_id: 1}, False, constraints=_constraints, internal=internal,
+                                   solver=solver, get_values=False)
         else:
-             solution = FBA(model, {r_id: 1}, False, constraints=_constraints, solver=solver)
+            solution = FBA(model, {r_id: 1}, False, constraints=_constraints, solver=solver, get_values=False)
              
         if solution.status == Status.OPTIMAL:
             variability[r_id][1] = solution.fobj
         elif solution.status == Status.UNBOUNDED:
+            variability[r_id][1] = None
+        elif solution.status == Status.INF_OR_UNB: #taking a wild guess here!
             variability[r_id][1] = None
         else:
             variability[r_id][1] = 0

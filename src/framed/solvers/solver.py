@@ -28,6 +28,7 @@ class Status:
     SUBOPTIMAL = -1
     UNBOUNDED = -2
     INFEASIBLE = -3
+    INF_OR_UNB = -4
 
 
 class VarType:
@@ -294,7 +295,8 @@ class Solver:
             self.add_constraint(m_id, table[m_id].items(), update_problem=False)
         self.update()
             
-    def solve_lp(self, objective, minimize=True, model=None, constraints=None, get_shadow_prices=False, get_reduced_costs=False):
+    def solve_lp(self, objective, minimize=True, model=None, constraints=None, get_values=True,
+                 get_shadow_prices=False, get_reduced_costs=False):
         """ Solve an LP optimization problem.
         
         Arguments:
@@ -303,6 +305,7 @@ class Solver:
             model : CBModel -- model (optional, leave blank to reuse previous model structure)
             minimize : bool -- minimization problem (default: True) set False to maximize
             constraints : dict (of str to float or (float, float)) -- environmental or additional constraints (optional)
+            get_values : bool -- set to false for speedup if you only care about the objective value (optional, default: True)
             get_shadow_prices : bool -- return shadow price information if available (optional, default: False)
             get_reduced_costs : bool -- return reduced costs information if available (optional, default: False)
             
@@ -313,8 +316,8 @@ class Solver:
         # An exception is raised if the subclass does not implement this method.
         raise Exception('Not implemented for this solver.')
 
-    def solve_qp(self, quad_obj, lin_obj,  minimize=True, model=None, constraints=None, get_shadow_prices=False,
-                 get_reduced_costs=False):
+    def solve_qp(self, quad_obj, lin_obj,  minimize=True, model=None, constraints=None, get_values=True,
+                 get_shadow_prices=False, get_reduced_costs=False):
         """ Solve an LP optimization problem.
         
         Arguments:
@@ -323,6 +326,7 @@ class Solver:
             model : CBModel -- model (optional, leave blank to reuse previous model structure)
             minimize : bool -- minimization problem (default: True) set False to maximize
             constraints : dict (of str to float or (float, float)) -- environmental or additional constraints (optional)
+            get_values : bool -- set to false for speedup if you only care about the objective value (optional, default: True)
             get_shadow_prices : bool -- return shadow price information if available (default: False)
             get_reduced_costs : bool -- return reduced costs information if available (default: False)
         

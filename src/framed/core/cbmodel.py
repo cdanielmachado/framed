@@ -148,7 +148,6 @@ class CBModel(Model):
         self.objective[reaction.id] = coeff
         self.set_gpr_association(reaction.id, GPRAssociation())
 
-
     def remove_reactions(self, id_list):
         """ Remove a list of reactions from the model.
         Also removes all the edges connected to the reactions.
@@ -156,13 +155,13 @@ class CBModel(Model):
         Arguments:
             id_list : list of str -- reaction ids
         """
-        Model.remove_reactions(self, id_list)
         for r_id in id_list:
             if r_id in self.reactions:
                 del self.bounds[r_id]
                 del self.objective[r_id]
                 del self.gpr_associations[r_id]
                 del self.rule_functions[r_id]
+        Model.remove_reactions(self, id_list)
 
     def print_reaction(self, r_id, reaction_names=False, metabolite_names=False):
         """ Print a reaction to a text based representation.

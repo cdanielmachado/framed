@@ -24,8 +24,8 @@ from ..solvers import solver_instance
 from ..solvers.solver import Status, VarType
 
 
-def FBA(model, objective=None, minimize=False, constraints=None, solver=None, get_shadow_prices=False,
-        get_reduced_costs=False):
+def FBA(model, objective=None, minimize=False, constraints=None, solver=None, get_values=True,
+        get_shadow_prices=False, get_reduced_costs=False):
     """ Run a Flux Balance Analysis (FBA) simulation:
     
     Arguments:
@@ -34,6 +34,7 @@ def FBA(model, objective=None, minimize=False, constraints=None, solver=None, ge
         minimize : bool (False) -- sense of optimization (maximize by default)
         constraints: dict (of str to (float, float)) -- environmental or additional constraints (optional)
         solver : Solver -- solver instance instantiated with the model, for speed (optional)
+        get_values : bool -- set to false for speedup if you only care about the objective value (optional, default: True)
         get_shadow_prices : Bool -- retrieve shadow prices (default: False)
         get_reduced_costs : Bool -- retrieve reduced costs (default: False)
        
@@ -125,7 +126,7 @@ def pFBA(model, objective=None, minimize=False, constraints=None, reactions=None
     return solution
 
 
-def looplessFBA(model, objective=None, minimize=False, constraints=None, internal=None, solver=None):
+def looplessFBA(model, objective=None, minimize=False, constraints=None, internal=None, solver=None, get_values=True):
 
     M = 1e4
 
@@ -174,7 +175,7 @@ def looplessFBA(model, objective=None, minimize=False, constraints=None, interna
     if not constraints:
         constraints = dict()
 
-    solution = solver.solve_lp(objective, minimize=minimize, constraints=constraints)
+    solution = solver.solve_lp(objective, minimize=minimize, constraints=constraints, get_values=get_values)
 
     return solution
 

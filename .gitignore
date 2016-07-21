@@ -23,3 +23,5 @@ src/framed/tests/yeast_project.py
 .settings/org.eclipse.core.resources.prefs
 
 datasets/ishii2007/fluxomics.csv
+
+src/framed/tests/main.py

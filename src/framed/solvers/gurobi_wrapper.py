@@ -22,14 +22,15 @@ Implementation of a Gurobi based solver interface.
 
 from collections import OrderedDict
 from .solver import Solver, Solution, Status, VarType
-from gurobipy import setParam, Model as GurobiModel, GRB, quicksum, read
+from gurobipy import setParam, Model as GurobiModel, GRB, quicksum
 
 setParam("OutputFlag", 0)
 setParam('IntFeasTol', 1e-9)
 
 status_mapping = {GRB.OPTIMAL: Status.OPTIMAL,
                   GRB.UNBOUNDED: Status.UNBOUNDED,
-                  GRB.INFEASIBLE: Status.INFEASIBLE}
+                  GRB.INFEASIBLE: Status.INFEASIBLE,
+                  GRB.INF_OR_UNBD: Status.INF_OR_UNB}
 
 
 class GurobiSolver(Solver):
@@ -128,7 +129,8 @@ class GurobiSolver(Solver):
         self.problem.update()
 
         
-    def solve_lp(self, objective, minimize=True, model=None, constraints=None, get_shadow_prices=False, get_reduced_costs=False):
+    def solve_lp(self, objective, minimize=True, model=None, constraints=None, get_values=True,
+                 get_shadow_prices=False, get_reduced_costs=False):
         """ Solve an LP optimization problem.
 
         Arguments:
@@ -137,17 +139,17 @@ class GurobiSolver(Solver):
             model : CBModel -- model (optional, leave blank to reuse previous model structure)
             minimize : bool -- minimization problem (default: True) set False to maximize
             constraints : dict (of str to float or (float, float)) -- environmental or additional constraints (optional)
+            get_values : bool -- set to false for speedup if you only care about the objective value (optional, default: True)
             get_shadow_prices : bool -- return shadow price information if available (optional, default: False)
             get_reduced_costs : bool -- return reduced costs information if available (optional, default: False)
         Returns:
             Solution
         """
 
-        return self._generic_solve(None, objective, minimize, model, constraints, get_shadow_prices,
-                                   get_reduced_costs)
+        return self._generic_solve(None, objective, minimize, model, constraints, get_values, get_shadow_prices, get_reduced_costs)
 
-    def solve_qp(self, quad_obj, lin_obj, minimize=True, model=None, constraints=None, get_shadow_prices=False,
-                 get_reduced_costs=False):
+    def solve_qp(self, quad_obj, lin_obj, minimize=True, model=None, constraints=None, get_values=True,
+                 get_shadow_prices=False, get_reduced_costs=False):
         """ Solve an LP optimization problem.
 
         Arguments:
@@ -156,6 +158,7 @@ class GurobiSolver(Solver):
             model : CBModel -- model (optional, leave blank to reuse previous model structure)
             minimize : bool -- minimization problem (default: True) set False to maximize
             constraints : dict (of str to float or (float, float)) -- environmental or additional constraints (optional)
+            get_values : bool -- set to false for speedup if you only care about the objective value (optional, default: True)
             get_shadow_prices : bool -- return shadow price information if available (default: False)
             get_reduced_costs : bool -- return reduced costs information if available (default: False)
 
@@ -164,11 +167,10 @@ class GurobiSolver(Solver):
         """
 
 
-        return self._generic_solve(quad_obj, lin_obj, minimize, model, constraints, get_shadow_prices,
-                                   get_reduced_costs)
+        return self._generic_solve(quad_obj, lin_obj, minimize, model, constraints, get_values, get_shadow_prices, get_reduced_costs)
 
-    def _generic_solve(self, quad_obj, lin_obj, minimize=True, model=None, constraints=None, get_shadow_prices=False,
-                       get_reduced_costs=False):
+    def _generic_solve(self, quad_obj, lin_obj, minimize=True, model=None, constraints=None, get_values=True,
+                       get_shadow_prices=False, get_reduced_costs=False):
 
         if model:
             self.build_problem(model)
@@ -212,15 +214,16 @@ class GurobiSolver(Solver):
 
         if status == Status.OPTIMAL:
             fobj = problem.ObjVal
-            values = OrderedDict([(r_id, problem.getVarByName(r_id).X) for r_id in self.var_ids])
+            values, shadow_prices, reduced_costs = None, None, None
 
-            #if metabolite is disconnected no constraint will exist
-            shadow_prices = OrderedDict([(m_id, problem.getConstrByName(m_id).Pi)
-                                         for m_id in self.constr_ids
-                                         if problem.getConstrByName(m_id)]) if get_shadow_prices else None
+            if get_values:
+                values = OrderedDict([(r_id, problem.getVarByName(r_id).X) for r_id in self.var_ids])
 
-            reduced_costs = OrderedDict([(r_id, problem.getVarByName(r_id).RC)
-                                         for r_id in self.var_ids]) if get_reduced_costs else None
+            if get_shadow_prices:
+                shadow_prices = OrderedDict([(m_id, problem.getConstrByName(m_id).Pi) for m_id in self.constr_ids])
+
+            if get_reduced_costs:
+                reduced_costs = OrderedDict([(r_id, problem.getVarByName(r_id).RC) for r_id in self.var_ids])
 
             solution = Solution(status, message, fobj, values, shadow_prices, reduced_costs)
         else:

@@ -10,9 +10,23 @@ class CplexSolver(Solver):
         Solver.__init__(self)
         self.problem = Cplex()
 
+        self.problem.set_log_stream(None)
+        self.problem.set_error_stream(None)
+        self.problem.set_warning_stream(None)
+        self.problem.set_results_stream(None)
+
+        #self.problem.parameters.preprocessing.presolve.set(0)
+        #self.problem.parameters.lpmethod.set(1)
+        #self.problem.parameters.qpmethod.set(1)
+
         self.status_mapping = {self.problem.solution.status.optimal: Status.OPTIMAL,
                                self.problem.solution.status.unbounded: Status.UNBOUNDED,
-                               self.problem.solution.status.infeasible: Status.INFEASIBLE}
+                               self.problem.solution.status.infeasible: Status.INFEASIBLE,
+                               self.problem.solution.status.infeasible_or_unbounded: Status.INF_OR_UNB,
+                               self.problem.solution.status.MIP_optimal: Status.OPTIMAL,
+                               self.problem.solution.status.MIP_unbounded: Status.UNBOUNDED,
+                               self.problem.solution.status.MIP_infeasible: Status.INFEASIBLE,
+                               self.problem.solution.status.MIP_infeasible_or_unbounded: Status.INF_OR_UNB}
 
         self.map_types = {VarType.BINARY: self.problem.variables.type.binary,
                           VarType.INTEGER: self.problem.variables.type.integer,
@@ -29,24 +43,46 @@ class CplexSolver(Solver):
             persistent : bool -- if the variable should be reused for multiple calls (default: true)
             update_problem : bool -- update problem immediately (default: True)
         """
-        lb = lb if lb is not None else -infinity
-        ub = ub if ub is not None else infinity
 
-        if var_id in self.var_ids:
-            self.problem.variables.set_lower_bounds(var_id, lb)
-            self.problem.variables.set_upper_bounds(var_id, ub)
-            self.problem.variables.set_types(var_id, self.map_types[vartype])
-        else:
-            self.problem.variables.add(names=[var_id], lb=[lb], ub=[ub], types=[self.map_types[vartype]])
-            self.var_ids.append(var_id)
+        self.add_variables([var_id], [lb], [ub], [vartype])
 
         if not persistent:
             self.temp_vars.add(var_id)
 
         if not update_problem:
-            self.update()
+            print 'Warning: CPLEX does not allow lazy updating.'
+
+    def add_variables(self, var_ids, lbs, ubs, vartypes):
+        lbs = [lb if lb is not None else -infinity for lb in lbs]
+        ubs = [ub if ub is not None else infinity for ub in ubs]
+        vartypes = [self.map_types[vartype] for vartype in vartypes]
+
+        self.problem.variables.add(names=var_ids, lb=lbs, ub=ubs, types=vartypes)
+        self.var_ids.extend(var_ids)
+
 
     def add_constraint(self, constr_id, lhs, sense='=', rhs=0, persistent=True, update_problem=True):
+        """ Add a variable to the current problem.
+
+        Arguments:
+            constr_id : str -- constraint identifier
+            lhs : list [of (str, float)] -- variables and respective coefficients
+            sense : {'<', '=', '>'} -- default '='
+            rhs : float -- right-hand side of equation (default: 0)
+            persistent : bool -- if the variable should be reused for multiple calls (default: True)
+            update_problem : bool -- update problem immediately (default: True)
+        """
+
+        self.add_constraints([constr_id], [dict(lhs)], [sense], [rhs])
+
+        if not persistent:
+            self.temp_constrs.add(constr_id)
+
+        if not update_problem:
+            print 'Warning: CPLEX does not allow lazy updating.'
+
+
+    def add_constraints(self, constr_ids, lhs, senses, rhs):
         """ Add a variable to the current problem.
 
         Arguments:
@@ -62,25 +98,15 @@ class CplexSolver(Solver):
                      '<': 'L',
                      '>': 'G'}
 
-        lhs = dict(lhs)
-        expr = SparsePair(ind=lhs.keys(), val=lhs.values())
+        exprs = [SparsePair(ind=constr.keys(), val=constr.values()) for constr in lhs]
+        senses = [map_sense[sense] for sense in senses]
 
-        if constr_id in self.constr_ids:
-            self.problem.linear_constraints.set_linear_components(constr_id, expr)
-            self.problem.linear_constraints.set_rhs(constr_id, rhs)
-            self.problem.linear_constraints.set_senses(constr_id, map_sense[sense])
-        else:
-            self.problem.linear_constraints.add(lin_expr=[expr],
-                                                senses=[map_sense[sense]],
-                                                rhs=[rhs],
-                                                names=[constr_id])
-            self.constr_ids.append(constr_id)
+        self.problem.linear_constraints.add(lin_expr=exprs,
+                                            senses=senses,
+                                            rhs=rhs,
+                                            names=constr_ids)
+        self.constr_ids.extend(constr_ids)
 
-        if not persistent:
-            self.temp_constrs.add(constr_id)
-
-        if update_problem:
-            self.update()
 
     def remove_variable(self, var_id):
         """ Remove a variable from the current problem.
@@ -106,8 +132,28 @@ class CplexSolver(Solver):
         """ Update internal structure. Used for efficient lazy updating. """
         print 'Cplex solver does not allow lazy updating.'
 
+    def build_problem(self, model):
+        """ Create problem structure for a given model.
 
-    def solve_lp(self, objective, minimize=True, model=None, constraints=None, get_shadow_prices=False, get_reduced_costs=False):
+        Arguments:
+            model : CBModel
+        """
+
+        var_ids = model.reactions.keys()
+        lbs, ubs = zip(*model.bounds.values())
+        var_types = [VarType.CONTINUOUS] * len(var_ids)
+        self.add_variables(var_ids, lbs, ubs, var_types)
+
+        constr_ids = model.metabolites.keys()
+        table = model.metabolite_reaction_lookup_table()
+        lhs = table.values()
+        senses = ['='] * len(constr_ids)
+        rhs = [0] * len(constr_ids)
+        self.add_constraints(constr_ids, lhs, senses, rhs)
+
+
+    def solve_lp(self, objective, minimize=True, model=None, constraints=None, get_values=True,
+                 get_shadow_prices=False, get_reduced_costs=False):
         """ Solve an LP optimization problem.
 
         Arguments:
@@ -116,17 +162,17 @@ class CplexSolver(Solver):
             model : CBModel -- model (optional, leave blank to reuse previous model structure)
             minimize : bool -- minimization problem (default: True) set False to maximize
             constraints : dict (of str to float or (float, float)) -- environmental or additional constraints (optional)
+            get_values : bool -- set to false for speedup if you only care about the objective value (optional, default: True)
             get_shadow_prices : bool -- return shadow price information if available (optional, default: False)
             get_reduced_costs : bool -- return reduced costs information if available (optional, default: False)
         Returns:
             Solution
         """
 
-        return self._generic_solve(None, objective, minimize, model, constraints, get_shadow_prices,
-                                   get_reduced_costs)
+        return self._generic_solve(None, objective, minimize, model, constraints, get_values, get_shadow_prices, get_reduced_costs)
 
-    def solve_qp(self, quad_obj, lin_obj, minimize=True, model=None, constraints=None, get_shadow_prices=False,
-                 get_reduced_costs=False):
+    def solve_qp(self, quad_obj, lin_obj, minimize=True, model=None, constraints=None, get_values=True,
+                 get_shadow_prices=False, get_reduced_costs=False):
         """ Solve an LP optimization problem.
 
         Arguments:
@@ -135,6 +181,7 @@ class CplexSolver(Solver):
             model : CBModel -- model (optional, leave blank to reuse previous model structure)
             minimize : bool -- minimization problem (default: True) set False to maximize
             constraints : dict (of str to float or (float, float)) -- environmental or additional constraints (optional)
+            get_values : bool -- set to false for speedup if you only care about the objective value (optional, default: True)
             get_shadow_prices : bool -- return shadow price information if available (default: False)
             get_reduced_costs : bool -- return reduced costs information if available (default: False)
 
@@ -143,11 +190,10 @@ class CplexSolver(Solver):
         """
 
 
-        return self._generic_solve(quad_obj, lin_obj, minimize, model, constraints, get_shadow_prices,
-                                   get_reduced_costs)
+        return self._generic_solve(quad_obj, lin_obj, minimize, model, constraints, get_values, get_shadow_prices, get_reduced_costs)
 
-    def _generic_solve(self, quad_obj, lin_obj, minimize=True, model=None, constraints=None, get_shadow_prices=False,
-                       get_reduced_costs=False):
+    def _generic_solve(self, quad_obj, lin_obj, minimize=True, model=None, constraints=None, get_values=True,
+                       get_shadow_prices=False, get_reduced_costs=False):
 
         if model:
             self.build_problem(model)
@@ -169,13 +215,15 @@ class CplexSolver(Solver):
                     problem.variables.set_upper_bounds(r_id, ub)
                 else:
                     print 'Error: constrained variable not previously declared', r_id
-            problem.update()
 
         #create objective function
-        quad_coeffs = [(r_id1, r_id2, coeff) for (r_id1, r_id2), coeff in quad_obj.items()]
-        problem.objective.set_quadratic_coefficients(quad_coeffs)
+        if quad_obj:
+            problem.objective.set_quadratic([0.0] * len(self.var_ids)) #resets previous objectives
+            quad_coeffs = [(r_id1, r_id2, coeff) for (r_id1, r_id2), coeff in quad_obj.items()]
+            problem.objective.set_quadratic_coefficients(quad_coeffs)
 
-        problem.objective.set_linear(lin_obj.items())
+        if lin_obj:
+            problem.objective.set_linear(lin_obj.items())
 
         if minimize:
             problem.objective.set_sense(problem.objective.sense.minimize)
@@ -183,30 +231,35 @@ class CplexSolver(Solver):
             problem.objective.set_sense(problem.objective.sense.maximize)
 
         #run the optimization
-        problem.optimize()
+        problem.solve()
+        cplex_status = problem.solution.get_status()
 
-        status = self.status_mapping[problem.status] if problem.status in self.status_mapping else Status.UNKNOWN
-        message = str(problem.status)
+        status = self.status_mapping[cplex_status] if cplex_status in self.status_mapping else Status.UNKNOWN
+        message = str(problem.solution.get_status_string())
 
         if status == Status.OPTIMAL:
             fobj = problem.solution.get_objective_value()
-            values = OrderedDict(zip(self.var_ids, problem.solution.get_values(self.var_ids)))
+            values, shadow_prices, reduced_costs = None, None, None
+
+            if get_values:
+#                values = OrderedDict(zip(self.var_ids, problem.solution.get_values(self.var_ids)))
+                values = OrderedDict([(r_id, problem.solution.get_values(r_id)) for r_id in self.var_ids])
 
             if get_shadow_prices:
                 shadow_prices = OrderedDict(zip(self.constr_ids,
                                                 problem.solution.get_dual_values(self.constr_ids)))
-            else:
-                shadow_prices = None
 
             if get_reduced_costs:
                 reduced_costs = OrderedDict(zip(self.var_ids,
                                                 problem.solution.get_reduced_costs(self.var_ids)))
-            else:
-                reduced_costs = None
 
             solution = Solution(status, message, fobj, values, shadow_prices, reduced_costs)
         else:
             solution = Solution(status, message)
+
+        if lin_obj:
+            reset_coeffs = [(r_id, 0.0) for r_id in lin_obj]
+            problem.objective.set_linear(reset_coeffs)
 
         #TODO: update all simultaneously
         if constraints:
