@@ -49,7 +49,8 @@ def FBA(model, objective=None, minimize=False, constraints=None, solver=None, ge
         solver = solver_instance()
         solver.build_problem(model)
 
-    solution = solver.solve_lp(objective, minimize, None, constraints, get_shadow_prices, get_reduced_costs)
+    solution = solver.solve_lp(objective, minimize=minimize, constraints=constraints, get_values=get_values,
+                               get_shadow_prices=get_shadow_prices, get_reduced_costs=get_reduced_costs)
     return solution
 
 

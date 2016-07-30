@@ -218,7 +218,7 @@ def _load_cobra_gpr(sbml_model):
     for reaction in sbml_model.getListOfReactions():
         rule = _extract_rule(reaction)
         if rule:
-            gpr = _parse_gpr_rule(rule)
+            gpr = parse_gpr_rule(rule)
             for protein in gpr.proteins:
                 genes |= set(protein.genes)
             gprs[reaction.getId()] = gpr
@@ -237,7 +237,7 @@ def _extract_rule(reaction):
     return rule
 
 
-def _parse_gpr_rule(rule):
+def parse_gpr_rule(rule):
     rule = rule.replace(' and ', ' & ').replace(' or ', ' | ').replace('-', '_').strip()
     gpr = GPRAssociation()
 

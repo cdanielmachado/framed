@@ -89,26 +89,6 @@ def make_irreversible(model):
     return mapping
 
 
-def add_ratio_constraint(model, r_id_num, r_id_den, ratio):
-    """ Add a flux ratio constraint to a model.
-
-    Arguments:
-        model : CBmodel
-        r_id_num : str -- id of the numerator
-        r_id_num : str -- id of the denominator
-        ratio : float -- ratio value
-
-    Returns:
-        str : identifier of the pseudo-metabolite
-    """
-
-    if r_id_num in model.reactions and r_id_den in model.reactions:
-        m_id = 'ratio_{}_{}'.format(r_id_num, r_id_den)
-        model.add_metabolite(Metabolite(m_id))
-        model.set_stoichiometry(m_id, r_id_num, 1)
-        model.set_stoichiometry(m_id, r_id_den, -ratio)
-        return m_id
-
 
 def _disconnected_metabolites(model):
     m_r_table = model.metabolite_reaction_lookup_table()

@@ -1,6 +1,6 @@
 from collections import OrderedDict
 
-from framed.core.model import Model
+from framed.core.model import Model, Metabolite
 
 
 class Gene:
@@ -282,3 +282,41 @@ class CBModel(Model):
                 rule = rule.replace(' ' + gene + ' ', ' x[\'' + gene + '\'] ')
         return eval('lambda x: ' + rule)
 
+    def add_ratio_constraint(self, r_id_num, r_id_den, ratio):
+        """ Add a flux ratio constraint to the model.
+
+        Arguments:
+            r_id_num : str -- id of the numerator
+            r_id_num : str -- id of the denominator
+            ratio : float -- ratio value
+
+        Returns:
+            str : identifier of the pseudo-metabolite
+        """
+
+        if r_id_num in self.reactions and r_id_den in self.reactions:
+            m_id = 'ratio_{}_{}'.format(r_id_num, r_id_den)
+            self.add_metabolite(Metabolite(m_id))
+            self.set_stoichiometry(m_id, r_id_num, 1)
+            self.set_stoichiometry(m_id, r_id_den, -ratio)
+            return m_id
+        else:
+            print 'Invalid reactions.'
+
+    def remove_ratio_constraint(self, r_id_num, r_id_den):
+        """ Remove a flux ratio constraint from the model.
+
+        Arguments:
+            r_id_num : str -- id of the numerator
+            r_id_num : str -- id of the denominator
+
+        """
+
+        if r_id_num in self.reactions and r_id_den in self.reactions:
+            m_id = 'ratio_{}_{}'.format(r_id_num, r_id_den)
+            if m_id in self.metabolites:
+                self.remove_metabolite(m_id)
+            else:
+                print 'No ratio constraint for {}/{}'.format(r_id_num, r_id_den)
+        else:
+            print 'Invalid reactions.'

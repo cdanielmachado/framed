@@ -23,9 +23,10 @@ def gene2rxn(gpr, gene_exp, and_func=min, or_func=sum):
 def gene_to_reaction_expression(model, gene_exp, and_func=min, or_func=sum):
     rxn_exp = {}
     for r_id, gpr in model.gpr_associations.items():
-        level = gene2rxn(gpr, gene_exp, and_func, or_func)
-        if level is not None:
-            rxn_exp[r_id] = level
+        if gpr is not None:
+            level = gene2rxn(gpr, gene_exp, and_func, or_func)
+            if level is not None:
+                rxn_exp[r_id] = level
     return rxn_exp
 
 
