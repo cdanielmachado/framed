@@ -14,6 +14,7 @@ class Gene:
         """
         self.id = elem_id
         self.name = name if name is not None else elem_id
+        self.metadata = OrderedDict()
 
     def __str__(self):
         return self.name
@@ -23,6 +24,7 @@ class Protein:
 
     def __init__(self):
         self.genes = []
+        self.metadata = OrderedDict()
 
     def __str__(self):
         if len(self.genes) > 1:
@@ -35,6 +37,7 @@ class GPRAssociation:
 
     def __init__(self):
         self.proteins = []
+        self.metadata = OrderedDict()
 
     def __str__(self):
         gpr_str = ' or '.join(map(str, self.proteins))
@@ -146,7 +149,7 @@ class CBModel(Model):
 
         self.bounds[reaction.id] = (lb, ub)
         self.objective[reaction.id] = coeff
-        self.set_gpr_association(reaction.id, GPRAssociation())
+        self.set_gpr_association(reaction.id, None)
 
     def remove_reactions(self, id_list):
         """ Remove a list of reactions from the model.

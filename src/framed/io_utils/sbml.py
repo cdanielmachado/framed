@@ -43,7 +43,7 @@ FBC2_MODEL = 'fbc2'
 LB_TAG = 'LOWER_BOUND'
 UB_TAG = 'UPPER_BOUND'
 OBJ_TAG = 'OBJECTIVE_COEFFICIENT'
-GPR_TAG = 'GENE_ASSOCIATION:'
+GPR_TAG = 'GENE_ASSOCIATION'
 
 DEFAULT_LOWER_BOUND_ID = 'cobra_default_lb'
 DEFAULT_UPPER_BOUND_ID = 'cobra_default_ub'
@@ -80,6 +80,8 @@ def load_sbml_model(filename, kind=None, flavor=None):
     else:
         model = _load_stoichiometric_model(sbml_model)
 
+    _load_metadata(sbml_model, model)
+
     return model
 
 
@@ -109,7 +111,9 @@ def _load_compartments(sbml_model):
 
 
 def _load_compartment(compartment):
-    return Compartment(compartment.getId(), compartment.getName(), compartment.getSize())
+    comp = Compartment(compartment.getId(), compartment.getName(), compartment.getSize())
+    _load_metadata(compartment, comp)
+    return comp
 
 
 def _load_metabolites(sbml_model):
@@ -117,7 +121,9 @@ def _load_metabolites(sbml_model):
 
 
 def _load_metabolite(species):
-    return Metabolite(species.getId(), species.getName(), species.getCompartment())
+    metabolite = Metabolite(species.getId(), species.getName(), species.getCompartment())
+    _load_metadata(species, metabolite)
+    return metabolite
 
 
 def _load_reactions(sbml_model):
@@ -157,7 +163,9 @@ def _load_reaction(reaction):
             kind = '-'
         modifiers[m_id] = kind
 
-    return Reaction(reaction.getId(), reaction.getName(), reaction.getReversible(), stoichiometry, modifiers)
+    rxn = Reaction(reaction.getId(), reaction.getName(), reaction.getReversible(), stoichiometry, modifiers)
+    _load_metadata(reaction, rxn)
+    return rxn
 
 
 def _load_cbmodel(sbml_model, flavor):
@@ -231,7 +239,7 @@ def _load_cobra_gpr(sbml_model):
 def _extract_rule(reaction):
     notes = reaction.getNotesString()
     if GPR_TAG in notes:
-        rule = notes.partition(GPR_TAG)[2].partition('<')[0].strip()
+        rule = notes.partition(GPR_TAG + ':')[2].partition('<')[0].strip()
     else:
         rule = ''
     return rule
@@ -295,7 +303,6 @@ def _load_fbc2_objective(sbml_model):
 
 
 def _load_fbc2_gpr(sbml_model):
-    #TODO: Temporary solution (converting to old GPR format) until adopting GPR Association classes
     fbcmodel = sbml_model.getPlugin('fbc')
     genes = [Gene(gene.getId(), gene.getName()) for gene in fbcmodel.getListOfGeneProducts()]
     gprs = OrderedDict()
@@ -418,6 +425,7 @@ def save_sbml_model(model, filename, flavor=None):
         _save_global_parameters(model, sbml_model)
         _save_kineticlaws(model, sbml_model)
         _save_assignment_rules(model, sbml_model)
+    _save_metadata(model, sbml_model)
     writer = SBMLWriter()
     writer.writeSBML(document, filename)
 
@@ -432,6 +440,7 @@ def _save_compartments(model, sbml_model):
         sbml_compartment.setId(compartment.id)
         sbml_compartment.setName(compartment.name)
         sbml_compartment.setSize(compartment.size)
+        _save_metadata(compartment, sbml_compartment)
 
 
 def _save_metabolites(model, sbml_model):
@@ -440,6 +449,7 @@ def _save_metabolites(model, sbml_model):
         species.setId(metabolite.id)
         species.setName(metabolite.name)
         species.setCompartment(metabolite.compartment)
+        _save_metadata(metabolite, species)
 
 
 def _save_reactions(model, sbml_model):
@@ -448,6 +458,8 @@ def _save_reactions(model, sbml_model):
         sbml_reaction.setId(reaction.id)
         sbml_reaction.setName(reaction.name)
         sbml_reaction.setReversible(reaction.reversible)
+        _save_metadata(reaction, sbml_reaction)
+
         for m_id, coeff in reaction.stoichiometry.items():
             if coeff < 0:
                 speciesReference = sbml_reaction.createReactant()
@@ -510,12 +522,10 @@ def _save_cobra_parameters(model, sbml_model, set_default_bounds=False):
 def _save_cobra_gprs(model, sbml_model):
     for r_id, gpr in model.gpr_associations.items():
         if gpr:
+            reaction = model.reactions[r_id]
+            reaction.metadata[GPR_TAG] = str(gpr)
             sbml_reaction = sbml_model.getReaction(r_id)
-            #sbml_reaction.appendNotes(GPR_TAG + ' ' + model.rules[r_id])
-            association = str(gpr)
-            note = XMLNode.convertStringToXMLNode('<html><p>' + GPR_TAG + ' ' + association + '</p></html>')
-            note.getNamespaces().add('http://www.w3.org/1999/xhtml')
-            sbml_reaction.setNotes(note)
+            _save_metadata(reaction, sbml_reaction)
 
 
 def _save_fbc_fluxbounds(model, sbml_model):
@@ -631,3 +641,27 @@ def _save_assignment_rules(model, sbml_model):
         rule.setVariable(p_id)
         rule.setFormula(formula)
         sbml_model.getParameter(p_id).setConstant(False)
+
+
+def _save_metadata(elem, sbml_elem):
+    if elem.metadata:
+        notes = ['<p>{}: {}</p>'.format(key, value) for key, value in elem.metadata.items()]
+        note_string = '<html>' + ''.join(notes) + '</html>'
+        note_xml = XMLNode.convertStringToXMLNode(note_string)
+        note_xml.getNamespaces().add('http://www.w3.org/1999/xhtml')
+        sbml_elem.setNotes(note_xml)
+
+
+def _load_metadata(sbml_elem, elem):
+    notes = sbml_elem.getNotes()
+
+    if notes:
+        html_tag = notes.getChild(0)
+        for i in range(html_tag.getNumChildren()):
+            child = html_tag.getChild(i)
+            note_str = child.getChild(0).getCharacters()
+            if ':' in note_str:
+                key, value = note_str.split(':', 1)
+                elem.metadata[key.strip()] = value.strip()
+
+

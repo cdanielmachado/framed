@@ -32,20 +32,16 @@ def simplify(model):
         model : CBModel
         
     Returns:
-        (list (of str), list (of str)) : lists of removed reactions and metabolites
+        (list (of str), list (of str), list (of str)) : lists of removed reactions, metabolites, and genes
     """
 
     del_reactions = blocked_reactions(model)
     model.remove_reactions(del_reactions)
     del_metabolites = _disconnected_metabolites(model)
     model.remove_metabolites(del_metabolites)
-
-    if isinstance(model, CBModel):
-        del_genes = _disconnected_genes(model)
-        model.remove_genes(del_genes)
-        return del_reactions, del_metabolites, del_genes
-    else:
-        return del_reactions, del_metabolites
+    del_genes = _disconnected_genes(model)
+    model.remove_genes(del_genes)
+    return del_reactions, del_metabolites, del_genes
 
 
 def make_irreversible(model):

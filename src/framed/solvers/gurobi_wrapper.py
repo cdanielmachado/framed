@@ -36,9 +36,11 @@ status_mapping = {GRB.OPTIMAL: Status.OPTIMAL,
 class GurobiSolver(Solver):
     """ Implements the solver interface using gurobipy. """
 
-    def __init__(self):
+    def __init__(self, model=None):
         Solver.__init__(self)
         self.problem = GurobiModel()
+        if model:
+            self.build_problem(model)
 
             
     def add_variable(self, var_id, lb=None, ub=None, vartype=VarType.CONTINUOUS, persistent=True, update_problem=True):

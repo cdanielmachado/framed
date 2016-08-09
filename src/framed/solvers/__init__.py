@@ -79,11 +79,11 @@ def set_default_solver(solvername):
         warn('Solver ' + solvername + ' not available.')
 
 
-def solver_instance():
+def solver_instance(model=None):
     """ Returns a new instance of the currently selected solver.
 
     Returns:
         Solver
     """
 
-    return solvers[default_solver]()
+    return solvers[default_solver](model)

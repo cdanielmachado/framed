@@ -56,7 +56,8 @@ class Solution:
                         Status.UNKNOWN: 'Unknown',
                         Status.SUBOPTIMAL: 'Suboptimal',
                         Status.UNBOUNDED: 'Unbounded',
-                        Status.INFEASIBLE: 'Infeasible'}
+                        Status.INFEASIBLE: 'Infeasible',
+                        Status.INF_OR_UNB: 'Infeasible or Unbounded'}
 
         return 'Objective: {}\nStatus: {}\nMessage: {}\n'.format(self.fobj, status_codes[self.status], self.message)
 
@@ -184,12 +185,14 @@ class Solver:
     All solver interfaces should implement the basic methods.
     """
 
-    def __init__(self):
+    def __init__(self, model=None):
         self.problem = None
         self.var_ids = []
         self.constr_ids = []
         self.temp_vars = set()
         self.temp_constrs = set()
+        if model:
+            self.build_problem(model)
 
     def __repr__(self):
         pass

@@ -40,6 +40,7 @@ class Metabolite:
         self.id = elem_id
         self.name = name
         self.compartment = compartment
+        self.metadata = OrderedDict()
 
     def __str__(self):
         return self.name if self.name else self.id
@@ -62,6 +63,7 @@ class Reaction:
         self.reversible = reversible
         self.stoichiometry = OrderedDict()
         self.regulators =  OrderedDict()
+        self.metadata = OrderedDict()
 
         if stoichiometry:
             self.stoichiometry.update(stoichiometry)
@@ -97,6 +99,7 @@ class Compartment:
         self.id = elem_id
         self.name = name
         self.size = size
+        self.metadata = OrderedDict()
 
     def __str__(self):
         return self.name if self.name else self.id
@@ -116,6 +119,7 @@ class Model:
         self.metabolites = OrderedDict()
         self.reactions = OrderedDict()
         self.compartments = OrderedDict()
+        self.metadata = OrderedDict()
         self._clear_temp()
 
     def _clear_temp(self):

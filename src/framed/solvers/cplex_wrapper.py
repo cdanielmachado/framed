@@ -6,7 +6,7 @@ from cplex import Cplex, infinity, SparsePair
 class CplexSolver(Solver):
     """ Implements the solver interface using cplex. """
 
-    def __init__(self):
+    def __init__(self, model=None):
         Solver.__init__(self)
         self.problem = Cplex()
 
@@ -31,6 +31,9 @@ class CplexSolver(Solver):
         self.map_types = {VarType.BINARY: self.problem.variables.type.binary,
                           VarType.INTEGER: self.problem.variables.type.integer,
                           VarType.CONTINUOUS: self.problem.variables.type.continuous}
+
+        if model:
+            self.build_problem(model)
 
     def add_variable(self, var_id, lb=None, ub=None, vartype=VarType.CONTINUOUS, persistent=True, update_problem=True):
         """ Add a variable to the current problem.
