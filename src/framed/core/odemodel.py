@@ -27,19 +27,11 @@ class ODEModel(Model):
         self.ratelaws[reaction.id] = ratelaw
         self.local_params[reaction.id] = OrderedDict()
 
-    def set_concentrations(self, concentrations):
-        for m_id, concentration in concentrations:
-            self.set_concentration(m_id, concentration)
-
     def set_concentration(self, m_id, concentration):
         if m_id in self.metabolites:
             self.concentrations[m_id] = concentration
         else:
             print 'No such metabolite', m_id
-
-    def set_ratelaws(self, ratelaws):
-        for r_id, ratelaw in ratelaws:
-            self.set_ratelaw(r_id, ratelaw)
 
     def set_ratelaw(self, r_id, ratelaw):
         if r_id in self.reactions:
@@ -47,31 +39,23 @@ class ODEModel(Model):
         else:
             print 'No such reaction', r_id
 
-    def set_assignment_rules(self, rules):
-        for p_id, rule in rules:
-            self.set_assignment_rule(p_id, rule)
-
     def set_assignment_rule(self, p_id, rule):
         if p_id in self.variable_params:
             self.assignment_rules[p_id] = rule
         else:
             print 'No such variable parameter', p_id
 
-    def set_constant_parameters(self, parameters):
-        for key, value in parameters:
+    def set_global_parameter(self, key, value, constant=True):
+        if constant:
             self.constant_params[key] = value
-
-    def set_variable_parameters(self, parameters):
-        for key, value in parameters:
+        else:
             self.variable_params[key] = value
 
-    def set_local_parameters(self, parameters):
-        for r_id, params in parameters.items():
-            if r_id in self.reactions:
-                for p_id, value in params:
-                    self.local_params[r_id][p_id] = value
-            else:
-                print 'No such reaction', r_id
+    def set_local_parameter(self, r_id, p_id, value):
+        if r_id in self.reactions:
+            self.local_params[r_id][p_id] = value
+        else:
+            print 'No such reaction', r_id
 
     def remove_reactions(self, id_list):
         Model.remove_reactions(self, id_list)

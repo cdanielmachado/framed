@@ -12,7 +12,7 @@ from framed.io_utils.plaintext import read_model_from_file, write_model_to_file
 from framed.analysis.deletion import gene_deletion
 from framed.analysis.essentiality import essential_genes
 from framed.solvers.solver import Status
-from framed.core.transformation import make_irreversible, simplify, add_ratio_constraint
+from framed.core.transformation import make_irreversible, simplify
 
 
 SMALL_TEST_MODEL = '../../../examples/models/ecoli_core_model.xml'
@@ -62,7 +62,7 @@ class FBAwithRatioTest(unittest.TestCase):
         r_id1 = 'R_PGI'
         r_id2 = 'R_G6PDH2r'
         ratio = 2.0
-        add_ratio_constraint(model, r_id1, r_id2, ratio)
+        model.add_ratio_constraint(r_id1, r_id2, ratio)
         solution = FBA(model, get_shadow_prices=True, get_reduced_costs=True)
         self.assertEqual(solution.status, Status.OPTIMAL)
         self.assertEqual(solution.values[r_id1] / solution.values[r_id2], ratio)

@@ -100,14 +100,15 @@ def load_odemodel(filename):
 
 def _load_stoichiometric_model(sbml_model):
     model = Model(sbml_model.getId())
-    model.add_compartments(_load_compartments(sbml_model))
-    model.add_metabolites(_load_metabolites(sbml_model))
-    model.add_reactions(_load_reactions(sbml_model))
+    _load_compartments(sbml_model, model)
+    _load_metabolites(sbml_model, model)
+    _load_reactions(sbml_model, model)
     return model
 
 
-def _load_compartments(sbml_model):
-    return [_load_compartment(compartment) for compartment in sbml_model.getListOfCompartments()]
+def _load_compartments(sbml_model, model):
+    for compartment in sbml_model.getListOfCompartments():
+        model.add_compartment(_load_compartment(compartment))
 
 
 def _load_compartment(compartment):
@@ -116,8 +117,9 @@ def _load_compartment(compartment):
     return comp
 
 
-def _load_metabolites(sbml_model):
-    return [_load_metabolite(species) for species in sbml_model.getListOfSpecies()]
+def _load_metabolites(sbml_model, model):
+    for species in sbml_model.getListOfSpecies():
+        model.add_metabolite(_load_metabolite(species))
 
 
 def _load_metabolite(species):
@@ -126,8 +128,9 @@ def _load_metabolite(species):
     return metabolite
 
 
-def _load_reactions(sbml_model):
-    return [_load_reaction(reaction) for reaction in sbml_model.getListOfReactions()]
+def _load_reactions(sbml_model, model):
+    for reaction in sbml_model.getListOfReactions():
+        model.add_reaction(_load_reaction(reaction))
 
 
 def _load_reaction(reaction):
@@ -170,44 +173,37 @@ def _load_reaction(reaction):
 
 def _load_cbmodel(sbml_model, flavor):
     model = CBModel(sbml_model.getId())
-    model.add_compartments(_load_compartments(sbml_model))
-    model.add_metabolites(_load_metabolites(sbml_model))
-    model.add_reactions(_load_reactions(sbml_model))
+    _load_compartments(sbml_model, model)
+    _load_metabolites(sbml_model, model)
+    _load_reactions(sbml_model, model)
     if flavor == COBRA_MODEL:
-        bounds = _load_cobra_bounds(sbml_model)
-        objective = _load_cobra_objective(sbml_model)
-        genes, gprs = _load_cobra_gpr(sbml_model)
+        _load_cobra_bounds(sbml_model, model)
+        _load_cobra_objective(sbml_model, model)
+        _load_cobra_gpr(sbml_model, model)
     elif flavor == FBC2_MODEL:
-        bounds = _load_fbc2_bounds(sbml_model)
-        objective = _load_fbc2_objective(sbml_model)
-        genes, gprs = _load_fbc2_gpr(sbml_model)
+        _load_fbc2_bounds(sbml_model, model)
+        _load_fbc2_objective(sbml_model, model)
+        _load_fbc2_gpr(sbml_model, model)
     else:
         print 'unsupported SBML flavor', flavor
-
-    model.set_multiple_bounds(bounds)
-    model.set_objective(objective)
-    model.add_genes(genes)
-    model.set_gpr_associations(gprs)
 
     return model
 
 
-def _load_cobra_bounds(sbml_model):
-    bounds = OrderedDict()
+def _load_cobra_bounds(sbml_model, model):
     for reaction in sbml_model.getListOfReactions():
         lb = _get_cb_parameter(reaction, LB_TAG)
         ub = _get_cb_parameter(reaction, UB_TAG)
-        bounds[reaction.getId()] = (lb, ub)
-    return bounds
+        model.set_flux_bounds(reaction.getId(), lb, ub)
 
 
-def _load_cobra_objective(sbml_model):
+def _load_cobra_objective(sbml_model, model):
     objective = OrderedDict()
     for reaction in sbml_model.getListOfReactions():
         coeff = _get_cb_parameter(reaction, OBJ_TAG, default_value=0)
         if coeff:
             objective[reaction.getId()] = coeff
-    return objective
+    model.set_objective(objective)
 
 
 def _get_cb_parameter(reaction, tag, default_value=None):
@@ -220,9 +216,10 @@ def _get_cb_parameter(reaction, tag, default_value=None):
     return param_value
 
 
-def _load_cobra_gpr(sbml_model):
+def _load_cobra_gpr(sbml_model, model):
     genes = set()
     gprs = OrderedDict()
+
     for reaction in sbml_model.getListOfReactions():
         rule = _extract_rule(reaction)
         if rule:
@@ -232,8 +229,12 @@ def _load_cobra_gpr(sbml_model):
             gprs[reaction.getId()] = gpr
         else:
             gprs[reaction.getId()] = None
-    genes = [Gene(gene) for gene in sorted(genes)]
-    return genes, gprs
+
+    for gene in sorted(genes):
+        model.add_gene(Gene(gene))
+
+    for r_id, gpr in gprs.items():
+        model.set_gpr_association(r_id, gpr)
 
 
 def _extract_rule(reaction):
@@ -277,20 +278,17 @@ def parse_gpr_rule(rule):
     return gpr
 
 
-def _load_fbc2_bounds(sbml_model):
+def _load_fbc2_bounds(sbml_model, model):
     params = {param.getId(): param.getValue() for param in sbml_model.getListOfParameters()}
 
-    bounds = OrderedDict()
     for reaction in sbml_model.getListOfReactions():
         fbc_rxn = reaction.getPlugin('fbc')
         lb = fbc_rxn.getLowerFluxBound()
         ub = fbc_rxn.getUpperFluxBound()
-        bounds[reaction.getId()] = (params[lb], params[ub])
-
-    return bounds
+        model.set_flux_bounds(reaction.getId(), params[lb], params[ub])
 
 
-def _load_fbc2_objective(sbml_model):
+def _load_fbc2_objective(sbml_model, model):
     fbcmodel = sbml_model.getPlugin('fbc')
     active_obj = fbcmodel.getActiveObjective()
     objective = OrderedDict()
@@ -299,24 +297,23 @@ def _load_fbc2_objective(sbml_model):
         coeff = rxn_obj.getCoefficient()
         if coeff:
             objective[r_id] = coeff
-    return objective
+    model.set_objective(objective)
 
 
-def _load_fbc2_gpr(sbml_model):
+def _load_fbc2_gpr(sbml_model, model):
     fbcmodel = sbml_model.getPlugin('fbc')
-    genes = [Gene(gene.getId(), gene.getName()) for gene in fbcmodel.getListOfGeneProducts()]
-    gprs = OrderedDict()
+
+    for gene in fbcmodel.getListOfGeneProducts():
+        model.add_gene(Gene(gene.getId(), gene.getName()))
 
     for reaction in sbml_model.getListOfReactions():
         fbcrxn = reaction.getPlugin('fbc')
         gpr_assoc = fbcrxn.getGeneProductAssociation()
         if gpr_assoc:
-            gpr_assoc = gpr_assoc.getAssociation()
-            gprs[reaction.getId()] = _parse_fbc_association(gpr_assoc)
+            gpr = _parse_fbc_association(gpr_assoc.getAssociation())
+            model.set_gpr_association(reaction.getId(), gpr)
         else:
-            gprs[reaction.getId()] = None
-
-    return genes, gprs
+            model.set_gpr_association(reaction.getId(), None)
 
 
 def _parse_fbc_association(gpr_assoc):
@@ -358,48 +355,44 @@ def _parse_fbc_association(gpr_assoc):
 
 def _load_odemodel(sbml_model):
     model = ODEModel(sbml_model.getId())
-    model.add_compartments(_load_compartments(sbml_model))
-    model.add_metabolites(_load_metabolites(sbml_model))
-    model.add_reactions(_load_reactions(sbml_model))
-    model.set_concentrations(_load_concentrations(sbml_model))
-    model.set_constant_parameters(_load_constant_parameters(sbml_model))
-    model.set_variable_parameters(_load_variable_parameters(sbml_model))
-    model.set_local_parameters(_load_local_parameters(sbml_model))
-    model.set_ratelaws(_load_ratelaws(sbml_model))
-    model.set_assignment_rules(_load_assignment_rules(sbml_model))
+    _load_compartments(sbml_model, model)
+    _load_metabolites(sbml_model, model)
+    _load_reactions(sbml_model, model)
+    _load_concentrations(sbml_model, model)
+    _load_global_parameters(sbml_model, model)
+    _load_local_parameters(sbml_model, model)
+    _load_ratelaws(sbml_model, model)
+    _load_assignment_rules(sbml_model, model)
     model.build_rate_functions()
 
     return model
 
 
-def _load_concentrations(sbml_model):
-    return [(species.getId(), species.getInitialConcentration())
-            for species in sbml_model.getListOfSpecies()]
+def _load_concentrations(sbml_model, model):
+    for species in sbml_model.getListOfSpecies():
+        model.set_concentration(species.getId(), species.getInitialConcentration())
 
 
-def _load_constant_parameters(sbml_model):
-    return [(parameter.getId(), parameter.getValue())
-            for parameter in sbml_model.getListOfParameters() if parameter.getConstant()]
+def _load_global_parameters(sbml_model, model):
+    for parameter in sbml_model.getListOfParameters():
+            model.set_global_parameter(parameter.getId(), parameter.getValue(), parameter.getConstant())
 
-def _load_variable_parameters(sbml_model):
-    return [(parameter.getId(), parameter.getValue())
-            for parameter in sbml_model.getListOfParameters() if parameter.getConstant() == False]
 
-def _load_local_parameters(sbml_model):
-    params = OrderedDict()
+def _load_local_parameters(sbml_model, model):
     for reaction in sbml_model.getListOfReactions():
-        params[reaction.getId()] = [(parameter.getId(), parameter.getValue())
-                                    for parameter in reaction.getKineticLaw().getListOfParameters()]
-    return params
+        for parameter in reaction.getKineticLaw().getListOfParameters():
+            model.set_local_parameter(reaction.getId(), parameter.getId(), parameter.getValue())
 
 
-def _load_ratelaws(sbml_model):
-    return [(reaction.getId(), reaction.getKineticLaw().getFormula())
-            for reaction in sbml_model.getListOfReactions()]
+def _load_ratelaws(sbml_model, model):
+    for reaction in sbml_model.getListOfReactions():
+        model.set_ratelaw(reaction.getId(), reaction.getKineticLaw().getFormula())
 
-def _load_assignment_rules(sbml_model):
-    return [(rule.getVariable(), rule.getFormula()) for rule in sbml_model.getListOfRules()
-            if isinstance(rule, AssignmentRule)]
+
+def _load_assignment_rules(sbml_model, model):
+    for rule in sbml_model.getListOfRules():
+        if isinstance(rule, AssignmentRule):
+            model.set_assignment_rule(rule.getVariable(), rule.getFormula())
 
 
 def save_sbml_model(model, filename, flavor=None):

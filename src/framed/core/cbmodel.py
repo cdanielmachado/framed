@@ -67,13 +67,6 @@ class CBModel(Model):
         self.rule_functions = OrderedDict()
         self.biomass_reaction = None
 
-    def set_multiple_bounds(self, bounds):
-        """ Define flux bounds for a set of reactions
-
-        """
-        for r_id, (lb, ub) in bounds.items():
-            self.set_flux_bounds(r_id, lb, ub)
-
     def set_flux_bounds(self, r_id, lb, ub):
         """ Define flux bounds for one reaction
 
@@ -208,16 +201,6 @@ class CBModel(Model):
 
         return self.biomass_reaction
 
-
-    def add_genes(self, genes):
-        """ Add a list of genes to the model.
-
-        Arguments:
-            genes : list of Gene
-        """
-        for gene in genes:
-            self.add_gene(gene)
-
     def add_gene(self, gene):
         """ Add a gene metabolite to the model.
         If a gene with the same id exists, it will be replaced.
@@ -235,7 +218,6 @@ class CBModel(Model):
         """
         self.remove_genes([gene_id])
 
-
     def remove_genes(self, gene_list):
         """ Remove a set of genes from the model.
             TODO: When switching to a GPR class representation, make sure to clean up rules as well
@@ -249,11 +231,6 @@ class CBModel(Model):
                 del self.genes[gene_id]
             else:
                 print 'No such gene', gene_id
-
-    def set_gpr_associations(self, gprs):
-
-        for r_id, gpr in gprs.items():
-            self.set_gpr_association(r_id, gpr)
 
     def set_gpr_association(self, r_id, gpr):
 

@@ -130,16 +130,6 @@ class Model:
     def copy(self):
         return deepcopy(self)
 
-    def add_metabolites(self, metabolites):
-        """ Add a list of metabolites to the model.
-
-        Arguments:
-            metabolites : list of Metabolite
-        """
-        for metabolite in metabolites:
-            self.add_metabolite(metabolite)
-        self._clear_temp()
-
     def add_metabolite(self, metabolite):
         """ Add a single metabolite to the model.
         If a metabolite with the same id exists, it will be replaced.
@@ -153,16 +143,6 @@ class Model:
         else:
             print 'Failed to add metabolite', metabolite.id, '(invalid compartment)'
 
-    def add_reactions(self, reactions):
-        """ Add a list of reactions to the model.
-
-        Arguments:
-            reactions : list of Reaction
-        """
-        for reaction in reactions:
-            self.add_reaction(reaction)
-        self._clear_temp()
-
     def add_reaction(self, reaction):
         """ Add a single reaction to the model.
         If a reaction with the same id exists, it will be replaced.
@@ -171,15 +151,6 @@ class Model:
             reaction : Reaction
         """
         self.reactions[reaction.id] = reaction
-
-    def add_compartments(self, compartments):
-        """ Add a list of compartments to the model.
-
-        Arguments:
-            compartments : list of Compartment
-        """
-        for compartment in compartments:
-            self.add_compartment(compartment)
 
     def add_compartment(self, compartment):
         """ Add a single compartment to the model.

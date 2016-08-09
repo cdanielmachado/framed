@@ -6,84 +6,518 @@
       <compartment id="C_e" name="Extracellular" size="1"/>
     </listOfCompartments>
     <listOfSpecies>
-      <species id="M_13dpg_c" name="3-Phospho-D-glyceroyl-phosphate" compartment="C_c"/>
-      <species id="M_2pg_c" name="D-Glycerate-2-phosphate" compartment="C_c"/>
-      <species id="M_3pg_c" name="3-Phospho-D-glycerate" compartment="C_c"/>
-      <species id="M_6pgc_c" name="6-Phospho-D-gluconate" compartment="C_c"/>
-      <species id="M_6pgl_c" name="6-phospho-D-glucono-1-5-lactone" compartment="C_c"/>
-      <species id="M_ac_c" name="Acetate" compartment="C_c"/>
-      <species id="M_ac_e" name="Acetate" compartment="C_e"/>
-      <species id="M_acald_c" name="Acetaldehyde" compartment="C_c"/>
-      <species id="M_acald_e" name="Acetaldehyde" compartment="C_e"/>
-      <species id="M_accoa_c" name="Acetyl-CoA" compartment="C_c"/>
-      <species id="M_acon_C_c" name="cis-Aconitate" compartment="C_c"/>
-      <species id="M_actp_c" name="Acetyl-phosphate" compartment="C_c"/>
-      <species id="M_adp_c" name="ADP" compartment="C_c"/>
-      <species id="M_akg_c" name="2-Oxoglutarate" compartment="C_c"/>
-      <species id="M_akg_e" name="2-Oxoglutarate" compartment="C_e"/>
-      <species id="M_amp_c" name="AMP" compartment="C_c"/>
-      <species id="M_atp_c" name="ATP" compartment="C_c"/>
-      <species id="M_cit_c" name="Citrate" compartment="C_c"/>
-      <species id="M_co2_c" name="CO2" compartment="C_c"/>
-      <species id="M_co2_e" name="CO2" compartment="C_e"/>
-      <species id="M_coa_c" name="Coenzyme-A" compartment="C_c"/>
-      <species id="M_dhap_c" name="Dihydroxyacetone-phosphate" compartment="C_c"/>
-      <species id="M_e4p_c" name="D-Erythrose-4-phosphate" compartment="C_c"/>
-      <species id="M_etoh_c" name="Ethanol" compartment="C_c"/>
-      <species id="M_etoh_e" name="Ethanol" compartment="C_e"/>
-      <species id="M_f6p_c" name="D-Fructose-6-phosphate" compartment="C_c"/>
-      <species id="M_fdp_c" name="D-Fructose-1-6-bisphosphate" compartment="C_c"/>
-      <species id="M_for_c" name="Formate" compartment="C_c"/>
-      <species id="M_for_e" name="Formate" compartment="C_e"/>
-      <species id="M_fru_e" name="D-Fructose" compartment="C_e"/>
-      <species id="M_fum_c" name="Fumarate" compartment="C_c"/>
-      <species id="M_fum_e" name="Fumarate" compartment="C_e"/>
-      <species id="M_g3p_c" name="Glyceraldehyde-3-phosphate" compartment="C_c"/>
-      <species id="M_g6p_c" name="D-Glucose-6-phosphate" compartment="C_c"/>
-      <species id="M_glc_D_e" name="D-Glucose" compartment="C_e"/>
-      <species id="M_gln_L_c" name="L-Glutamine" compartment="C_c"/>
-      <species id="M_gln_L_e" name="L-Glutamine" compartment="C_e"/>
-      <species id="M_glu_L_c" name="L-Glutamate" compartment="C_c"/>
-      <species id="M_glu_L_e" name="L-Glutamate" compartment="C_e"/>
-      <species id="M_glx_c" name="Glyoxylate" compartment="C_c"/>
-      <species id="M_h2o_c" name="H2O" compartment="C_c"/>
-      <species id="M_h2o_e" name="H2O" compartment="C_e"/>
-      <species id="M_h_c" name="H" compartment="C_c"/>
-      <species id="M_h_e" name="H" compartment="C_e"/>
-      <species id="M_icit_c" name="Isocitrate" compartment="C_c"/>
-      <species id="M_lac_D_c" name="D-Lactate" compartment="C_c"/>
-      <species id="M_lac_D_e" name="D-Lactate" compartment="C_e"/>
-      <species id="M_mal_L_c" name="L-Malate" compartment="C_c"/>
-      <species id="M_mal_L_e" name="L-Malate" compartment="C_e"/>
-      <species id="M_nad_c" name="Nicotinamide-adenine-dinucleotide" compartment="C_c"/>
-      <species id="M_nadh_c" name="Nicotinamide-adenine-dinucleotide-reduced" compartment="C_c"/>
-      <species id="M_nadp_c" name="Nicotinamide-adenine-dinucleotide-phosphate" compartment="C_c"/>
-      <species id="M_nadph_c" name="Nicotinamide-adenine-dinucleotide-phosphate-reduced" compartment="C_c"/>
-      <species id="M_nh4_c" name="Ammonium" compartment="C_c"/>
-      <species id="M_nh4_e" name="Ammonium" compartment="C_e"/>
-      <species id="M_o2_c" name="O2" compartment="C_c"/>
-      <species id="M_o2_e" name="O2" compartment="C_e"/>
-      <species id="M_oaa_c" name="Oxaloacetate" compartment="C_c"/>
-      <species id="M_pep_c" name="Phosphoenolpyruvate" compartment="C_c"/>
-      <species id="M_pi_c" name="Phosphate" compartment="C_c"/>
-      <species id="M_pi_e" name="Phosphate" compartment="C_e"/>
-      <species id="M_pyr_c" name="Pyruvate" compartment="C_c"/>
-      <species id="M_pyr_e" name="Pyruvate" compartment="C_e"/>
-      <species id="M_q8_c" name="Ubiquinone-8" compartment="C_c"/>
-      <species id="M_q8h2_c" name="Ubiquinol-8" compartment="C_c"/>
-      <species id="M_r5p_c" name="alpha-D-Ribose-5-phosphate" compartment="C_c"/>
-      <species id="M_ru5p_D_c" name="D-Ribulose-5-phosphate" compartment="C_c"/>
-      <species id="M_s7p_c" name="Sedoheptulose-7-phosphate" compartment="C_c"/>
-      <species id="M_succ_c" name="Succinate" compartment="C_c"/>
-      <species id="M_succ_e" name="Succinate" compartment="C_e"/>
-      <species id="M_succoa_c" name="Succinyl-CoA" compartment="C_c"/>
-      <species id="M_xu5p_D_c" name="D-Xylulose-5-phosphate" compartment="C_c"/>
+      <species id="M_13dpg_c" name="3-Phospho-D-glyceroyl-phosphate" compartment="C_c">
+        <notes>
+          <html xmlns="http://www.w3.org/1999/xhtml">
+            <p>FORMULA: C3H4O10P2</p>
+          </html>
+        </notes>
+      </species>
+      <species id="M_2pg_c" name="D-Glycerate-2-phosphate" compartment="C_c">
+        <notes>
+          <html xmlns="http://www.w3.org/1999/xhtml">
+            <p>FORMULA: C3H4O7P</p>
+          </html>
+        </notes>
+      </species>
+      <species id="M_3pg_c" name="3-Phospho-D-glycerate" compartment="C_c">
+        <notes>
+          <html xmlns="http://www.w3.org/1999/xhtml">
+            <p>FORMULA: C3H4O7P</p>
+          </html>
+        </notes>
+      </species>
+      <species id="M_6pgc_c" name="6-Phospho-D-gluconate" compartment="C_c">
+        <notes>
+          <html xmlns="http://www.w3.org/1999/xhtml">
+            <p>FORMULA: C6H10O10P</p>
+          </html>
+        </notes>
+      </species>
+      <species id="M_6pgl_c" name="6-phospho-D-glucono-1-5-lactone" compartment="C_c">
+        <notes>
+          <html xmlns="http://www.w3.org/1999/xhtml">
+            <p>FORMULA: C6H9O9P</p>
+          </html>
+        </notes>
+      </species>
+      <species id="M_ac_c" name="Acetate" compartment="C_c">
+        <notes>
+          <html xmlns="http://www.w3.org/1999/xhtml">
+            <p>FORMULA: C2H3O2</p>
+          </html>
+        </notes>
+      </species>
+      <species id="M_ac_e" name="Acetate" compartment="C_e">
+        <notes>
+          <html xmlns="http://www.w3.org/1999/xhtml">
+            <p>FORMULA: C2H3O2</p>
+          </html>
+        </notes>
+      </species>
+      <species id="M_acald_c" name="Acetaldehyde" compartment="C_c">
+        <notes>
+          <html xmlns="http://www.w3.org/1999/xhtml">
+            <p>FORMULA: C2H4O</p>
+          </html>
+        </notes>
+      </species>
+      <species id="M_acald_e" name="Acetaldehyde" compartment="C_e">
+        <notes>
+          <html xmlns="http://www.w3.org/1999/xhtml">
+            <p>FORMULA: C2H4O</p>
+          </html>
+        </notes>
+      </species>
+      <species id="M_accoa_c" name="Acetyl-CoA" compartment="C_c">
+        <notes>
+          <html xmlns="http://www.w3.org/1999/xhtml">
+            <p>FORMULA: C23H34N7O17P3S</p>
+          </html>
+        </notes>
+      </species>
+      <species id="M_acon_C_c" name="cis-Aconitate" compartment="C_c">
+        <notes>
+          <html xmlns="http://www.w3.org/1999/xhtml">
+            <p>FORMULA: C6H3O6</p>
+          </html>
+        </notes>
+      </species>
+      <species id="M_actp_c" name="Acetyl-phosphate" compartment="C_c">
+        <notes>
+          <html xmlns="http://www.w3.org/1999/xhtml">
+            <p>FORMULA: C2H3O5P</p>
+          </html>
+        </notes>
+      </species>
+      <species id="M_adp_c" name="ADP" compartment="C_c">
+        <notes>
+          <html xmlns="http://www.w3.org/1999/xhtml">
+            <p>FORMULA: C10H12N5O10P2</p>
+          </html>
+        </notes>
+      </species>
+      <species id="M_akg_c" name="2-Oxoglutarate" compartment="C_c">
+        <notes>
+          <html xmlns="http://www.w3.org/1999/xhtml">
+            <p>FORMULA: C5H4O5</p>
+          </html>
+        </notes>
+      </species>
+      <species id="M_akg_e" name="2-Oxoglutarate" compartment="C_e">
+        <notes>
+          <html xmlns="http://www.w3.org/1999/xhtml">
+            <p>FORMULA: C5H4O5</p>
+          </html>
+        </notes>
+      </species>
+      <species id="M_amp_c" name="AMP" compartment="C_c">
+        <notes>
+          <html xmlns="http://www.w3.org/1999/xhtml">
+            <p>FORMULA: C10H12N5O7P</p>
+          </html>
+        </notes>
+      </species>
+      <species id="M_atp_c" name="ATP" compartment="C_c">
+        <notes>
+          <html xmlns="http://www.w3.org/1999/xhtml">
+            <p>FORMULA: C10H12N5O13P3</p>
+          </html>
+        </notes>
+      </species>
+      <species id="M_cit_c" name="Citrate" compartment="C_c">
+        <notes>
+          <html xmlns="http://www.w3.org/1999/xhtml">
+            <p>FORMULA: C6H5O7</p>
+          </html>
+        </notes>
+      </species>
+      <species id="M_co2_c" name="CO2" compartment="C_c">
+        <notes>
+          <html xmlns="http://www.w3.org/1999/xhtml">
+            <p>FORMULA: CO2</p>
+          </html>
+        </notes>
+      </species>
+      <species id="M_co2_e" name="CO2" compartment="C_e">
+        <notes>
+          <html xmlns="http://www.w3.org/1999/xhtml">
+            <p>FORMULA: CO2</p>
+          </html>
+        </notes>
+      </species>
+      <species id="M_coa_c" name="Coenzyme-A" compartment="C_c">
+        <notes>
+          <html xmlns="http://www.w3.org/1999/xhtml">
+            <p>FORMULA: C21H32N7O16P3S</p>
+          </html>
+        </notes>
+      </species>
+      <species id="M_dhap_c" name="Dihydroxyacetone-phosphate" compartment="C_c">
+        <notes>
+          <html xmlns="http://www.w3.org/1999/xhtml">
+            <p>FORMULA: C3H5O6P</p>
+          </html>
+        </notes>
+      </species>
+      <species id="M_e4p_c" name="D-Erythrose-4-phosphate" compartment="C_c">
+        <notes>
+          <html xmlns="http://www.w3.org/1999/xhtml">
+            <p>FORMULA: C4H7O7P</p>
+          </html>
+        </notes>
+      </species>
+      <species id="M_etoh_c" name="Ethanol" compartment="C_c">
+        <notes>
+          <html xmlns="http://www.w3.org/1999/xhtml">
+            <p>FORMULA: C2H6O</p>
+          </html>
+        </notes>
+      </species>
+      <species id="M_etoh_e" name="Ethanol" compartment="C_e">
+        <notes>
+          <html xmlns="http://www.w3.org/1999/xhtml">
+            <p>FORMULA: C2H6O</p>
+          </html>
+        </notes>
+      </species>
+      <species id="M_f6p_c" name="D-Fructose-6-phosphate" compartment="C_c">
+        <notes>
+          <html xmlns="http://www.w3.org/1999/xhtml">
+            <p>FORMULA: C6H11O9P</p>
+          </html>
+        </notes>
+      </species>
+      <species id="M_fdp_c" name="D-Fructose-1-6-bisphosphate" compartment="C_c">
+        <notes>
+          <html xmlns="http://www.w3.org/1999/xhtml">
+            <p>FORMULA: C6H10O12P2</p>
+          </html>
+        </notes>
+      </species>
+      <species id="M_for_c" name="Formate" compartment="C_c">
+        <notes>
+          <html xmlns="http://www.w3.org/1999/xhtml">
+            <p>FORMULA: CH1O2</p>
+          </html>
+        </notes>
+      </species>
+      <species id="M_for_e" name="Formate" compartment="C_e">
+        <notes>
+          <html xmlns="http://www.w3.org/1999/xhtml">
+            <p>FORMULA: CH1O2</p>
+          </html>
+        </notes>
+      </species>
+      <species id="M_fru_e" name="D-Fructose" compartment="C_e">
+        <notes>
+          <html xmlns="http://www.w3.org/1999/xhtml">
+            <p>FORMULA: C6H12O6</p>
+          </html>
+        </notes>
+      </species>
+      <species id="M_fum_c" name="Fumarate" compartment="C_c">
+        <notes>
+          <html xmlns="http://www.w3.org/1999/xhtml">
+            <p>FORMULA: C4H2O4</p>
+          </html>
+        </notes>
+      </species>
+      <species id="M_fum_e" name="Fumarate" compartment="C_e">
+        <notes>
+          <html xmlns="http://www.w3.org/1999/xhtml">
+            <p>FORMULA: C4H2O4</p>
+          </html>
+        </notes>
+      </species>
+      <species id="M_g3p_c" name="Glyceraldehyde-3-phosphate" compartment="C_c">
+        <notes>
+          <html xmlns="http://www.w3.org/1999/xhtml">
+            <p>FORMULA: C3H5O6P</p>
+          </html>
+        </notes>
+      </species>
+      <species id="M_g6p_c" name="D-Glucose-6-phosphate" compartment="C_c">
+        <notes>
+          <html xmlns="http://www.w3.org/1999/xhtml">
+            <p>FORMULA: C6H11O9P</p>
+          </html>
+        </notes>
+      </species>
+      <species id="M_glc_D_e" name="D-Glucose" compartment="C_e">
+        <notes>
+          <html xmlns="http://www.w3.org/1999/xhtml">
+            <p>FORMULA: C6H12O6</p>
+          </html>
+        </notes>
+      </species>
+      <species id="M_gln_L_c" name="L-Glutamine" compartment="C_c">
+        <notes>
+          <html xmlns="http://www.w3.org/1999/xhtml">
+            <p>FORMULA: C5H10N2O3</p>
+          </html>
+        </notes>
+      </species>
+      <species id="M_gln_L_e" name="L-Glutamine" compartment="C_e">
+        <notes>
+          <html xmlns="http://www.w3.org/1999/xhtml">
+            <p>FORMULA: C5H10N2O3</p>
+          </html>
+        </notes>
+      </species>
+      <species id="M_glu_L_c" name="L-Glutamate" compartment="C_c">
+        <notes>
+          <html xmlns="http://www.w3.org/1999/xhtml">
+            <p>FORMULA: C5H8NO4</p>
+          </html>
+        </notes>
+      </species>
+      <species id="M_glu_L_e" name="L-Glutamate" compartment="C_e">
+        <notes>
+          <html xmlns="http://www.w3.org/1999/xhtml">
+            <p>FORMULA: C5H8NO4</p>
+          </html>
+        </notes>
+      </species>
+      <species id="M_glx_c" name="Glyoxylate" compartment="C_c">
+        <notes>
+          <html xmlns="http://www.w3.org/1999/xhtml">
+            <p>FORMULA: C2H1O3</p>
+          </html>
+        </notes>
+      </species>
+      <species id="M_h2o_c" name="H2O" compartment="C_c">
+        <notes>
+          <html xmlns="http://www.w3.org/1999/xhtml">
+            <p>FORMULA: H2O</p>
+          </html>
+        </notes>
+      </species>
+      <species id="M_h2o_e" name="H2O" compartment="C_e">
+        <notes>
+          <html xmlns="http://www.w3.org/1999/xhtml">
+            <p>FORMULA: H2O</p>
+          </html>
+        </notes>
+      </species>
+      <species id="M_h_c" name="H" compartment="C_c">
+        <notes>
+          <html xmlns="http://www.w3.org/1999/xhtml">
+            <p>FORMULA: H</p>
+          </html>
+        </notes>
+      </species>
+      <species id="M_h_e" name="H" compartment="C_e">
+        <notes>
+          <html xmlns="http://www.w3.org/1999/xhtml">
+            <p>FORMULA: H</p>
+          </html>
+        </notes>
+      </species>
+      <species id="M_icit_c" name="Isocitrate" compartment="C_c">
+        <notes>
+          <html xmlns="http://www.w3.org/1999/xhtml">
+            <p>FORMULA: C6H5O7</p>
+          </html>
+        </notes>
+      </species>
+      <species id="M_lac_D_c" name="D-Lactate" compartment="C_c">
+        <notes>
+          <html xmlns="http://www.w3.org/1999/xhtml">
+            <p>FORMULA: C3H5O3</p>
+          </html>
+        </notes>
+      </species>
+      <species id="M_lac_D_e" name="D-Lactate" compartment="C_e">
+        <notes>
+          <html xmlns="http://www.w3.org/1999/xhtml">
+            <p>FORMULA: C3H5O3</p>
+          </html>
+        </notes>
+      </species>
+      <species id="M_mal_L_c" name="L-Malate" compartment="C_c">
+        <notes>
+          <html xmlns="http://www.w3.org/1999/xhtml">
+            <p>FORMULA: C4H4O5</p>
+          </html>
+        </notes>
+      </species>
+      <species id="M_mal_L_e" name="L-Malate" compartment="C_e">
+        <notes>
+          <html xmlns="http://www.w3.org/1999/xhtml">
+            <p>FORMULA: C4H4O5</p>
+          </html>
+        </notes>
+      </species>
+      <species id="M_nad_c" name="Nicotinamide-adenine-dinucleotide" compartment="C_c">
+        <notes>
+          <html xmlns="http://www.w3.org/1999/xhtml">
+            <p>FORMULA: C21H26N7O14P2</p>
+          </html>
+        </notes>
+      </species>
+      <species id="M_nadh_c" name="Nicotinamide-adenine-dinucleotide-reduced" compartment="C_c">
+        <notes>
+          <html xmlns="http://www.w3.org/1999/xhtml">
+            <p>FORMULA: C21H27N7O14P2</p>
+          </html>
+        </notes>
+      </species>
+      <species id="M_nadp_c" name="Nicotinamide-adenine-dinucleotide-phosphate" compartment="C_c">
+        <notes>
+          <html xmlns="http://www.w3.org/1999/xhtml">
+            <p>FORMULA: C21H25N7O17P3</p>
+          </html>
+        </notes>
+      </species>
+      <species id="M_nadph_c" name="Nicotinamide-adenine-dinucleotide-phosphate-reduced" compartment="C_c">
+        <notes>
+          <html xmlns="http://www.w3.org/1999/xhtml">
+            <p>FORMULA: C21H26N7O17P3</p>
+          </html>
+        </notes>
+      </species>
+      <species id="M_nh4_c" name="Ammonium" compartment="C_c">
+        <notes>
+          <html xmlns="http://www.w3.org/1999/xhtml">
+            <p>FORMULA: H4N</p>
+          </html>
+        </notes>
+      </species>
+      <species id="M_nh4_e" name="Ammonium" compartment="C_e">
+        <notes>
+          <html xmlns="http://www.w3.org/1999/xhtml">
+            <p>FORMULA: H4N</p>
+          </html>
+        </notes>
+      </species>
+      <species id="M_o2_c" name="O2" compartment="C_c">
+        <notes>
+          <html xmlns="http://www.w3.org/1999/xhtml">
+            <p>FORMULA: O2</p>
+          </html>
+        </notes>
+      </species>
+      <species id="M_o2_e" name="O2" compartment="C_e">
+        <notes>
+          <html xmlns="http://www.w3.org/1999/xhtml">
+            <p>FORMULA: O2</p>
+          </html>
+        </notes>
+      </species>
+      <species id="M_oaa_c" name="Oxaloacetate" compartment="C_c">
+        <notes>
+          <html xmlns="http://www.w3.org/1999/xhtml">
+            <p>FORMULA: C4H2O5</p>
+          </html>
+        </notes>
+      </species>
+      <species id="M_pep_c" name="Phosphoenolpyruvate" compartment="C_c">
+        <notes>
+          <html xmlns="http://www.w3.org/1999/xhtml">
+            <p>FORMULA: C3H2O6P</p>
+          </html>
+        </notes>
+      </species>
+      <species id="M_pi_c" name="Phosphate" compartment="C_c">
+        <notes>
+          <html xmlns="http://www.w3.org/1999/xhtml">
+            <p>FORMULA: HO4P</p>
+          </html>
+        </notes>
+      </species>
+      <species id="M_pi_e" name="Phosphate" compartment="C_e">
+        <notes>
+          <html xmlns="http://www.w3.org/1999/xhtml">
+            <p>FORMULA: HO4P</p>
+          </html>
+        </notes>
+      </species>
+      <species id="M_pyr_c" name="Pyruvate" compartment="C_c">
+        <notes>
+          <html xmlns="http://www.w3.org/1999/xhtml">
+            <p>FORMULA: C3H3O3</p>
+          </html>
+        </notes>
+      </species>
+      <species id="M_pyr_e" name="Pyruvate" compartment="C_e">
+        <notes>
+          <html xmlns="http://www.w3.org/1999/xhtml">
+            <p>FORMULA: C3H3O3</p>
+          </html>
+        </notes>
+      </species>
+      <species id="M_q8_c" name="Ubiquinone-8" compartment="C_c">
+        <notes>
+          <html xmlns="http://www.w3.org/1999/xhtml">
+            <p>FORMULA: C49H74O4</p>
+          </html>
+        </notes>
+      </species>
+      <species id="M_q8h2_c" name="Ubiquinol-8" compartment="C_c">
+        <notes>
+          <html xmlns="http://www.w3.org/1999/xhtml">
+            <p>FORMULA: C49H76O4</p>
+          </html>
+        </notes>
+      </species>
+      <species id="M_r5p_c" name="alpha-D-Ribose-5-phosphate" compartment="C_c">
+        <notes>
+          <html xmlns="http://www.w3.org/1999/xhtml">
+            <p>FORMULA: C5H9O8P</p>
+          </html>
+        </notes>
+      </species>
+      <species id="M_ru5p_D_c" name="D-Ribulose-5-phosphate" compartment="C_c">
+        <notes>
+          <html xmlns="http://www.w3.org/1999/xhtml">
+            <p>FORMULA: C5H9O8P</p>
+          </html>
+        </notes>
+      </species>
+      <species id="M_s7p_c" name="Sedoheptulose-7-phosphate" compartment="C_c">
+        <notes>
+          <html xmlns="http://www.w3.org/1999/xhtml">
+            <p>FORMULA: C7H13O10P</p>
+          </html>
+        </notes>
+      </species>
+      <species id="M_succ_c" name="Succinate" compartment="C_c">
+        <notes>
+          <html xmlns="http://www.w3.org/1999/xhtml">
+            <p>FORMULA: C4H4O4</p>
+          </html>
+        </notes>
+      </species>
+      <species id="M_succ_e" name="Succinate" compartment="C_e">
+        <notes>
+          <html xmlns="http://www.w3.org/1999/xhtml">
+            <p>FORMULA: C4H4O4</p>
+          </html>
+        </notes>
+      </species>
+      <species id="M_succoa_c" name="Succinyl-CoA" compartment="C_c">
+        <notes>
+          <html xmlns="http://www.w3.org/1999/xhtml">
+            <p>FORMULA: C25H35N7O19P3S</p>
+          </html>
+        </notes>
+      </species>
+      <species id="M_xu5p_D_c" name="D-Xylulose-5-phosphate" compartment="C_c">
+        <notes>
+          <html xmlns="http://www.w3.org/1999/xhtml">
+            <p>FORMULA: C5H9O8P</p>
+          </html>
+        </notes>
+      </species>
     </listOfSpecies>
     <listOfReactions>
       <reaction id="R_ACALD" name="acetaldehyde dehydrogenase (acetylating)" reversible="true">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
             <p>GENE_ASSOCIATION: (b0351 or b1241)</p>
+            <p>GENE_LIST: b0351 b1241</p>
+            <p>SUBSYSTEM: Pyruvate Metabolism</p>
           </html>
         </notes>
         <listOfReactants>
@@ -111,6 +545,8 @@
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
             <p>GENE_ASSOCIATION: s0001</p>
+            <p>GENE_LIST: s0001</p>
+            <p>SUBSYSTEM: Transport, Extracellular</p>
           </html>
         </notes>
         <listOfReactants>
@@ -134,6 +570,8 @@
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
             <p>GENE_ASSOCIATION: (b1849 or b2296 or b3115)</p>
+            <p>GENE_LIST: b1849 b2296 b3115</p>
+            <p>SUBSYSTEM: Pyruvate Metabolism</p>
           </html>
         </notes>
         <listOfReactants>
@@ -159,6 +597,8 @@
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
             <p>GENE_ASSOCIATION: (b0118 or b1276)</p>
+            <p>GENE_LIST: b0118 b1276</p>
+            <p>SUBSYSTEM: Citric Acid Cycle</p>
           </html>
         </notes>
         <listOfReactants>
@@ -183,6 +623,8 @@
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
             <p>GENE_ASSOCIATION: (b0118 or b1276)</p>
+            <p>GENE_LIST: b0118 b1276</p>
+            <p>SUBSYSTEM: Citric Acid Cycle</p>
           </html>
         </notes>
         <listOfReactants>
@@ -204,6 +646,11 @@
         </kineticLaw>
       </reaction>
       <reaction id="R_ACt2r" name="acetate reversible transport via proton symport" reversible="true">
+        <notes>
+          <html xmlns="http://www.w3.org/1999/xhtml">
+            <p>SUBSYSTEM: Transport, Extracellular</p>
+          </html>
+        </notes>
         <listOfReactants>
           <speciesReference species="M_ac_e" stoichiometry="1"/>
           <speciesReference species="M_h_e" stoichiometry="1"/>
@@ -227,6 +674,8 @@
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
             <p>GENE_ASSOCIATION: b0474</p>
+            <p>GENE_LIST: b0474</p>
+            <p>SUBSYSTEM: Oxidative Phosphorylation</p>
           </html>
         </notes>
         <listOfReactants>
@@ -251,6 +700,8 @@
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
             <p>GENE_ASSOCIATION: (b0116 and b0726 and b0727)</p>
+            <p>GENE_LIST: b0116 b0726 b0727</p>
+            <p>SUBSYSTEM: Citric Acid Cycle</p>
           </html>
         </notes>
         <listOfReactants>
@@ -278,6 +729,8 @@
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
             <p>GENE_ASSOCIATION: b2587</p>
+            <p>GENE_LIST: b2587</p>
+            <p>SUBSYSTEM: Transport, Extracellular</p>
           </html>
         </notes>
         <listOfReactants>
@@ -303,6 +756,8 @@
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
             <p>GENE_ASSOCIATION: (b0356 or b1241 or b1478)</p>
+            <p>GENE_LIST: b0356 b1241 b1478</p>
+            <p>SUBSYSTEM: Pyruvate Metabolism</p>
           </html>
         </notes>
         <listOfReactants>
@@ -326,6 +781,11 @@
         </kineticLaw>
       </reaction>
       <reaction id="R_ATPM" name="ATP maintenance requirement" reversible="false">
+        <notes>
+          <html xmlns="http://www.w3.org/1999/xhtml">
+            <p>SUBSYSTEM: Oxidative Phosphorylation</p>
+          </html>
+        </notes>
         <listOfReactants>
           <speciesReference species="M_atp_c" stoichiometry="1"/>
           <speciesReference species="M_h2o_c" stoichiometry="1"/>
@@ -350,6 +810,8 @@
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
             <p>GENE_ASSOCIATION: ((b3731 and b3732 and b3733 and b3734 and b3735 and b3736 and b3737 and b3738) or (b3731 and b3732 and b3733 and b3734 and b3735 and b3736 and b3737 and b3738 and b3739))</p>
+            <p>GENE_LIST: b3731 b3732 b3733 b3734 b3735 b3736 b3737 b3738 b3739</p>
+            <p>SUBSYSTEM: Oxidative Phosphorylation</p>
           </html>
         </notes>
         <listOfReactants>
@@ -416,6 +878,8 @@
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
             <p>GENE_ASSOCIATION: s0001</p>
+            <p>GENE_LIST: s0001</p>
+            <p>SUBSYSTEM: Transport, Extracellular</p>
           </html>
         </notes>
         <listOfReactants>
@@ -439,6 +903,8 @@
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
             <p>GENE_ASSOCIATION: b0720</p>
+            <p>GENE_LIST: b0720</p>
+            <p>SUBSYSTEM: Citric Acid Cycle</p>
           </html>
         </notes>
         <listOfReactants>
@@ -466,6 +932,8 @@
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
             <p>GENE_ASSOCIATION: ((b0733 and b0734) or (b0978 and b0979))</p>
+            <p>GENE_LIST: b0733 b0734 b0978 b0979</p>
+            <p>SUBSYSTEM: Oxidative Phosphorylation</p>
           </html>
         </notes>
         <listOfReactants>
@@ -493,6 +961,8 @@
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
             <p>GENE_ASSOCIATION: (b2975 or b3603)</p>
+            <p>GENE_LIST: b2975 b3603</p>
+            <p>SUBSYSTEM: Transport, Extracellular</p>
           </html>
         </notes>
         <listOfReactants>
@@ -518,6 +988,8 @@
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
             <p>GENE_ASSOCIATION: b2779</p>
+            <p>GENE_LIST: b2779</p>
+            <p>SUBSYSTEM: Glycolysis/Gluconeogenesis</p>
           </html>
         </notes>
         <listOfReactants>
@@ -539,6 +1011,11 @@
         </kineticLaw>
       </reaction>
       <reaction id="R_ETOHt2r" name="ethanol reversible transport via proton symport" reversible="true">
+        <notes>
+          <html xmlns="http://www.w3.org/1999/xhtml">
+            <p>SUBSYSTEM: Transport, Extracellular</p>
+          </html>
+        </notes>
         <listOfReactants>
           <speciesReference species="M_etoh_e" stoichiometry="1"/>
           <speciesReference species="M_h_e" stoichiometry="1"/>
@@ -559,6 +1036,11 @@
         </kineticLaw>
       </reaction>
       <reaction id="R_EX_ac_e" name="Acetate exchange" reversible="true">
+        <notes>
+          <html xmlns="http://www.w3.org/1999/xhtml">
+            <p>SUBSYSTEM: Exchange</p>
+          </html>
+        </notes>
         <listOfReactants>
           <speciesReference species="M_ac_e" stoichiometry="1"/>
         </listOfReactants>
@@ -574,6 +1056,11 @@
         </kineticLaw>
       </reaction>
       <reaction id="R_EX_acald_e" name="Acetaldehyde exchange" reversible="true">
+        <notes>
+          <html xmlns="http://www.w3.org/1999/xhtml">
+            <p>SUBSYSTEM: Exchange</p>
+          </html>
+        </notes>
         <listOfReactants>
           <speciesReference species="M_acald_e" stoichiometry="1"/>
         </listOfReactants>
@@ -589,6 +1076,11 @@
         </kineticLaw>
       </reaction>
       <reaction id="R_EX_akg_e" name="2-Oxoglutarate exchange" reversible="true">
+        <notes>
+          <html xmlns="http://www.w3.org/1999/xhtml">
+            <p>SUBSYSTEM: Exchange</p>
+          </html>
+        </notes>
         <listOfReactants>
           <speciesReference species="M_akg_e" stoichiometry="1"/>
         </listOfReactants>
@@ -604,6 +1096,11 @@
         </kineticLaw>
       </reaction>
       <reaction id="R_EX_co2_e" name="CO2 exchange" reversible="true">
+        <notes>
+          <html xmlns="http://www.w3.org/1999/xhtml">
+            <p>SUBSYSTEM: Exchange</p>
+          </html>
+        </notes>
         <listOfReactants>
           <speciesReference species="M_co2_e" stoichiometry="1"/>
         </listOfReactants>
@@ -619,6 +1116,11 @@
         </kineticLaw>
       </reaction>
       <reaction id="R_EX_etoh_e" name="Ethanol exchange" reversible="true">
+        <notes>
+          <html xmlns="http://www.w3.org/1999/xhtml">
+            <p>SUBSYSTEM: Exchange</p>
+          </html>
+        </notes>
         <listOfReactants>
           <speciesReference species="M_etoh_e" stoichiometry="1"/>
         </listOfReactants>
@@ -634,6 +1136,11 @@
         </kineticLaw>
       </reaction>
       <reaction id="R_EX_for_e" name="Formate exchange" reversible="true">
+        <notes>
+          <html xmlns="http://www.w3.org/1999/xhtml">
+            <p>SUBSYSTEM: Exchange</p>
+          </html>
+        </notes>
         <listOfReactants>
           <speciesReference species="M_for_e" stoichiometry="1"/>
         </listOfReactants>
@@ -649,6 +1156,11 @@
         </kineticLaw>
       </reaction>
       <reaction id="R_EX_fru_e" name="D-Fructose exchange" reversible="true">
+        <notes>
+          <html xmlns="http://www.w3.org/1999/xhtml">
+            <p>SUBSYSTEM: Exchange</p>
+          </html>
+        </notes>
         <listOfReactants>
           <speciesReference species="M_fru_e" stoichiometry="1"/>
         </listOfReactants>
@@ -664,6 +1176,11 @@
         </kineticLaw>
       </reaction>
       <reaction id="R_EX_fum_e" name="Fumarate exchange" reversible="true">
+        <notes>
+          <html xmlns="http://www.w3.org/1999/xhtml">
+            <p>SUBSYSTEM: Exchange</p>
+          </html>
+        </notes>
         <listOfReactants>
           <speciesReference species="M_fum_e" stoichiometry="1"/>
         </listOfReactants>
@@ -679,6 +1196,11 @@
         </kineticLaw>
       </reaction>
       <reaction id="R_EX_glc_e" name="D-Glucose exchange" reversible="true">
+        <notes>
+          <html xmlns="http://www.w3.org/1999/xhtml">
+            <p>SUBSYSTEM: Exchange</p>
+          </html>
+        </notes>
         <listOfReactants>
           <speciesReference species="M_glc_D_e" stoichiometry="1"/>
         </listOfReactants>
@@ -694,6 +1216,11 @@
         </kineticLaw>
       </reaction>
       <reaction id="R_EX_gln_L_e" name="L-Glutamine exchange" reversible="true">
+        <notes>
+          <html xmlns="http://www.w3.org/1999/xhtml">
+            <p>SUBSYSTEM: Exchange</p>
+          </html>
+        </notes>
         <listOfReactants>
           <speciesReference species="M_gln_L_e" stoichiometry="1"/>
         </listOfReactants>
@@ -709,6 +1236,11 @@
         </kineticLaw>
       </reaction>
       <reaction id="R_EX_glu_L_e" name="L-Glutamate exchange" reversible="true">
+        <notes>
+          <html xmlns="http://www.w3.org/1999/xhtml">
+            <p>SUBSYSTEM: Exchange</p>
+          </html>
+        </notes>
         <listOfReactants>
           <speciesReference species="M_glu_L_e" stoichiometry="1"/>
         </listOfReactants>
@@ -724,6 +1256,11 @@
         </kineticLaw>
       </reaction>
       <reaction id="R_EX_h_e" name="H+ exchange" reversible="true">
+        <notes>
+          <html xmlns="http://www.w3.org/1999/xhtml">
+            <p>SUBSYSTEM: Exchange</p>
+          </html>
+        </notes>
         <listOfReactants>
           <speciesReference species="M_h_e" stoichiometry="1"/>
         </listOfReactants>
@@ -739,6 +1276,11 @@
         </kineticLaw>
       </reaction>
       <reaction id="R_EX_h2o_e" name="H2O exchange" reversible="true">
+        <notes>
+          <html xmlns="http://www.w3.org/1999/xhtml">
+            <p>SUBSYSTEM: Exchange</p>
+          </html>
+        </notes>
         <listOfReactants>
           <speciesReference species="M_h2o_e" stoichiometry="1"/>
         </listOfReactants>
@@ -754,6 +1296,11 @@
         </kineticLaw>
       </reaction>
       <reaction id="R_EX_lac_D_e" name="D-Lactate exchange" reversible="true">
+        <notes>
+          <html xmlns="http://www.w3.org/1999/xhtml">
+            <p>SUBSYSTEM: Exchange</p>
+          </html>
+        </notes>
         <listOfReactants>
           <speciesReference species="M_lac_D_e" stoichiometry="1"/>
         </listOfReactants>
@@ -769,6 +1316,11 @@
         </kineticLaw>
       </reaction>
       <reaction id="R_EX_mal_L_e" name="L-Malate exchange" reversible="true">
+        <notes>
+          <html xmlns="http://www.w3.org/1999/xhtml">
+            <p>SUBSYSTEM: Exchange</p>
+          </html>
+        </notes>
         <listOfReactants>
           <speciesReference species="M_mal_L_e" stoichiometry="1"/>
         </listOfReactants>
@@ -784,6 +1336,11 @@
         </kineticLaw>
       </reaction>
       <reaction id="R_EX_nh4_e" name="Ammonium exchange" reversible="true">
+        <notes>
+          <html xmlns="http://www.w3.org/1999/xhtml">
+            <p>SUBSYSTEM: Exchange</p>
+          </html>
+        </notes>
         <listOfReactants>
           <speciesReference species="M_nh4_e" stoichiometry="1"/>
         </listOfReactants>
@@ -799,6 +1356,11 @@
         </kineticLaw>
       </reaction>
       <reaction id="R_EX_o2_e" name="O2 exchange" reversible="true">
+        <notes>
+          <html xmlns="http://www.w3.org/1999/xhtml">
+            <p>SUBSYSTEM: Exchange</p>
+          </html>
+        </notes>
         <listOfReactants>
           <speciesReference species="M_o2_e" stoichiometry="1"/>
         </listOfReactants>
@@ -814,6 +1376,11 @@
         </kineticLaw>
       </reaction>
       <reaction id="R_EX_pi_e" name="Phosphate exchange" reversible="true">
+        <notes>
+          <html xmlns="http://www.w3.org/1999/xhtml">
+            <p>SUBSYSTEM: Exchange</p>
+          </html>
+        </notes>
         <listOfReactants>
           <speciesReference species="M_pi_e" stoichiometry="1"/>
         </listOfReactants>
@@ -829,6 +1396,11 @@
         </kineticLaw>
       </reaction>
       <reaction id="R_EX_pyr_e" name="Pyruvate exchange" reversible="true">
+        <notes>
+          <html xmlns="http://www.w3.org/1999/xhtml">
+            <p>SUBSYSTEM: Exchange</p>
+          </html>
+        </notes>
         <listOfReactants>
           <speciesReference species="M_pyr_e" stoichiometry="1"/>
         </listOfReactants>
@@ -844,6 +1416,11 @@
         </kineticLaw>
       </reaction>
       <reaction id="R_EX_succ_e" name="Succinate exchange" reversible="true">
+        <notes>
+          <html xmlns="http://www.w3.org/1999/xhtml">
+            <p>SUBSYSTEM: Exchange</p>
+          </html>
+        </notes>
         <listOfReactants>
           <speciesReference species="M_succ_e" stoichiometry="1"/>
         </listOfReactants>
@@ -862,6 +1439,8 @@
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
             <p>GENE_ASSOCIATION: (b1773 or b2097 or b2925)</p>
+            <p>GENE_LIST: b1773 b2097 b2925</p>
+            <p>SUBSYSTEM: Glycolysis/Gluconeogenesis</p>
           </html>
         </notes>
         <listOfReactants>
@@ -886,6 +1465,8 @@
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
             <p>GENE_ASSOCIATION: (b3925 or b4232)</p>
+            <p>GENE_LIST: b3925 b4232</p>
+            <p>SUBSYSTEM: Glycolysis/Gluconeogenesis</p>
           </html>
         </notes>
         <listOfReactants>
@@ -911,6 +1492,8 @@
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
             <p>GENE_ASSOCIATION: (b0904 or b2492)</p>
+            <p>GENE_LIST: b0904 b2492</p>
+            <p>SUBSYSTEM: Transport, Extracellular</p>
           </html>
         </notes>
         <listOfReactants>
@@ -936,6 +1519,8 @@
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
             <p>GENE_ASSOCIATION: (b0904 or b2492)</p>
+            <p>GENE_LIST: b0904 b2492</p>
+            <p>SUBSYSTEM: Transport, Extracellular</p>
           </html>
         </notes>
         <listOfReactants>
@@ -959,6 +1544,8 @@
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
             <p>GENE_ASSOCIATION: (b4151 and b4152 and b4153 and b4154)</p>
+            <p>GENE_LIST: b4151 b4152 b4153 b4154</p>
+            <p>SUBSYSTEM: Oxidative Phosphorylation</p>
           </html>
         </notes>
         <listOfReactants>
@@ -984,6 +1571,8 @@
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
             <p>GENE_ASSOCIATION: (b1817 and b1818 and b1819 and b2415 and b2416)</p>
+            <p>GENE_LIST: b1817 b1818 b1819 b2415 b2416</p>
+            <p>SUBSYSTEM: Transport, Extracellular</p>
           </html>
         </notes>
         <listOfReactants>
@@ -1009,6 +1598,8 @@
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
             <p>GENE_ASSOCIATION: (b1611 or b1612 or b4122)</p>
+            <p>GENE_LIST: b1611 b1612 b4122</p>
+            <p>SUBSYSTEM: Citric Acid Cycle</p>
           </html>
         </notes>
         <listOfReactants>
@@ -1033,6 +1624,8 @@
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
             <p>GENE_ASSOCIATION: b3528</p>
+            <p>GENE_LIST: b3528</p>
+            <p>SUBSYSTEM: Transport, Extracellular</p>
           </html>
         </notes>
         <listOfReactants>
@@ -1058,6 +1651,8 @@
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
             <p>GENE_ASSOCIATION: b1852</p>
+            <p>GENE_LIST: b1852</p>
+            <p>SUBSYSTEM: Pentose Phosphate Pathway</p>
           </html>
         </notes>
         <listOfReactants>
@@ -1084,6 +1679,8 @@
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
             <p>GENE_ASSOCIATION: b1779</p>
+            <p>GENE_LIST: b1779</p>
+            <p>SUBSYSTEM: Glycolysis/Gluconeogenesis</p>
           </html>
         </notes>
         <listOfReactants>
@@ -1111,6 +1708,8 @@
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
             <p>GENE_ASSOCIATION: ((b1101 and b2415 and b2416 and b2417) or (b1621 and b2415 and b2416 and b2417) or (b1817 and b1818 and b1819 and b2415 and b2416))</p>
+            <p>GENE_LIST: b1101 b1621 b1817 b1818 b1819 b2415 b2416 b2417</p>
+            <p>SUBSYSTEM: Transport, Extracellular</p>
           </html>
         </notes>
         <listOfReactants>
@@ -1136,6 +1735,8 @@
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
             <p>GENE_ASSOCIATION: (b1297 or b3870)</p>
+            <p>GENE_LIST: b1297 b3870</p>
+            <p>SUBSYSTEM: Glutamate Metabolism</p>
           </html>
         </notes>
         <listOfReactants>
@@ -1164,6 +1765,8 @@
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
             <p>GENE_ASSOCIATION: (b0809 and b0810 and b0811)</p>
+            <p>GENE_LIST: b0809 b0810 b0811</p>
+            <p>SUBSYSTEM: Transport, Extracellular</p>
           </html>
         </notes>
         <listOfReactants>
@@ -1192,6 +1795,8 @@
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
             <p>GENE_ASSOCIATION: b1761</p>
+            <p>GENE_LIST: b1761</p>
+            <p>SUBSYSTEM: Glutamate Metabolism</p>
           </html>
         </notes>
         <listOfReactants>
@@ -1220,6 +1825,8 @@
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
             <p>GENE_ASSOCIATION: (b0485 or b1524 or b1812)</p>
+            <p>GENE_LIST: b0485 b1524 b1812</p>
+            <p>SUBSYSTEM: Glutamate Metabolism</p>
           </html>
         </notes>
         <listOfReactants>
@@ -1245,6 +1852,8 @@
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
             <p>GENE_ASSOCIATION: (b3212 and b3213)</p>
+            <p>GENE_LIST: b3212 b3213</p>
+            <p>SUBSYSTEM: Glutamate Metabolism</p>
           </html>
         </notes>
         <listOfReactants>
@@ -1272,6 +1881,8 @@
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
             <p>GENE_ASSOCIATION: b4077</p>
+            <p>GENE_LIST: b4077</p>
+            <p>SUBSYSTEM: Transport, Extracellular</p>
           </html>
         </notes>
         <listOfReactants>
@@ -1297,6 +1908,8 @@
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
             <p>GENE_ASSOCIATION: b2029</p>
+            <p>GENE_LIST: b2029</p>
+            <p>SUBSYSTEM: Pentose Phosphate Pathway</p>
           </html>
         </notes>
         <listOfReactants>
@@ -1323,6 +1936,8 @@
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
             <p>GENE_ASSOCIATION: (b0875 or s0001)</p>
+            <p>GENE_LIST: b0875 s0001</p>
+            <p>SUBSYSTEM: Transport, Extracellular</p>
           </html>
         </notes>
         <listOfReactants>
@@ -1346,6 +1961,8 @@
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
             <p>GENE_ASSOCIATION: b1136</p>
+            <p>GENE_LIST: b1136</p>
+            <p>SUBSYSTEM: Citric Acid Cycle</p>
           </html>
         </notes>
         <listOfReactants>
@@ -1372,6 +1989,8 @@
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
             <p>GENE_ASSOCIATION: b4015</p>
+            <p>GENE_LIST: b4015</p>
+            <p>SUBSYSTEM: Anaplerotic reactions</p>
           </html>
         </notes>
         <listOfReactants>
@@ -1396,6 +2015,8 @@
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
             <p>GENE_ASSOCIATION: (b1380 or b2133)</p>
+            <p>GENE_LIST: b1380 b2133</p>
+            <p>SUBSYSTEM: Pyruvate Metabolism</p>
           </html>
         </notes>
         <listOfReactants>
@@ -1422,6 +2043,8 @@
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
             <p>GENE_ASSOCIATION: (b2976 or b4014)</p>
+            <p>GENE_LIST: b2976 b4014</p>
+            <p>SUBSYSTEM: Anaplerotic reactions</p>
           </html>
         </notes>
         <listOfReactants>
@@ -1449,6 +2072,8 @@
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
             <p>GENE_ASSOCIATION: b3528</p>
+            <p>GENE_LIST: b3528</p>
+            <p>SUBSYSTEM: Transport, Extracellular</p>
           </html>
         </notes>
         <listOfReactants>
@@ -1474,6 +2099,8 @@
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
             <p>GENE_ASSOCIATION: b3236</p>
+            <p>GENE_LIST: b3236</p>
+            <p>SUBSYSTEM: Citric Acid Cycle</p>
           </html>
         </notes>
         <listOfReactants>
@@ -1500,6 +2127,8 @@
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
             <p>GENE_ASSOCIATION: b1479</p>
+            <p>GENE_LIST: b1479</p>
+            <p>SUBSYSTEM: Anaplerotic reactions</p>
           </html>
         </notes>
         <listOfReactants>
@@ -1526,6 +2155,8 @@
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
             <p>GENE_ASSOCIATION: b2463</p>
+            <p>GENE_LIST: b2463</p>
+            <p>SUBSYSTEM: Anaplerotic reactions</p>
           </html>
         </notes>
         <listOfReactants>
@@ -1552,6 +2183,8 @@
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
             <p>GENE_ASSOCIATION: (b2276 and b2277 and b2278 and b2279 and b2280 and b2281 and b2282 and b2283 and b2284 and b2285 and b2286 and b2287 and b2288)</p>
+            <p>GENE_LIST: b2276 b2277 b2278 b2279 b2280 b2281 b2282 b2283 b2284 b2285 b2286 b2287 b2288</p>
+            <p>SUBSYSTEM: Oxidative Phosphorylation</p>
           </html>
         </notes>
         <listOfReactants>
@@ -1579,6 +2212,8 @@
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
             <p>GENE_ASSOCIATION: (b3962 or (b1602 and b1603))</p>
+            <p>GENE_LIST: b1602 b1603 b3962</p>
+            <p>SUBSYSTEM: Oxidative Phosphorylation</p>
           </html>
         </notes>
         <listOfReactants>
@@ -1604,6 +2239,8 @@
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
             <p>GENE_ASSOCIATION: (b0451 or s0001)</p>
+            <p>GENE_LIST: b0451 s0001</p>
+            <p>SUBSYSTEM: Inorganic Ion Transport and Metabolism</p>
           </html>
         </notes>
         <listOfReactants>
@@ -1627,6 +2264,8 @@
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
             <p>GENE_ASSOCIATION: s0001</p>
+            <p>GENE_LIST: s0001</p>
+            <p>SUBSYSTEM: Transport, Extracellular</p>
           </html>
         </notes>
         <listOfReactants>
@@ -1650,6 +2289,8 @@
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
             <p>GENE_ASSOCIATION: (b0114 and b0115 and b0116)</p>
+            <p>GENE_LIST: b0114 b0115 b0116</p>
+            <p>SUBSYSTEM: Glycolysis/Gluconeogenesis</p>
           </html>
         </notes>
         <listOfReactants>
@@ -1677,6 +2318,8 @@
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
             <p>GENE_ASSOCIATION: (b1723 or b3916)</p>
+            <p>GENE_LIST: b1723 b3916</p>
+            <p>SUBSYSTEM: Glycolysis/Gluconeogenesis</p>
           </html>
         </notes>
         <listOfReactants>
@@ -1703,6 +2346,8 @@
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
             <p>GENE_ASSOCIATION: ((b0902 and b0903) or (b0902 and b3114) or (b3951 and b3952) or (b0902 and b0903 and b2579))</p>
+            <p>GENE_LIST: b0902 b0903 b2579 b3114 b3951 b3952</p>
+            <p>SUBSYSTEM: Pyruvate Metabolism</p>
           </html>
         </notes>
         <listOfReactants>
@@ -1728,6 +2373,8 @@
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
             <p>GENE_ASSOCIATION: b4025</p>
+            <p>GENE_LIST: b4025</p>
+            <p>SUBSYSTEM: Glycolysis/Gluconeogenesis</p>
           </html>
         </notes>
         <listOfReactants>
@@ -1751,6 +2398,8 @@
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
             <p>GENE_ASSOCIATION: b2926</p>
+            <p>GENE_LIST: b2926</p>
+            <p>SUBSYSTEM: Glycolysis/Gluconeogenesis</p>
           </html>
         </notes>
         <listOfReactants>
@@ -1776,6 +2425,8 @@
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
             <p>GENE_ASSOCIATION: b0767</p>
+            <p>GENE_LIST: b0767</p>
+            <p>SUBSYSTEM: Pentose Phosphate Pathway</p>
           </html>
         </notes>
         <listOfReactants>
@@ -1801,6 +2452,8 @@
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
             <p>GENE_ASSOCIATION: (b0755 or b3612 or b4395)</p>
+            <p>GENE_LIST: b0755 b3612 b4395</p>
+            <p>SUBSYSTEM: Glycolysis/Gluconeogenesis</p>
           </html>
         </notes>
         <listOfReactants>
@@ -1824,6 +2477,8 @@
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
             <p>GENE_ASSOCIATION: (b2987 or b3493)</p>
+            <p>GENE_LIST: b2987 b3493</p>
+            <p>SUBSYSTEM: Inorganic Ion Transport and Metabolism</p>
           </html>
         </notes>
         <listOfReactants>
@@ -1849,6 +2504,8 @@
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
             <p>GENE_ASSOCIATION: b3956</p>
+            <p>GENE_LIST: b3956</p>
+            <p>SUBSYSTEM: Anaplerotic reactions</p>
           </html>
         </notes>
         <listOfReactants>
@@ -1876,6 +2533,8 @@
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
             <p>GENE_ASSOCIATION: b3403</p>
+            <p>GENE_LIST: b3403</p>
+            <p>SUBSYSTEM: Anaplerotic reactions</p>
           </html>
         </notes>
         <listOfReactants>
@@ -1902,6 +2561,8 @@
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
             <p>GENE_ASSOCIATION: b1702</p>
+            <p>GENE_LIST: b1702</p>
+            <p>SUBSYSTEM: Glycolysis/Gluconeogenesis</p>
           </html>
         </notes>
         <listOfReactants>
@@ -1930,6 +2591,8 @@
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
             <p>GENE_ASSOCIATION: (b2297 or b2458)</p>
+            <p>GENE_LIST: b2297 b2458</p>
+            <p>SUBSYSTEM: Pyruvate Metabolism</p>
           </html>
         </notes>
         <listOfReactants>
@@ -1955,6 +2618,8 @@
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
             <p>GENE_ASSOCIATION: (b1676 or b1854)</p>
+            <p>GENE_LIST: b1676 b1854</p>
+            <p>SUBSYSTEM: Glycolysis/Gluconeogenesis</p>
           </html>
         </notes>
         <listOfReactants>
@@ -1978,6 +2643,11 @@
         </kineticLaw>
       </reaction>
       <reaction id="R_PYRt2r" name="pyruvate reversible transport via proton symport" reversible="true">
+        <notes>
+          <html xmlns="http://www.w3.org/1999/xhtml">
+            <p>SUBSYSTEM: Transport, Extracellular</p>
+          </html>
+        </notes>
         <listOfReactants>
           <speciesReference species="M_h_e" stoichiometry="1"/>
           <speciesReference species="M_pyr_e" stoichiometry="1"/>
@@ -2001,6 +2671,8 @@
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
             <p>GENE_ASSOCIATION: (b3386 or b4301)</p>
+            <p>GENE_LIST: b3386 b4301</p>
+            <p>SUBSYSTEM: Pentose Phosphate Pathway</p>
           </html>
         </notes>
         <listOfReactants>
@@ -2024,6 +2696,8 @@
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
             <p>GENE_ASSOCIATION: (b2914 or b4090)</p>
+            <p>GENE_LIST: b2914 b4090</p>
+            <p>SUBSYSTEM: Pentose Phosphate Pathway</p>
           </html>
         </notes>
         <listOfReactants>
@@ -2047,6 +2721,8 @@
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
             <p>GENE_ASSOCIATION: b3528</p>
+            <p>GENE_LIST: b3528</p>
+            <p>SUBSYSTEM: Transport, Extracellular</p>
           </html>
         </notes>
         <listOfReactants>
@@ -2069,6 +2745,11 @@
         </kineticLaw>
       </reaction>
       <reaction id="R_SUCCt3" name="succinate transport out via proton antiport" reversible="false">
+        <notes>
+          <html xmlns="http://www.w3.org/1999/xhtml">
+            <p>SUBSYSTEM: Transport, Extracellular</p>
+          </html>
+        </notes>
         <listOfReactants>
           <speciesReference species="M_h_e" stoichiometry="1"/>
           <speciesReference species="M_succ_c" stoichiometry="1"/>
@@ -2092,6 +2773,8 @@
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
             <p>GENE_ASSOCIATION: (b0721 and b0722 and b0723 and b0724)</p>
+            <p>GENE_LIST: b0721 b0722 b0723 b0724</p>
+            <p>SUBSYSTEM: Oxidative Phosphorylation</p>
           </html>
         </notes>
         <listOfReactants>
@@ -2117,6 +2800,8 @@
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
             <p>GENE_ASSOCIATION: (b0728 and b0729)</p>
+            <p>GENE_LIST: b0728 b0729</p>
+            <p>SUBSYSTEM: Citric Acid Cycle</p>
           </html>
         </notes>
         <listOfReactants>
@@ -2144,6 +2829,8 @@
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
             <p>GENE_ASSOCIATION: (b0008 or b2464)</p>
+            <p>GENE_LIST: b0008 b2464</p>
+            <p>SUBSYSTEM: Pentose Phosphate Pathway</p>
           </html>
         </notes>
         <listOfReactants>
@@ -2169,6 +2856,8 @@
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
             <p>GENE_ASSOCIATION: (b1602 and b1603)</p>
+            <p>GENE_LIST: b1602 b1603</p>
+            <p>SUBSYSTEM: Oxidative Phosphorylation</p>
           </html>
         </notes>
         <listOfReactants>
@@ -2196,6 +2885,8 @@
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
             <p>GENE_ASSOCIATION: (b2465 or b2935)</p>
+            <p>GENE_LIST: b2465 b2935</p>
+            <p>SUBSYSTEM: Pentose Phosphate Pathway</p>
           </html>
         </notes>
         <listOfReactants>
@@ -2221,6 +2912,8 @@
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
             <p>GENE_ASSOCIATION: (b2465 or b2935)</p>
+            <p>GENE_LIST: b2465 b2935</p>
+            <p>SUBSYSTEM: Pentose Phosphate Pathway</p>
           </html>
         </notes>
         <listOfReactants>
@@ -2246,6 +2939,8 @@
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
             <p>GENE_ASSOCIATION: b3919</p>
+            <p>GENE_LIST: b3919</p>
+            <p>SUBSYSTEM: Glycolysis/Gluconeogenesis</p>
           </html>
         </notes>
         <listOfReactants>

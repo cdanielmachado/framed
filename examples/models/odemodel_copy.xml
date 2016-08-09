@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <sbml xmlns="http://www.sbml.org/sbml/level3/version1/core" level="3" version="1">
   <model id="Chassagnole2002_Carbon_Metabolism">
+    <notes>
+      <html xmlns="http://www.w3.org/1999/xhtml">
+        <p>This model originates from BioModels Database: A Database of Annotated Published Models (http://www.ebi.ac.uk/biomodels/). It is copyright (c) 2005-2012 The BioModels.net Team.</p>
+      </html>
+    </notes>
     <listOfCompartments>
       <compartment id="extracellular" size="1"/>
       <compartment id="cytosol" size="1"/>
