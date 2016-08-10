@@ -221,7 +221,7 @@ def _load_cobra_gpr(sbml_model, model):
     gprs = OrderedDict()
 
     for reaction in sbml_model.getListOfReactions():
-        rule = _extract_rule(reaction)
+        rule = model.reactions[reaction.getId()].metadata.pop(GPR_TAG, None)
         if rule:
             gpr = parse_gpr_rule(rule)
             for protein in gpr.proteins:
@@ -231,32 +231,36 @@ def _load_cobra_gpr(sbml_model, model):
             gprs[reaction.getId()] = None
 
     for gene in sorted(genes):
-        model.add_gene(Gene(gene))
+        model.add_gene(Gene(gene, gene[2:]))
 
     for r_id, gpr in gprs.items():
         model.set_gpr_association(r_id, gpr)
 
 
-def _extract_rule(reaction):
-    notes = reaction.getNotesString()
-    if GPR_TAG in notes:
-        rule = notes.partition(GPR_TAG + ':')[2].partition('<')[0].strip()
-    else:
-        rule = ''
-    return rule
-
-
 def parse_gpr_rule(rule):
-    rule = rule.replace(' and ', ' & ').replace(' or ', ' | ').replace('-', '_').strip()
-    gpr = GPRAssociation()
 
-    if not rule:
-        return gpr
+    rule = rule.replace('(', '( ').replace(')', ' )')
+
+    def replacement(token):
+        if token == 'and':
+            return '&'
+        elif token == 'or':
+            return '|'
+        elif token == '(' or token == ')':
+            return token
+        elif token.startswith('G_'):
+            return token.replace('-', '_')
+        else:
+            return 'G_' + token.replace('-', '_')
+
+    rule = ' '.join(map(replacement, rule.split()))
 
     expr = parse_expr(rule)
 
     if not is_dnf(expr):
         expr = to_dnf(expr)
+
+    gpr = GPRAssociation()
 
     if type(expr) is Or:
         for sub_expr in expr.args:

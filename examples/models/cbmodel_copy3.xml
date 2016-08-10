@@ -522,7 +522,6 @@
       <reaction id="R_ACALD" name="acetaldehyde dehydrogenase (acetylating)" reversible="true" fbc:lowerFluxBound="cobra_default_lb" fbc:upperFluxBound="cobra_default_ub">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
-            <p>GENE_ASSOCIATION: (b0351 or b1241)</p>
             <p>GENE_LIST: b0351 b1241</p>
             <p>SUBSYSTEM: Pyruvate Metabolism</p>
           </html>
@@ -539,15 +538,14 @@
         </listOfProducts>
         <fbc:geneProductAssociation>
           <fbc:or>
-            <fbc:geneProductRef fbc:geneProduct="b0351"/>
-            <fbc:geneProductRef fbc:geneProduct="b1241"/>
+            <fbc:geneProductRef fbc:geneProduct="G_b0351"/>
+            <fbc:geneProductRef fbc:geneProduct="G_b1241"/>
           </fbc:or>
         </fbc:geneProductAssociation>
       </reaction>
       <reaction id="R_ACALDt" name="acetaldehyde reversible transport" reversible="true" fbc:lowerFluxBound="cobra_default_lb" fbc:upperFluxBound="cobra_default_ub">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
-            <p>GENE_ASSOCIATION: s0001</p>
             <p>GENE_LIST: s0001</p>
             <p>SUBSYSTEM: Transport, Extracellular</p>
           </html>
@@ -559,13 +557,12 @@
           <speciesReference species="M_acald_c" stoichiometry="1"/>
         </listOfProducts>
         <fbc:geneProductAssociation>
-          <fbc:geneProductRef fbc:geneProduct="s0001"/>
+          <fbc:geneProductRef fbc:geneProduct="G_s0001"/>
         </fbc:geneProductAssociation>
       </reaction>
       <reaction id="R_ACKr" name="acetate kinase" reversible="true" fbc:lowerFluxBound="cobra_default_lb" fbc:upperFluxBound="cobra_default_ub">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
-            <p>GENE_ASSOCIATION: (b3115 or b2296 or b1849)</p>
             <p>GENE_LIST: b1849 b2296 b3115</p>
             <p>SUBSYSTEM: Pyruvate Metabolism</p>
           </html>
@@ -580,16 +577,15 @@
         </listOfProducts>
         <fbc:geneProductAssociation>
           <fbc:or>
-            <fbc:geneProductRef fbc:geneProduct="b1849"/>
-            <fbc:geneProductRef fbc:geneProduct="b2296"/>
-            <fbc:geneProductRef fbc:geneProduct="b3115"/>
+            <fbc:geneProductRef fbc:geneProduct="G_b1849"/>
+            <fbc:geneProductRef fbc:geneProduct="G_b2296"/>
+            <fbc:geneProductRef fbc:geneProduct="G_b3115"/>
           </fbc:or>
         </fbc:geneProductAssociation>
       </reaction>
       <reaction id="R_ACONTa" name="aconitase (half-reaction A, Citrate hydro-lyase)" reversible="true" fbc:lowerFluxBound="cobra_default_lb" fbc:upperFluxBound="cobra_default_ub">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
-            <p>GENE_ASSOCIATION: (b0118 or b1276)</p>
             <p>GENE_LIST: b0118 b1276</p>
             <p>SUBSYSTEM: Citric Acid Cycle</p>
           </html>
@@ -603,15 +599,14 @@
         </listOfProducts>
         <fbc:geneProductAssociation>
           <fbc:or>
-            <fbc:geneProductRef fbc:geneProduct="b0118"/>
-            <fbc:geneProductRef fbc:geneProduct="b1276"/>
+            <fbc:geneProductRef fbc:geneProduct="G_b0118"/>
+            <fbc:geneProductRef fbc:geneProduct="G_b1276"/>
           </fbc:or>
         </fbc:geneProductAssociation>
       </reaction>
       <reaction id="R_ACONTb" name="aconitase (half-reaction B, Isocitrate hydro-lyase)" reversible="true" fbc:lowerFluxBound="cobra_default_lb" fbc:upperFluxBound="cobra_default_ub">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
-            <p>GENE_ASSOCIATION: (b0118 or b1276)</p>
             <p>GENE_LIST: b0118 b1276</p>
             <p>SUBSYSTEM: Citric Acid Cycle</p>
           </html>
@@ -625,8 +620,8 @@
         </listOfProducts>
         <fbc:geneProductAssociation>
           <fbc:or>
-            <fbc:geneProductRef fbc:geneProduct="b0118"/>
-            <fbc:geneProductRef fbc:geneProduct="b1276"/>
+            <fbc:geneProductRef fbc:geneProduct="G_b0118"/>
+            <fbc:geneProductRef fbc:geneProduct="G_b1276"/>
           </fbc:or>
         </fbc:geneProductAssociation>
       </reaction>
@@ -648,7 +643,6 @@
       <reaction id="R_ADK1" name="adenylate kinase" reversible="true" fbc:lowerFluxBound="cobra_default_lb" fbc:upperFluxBound="cobra_default_ub">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
-            <p>GENE_ASSOCIATION: b0474</p>
             <p>GENE_LIST: b0474</p>
             <p>SUBSYSTEM: Oxidative Phosphorylation</p>
           </html>
@@ -661,13 +655,12 @@
           <speciesReference species="M_adp_c" stoichiometry="2"/>
         </listOfProducts>
         <fbc:geneProductAssociation>
-          <fbc:geneProductRef fbc:geneProduct="b0474"/>
+          <fbc:geneProductRef fbc:geneProduct="G_b0474"/>
         </fbc:geneProductAssociation>
       </reaction>
       <reaction id="R_AKGDH" name="2-Oxoglutarate dehydrogenase" reversible="false" fbc:lowerFluxBound="cobra_0_bound" fbc:upperFluxBound="cobra_default_ub">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
-            <p>GENE_ASSOCIATION: ( b0116  and  b0726  and  b0727 )</p>
             <p>GENE_LIST: b0116 b0726 b0727</p>
             <p>SUBSYSTEM: Citric Acid Cycle</p>
           </html>
@@ -684,16 +677,15 @@
         </listOfProducts>
         <fbc:geneProductAssociation>
           <fbc:and>
-            <fbc:geneProductRef fbc:geneProduct="b0116"/>
-            <fbc:geneProductRef fbc:geneProduct="b0726"/>
-            <fbc:geneProductRef fbc:geneProduct="b0727"/>
+            <fbc:geneProductRef fbc:geneProduct="G_b0116"/>
+            <fbc:geneProductRef fbc:geneProduct="G_b0726"/>
+            <fbc:geneProductRef fbc:geneProduct="G_b0727"/>
           </fbc:and>
         </fbc:geneProductAssociation>
       </reaction>
       <reaction id="R_AKGt2r" name="2-oxoglutarate reversible transport via symport" reversible="true" fbc:lowerFluxBound="cobra_default_lb" fbc:upperFluxBound="cobra_default_ub">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
-            <p>GENE_ASSOCIATION: b2587</p>
             <p>GENE_LIST: b2587</p>
             <p>SUBSYSTEM: Transport, Extracellular</p>
           </html>
@@ -707,13 +699,12 @@
           <speciesReference species="M_h_c" stoichiometry="1"/>
         </listOfProducts>
         <fbc:geneProductAssociation>
-          <fbc:geneProductRef fbc:geneProduct="b2587"/>
+          <fbc:geneProductRef fbc:geneProduct="G_b2587"/>
         </fbc:geneProductAssociation>
       </reaction>
       <reaction id="R_ALCD2x" name="alcohol dehydrogenase (ethanol)" reversible="true" fbc:lowerFluxBound="cobra_default_lb" fbc:upperFluxBound="cobra_default_ub">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
-            <p>GENE_ASSOCIATION: (b0356 or b1478 or b1241)</p>
             <p>GENE_LIST: b0356 b1241 b1478</p>
             <p>SUBSYSTEM: Pyruvate Metabolism</p>
           </html>
@@ -729,9 +720,9 @@
         </listOfProducts>
         <fbc:geneProductAssociation>
           <fbc:or>
-            <fbc:geneProductRef fbc:geneProduct="b0356"/>
-            <fbc:geneProductRef fbc:geneProduct="b1241"/>
-            <fbc:geneProductRef fbc:geneProduct="b1478"/>
+            <fbc:geneProductRef fbc:geneProduct="G_b0356"/>
+            <fbc:geneProductRef fbc:geneProduct="G_b1241"/>
+            <fbc:geneProductRef fbc:geneProduct="G_b1478"/>
           </fbc:or>
         </fbc:geneProductAssociation>
       </reaction>
@@ -754,7 +745,6 @@
       <reaction id="R_ATPS4r" name="ATP synthase (four protons for one ATP)" reversible="true" fbc:lowerFluxBound="cobra_default_lb" fbc:upperFluxBound="cobra_default_ub">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
-            <p>GENE_ASSOCIATION: (((b3736 and b3737 and b3738) and (b3731 and b3732 and b3733 and b3734 and b3735)) or ((b3736 and b3737 and b3738) and (b3731 and b3732 and b3733 and b3734 and b3735) and b3739))</p>
             <p>GENE_LIST: b3731 b3732 b3733 b3734 b3735 b3736 b3737 b3738 b3739</p>
             <p>SUBSYSTEM: Oxidative Phosphorylation</p>
           </html>
@@ -772,25 +762,25 @@
         <fbc:geneProductAssociation>
           <fbc:or>
             <fbc:and>
-              <fbc:geneProductRef fbc:geneProduct="b3731"/>
-              <fbc:geneProductRef fbc:geneProduct="b3732"/>
-              <fbc:geneProductRef fbc:geneProduct="b3733"/>
-              <fbc:geneProductRef fbc:geneProduct="b3734"/>
-              <fbc:geneProductRef fbc:geneProduct="b3735"/>
-              <fbc:geneProductRef fbc:geneProduct="b3736"/>
-              <fbc:geneProductRef fbc:geneProduct="b3737"/>
-              <fbc:geneProductRef fbc:geneProduct="b3738"/>
+              <fbc:geneProductRef fbc:geneProduct="G_b3731"/>
+              <fbc:geneProductRef fbc:geneProduct="G_b3732"/>
+              <fbc:geneProductRef fbc:geneProduct="G_b3733"/>
+              <fbc:geneProductRef fbc:geneProduct="G_b3734"/>
+              <fbc:geneProductRef fbc:geneProduct="G_b3735"/>
+              <fbc:geneProductRef fbc:geneProduct="G_b3736"/>
+              <fbc:geneProductRef fbc:geneProduct="G_b3737"/>
+              <fbc:geneProductRef fbc:geneProduct="G_b3738"/>
             </fbc:and>
             <fbc:and>
-              <fbc:geneProductRef fbc:geneProduct="b3731"/>
-              <fbc:geneProductRef fbc:geneProduct="b3732"/>
-              <fbc:geneProductRef fbc:geneProduct="b3733"/>
-              <fbc:geneProductRef fbc:geneProduct="b3734"/>
-              <fbc:geneProductRef fbc:geneProduct="b3735"/>
-              <fbc:geneProductRef fbc:geneProduct="b3736"/>
-              <fbc:geneProductRef fbc:geneProduct="b3737"/>
-              <fbc:geneProductRef fbc:geneProduct="b3738"/>
-              <fbc:geneProductRef fbc:geneProduct="b3739"/>
+              <fbc:geneProductRef fbc:geneProduct="G_b3731"/>
+              <fbc:geneProductRef fbc:geneProduct="G_b3732"/>
+              <fbc:geneProductRef fbc:geneProduct="G_b3733"/>
+              <fbc:geneProductRef fbc:geneProduct="G_b3734"/>
+              <fbc:geneProductRef fbc:geneProduct="G_b3735"/>
+              <fbc:geneProductRef fbc:geneProduct="G_b3736"/>
+              <fbc:geneProductRef fbc:geneProduct="G_b3737"/>
+              <fbc:geneProductRef fbc:geneProduct="G_b3738"/>
+              <fbc:geneProductRef fbc:geneProduct="G_b3739"/>
             </fbc:and>
           </fbc:or>
         </fbc:geneProductAssociation>
@@ -827,7 +817,6 @@
       <reaction id="R_CO2t" name="CO2 transporter via diffusion" reversible="true" fbc:lowerFluxBound="cobra_default_lb" fbc:upperFluxBound="cobra_default_ub">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
-            <p>GENE_ASSOCIATION: s0001</p>
             <p>GENE_LIST: s0001</p>
             <p>SUBSYSTEM: Transport, Extracellular</p>
           </html>
@@ -839,13 +828,12 @@
           <speciesReference species="M_co2_c" stoichiometry="1"/>
         </listOfProducts>
         <fbc:geneProductAssociation>
-          <fbc:geneProductRef fbc:geneProduct="s0001"/>
+          <fbc:geneProductRef fbc:geneProduct="G_s0001"/>
         </fbc:geneProductAssociation>
       </reaction>
       <reaction id="R_CS" name="citrate synthase" reversible="false" fbc:lowerFluxBound="cobra_0_bound" fbc:upperFluxBound="cobra_default_ub">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
-            <p>GENE_ASSOCIATION: b0720</p>
             <p>GENE_LIST: b0720</p>
             <p>SUBSYSTEM: Citric Acid Cycle</p>
           </html>
@@ -861,13 +849,12 @@
           <speciesReference species="M_h_c" stoichiometry="1"/>
         </listOfProducts>
         <fbc:geneProductAssociation>
-          <fbc:geneProductRef fbc:geneProduct="b0720"/>
+          <fbc:geneProductRef fbc:geneProduct="G_b0720"/>
         </fbc:geneProductAssociation>
       </reaction>
       <reaction id="R_CYTBD" name="cytochrome oxidase bd (ubiquinol-8: 2 protons)" reversible="false" fbc:lowerFluxBound="cobra_0_bound" fbc:upperFluxBound="cobra_default_ub">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
-            <p>GENE_ASSOCIATION: ((b0978 and b0979) or (b0733 and b0734))</p>
             <p>GENE_LIST: b0733 b0734 b0978 b0979</p>
             <p>SUBSYSTEM: Oxidative Phosphorylation</p>
           </html>
@@ -885,12 +872,12 @@
         <fbc:geneProductAssociation>
           <fbc:or>
             <fbc:and>
-              <fbc:geneProductRef fbc:geneProduct="b0733"/>
-              <fbc:geneProductRef fbc:geneProduct="b0734"/>
+              <fbc:geneProductRef fbc:geneProduct="G_b0733"/>
+              <fbc:geneProductRef fbc:geneProduct="G_b0734"/>
             </fbc:and>
             <fbc:and>
-              <fbc:geneProductRef fbc:geneProduct="b0978"/>
-              <fbc:geneProductRef fbc:geneProduct="b0979"/>
+              <fbc:geneProductRef fbc:geneProduct="G_b0978"/>
+              <fbc:geneProductRef fbc:geneProduct="G_b0979"/>
             </fbc:and>
           </fbc:or>
         </fbc:geneProductAssociation>
@@ -898,7 +885,6 @@
       <reaction id="R_D_LACt2" name="D-lactate transport via proton symport" reversible="true" fbc:lowerFluxBound="cobra_default_lb" fbc:upperFluxBound="cobra_default_ub">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
-            <p>GENE_ASSOCIATION: ( b2975  or  b3603 )</p>
             <p>GENE_LIST: b2975 b3603</p>
             <p>SUBSYSTEM: Transport, Extracellular</p>
           </html>
@@ -913,15 +899,14 @@
         </listOfProducts>
         <fbc:geneProductAssociation>
           <fbc:or>
-            <fbc:geneProductRef fbc:geneProduct="b2975"/>
-            <fbc:geneProductRef fbc:geneProduct="b3603"/>
+            <fbc:geneProductRef fbc:geneProduct="G_b2975"/>
+            <fbc:geneProductRef fbc:geneProduct="G_b3603"/>
           </fbc:or>
         </fbc:geneProductAssociation>
       </reaction>
       <reaction id="R_ENO" name="enolase" reversible="true" fbc:lowerFluxBound="cobra_default_lb" fbc:upperFluxBound="cobra_default_ub">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
-            <p>GENE_ASSOCIATION: b2779</p>
             <p>GENE_LIST: b2779</p>
             <p>SUBSYSTEM: Glycolysis/Gluconeogenesis</p>
           </html>
@@ -934,7 +919,7 @@
           <speciesReference species="M_pep_c" stoichiometry="1"/>
         </listOfProducts>
         <fbc:geneProductAssociation>
-          <fbc:geneProductRef fbc:geneProduct="b2779"/>
+          <fbc:geneProductRef fbc:geneProduct="G_b2779"/>
         </fbc:geneProductAssociation>
       </reaction>
       <reaction id="R_ETOHt2r" name="ethanol reversible transport via proton symport" reversible="true" fbc:lowerFluxBound="cobra_default_lb" fbc:upperFluxBound="cobra_default_ub">
@@ -1155,7 +1140,6 @@
       <reaction id="R_FBA" name="fructose-bisphosphate aldolase" reversible="true" fbc:lowerFluxBound="cobra_default_lb" fbc:upperFluxBound="cobra_default_ub">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
-            <p>GENE_ASSOCIATION: (b2097 or b1773 or b2925)</p>
             <p>GENE_LIST: b1773 b2097 b2925</p>
             <p>SUBSYSTEM: Glycolysis/Gluconeogenesis</p>
           </html>
@@ -1169,16 +1153,15 @@
         </listOfProducts>
         <fbc:geneProductAssociation>
           <fbc:or>
-            <fbc:geneProductRef fbc:geneProduct="b1773"/>
-            <fbc:geneProductRef fbc:geneProduct="b2097"/>
-            <fbc:geneProductRef fbc:geneProduct="b2925"/>
+            <fbc:geneProductRef fbc:geneProduct="G_b1773"/>
+            <fbc:geneProductRef fbc:geneProduct="G_b2097"/>
+            <fbc:geneProductRef fbc:geneProduct="G_b2925"/>
           </fbc:or>
         </fbc:geneProductAssociation>
       </reaction>
       <reaction id="R_FBP" name="fructose-bisphosphatase" reversible="false" fbc:lowerFluxBound="cobra_0_bound" fbc:upperFluxBound="cobra_default_ub">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
-            <p>GENE_ASSOCIATION: (b3925 or b4232)</p>
             <p>GENE_LIST: b3925 b4232</p>
             <p>SUBSYSTEM: Glycolysis/Gluconeogenesis</p>
           </html>
@@ -1193,15 +1176,14 @@
         </listOfProducts>
         <fbc:geneProductAssociation>
           <fbc:or>
-            <fbc:geneProductRef fbc:geneProduct="b3925"/>
-            <fbc:geneProductRef fbc:geneProduct="b4232"/>
+            <fbc:geneProductRef fbc:geneProduct="G_b3925"/>
+            <fbc:geneProductRef fbc:geneProduct="G_b4232"/>
           </fbc:or>
         </fbc:geneProductAssociation>
       </reaction>
       <reaction id="R_FORt2" name="formate transport via proton symport (uptake only)" reversible="false" fbc:lowerFluxBound="cobra_0_bound" fbc:upperFluxBound="cobra_default_ub">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
-            <p>GENE_ASSOCIATION: (b0904 or b2492)</p>
             <p>GENE_LIST: b0904 b2492</p>
             <p>SUBSYSTEM: Transport, Extracellular</p>
           </html>
@@ -1216,15 +1198,14 @@
         </listOfProducts>
         <fbc:geneProductAssociation>
           <fbc:or>
-            <fbc:geneProductRef fbc:geneProduct="b0904"/>
-            <fbc:geneProductRef fbc:geneProduct="b2492"/>
+            <fbc:geneProductRef fbc:geneProduct="G_b0904"/>
+            <fbc:geneProductRef fbc:geneProduct="G_b2492"/>
           </fbc:or>
         </fbc:geneProductAssociation>
       </reaction>
       <reaction id="R_FORti" name="formate transport via diffusion" reversible="false" fbc:lowerFluxBound="cobra_0_bound" fbc:upperFluxBound="cobra_default_ub">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
-            <p>GENE_ASSOCIATION: (b0904 or b2492)</p>
             <p>GENE_LIST: b0904 b2492</p>
             <p>SUBSYSTEM: Transport, Extracellular</p>
           </html>
@@ -1237,15 +1218,14 @@
         </listOfProducts>
         <fbc:geneProductAssociation>
           <fbc:or>
-            <fbc:geneProductRef fbc:geneProduct="b0904"/>
-            <fbc:geneProductRef fbc:geneProduct="b2492"/>
+            <fbc:geneProductRef fbc:geneProduct="G_b0904"/>
+            <fbc:geneProductRef fbc:geneProduct="G_b2492"/>
           </fbc:or>
         </fbc:geneProductAssociation>
       </reaction>
       <reaction id="R_FRD7" name="fumarate reductase" reversible="false" fbc:lowerFluxBound="cobra_0_bound" fbc:upperFluxBound="cobra_default_ub">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
-            <p>GENE_ASSOCIATION: (b4151 and b4152 and b4153 and b4154)</p>
             <p>GENE_LIST: b4151 b4152 b4153 b4154</p>
             <p>SUBSYSTEM: Oxidative Phosphorylation</p>
           </html>
@@ -1260,17 +1240,16 @@
         </listOfProducts>
         <fbc:geneProductAssociation>
           <fbc:and>
-            <fbc:geneProductRef fbc:geneProduct="b4151"/>
-            <fbc:geneProductRef fbc:geneProduct="b4152"/>
-            <fbc:geneProductRef fbc:geneProduct="b4153"/>
-            <fbc:geneProductRef fbc:geneProduct="b4154"/>
+            <fbc:geneProductRef fbc:geneProduct="G_b4151"/>
+            <fbc:geneProductRef fbc:geneProduct="G_b4152"/>
+            <fbc:geneProductRef fbc:geneProduct="G_b4153"/>
+            <fbc:geneProductRef fbc:geneProduct="G_b4154"/>
           </fbc:and>
         </fbc:geneProductAssociation>
       </reaction>
       <reaction id="R_FRUpts2" name="Fructose transport via PEP:Pyr PTS (f6p generating)" reversible="false" fbc:lowerFluxBound="cobra_0_bound" fbc:upperFluxBound="cobra_default_ub">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
-            <p>GENE_ASSOCIATION: (b1817 and b1818 and b1819 and b2415 and b2416)</p>
             <p>GENE_LIST: b1817 b1818 b1819 b2415 b2416</p>
             <p>SUBSYSTEM: Transport, Extracellular</p>
           </html>
@@ -1285,18 +1264,17 @@
         </listOfProducts>
         <fbc:geneProductAssociation>
           <fbc:and>
-            <fbc:geneProductRef fbc:geneProduct="b1817"/>
-            <fbc:geneProductRef fbc:geneProduct="b1818"/>
-            <fbc:geneProductRef fbc:geneProduct="b1819"/>
-            <fbc:geneProductRef fbc:geneProduct="b2415"/>
-            <fbc:geneProductRef fbc:geneProduct="b2416"/>
+            <fbc:geneProductRef fbc:geneProduct="G_b1817"/>
+            <fbc:geneProductRef fbc:geneProduct="G_b1818"/>
+            <fbc:geneProductRef fbc:geneProduct="G_b1819"/>
+            <fbc:geneProductRef fbc:geneProduct="G_b2415"/>
+            <fbc:geneProductRef fbc:geneProduct="G_b2416"/>
           </fbc:and>
         </fbc:geneProductAssociation>
       </reaction>
       <reaction id="R_FUM" name="fumarase" reversible="true" fbc:lowerFluxBound="cobra_default_lb" fbc:upperFluxBound="cobra_default_ub">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
-            <p>GENE_ASSOCIATION: ( b1612  or  b4122  or  b1611 )</p>
             <p>GENE_LIST: b1611 b1612 b4122</p>
             <p>SUBSYSTEM: Citric Acid Cycle</p>
           </html>
@@ -1310,16 +1288,15 @@
         </listOfProducts>
         <fbc:geneProductAssociation>
           <fbc:or>
-            <fbc:geneProductRef fbc:geneProduct="b1611"/>
-            <fbc:geneProductRef fbc:geneProduct="b1612"/>
-            <fbc:geneProductRef fbc:geneProduct="b4122"/>
+            <fbc:geneProductRef fbc:geneProduct="G_b1611"/>
+            <fbc:geneProductRef fbc:geneProduct="G_b1612"/>
+            <fbc:geneProductRef fbc:geneProduct="G_b4122"/>
           </fbc:or>
         </fbc:geneProductAssociation>
       </reaction>
       <reaction id="R_FUMt2_2" name="Fumarate transport via proton symport (2 H)" reversible="false" fbc:lowerFluxBound="cobra_0_bound" fbc:upperFluxBound="cobra_default_ub">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
-            <p>GENE_ASSOCIATION: b3528</p>
             <p>GENE_LIST: b3528</p>
             <p>SUBSYSTEM: Transport, Extracellular</p>
           </html>
@@ -1333,13 +1310,12 @@
           <speciesReference species="M_h_c" stoichiometry="2"/>
         </listOfProducts>
         <fbc:geneProductAssociation>
-          <fbc:geneProductRef fbc:geneProduct="b3528"/>
+          <fbc:geneProductRef fbc:geneProduct="G_b3528"/>
         </fbc:geneProductAssociation>
       </reaction>
       <reaction id="R_G6PDH2r" name="glucose 6-phosphate dehydrogenase" reversible="true" fbc:lowerFluxBound="cobra_default_lb" fbc:upperFluxBound="cobra_default_ub">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
-            <p>GENE_ASSOCIATION: b1852</p>
             <p>GENE_LIST: b1852</p>
             <p>SUBSYSTEM: Pentose Phosphate Pathway</p>
           </html>
@@ -1354,13 +1330,12 @@
           <speciesReference species="M_nadph_c" stoichiometry="1"/>
         </listOfProducts>
         <fbc:geneProductAssociation>
-          <fbc:geneProductRef fbc:geneProduct="b1852"/>
+          <fbc:geneProductRef fbc:geneProduct="G_b1852"/>
         </fbc:geneProductAssociation>
       </reaction>
       <reaction id="R_GAPD" name="glyceraldehyde-3-phosphate dehydrogenase" reversible="true" fbc:lowerFluxBound="cobra_default_lb" fbc:upperFluxBound="cobra_default_ub">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
-            <p>GENE_ASSOCIATION: b1779</p>
             <p>GENE_LIST: b1779</p>
             <p>SUBSYSTEM: Glycolysis/Gluconeogenesis</p>
           </html>
@@ -1376,13 +1351,12 @@
           <speciesReference species="M_nadh_c" stoichiometry="1"/>
         </listOfProducts>
         <fbc:geneProductAssociation>
-          <fbc:geneProductRef fbc:geneProduct="b1779"/>
+          <fbc:geneProductRef fbc:geneProduct="G_b1779"/>
         </fbc:geneProductAssociation>
       </reaction>
       <reaction id="R_GLCpts" name="D-glucose transport via PEP:Pyr PTS" reversible="false" fbc:lowerFluxBound="cobra_0_bound" fbc:upperFluxBound="cobra_default_ub">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
-            <p>GENE_ASSOCIATION: ((b2417 and b1101 and b2415 and b2416) or (b1817 and b1818 and b1819 and b2415 and b2416) or (b2417 and b1621 and b2415 and b2416))</p>
             <p>GENE_LIST: b1101 b1621 b1817 b1818 b1819 b2415 b2416 b2417</p>
             <p>SUBSYSTEM: Transport, Extracellular</p>
           </html>
@@ -1398,23 +1372,23 @@
         <fbc:geneProductAssociation>
           <fbc:or>
             <fbc:and>
-              <fbc:geneProductRef fbc:geneProduct="b1101"/>
-              <fbc:geneProductRef fbc:geneProduct="b2415"/>
-              <fbc:geneProductRef fbc:geneProduct="b2416"/>
-              <fbc:geneProductRef fbc:geneProduct="b2417"/>
+              <fbc:geneProductRef fbc:geneProduct="G_b1101"/>
+              <fbc:geneProductRef fbc:geneProduct="G_b2415"/>
+              <fbc:geneProductRef fbc:geneProduct="G_b2416"/>
+              <fbc:geneProductRef fbc:geneProduct="G_b2417"/>
             </fbc:and>
             <fbc:and>
-              <fbc:geneProductRef fbc:geneProduct="b1621"/>
-              <fbc:geneProductRef fbc:geneProduct="b2415"/>
-              <fbc:geneProductRef fbc:geneProduct="b2416"/>
-              <fbc:geneProductRef fbc:geneProduct="b2417"/>
+              <fbc:geneProductRef fbc:geneProduct="G_b1621"/>
+              <fbc:geneProductRef fbc:geneProduct="G_b2415"/>
+              <fbc:geneProductRef fbc:geneProduct="G_b2416"/>
+              <fbc:geneProductRef fbc:geneProduct="G_b2417"/>
             </fbc:and>
             <fbc:and>
-              <fbc:geneProductRef fbc:geneProduct="b1817"/>
-              <fbc:geneProductRef fbc:geneProduct="b1818"/>
-              <fbc:geneProductRef fbc:geneProduct="b1819"/>
-              <fbc:geneProductRef fbc:geneProduct="b2415"/>
-              <fbc:geneProductRef fbc:geneProduct="b2416"/>
+              <fbc:geneProductRef fbc:geneProduct="G_b1817"/>
+              <fbc:geneProductRef fbc:geneProduct="G_b1818"/>
+              <fbc:geneProductRef fbc:geneProduct="G_b1819"/>
+              <fbc:geneProductRef fbc:geneProduct="G_b2415"/>
+              <fbc:geneProductRef fbc:geneProduct="G_b2416"/>
             </fbc:and>
           </fbc:or>
         </fbc:geneProductAssociation>
@@ -1422,7 +1396,6 @@
       <reaction id="R_GLNS" name="glutamine synthetase" reversible="false" fbc:lowerFluxBound="cobra_0_bound" fbc:upperFluxBound="cobra_default_ub">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
-            <p>GENE_ASSOCIATION: (b3870 or b1297)</p>
             <p>GENE_LIST: b1297 b3870</p>
             <p>SUBSYSTEM: Glutamate Metabolism</p>
           </html>
@@ -1440,15 +1413,14 @@
         </listOfProducts>
         <fbc:geneProductAssociation>
           <fbc:or>
-            <fbc:geneProductRef fbc:geneProduct="b1297"/>
-            <fbc:geneProductRef fbc:geneProduct="b3870"/>
+            <fbc:geneProductRef fbc:geneProduct="G_b1297"/>
+            <fbc:geneProductRef fbc:geneProduct="G_b3870"/>
           </fbc:or>
         </fbc:geneProductAssociation>
       </reaction>
       <reaction id="R_GLNabc" name="L-glutamine transport via ABC system" reversible="false" fbc:lowerFluxBound="cobra_0_bound" fbc:upperFluxBound="cobra_default_ub">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
-            <p>GENE_ASSOCIATION: (b0811 and b0810 and b0809)</p>
             <p>GENE_LIST: b0809 b0810 b0811</p>
             <p>SUBSYSTEM: Transport, Extracellular</p>
           </html>
@@ -1466,16 +1438,15 @@
         </listOfProducts>
         <fbc:geneProductAssociation>
           <fbc:and>
-            <fbc:geneProductRef fbc:geneProduct="b0809"/>
-            <fbc:geneProductRef fbc:geneProduct="b0810"/>
-            <fbc:geneProductRef fbc:geneProduct="b0811"/>
+            <fbc:geneProductRef fbc:geneProduct="G_b0809"/>
+            <fbc:geneProductRef fbc:geneProduct="G_b0810"/>
+            <fbc:geneProductRef fbc:geneProduct="G_b0811"/>
           </fbc:and>
         </fbc:geneProductAssociation>
       </reaction>
       <reaction id="R_GLUDy" name="glutamate dehydrogenase (NADP)" reversible="true" fbc:lowerFluxBound="cobra_default_lb" fbc:upperFluxBound="cobra_default_ub">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
-            <p>GENE_ASSOCIATION: b1761</p>
             <p>GENE_LIST: b1761</p>
             <p>SUBSYSTEM: Glutamate Metabolism</p>
           </html>
@@ -1492,13 +1463,12 @@
           <speciesReference species="M_nh4_c" stoichiometry="1"/>
         </listOfProducts>
         <fbc:geneProductAssociation>
-          <fbc:geneProductRef fbc:geneProduct="b1761"/>
+          <fbc:geneProductRef fbc:geneProduct="G_b1761"/>
         </fbc:geneProductAssociation>
       </reaction>
       <reaction id="R_GLUN" name="glutaminase" reversible="false" fbc:lowerFluxBound="cobra_0_bound" fbc:upperFluxBound="cobra_default_ub">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
-            <p>GENE_ASSOCIATION: (b1812 or b0485 or b1524)</p>
             <p>GENE_LIST: b0485 b1524 b1812</p>
             <p>SUBSYSTEM: Glutamate Metabolism</p>
           </html>
@@ -1513,16 +1483,15 @@
         </listOfProducts>
         <fbc:geneProductAssociation>
           <fbc:or>
-            <fbc:geneProductRef fbc:geneProduct="b0485"/>
-            <fbc:geneProductRef fbc:geneProduct="b1524"/>
-            <fbc:geneProductRef fbc:geneProduct="b1812"/>
+            <fbc:geneProductRef fbc:geneProduct="G_b0485"/>
+            <fbc:geneProductRef fbc:geneProduct="G_b1524"/>
+            <fbc:geneProductRef fbc:geneProduct="G_b1812"/>
           </fbc:or>
         </fbc:geneProductAssociation>
       </reaction>
       <reaction id="R_GLUSy" name="glutamate synthase (NADPH)" reversible="false" fbc:lowerFluxBound="cobra_0_bound" fbc:upperFluxBound="cobra_default_ub">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
-            <p>GENE_ASSOCIATION: (b3212 and b3213)</p>
             <p>GENE_LIST: b3212 b3213</p>
             <p>SUBSYSTEM: Glutamate Metabolism</p>
           </html>
@@ -1539,15 +1508,14 @@
         </listOfProducts>
         <fbc:geneProductAssociation>
           <fbc:and>
-            <fbc:geneProductRef fbc:geneProduct="b3212"/>
-            <fbc:geneProductRef fbc:geneProduct="b3213"/>
+            <fbc:geneProductRef fbc:geneProduct="G_b3212"/>
+            <fbc:geneProductRef fbc:geneProduct="G_b3213"/>
           </fbc:and>
         </fbc:geneProductAssociation>
       </reaction>
       <reaction id="R_GLUt2r" name="L-glutamate transport via proton symport, reversible (periplasm)" reversible="true" fbc:lowerFluxBound="cobra_default_lb" fbc:upperFluxBound="cobra_default_ub">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
-            <p>GENE_ASSOCIATION: b4077</p>
             <p>GENE_LIST: b4077</p>
             <p>SUBSYSTEM: Transport, Extracellular</p>
           </html>
@@ -1561,13 +1529,12 @@
           <speciesReference species="M_h_c" stoichiometry="1"/>
         </listOfProducts>
         <fbc:geneProductAssociation>
-          <fbc:geneProductRef fbc:geneProduct="b4077"/>
+          <fbc:geneProductRef fbc:geneProduct="G_b4077"/>
         </fbc:geneProductAssociation>
       </reaction>
       <reaction id="R_GND" name="phosphogluconate dehydrogenase" reversible="false" fbc:lowerFluxBound="cobra_0_bound" fbc:upperFluxBound="cobra_default_ub">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
-            <p>GENE_ASSOCIATION: b2029</p>
             <p>GENE_LIST: b2029</p>
             <p>SUBSYSTEM: Pentose Phosphate Pathway</p>
           </html>
@@ -1582,13 +1549,12 @@
           <speciesReference species="M_ru5p_D_c" stoichiometry="1"/>
         </listOfProducts>
         <fbc:geneProductAssociation>
-          <fbc:geneProductRef fbc:geneProduct="b2029"/>
+          <fbc:geneProductRef fbc:geneProduct="G_b2029"/>
         </fbc:geneProductAssociation>
       </reaction>
       <reaction id="R_H2Ot" name="H2O transport via diffusion" reversible="true" fbc:lowerFluxBound="cobra_default_lb" fbc:upperFluxBound="cobra_default_ub">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
-            <p>GENE_ASSOCIATION: (b0875 or s0001)</p>
             <p>GENE_LIST: b0875 s0001</p>
             <p>SUBSYSTEM: Transport, Extracellular</p>
           </html>
@@ -1601,15 +1567,14 @@
         </listOfProducts>
         <fbc:geneProductAssociation>
           <fbc:or>
-            <fbc:geneProductRef fbc:geneProduct="b0875"/>
-            <fbc:geneProductRef fbc:geneProduct="s0001"/>
+            <fbc:geneProductRef fbc:geneProduct="G_b0875"/>
+            <fbc:geneProductRef fbc:geneProduct="G_s0001"/>
           </fbc:or>
         </fbc:geneProductAssociation>
       </reaction>
       <reaction id="R_ICDHyr" name="isocitrate dehydrogenase (NADP)" reversible="true" fbc:lowerFluxBound="cobra_default_lb" fbc:upperFluxBound="cobra_default_ub">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
-            <p>GENE_ASSOCIATION: b1136</p>
             <p>GENE_LIST: b1136</p>
             <p>SUBSYSTEM: Citric Acid Cycle</p>
           </html>
@@ -1624,13 +1589,12 @@
           <speciesReference species="M_nadph_c" stoichiometry="1"/>
         </listOfProducts>
         <fbc:geneProductAssociation>
-          <fbc:geneProductRef fbc:geneProduct="b1136"/>
+          <fbc:geneProductRef fbc:geneProduct="G_b1136"/>
         </fbc:geneProductAssociation>
       </reaction>
       <reaction id="R_ICL" name="Isocitrate lyase" reversible="false" fbc:lowerFluxBound="cobra_0_bound" fbc:upperFluxBound="cobra_default_ub">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
-            <p>GENE_ASSOCIATION: b4015</p>
             <p>GENE_LIST: b4015</p>
             <p>SUBSYSTEM: Anaplerotic reactions</p>
           </html>
@@ -1643,13 +1607,12 @@
           <speciesReference species="M_succ_c" stoichiometry="1"/>
         </listOfProducts>
         <fbc:geneProductAssociation>
-          <fbc:geneProductRef fbc:geneProduct="b4015"/>
+          <fbc:geneProductRef fbc:geneProduct="G_b4015"/>
         </fbc:geneProductAssociation>
       </reaction>
       <reaction id="R_LDH_D" name="D lactate dehydrogenase" reversible="true" fbc:lowerFluxBound="cobra_default_lb" fbc:upperFluxBound="cobra_default_ub">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
-            <p>GENE_ASSOCIATION: (b2133 or b1380)</p>
             <p>GENE_LIST: b1380 b2133</p>
             <p>SUBSYSTEM: Pyruvate Metabolism</p>
           </html>
@@ -1665,15 +1628,14 @@
         </listOfProducts>
         <fbc:geneProductAssociation>
           <fbc:or>
-            <fbc:geneProductRef fbc:geneProduct="b1380"/>
-            <fbc:geneProductRef fbc:geneProduct="b2133"/>
+            <fbc:geneProductRef fbc:geneProduct="G_b1380"/>
+            <fbc:geneProductRef fbc:geneProduct="G_b2133"/>
           </fbc:or>
         </fbc:geneProductAssociation>
       </reaction>
       <reaction id="R_MALS" name="malate synthase" reversible="false" fbc:lowerFluxBound="cobra_0_bound" fbc:upperFluxBound="cobra_default_ub">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
-            <p>GENE_ASSOCIATION: ( b4014  or  b2976 )</p>
             <p>GENE_LIST: b2976 b4014</p>
             <p>SUBSYSTEM: Anaplerotic reactions</p>
           </html>
@@ -1690,15 +1652,14 @@
         </listOfProducts>
         <fbc:geneProductAssociation>
           <fbc:or>
-            <fbc:geneProductRef fbc:geneProduct="b2976"/>
-            <fbc:geneProductRef fbc:geneProduct="b4014"/>
+            <fbc:geneProductRef fbc:geneProduct="G_b2976"/>
+            <fbc:geneProductRef fbc:geneProduct="G_b4014"/>
           </fbc:or>
         </fbc:geneProductAssociation>
       </reaction>
       <reaction id="R_MALt2_2" name="Malate transport via proton symport (2 H)" reversible="false" fbc:lowerFluxBound="cobra_0_bound" fbc:upperFluxBound="cobra_default_ub">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
-            <p>GENE_ASSOCIATION: b3528</p>
             <p>GENE_LIST: b3528</p>
             <p>SUBSYSTEM: Transport, Extracellular</p>
           </html>
@@ -1712,13 +1673,12 @@
           <speciesReference species="M_mal_L_c" stoichiometry="1"/>
         </listOfProducts>
         <fbc:geneProductAssociation>
-          <fbc:geneProductRef fbc:geneProduct="b3528"/>
+          <fbc:geneProductRef fbc:geneProduct="G_b3528"/>
         </fbc:geneProductAssociation>
       </reaction>
       <reaction id="R_MDH" name="malate dehydrogenase" reversible="true" fbc:lowerFluxBound="cobra_default_lb" fbc:upperFluxBound="cobra_default_ub">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
-            <p>GENE_ASSOCIATION: b3236</p>
             <p>GENE_LIST: b3236</p>
             <p>SUBSYSTEM: Citric Acid Cycle</p>
           </html>
@@ -1733,13 +1693,12 @@
           <speciesReference species="M_oaa_c" stoichiometry="1"/>
         </listOfProducts>
         <fbc:geneProductAssociation>
-          <fbc:geneProductRef fbc:geneProduct="b3236"/>
+          <fbc:geneProductRef fbc:geneProduct="G_b3236"/>
         </fbc:geneProductAssociation>
       </reaction>
       <reaction id="R_ME1" name="malic enzyme (NAD)" reversible="false" fbc:lowerFluxBound="cobra_0_bound" fbc:upperFluxBound="cobra_default_ub">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
-            <p>GENE_ASSOCIATION: b1479</p>
             <p>GENE_LIST: b1479</p>
             <p>SUBSYSTEM: Anaplerotic reactions</p>
           </html>
@@ -1754,13 +1713,12 @@
           <speciesReference species="M_pyr_c" stoichiometry="1"/>
         </listOfProducts>
         <fbc:geneProductAssociation>
-          <fbc:geneProductRef fbc:geneProduct="b1479"/>
+          <fbc:geneProductRef fbc:geneProduct="G_b1479"/>
         </fbc:geneProductAssociation>
       </reaction>
       <reaction id="R_ME2" name="malic enzyme (NADP)" reversible="false" fbc:lowerFluxBound="cobra_0_bound" fbc:upperFluxBound="cobra_default_ub">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
-            <p>GENE_ASSOCIATION: b2463</p>
             <p>GENE_LIST: b2463</p>
             <p>SUBSYSTEM: Anaplerotic reactions</p>
           </html>
@@ -1775,13 +1733,12 @@
           <speciesReference species="M_pyr_c" stoichiometry="1"/>
         </listOfProducts>
         <fbc:geneProductAssociation>
-          <fbc:geneProductRef fbc:geneProduct="b2463"/>
+          <fbc:geneProductRef fbc:geneProduct="G_b2463"/>
         </fbc:geneProductAssociation>
       </reaction>
       <reaction id="R_NADH16" name="NADH dehydrogenase (ubiquinone-8 &amp; 3 protons)" reversible="false" fbc:lowerFluxBound="cobra_0_bound" fbc:upperFluxBound="cobra_default_ub">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
-            <p>GENE_ASSOCIATION: (b2276 and b2277 and b2278 and b2279 and b2280 and b2281 and b2282 and b2283 and b2284 and b2285 and b2286 and b2287 and b2288)</p>
             <p>GENE_LIST: b2276 b2277 b2278 b2279 b2280 b2281 b2282 b2283 b2284 b2285 b2286 b2287 b2288</p>
             <p>SUBSYSTEM: Oxidative Phosphorylation</p>
           </html>
@@ -1798,26 +1755,25 @@
         </listOfProducts>
         <fbc:geneProductAssociation>
           <fbc:and>
-            <fbc:geneProductRef fbc:geneProduct="b2276"/>
-            <fbc:geneProductRef fbc:geneProduct="b2277"/>
-            <fbc:geneProductRef fbc:geneProduct="b2278"/>
-            <fbc:geneProductRef fbc:geneProduct="b2279"/>
-            <fbc:geneProductRef fbc:geneProduct="b2280"/>
-            <fbc:geneProductRef fbc:geneProduct="b2281"/>
-            <fbc:geneProductRef fbc:geneProduct="b2282"/>
-            <fbc:geneProductRef fbc:geneProduct="b2283"/>
-            <fbc:geneProductRef fbc:geneProduct="b2284"/>
-            <fbc:geneProductRef fbc:geneProduct="b2285"/>
-            <fbc:geneProductRef fbc:geneProduct="b2286"/>
-            <fbc:geneProductRef fbc:geneProduct="b2287"/>
-            <fbc:geneProductRef fbc:geneProduct="b2288"/>
+            <fbc:geneProductRef fbc:geneProduct="G_b2276"/>
+            <fbc:geneProductRef fbc:geneProduct="G_b2277"/>
+            <fbc:geneProductRef fbc:geneProduct="G_b2278"/>
+            <fbc:geneProductRef fbc:geneProduct="G_b2279"/>
+            <fbc:geneProductRef fbc:geneProduct="G_b2280"/>
+            <fbc:geneProductRef fbc:geneProduct="G_b2281"/>
+            <fbc:geneProductRef fbc:geneProduct="G_b2282"/>
+            <fbc:geneProductRef fbc:geneProduct="G_b2283"/>
+            <fbc:geneProductRef fbc:geneProduct="G_b2284"/>
+            <fbc:geneProductRef fbc:geneProduct="G_b2285"/>
+            <fbc:geneProductRef fbc:geneProduct="G_b2286"/>
+            <fbc:geneProductRef fbc:geneProduct="G_b2287"/>
+            <fbc:geneProductRef fbc:geneProduct="G_b2288"/>
           </fbc:and>
         </fbc:geneProductAssociation>
       </reaction>
       <reaction id="R_NADTRHD" name="NAD transhydrogenase" reversible="false" fbc:lowerFluxBound="cobra_0_bound" fbc:upperFluxBound="cobra_default_ub">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
-            <p>GENE_ASSOCIATION: (b3962 or (b1602 and b1603))</p>
             <p>GENE_LIST: b1602 b1603 b3962</p>
             <p>SUBSYSTEM: Oxidative Phosphorylation</p>
           </html>
@@ -1832,10 +1788,10 @@
         </listOfProducts>
         <fbc:geneProductAssociation>
           <fbc:or>
-            <fbc:geneProductRef fbc:geneProduct="b3962"/>
+            <fbc:geneProductRef fbc:geneProduct="G_b3962"/>
             <fbc:and>
-              <fbc:geneProductRef fbc:geneProduct="b1602"/>
-              <fbc:geneProductRef fbc:geneProduct="b1603"/>
+              <fbc:geneProductRef fbc:geneProduct="G_b1602"/>
+              <fbc:geneProductRef fbc:geneProduct="G_b1603"/>
             </fbc:and>
           </fbc:or>
         </fbc:geneProductAssociation>
@@ -1843,7 +1799,6 @@
       <reaction id="R_NH4t" name="ammonia reversible transport" reversible="true" fbc:lowerFluxBound="cobra_default_lb" fbc:upperFluxBound="cobra_default_ub">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
-            <p>GENE_ASSOCIATION: (s0001 or b0451)</p>
             <p>GENE_LIST: b0451 s0001</p>
             <p>SUBSYSTEM: Inorganic Ion Transport and Metabolism</p>
           </html>
@@ -1856,15 +1811,14 @@
         </listOfProducts>
         <fbc:geneProductAssociation>
           <fbc:or>
-            <fbc:geneProductRef fbc:geneProduct="b0451"/>
-            <fbc:geneProductRef fbc:geneProduct="s0001"/>
+            <fbc:geneProductRef fbc:geneProduct="G_b0451"/>
+            <fbc:geneProductRef fbc:geneProduct="G_s0001"/>
           </fbc:or>
         </fbc:geneProductAssociation>
       </reaction>
       <reaction id="R_O2t" name="o2 transport via diffusion" reversible="true" fbc:lowerFluxBound="cobra_default_lb" fbc:upperFluxBound="cobra_default_ub">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
-            <p>GENE_ASSOCIATION: s0001</p>
             <p>GENE_LIST: s0001</p>
             <p>SUBSYSTEM: Transport, Extracellular</p>
           </html>
@@ -1876,13 +1830,12 @@
           <speciesReference species="M_o2_c" stoichiometry="1"/>
         </listOfProducts>
         <fbc:geneProductAssociation>
-          <fbc:geneProductRef fbc:geneProduct="s0001"/>
+          <fbc:geneProductRef fbc:geneProduct="G_s0001"/>
         </fbc:geneProductAssociation>
       </reaction>
       <reaction id="R_PDH" name="pyruvate dehydrogenase" reversible="false" fbc:lowerFluxBound="cobra_0_bound" fbc:upperFluxBound="cobra_default_ub">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
-            <p>GENE_ASSOCIATION: ( b0114  and  b0115  and  b0116 )</p>
             <p>GENE_LIST: b0114 b0115 b0116</p>
             <p>SUBSYSTEM: Glycolysis/Gluconeogenesis</p>
           </html>
@@ -1899,16 +1852,15 @@
         </listOfProducts>
         <fbc:geneProductAssociation>
           <fbc:and>
-            <fbc:geneProductRef fbc:geneProduct="b0114"/>
-            <fbc:geneProductRef fbc:geneProduct="b0115"/>
-            <fbc:geneProductRef fbc:geneProduct="b0116"/>
+            <fbc:geneProductRef fbc:geneProduct="G_b0114"/>
+            <fbc:geneProductRef fbc:geneProduct="G_b0115"/>
+            <fbc:geneProductRef fbc:geneProduct="G_b0116"/>
           </fbc:and>
         </fbc:geneProductAssociation>
       </reaction>
       <reaction id="R_PFK" name="phosphofructokinase" reversible="false" fbc:lowerFluxBound="cobra_0_bound" fbc:upperFluxBound="cobra_default_ub">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
-            <p>GENE_ASSOCIATION: ( b3916  or  b1723 )</p>
             <p>GENE_LIST: b1723 b3916</p>
             <p>SUBSYSTEM: Glycolysis/Gluconeogenesis</p>
           </html>
@@ -1924,15 +1876,14 @@
         </listOfProducts>
         <fbc:geneProductAssociation>
           <fbc:or>
-            <fbc:geneProductRef fbc:geneProduct="b1723"/>
-            <fbc:geneProductRef fbc:geneProduct="b3916"/>
+            <fbc:geneProductRef fbc:geneProduct="G_b1723"/>
+            <fbc:geneProductRef fbc:geneProduct="G_b3916"/>
           </fbc:or>
         </fbc:geneProductAssociation>
       </reaction>
       <reaction id="R_PFL" name="pyruvate formate lyase" reversible="false" fbc:lowerFluxBound="cobra_0_bound" fbc:upperFluxBound="cobra_default_ub">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
-            <p>GENE_ASSOCIATION: (((b0902 and b0903) and b2579) or (b0902 and b0903) or (b0902 and b3114) or (b3951 and b3952))</p>
             <p>GENE_LIST: b0902 b0903 b2579 b3114 b3951 b3952</p>
             <p>SUBSYSTEM: Pyruvate Metabolism</p>
           </html>
@@ -1948,21 +1899,21 @@
         <fbc:geneProductAssociation>
           <fbc:or>
             <fbc:and>
-              <fbc:geneProductRef fbc:geneProduct="b0902"/>
-              <fbc:geneProductRef fbc:geneProduct="b0903"/>
+              <fbc:geneProductRef fbc:geneProduct="G_b0902"/>
+              <fbc:geneProductRef fbc:geneProduct="G_b0903"/>
             </fbc:and>
             <fbc:and>
-              <fbc:geneProductRef fbc:geneProduct="b0902"/>
-              <fbc:geneProductRef fbc:geneProduct="b3114"/>
+              <fbc:geneProductRef fbc:geneProduct="G_b0902"/>
+              <fbc:geneProductRef fbc:geneProduct="G_b3114"/>
             </fbc:and>
             <fbc:and>
-              <fbc:geneProductRef fbc:geneProduct="b3951"/>
-              <fbc:geneProductRef fbc:geneProduct="b3952"/>
+              <fbc:geneProductRef fbc:geneProduct="G_b3951"/>
+              <fbc:geneProductRef fbc:geneProduct="G_b3952"/>
             </fbc:and>
             <fbc:and>
-              <fbc:geneProductRef fbc:geneProduct="b0902"/>
-              <fbc:geneProductRef fbc:geneProduct="b0903"/>
-              <fbc:geneProductRef fbc:geneProduct="b2579"/>
+              <fbc:geneProductRef fbc:geneProduct="G_b0902"/>
+              <fbc:geneProductRef fbc:geneProduct="G_b0903"/>
+              <fbc:geneProductRef fbc:geneProduct="G_b2579"/>
             </fbc:and>
           </fbc:or>
         </fbc:geneProductAssociation>
@@ -1970,7 +1921,6 @@
       <reaction id="R_PGI" name="glucose-6-phosphate isomerase" reversible="true" fbc:lowerFluxBound="cobra_default_lb" fbc:upperFluxBound="cobra_default_ub">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
-            <p>GENE_ASSOCIATION: b4025</p>
             <p>GENE_LIST: b4025</p>
             <p>SUBSYSTEM: Glycolysis/Gluconeogenesis</p>
           </html>
@@ -1982,13 +1932,12 @@
           <speciesReference species="M_f6p_c" stoichiometry="1"/>
         </listOfProducts>
         <fbc:geneProductAssociation>
-          <fbc:geneProductRef fbc:geneProduct="b4025"/>
+          <fbc:geneProductRef fbc:geneProduct="G_b4025"/>
         </fbc:geneProductAssociation>
       </reaction>
       <reaction id="R_PGK" name="phosphoglycerate kinase" reversible="true" fbc:lowerFluxBound="cobra_default_lb" fbc:upperFluxBound="cobra_default_ub">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
-            <p>GENE_ASSOCIATION: b2926</p>
             <p>GENE_LIST: b2926</p>
             <p>SUBSYSTEM: Glycolysis/Gluconeogenesis</p>
           </html>
@@ -2002,13 +1951,12 @@
           <speciesReference species="M_adp_c" stoichiometry="1"/>
         </listOfProducts>
         <fbc:geneProductAssociation>
-          <fbc:geneProductRef fbc:geneProduct="b2926"/>
+          <fbc:geneProductRef fbc:geneProduct="G_b2926"/>
         </fbc:geneProductAssociation>
       </reaction>
       <reaction id="R_PGL" name="6-phosphogluconolactonase" reversible="false" fbc:lowerFluxBound="cobra_0_bound" fbc:upperFluxBound="cobra_default_ub">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
-            <p>GENE_ASSOCIATION: b0767</p>
             <p>GENE_LIST: b0767</p>
             <p>SUBSYSTEM: Pentose Phosphate Pathway</p>
           </html>
@@ -2022,13 +1970,12 @@
           <speciesReference species="M_h_c" stoichiometry="1"/>
         </listOfProducts>
         <fbc:geneProductAssociation>
-          <fbc:geneProductRef fbc:geneProduct="b0767"/>
+          <fbc:geneProductRef fbc:geneProduct="G_b0767"/>
         </fbc:geneProductAssociation>
       </reaction>
       <reaction id="R_PGM" name="phosphoglycerate mutase" reversible="true" fbc:lowerFluxBound="cobra_default_lb" fbc:upperFluxBound="cobra_default_ub">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
-            <p>GENE_ASSOCIATION: (b3612 or b4395 or b0755)</p>
             <p>GENE_LIST: b0755 b3612 b4395</p>
             <p>SUBSYSTEM: Glycolysis/Gluconeogenesis</p>
           </html>
@@ -2041,16 +1988,15 @@
         </listOfProducts>
         <fbc:geneProductAssociation>
           <fbc:or>
-            <fbc:geneProductRef fbc:geneProduct="b0755"/>
-            <fbc:geneProductRef fbc:geneProduct="b3612"/>
-            <fbc:geneProductRef fbc:geneProduct="b4395"/>
+            <fbc:geneProductRef fbc:geneProduct="G_b0755"/>
+            <fbc:geneProductRef fbc:geneProduct="G_b3612"/>
+            <fbc:geneProductRef fbc:geneProduct="G_b4395"/>
           </fbc:or>
         </fbc:geneProductAssociation>
       </reaction>
       <reaction id="R_PIt2r" name="phosphate reversible transport via proton symport" reversible="true" fbc:lowerFluxBound="cobra_default_lb" fbc:upperFluxBound="cobra_default_ub">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
-            <p>GENE_ASSOCIATION: (b2987 or b3493)</p>
             <p>GENE_LIST: b2987 b3493</p>
             <p>SUBSYSTEM: Inorganic Ion Transport and Metabolism</p>
           </html>
@@ -2065,15 +2011,14 @@
         </listOfProducts>
         <fbc:geneProductAssociation>
           <fbc:or>
-            <fbc:geneProductRef fbc:geneProduct="b2987"/>
-            <fbc:geneProductRef fbc:geneProduct="b3493"/>
+            <fbc:geneProductRef fbc:geneProduct="G_b2987"/>
+            <fbc:geneProductRef fbc:geneProduct="G_b3493"/>
           </fbc:or>
         </fbc:geneProductAssociation>
       </reaction>
       <reaction id="R_PPC" name="phosphoenolpyruvate carboxylase" reversible="false" fbc:lowerFluxBound="cobra_0_bound" fbc:upperFluxBound="cobra_default_ub">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
-            <p>GENE_ASSOCIATION: b3956</p>
             <p>GENE_LIST: b3956</p>
             <p>SUBSYSTEM: Anaplerotic reactions</p>
           </html>
@@ -2089,13 +2034,12 @@
           <speciesReference species="M_pi_c" stoichiometry="1"/>
         </listOfProducts>
         <fbc:geneProductAssociation>
-          <fbc:geneProductRef fbc:geneProduct="b3956"/>
+          <fbc:geneProductRef fbc:geneProduct="G_b3956"/>
         </fbc:geneProductAssociation>
       </reaction>
       <reaction id="R_PPCK" name="phosphoenolpyruvate carboxykinase" reversible="false" fbc:lowerFluxBound="cobra_0_bound" fbc:upperFluxBound="cobra_default_ub">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
-            <p>GENE_ASSOCIATION: b3403</p>
             <p>GENE_LIST: b3403</p>
             <p>SUBSYSTEM: Anaplerotic reactions</p>
           </html>
@@ -2110,13 +2054,12 @@
           <speciesReference species="M_pep_c" stoichiometry="1"/>
         </listOfProducts>
         <fbc:geneProductAssociation>
-          <fbc:geneProductRef fbc:geneProduct="b3403"/>
+          <fbc:geneProductRef fbc:geneProduct="G_b3403"/>
         </fbc:geneProductAssociation>
       </reaction>
       <reaction id="R_PPS" name="phosphoenolpyruvate synthase" reversible="false" fbc:lowerFluxBound="cobra_0_bound" fbc:upperFluxBound="cobra_default_ub">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
-            <p>GENE_ASSOCIATION: b1702</p>
             <p>GENE_LIST: b1702</p>
             <p>SUBSYSTEM: Glycolysis/Gluconeogenesis</p>
           </html>
@@ -2133,13 +2076,12 @@
           <speciesReference species="M_pi_c" stoichiometry="1"/>
         </listOfProducts>
         <fbc:geneProductAssociation>
-          <fbc:geneProductRef fbc:geneProduct="b1702"/>
+          <fbc:geneProductRef fbc:geneProduct="G_b1702"/>
         </fbc:geneProductAssociation>
       </reaction>
       <reaction id="R_PTAr" name="phosphotransacetylase" reversible="true" fbc:lowerFluxBound="cobra_default_lb" fbc:upperFluxBound="cobra_default_ub">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
-            <p>GENE_ASSOCIATION: (b2297 or b2458)</p>
             <p>GENE_LIST: b2297 b2458</p>
             <p>SUBSYSTEM: Pyruvate Metabolism</p>
           </html>
@@ -2154,15 +2096,14 @@
         </listOfProducts>
         <fbc:geneProductAssociation>
           <fbc:or>
-            <fbc:geneProductRef fbc:geneProduct="b2297"/>
-            <fbc:geneProductRef fbc:geneProduct="b2458"/>
+            <fbc:geneProductRef fbc:geneProduct="G_b2297"/>
+            <fbc:geneProductRef fbc:geneProduct="G_b2458"/>
           </fbc:or>
         </fbc:geneProductAssociation>
       </reaction>
       <reaction id="R_PYK" name="pyruvate kinase" reversible="false" fbc:lowerFluxBound="cobra_0_bound" fbc:upperFluxBound="cobra_default_ub">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
-            <p>GENE_ASSOCIATION: (b1854 or b1676)</p>
             <p>GENE_LIST: b1676 b1854</p>
             <p>SUBSYSTEM: Glycolysis/Gluconeogenesis</p>
           </html>
@@ -2178,8 +2119,8 @@
         </listOfProducts>
         <fbc:geneProductAssociation>
           <fbc:or>
-            <fbc:geneProductRef fbc:geneProduct="b1676"/>
-            <fbc:geneProductRef fbc:geneProduct="b1854"/>
+            <fbc:geneProductRef fbc:geneProduct="G_b1676"/>
+            <fbc:geneProductRef fbc:geneProduct="G_b1854"/>
           </fbc:or>
         </fbc:geneProductAssociation>
       </reaction>
@@ -2201,7 +2142,6 @@
       <reaction id="R_RPE" name="ribulose 5-phosphate 3-epimerase" reversible="true" fbc:lowerFluxBound="cobra_default_lb" fbc:upperFluxBound="cobra_default_ub">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
-            <p>GENE_ASSOCIATION: (b3386 or b4301)</p>
             <p>GENE_LIST: b3386 b4301</p>
             <p>SUBSYSTEM: Pentose Phosphate Pathway</p>
           </html>
@@ -2214,15 +2154,14 @@
         </listOfProducts>
         <fbc:geneProductAssociation>
           <fbc:or>
-            <fbc:geneProductRef fbc:geneProduct="b3386"/>
-            <fbc:geneProductRef fbc:geneProduct="b4301"/>
+            <fbc:geneProductRef fbc:geneProduct="G_b3386"/>
+            <fbc:geneProductRef fbc:geneProduct="G_b4301"/>
           </fbc:or>
         </fbc:geneProductAssociation>
       </reaction>
       <reaction id="R_RPI" name="ribose-5-phosphate isomerase" reversible="true" fbc:lowerFluxBound="cobra_default_lb" fbc:upperFluxBound="cobra_default_ub">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
-            <p>GENE_ASSOCIATION: ( b2914  or  b4090 )</p>
             <p>GENE_LIST: b2914 b4090</p>
             <p>SUBSYSTEM: Pentose Phosphate Pathway</p>
           </html>
@@ -2235,15 +2174,14 @@
         </listOfProducts>
         <fbc:geneProductAssociation>
           <fbc:or>
-            <fbc:geneProductRef fbc:geneProduct="b2914"/>
-            <fbc:geneProductRef fbc:geneProduct="b4090"/>
+            <fbc:geneProductRef fbc:geneProduct="G_b2914"/>
+            <fbc:geneProductRef fbc:geneProduct="G_b4090"/>
           </fbc:or>
         </fbc:geneProductAssociation>
       </reaction>
       <reaction id="R_SUCCt2_2" name="succinate transport via proton symport (2 H)" reversible="false" fbc:lowerFluxBound="cobra_0_bound" fbc:upperFluxBound="cobra_default_ub">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
-            <p>GENE_ASSOCIATION: b3528</p>
             <p>GENE_LIST: b3528</p>
             <p>SUBSYSTEM: Transport, Extracellular</p>
           </html>
@@ -2257,7 +2195,7 @@
           <speciesReference species="M_succ_c" stoichiometry="1"/>
         </listOfProducts>
         <fbc:geneProductAssociation>
-          <fbc:geneProductRef fbc:geneProduct="b3528"/>
+          <fbc:geneProductRef fbc:geneProduct="G_b3528"/>
         </fbc:geneProductAssociation>
       </reaction>
       <reaction id="R_SUCCt3" name="succinate transport out via proton antiport" reversible="false" fbc:lowerFluxBound="cobra_0_bound" fbc:upperFluxBound="cobra_default_ub">
@@ -2278,7 +2216,6 @@
       <reaction id="R_SUCDi" name="succinate dehydrogenase (irreversible)" reversible="false" fbc:lowerFluxBound="cobra_0_bound" fbc:upperFluxBound="cobra_default_ub">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
-            <p>GENE_ASSOCIATION: (b0721 and b0722 and b0723 and b0724)</p>
             <p>GENE_LIST: b0721 b0722 b0723 b0724</p>
             <p>SUBSYSTEM: Oxidative Phosphorylation</p>
           </html>
@@ -2293,17 +2230,16 @@
         </listOfProducts>
         <fbc:geneProductAssociation>
           <fbc:and>
-            <fbc:geneProductRef fbc:geneProduct="b0721"/>
-            <fbc:geneProductRef fbc:geneProduct="b0722"/>
-            <fbc:geneProductRef fbc:geneProduct="b0723"/>
-            <fbc:geneProductRef fbc:geneProduct="b0724"/>
+            <fbc:geneProductRef fbc:geneProduct="G_b0721"/>
+            <fbc:geneProductRef fbc:geneProduct="G_b0722"/>
+            <fbc:geneProductRef fbc:geneProduct="G_b0723"/>
+            <fbc:geneProductRef fbc:geneProduct="G_b0724"/>
           </fbc:and>
         </fbc:geneProductAssociation>
       </reaction>
       <reaction id="R_SUCOAS" name="succinyl-CoA synthetase (ADP-forming)" reversible="true" fbc:lowerFluxBound="cobra_default_lb" fbc:upperFluxBound="cobra_default_ub">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
-            <p>GENE_ASSOCIATION: ( b0728  and  b0729 )</p>
             <p>GENE_LIST: b0728 b0729</p>
             <p>SUBSYSTEM: Citric Acid Cycle</p>
           </html>
@@ -2320,15 +2256,14 @@
         </listOfProducts>
         <fbc:geneProductAssociation>
           <fbc:and>
-            <fbc:geneProductRef fbc:geneProduct="b0728"/>
-            <fbc:geneProductRef fbc:geneProduct="b0729"/>
+            <fbc:geneProductRef fbc:geneProduct="G_b0728"/>
+            <fbc:geneProductRef fbc:geneProduct="G_b0729"/>
           </fbc:and>
         </fbc:geneProductAssociation>
       </reaction>
       <reaction id="R_TALA" name="transaldolase" reversible="true" fbc:lowerFluxBound="cobra_default_lb" fbc:upperFluxBound="cobra_default_ub">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
-            <p>GENE_ASSOCIATION: (b2464 or b0008)</p>
             <p>GENE_LIST: b0008 b2464</p>
             <p>SUBSYSTEM: Pentose Phosphate Pathway</p>
           </html>
@@ -2343,15 +2278,14 @@
         </listOfProducts>
         <fbc:geneProductAssociation>
           <fbc:or>
-            <fbc:geneProductRef fbc:geneProduct="b0008"/>
-            <fbc:geneProductRef fbc:geneProduct="b2464"/>
+            <fbc:geneProductRef fbc:geneProduct="G_b0008"/>
+            <fbc:geneProductRef fbc:geneProduct="G_b2464"/>
           </fbc:or>
         </fbc:geneProductAssociation>
       </reaction>
       <reaction id="R_THD2" name="NAD(P) transhydrogenase" reversible="false" fbc:lowerFluxBound="cobra_0_bound" fbc:upperFluxBound="cobra_default_ub">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
-            <p>GENE_ASSOCIATION: ( b1602  and  b1603 )</p>
             <p>GENE_LIST: b1602 b1603</p>
             <p>SUBSYSTEM: Oxidative Phosphorylation</p>
           </html>
@@ -2368,15 +2302,14 @@
         </listOfProducts>
         <fbc:geneProductAssociation>
           <fbc:and>
-            <fbc:geneProductRef fbc:geneProduct="b1602"/>
-            <fbc:geneProductRef fbc:geneProduct="b1603"/>
+            <fbc:geneProductRef fbc:geneProduct="G_b1602"/>
+            <fbc:geneProductRef fbc:geneProduct="G_b1603"/>
           </fbc:and>
         </fbc:geneProductAssociation>
       </reaction>
       <reaction id="R_TKT1" name="transketolase" reversible="true" fbc:lowerFluxBound="cobra_default_lb" fbc:upperFluxBound="cobra_default_ub">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
-            <p>GENE_ASSOCIATION: ( b2935  or  b2465 )</p>
             <p>GENE_LIST: b2465 b2935</p>
             <p>SUBSYSTEM: Pentose Phosphate Pathway</p>
           </html>
@@ -2391,15 +2324,14 @@
         </listOfProducts>
         <fbc:geneProductAssociation>
           <fbc:or>
-            <fbc:geneProductRef fbc:geneProduct="b2465"/>
-            <fbc:geneProductRef fbc:geneProduct="b2935"/>
+            <fbc:geneProductRef fbc:geneProduct="G_b2465"/>
+            <fbc:geneProductRef fbc:geneProduct="G_b2935"/>
           </fbc:or>
         </fbc:geneProductAssociation>
       </reaction>
       <reaction id="R_TKT2" name="transketolase" reversible="true" fbc:lowerFluxBound="cobra_default_lb" fbc:upperFluxBound="cobra_default_ub">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
-            <p>GENE_ASSOCIATION: ( b2935  or  b2465 )</p>
             <p>GENE_LIST: b2465 b2935</p>
             <p>SUBSYSTEM: Pentose Phosphate Pathway</p>
           </html>
@@ -2414,15 +2346,14 @@
         </listOfProducts>
         <fbc:geneProductAssociation>
           <fbc:or>
-            <fbc:geneProductRef fbc:geneProduct="b2465"/>
-            <fbc:geneProductRef fbc:geneProduct="b2935"/>
+            <fbc:geneProductRef fbc:geneProduct="G_b2465"/>
+            <fbc:geneProductRef fbc:geneProduct="G_b2935"/>
           </fbc:or>
         </fbc:geneProductAssociation>
       </reaction>
       <reaction id="R_TPI" name="triose-phosphate isomerase" reversible="true" fbc:lowerFluxBound="cobra_default_lb" fbc:upperFluxBound="cobra_default_ub">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
-            <p>GENE_ASSOCIATION: b3919</p>
             <p>GENE_LIST: b3919</p>
             <p>SUBSYSTEM: Glycolysis/Gluconeogenesis</p>
           </html>
@@ -2434,7 +2365,7 @@
           <speciesReference species="M_g3p_c" stoichiometry="1"/>
         </listOfProducts>
         <fbc:geneProductAssociation>
-          <fbc:geneProductRef fbc:geneProduct="b3919"/>
+          <fbc:geneProductRef fbc:geneProduct="G_b3919"/>
         </fbc:geneProductAssociation>
       </reaction>
     </listOfReactions>
@@ -2446,143 +2377,143 @@
       </fbc:objective>
     </fbc:listOfObjectives>
     <fbc:listOfGeneProducts>
-      <fbc:geneProduct fbc:id="b0008" fbc:name="b0008"/>
-      <fbc:geneProduct fbc:id="b0114" fbc:name="b0114"/>
-      <fbc:geneProduct fbc:id="b0115" fbc:name="b0115"/>
-      <fbc:geneProduct fbc:id="b0116" fbc:name="b0116"/>
-      <fbc:geneProduct fbc:id="b0118" fbc:name="b0118"/>
-      <fbc:geneProduct fbc:id="b0351" fbc:name="b0351"/>
-      <fbc:geneProduct fbc:id="b0356" fbc:name="b0356"/>
-      <fbc:geneProduct fbc:id="b0451" fbc:name="b0451"/>
-      <fbc:geneProduct fbc:id="b0474" fbc:name="b0474"/>
-      <fbc:geneProduct fbc:id="b0485" fbc:name="b0485"/>
-      <fbc:geneProduct fbc:id="b0720" fbc:name="b0720"/>
-      <fbc:geneProduct fbc:id="b0721" fbc:name="b0721"/>
-      <fbc:geneProduct fbc:id="b0722" fbc:name="b0722"/>
-      <fbc:geneProduct fbc:id="b0723" fbc:name="b0723"/>
-      <fbc:geneProduct fbc:id="b0724" fbc:name="b0724"/>
-      <fbc:geneProduct fbc:id="b0726" fbc:name="b0726"/>
-      <fbc:geneProduct fbc:id="b0727" fbc:name="b0727"/>
-      <fbc:geneProduct fbc:id="b0728" fbc:name="b0728"/>
-      <fbc:geneProduct fbc:id="b0729" fbc:name="b0729"/>
-      <fbc:geneProduct fbc:id="b0733" fbc:name="b0733"/>
-      <fbc:geneProduct fbc:id="b0734" fbc:name="b0734"/>
-      <fbc:geneProduct fbc:id="b0755" fbc:name="b0755"/>
-      <fbc:geneProduct fbc:id="b0767" fbc:name="b0767"/>
-      <fbc:geneProduct fbc:id="b0809" fbc:name="b0809"/>
-      <fbc:geneProduct fbc:id="b0810" fbc:name="b0810"/>
-      <fbc:geneProduct fbc:id="b0811" fbc:name="b0811"/>
-      <fbc:geneProduct fbc:id="b0875" fbc:name="b0875"/>
-      <fbc:geneProduct fbc:id="b0902" fbc:name="b0902"/>
-      <fbc:geneProduct fbc:id="b0903" fbc:name="b0903"/>
-      <fbc:geneProduct fbc:id="b0904" fbc:name="b0904"/>
-      <fbc:geneProduct fbc:id="b0978" fbc:name="b0978"/>
-      <fbc:geneProduct fbc:id="b0979" fbc:name="b0979"/>
-      <fbc:geneProduct fbc:id="b1101" fbc:name="b1101"/>
-      <fbc:geneProduct fbc:id="b1136" fbc:name="b1136"/>
-      <fbc:geneProduct fbc:id="b1241" fbc:name="b1241"/>
-      <fbc:geneProduct fbc:id="b1276" fbc:name="b1276"/>
-      <fbc:geneProduct fbc:id="b1297" fbc:name="b1297"/>
-      <fbc:geneProduct fbc:id="b1380" fbc:name="b1380"/>
-      <fbc:geneProduct fbc:id="b1478" fbc:name="b1478"/>
-      <fbc:geneProduct fbc:id="b1479" fbc:name="b1479"/>
-      <fbc:geneProduct fbc:id="b1524" fbc:name="b1524"/>
-      <fbc:geneProduct fbc:id="b1602" fbc:name="b1602"/>
-      <fbc:geneProduct fbc:id="b1603" fbc:name="b1603"/>
-      <fbc:geneProduct fbc:id="b1611" fbc:name="b1611"/>
-      <fbc:geneProduct fbc:id="b1612" fbc:name="b1612"/>
-      <fbc:geneProduct fbc:id="b1621" fbc:name="b1621"/>
-      <fbc:geneProduct fbc:id="b1676" fbc:name="b1676"/>
-      <fbc:geneProduct fbc:id="b1702" fbc:name="b1702"/>
-      <fbc:geneProduct fbc:id="b1723" fbc:name="b1723"/>
-      <fbc:geneProduct fbc:id="b1761" fbc:name="b1761"/>
-      <fbc:geneProduct fbc:id="b1773" fbc:name="b1773"/>
-      <fbc:geneProduct fbc:id="b1779" fbc:name="b1779"/>
-      <fbc:geneProduct fbc:id="b1812" fbc:name="b1812"/>
-      <fbc:geneProduct fbc:id="b1817" fbc:name="b1817"/>
-      <fbc:geneProduct fbc:id="b1818" fbc:name="b1818"/>
-      <fbc:geneProduct fbc:id="b1819" fbc:name="b1819"/>
-      <fbc:geneProduct fbc:id="b1849" fbc:name="b1849"/>
-      <fbc:geneProduct fbc:id="b1852" fbc:name="b1852"/>
-      <fbc:geneProduct fbc:id="b1854" fbc:name="b1854"/>
-      <fbc:geneProduct fbc:id="b2029" fbc:name="b2029"/>
-      <fbc:geneProduct fbc:id="b2097" fbc:name="b2097"/>
-      <fbc:geneProduct fbc:id="b2133" fbc:name="b2133"/>
-      <fbc:geneProduct fbc:id="b2276" fbc:name="b2276"/>
-      <fbc:geneProduct fbc:id="b2277" fbc:name="b2277"/>
-      <fbc:geneProduct fbc:id="b2278" fbc:name="b2278"/>
-      <fbc:geneProduct fbc:id="b2279" fbc:name="b2279"/>
-      <fbc:geneProduct fbc:id="b2280" fbc:name="b2280"/>
-      <fbc:geneProduct fbc:id="b2281" fbc:name="b2281"/>
-      <fbc:geneProduct fbc:id="b2282" fbc:name="b2282"/>
-      <fbc:geneProduct fbc:id="b2283" fbc:name="b2283"/>
-      <fbc:geneProduct fbc:id="b2284" fbc:name="b2284"/>
-      <fbc:geneProduct fbc:id="b2285" fbc:name="b2285"/>
-      <fbc:geneProduct fbc:id="b2286" fbc:name="b2286"/>
-      <fbc:geneProduct fbc:id="b2287" fbc:name="b2287"/>
-      <fbc:geneProduct fbc:id="b2288" fbc:name="b2288"/>
-      <fbc:geneProduct fbc:id="b2296" fbc:name="b2296"/>
-      <fbc:geneProduct fbc:id="b2297" fbc:name="b2297"/>
-      <fbc:geneProduct fbc:id="b2415" fbc:name="b2415"/>
-      <fbc:geneProduct fbc:id="b2416" fbc:name="b2416"/>
-      <fbc:geneProduct fbc:id="b2417" fbc:name="b2417"/>
-      <fbc:geneProduct fbc:id="b2458" fbc:name="b2458"/>
-      <fbc:geneProduct fbc:id="b2463" fbc:name="b2463"/>
-      <fbc:geneProduct fbc:id="b2464" fbc:name="b2464"/>
-      <fbc:geneProduct fbc:id="b2465" fbc:name="b2465"/>
-      <fbc:geneProduct fbc:id="b2492" fbc:name="b2492"/>
-      <fbc:geneProduct fbc:id="b2579" fbc:name="b2579"/>
-      <fbc:geneProduct fbc:id="b2587" fbc:name="b2587"/>
-      <fbc:geneProduct fbc:id="b2779" fbc:name="b2779"/>
-      <fbc:geneProduct fbc:id="b2914" fbc:name="b2914"/>
-      <fbc:geneProduct fbc:id="b2925" fbc:name="b2925"/>
-      <fbc:geneProduct fbc:id="b2926" fbc:name="b2926"/>
-      <fbc:geneProduct fbc:id="b2935" fbc:name="b2935"/>
-      <fbc:geneProduct fbc:id="b2975" fbc:name="b2975"/>
-      <fbc:geneProduct fbc:id="b2976" fbc:name="b2976"/>
-      <fbc:geneProduct fbc:id="b2987" fbc:name="b2987"/>
-      <fbc:geneProduct fbc:id="b3114" fbc:name="b3114"/>
-      <fbc:geneProduct fbc:id="b3115" fbc:name="b3115"/>
-      <fbc:geneProduct fbc:id="b3212" fbc:name="b3212"/>
-      <fbc:geneProduct fbc:id="b3213" fbc:name="b3213"/>
-      <fbc:geneProduct fbc:id="b3236" fbc:name="b3236"/>
-      <fbc:geneProduct fbc:id="b3386" fbc:name="b3386"/>
-      <fbc:geneProduct fbc:id="b3403" fbc:name="b3403"/>
-      <fbc:geneProduct fbc:id="b3493" fbc:name="b3493"/>
-      <fbc:geneProduct fbc:id="b3528" fbc:name="b3528"/>
-      <fbc:geneProduct fbc:id="b3603" fbc:name="b3603"/>
-      <fbc:geneProduct fbc:id="b3612" fbc:name="b3612"/>
-      <fbc:geneProduct fbc:id="b3731" fbc:name="b3731"/>
-      <fbc:geneProduct fbc:id="b3732" fbc:name="b3732"/>
-      <fbc:geneProduct fbc:id="b3733" fbc:name="b3733"/>
-      <fbc:geneProduct fbc:id="b3734" fbc:name="b3734"/>
-      <fbc:geneProduct fbc:id="b3735" fbc:name="b3735"/>
-      <fbc:geneProduct fbc:id="b3736" fbc:name="b3736"/>
-      <fbc:geneProduct fbc:id="b3737" fbc:name="b3737"/>
-      <fbc:geneProduct fbc:id="b3738" fbc:name="b3738"/>
-      <fbc:geneProduct fbc:id="b3739" fbc:name="b3739"/>
-      <fbc:geneProduct fbc:id="b3870" fbc:name="b3870"/>
-      <fbc:geneProduct fbc:id="b3916" fbc:name="b3916"/>
-      <fbc:geneProduct fbc:id="b3919" fbc:name="b3919"/>
-      <fbc:geneProduct fbc:id="b3925" fbc:name="b3925"/>
-      <fbc:geneProduct fbc:id="b3951" fbc:name="b3951"/>
-      <fbc:geneProduct fbc:id="b3952" fbc:name="b3952"/>
-      <fbc:geneProduct fbc:id="b3956" fbc:name="b3956"/>
-      <fbc:geneProduct fbc:id="b3962" fbc:name="b3962"/>
-      <fbc:geneProduct fbc:id="b4014" fbc:name="b4014"/>
-      <fbc:geneProduct fbc:id="b4015" fbc:name="b4015"/>
-      <fbc:geneProduct fbc:id="b4025" fbc:name="b4025"/>
-      <fbc:geneProduct fbc:id="b4077" fbc:name="b4077"/>
-      <fbc:geneProduct fbc:id="b4090" fbc:name="b4090"/>
-      <fbc:geneProduct fbc:id="b4122" fbc:name="b4122"/>
-      <fbc:geneProduct fbc:id="b4151" fbc:name="b4151"/>
-      <fbc:geneProduct fbc:id="b4152" fbc:name="b4152"/>
-      <fbc:geneProduct fbc:id="b4153" fbc:name="b4153"/>
-      <fbc:geneProduct fbc:id="b4154" fbc:name="b4154"/>
-      <fbc:geneProduct fbc:id="b4232" fbc:name="b4232"/>
-      <fbc:geneProduct fbc:id="b4301" fbc:name="b4301"/>
-      <fbc:geneProduct fbc:id="b4395" fbc:name="b4395"/>
-      <fbc:geneProduct fbc:id="s0001" fbc:name="s0001"/>
+      <fbc:geneProduct fbc:id="G_b0008" fbc:name="b0008"/>
+      <fbc:geneProduct fbc:id="G_b0114" fbc:name="b0114"/>
+      <fbc:geneProduct fbc:id="G_b0115" fbc:name="b0115"/>
+      <fbc:geneProduct fbc:id="G_b0116" fbc:name="b0116"/>
+      <fbc:geneProduct fbc:id="G_b0118" fbc:name="b0118"/>
+      <fbc:geneProduct fbc:id="G_b0351" fbc:name="b0351"/>
+      <fbc:geneProduct fbc:id="G_b0356" fbc:name="b0356"/>
+      <fbc:geneProduct fbc:id="G_b0451" fbc:name="b0451"/>
+      <fbc:geneProduct fbc:id="G_b0474" fbc:name="b0474"/>
+      <fbc:geneProduct fbc:id="G_b0485" fbc:name="b0485"/>
+      <fbc:geneProduct fbc:id="G_b0720" fbc:name="b0720"/>
+      <fbc:geneProduct fbc:id="G_b0721" fbc:name="b0721"/>
+      <fbc:geneProduct fbc:id="G_b0722" fbc:name="b0722"/>
+      <fbc:geneProduct fbc:id="G_b0723" fbc:name="b0723"/>
+      <fbc:geneProduct fbc:id="G_b0724" fbc:name="b0724"/>
+      <fbc:geneProduct fbc:id="G_b0726" fbc:name="b0726"/>
+      <fbc:geneProduct fbc:id="G_b0727" fbc:name="b0727"/>
+      <fbc:geneProduct fbc:id="G_b0728" fbc:name="b0728"/>
+      <fbc:geneProduct fbc:id="G_b0729" fbc:name="b0729"/>
+      <fbc:geneProduct fbc:id="G_b0733" fbc:name="b0733"/>
+      <fbc:geneProduct fbc:id="G_b0734" fbc:name="b0734"/>
+      <fbc:geneProduct fbc:id="G_b0755" fbc:name="b0755"/>
+      <fbc:geneProduct fbc:id="G_b0767" fbc:name="b0767"/>
+      <fbc:geneProduct fbc:id="G_b0809" fbc:name="b0809"/>
+      <fbc:geneProduct fbc:id="G_b0810" fbc:name="b0810"/>
+      <fbc:geneProduct fbc:id="G_b0811" fbc:name="b0811"/>
+      <fbc:geneProduct fbc:id="G_b0875" fbc:name="b0875"/>
+      <fbc:geneProduct fbc:id="G_b0902" fbc:name="b0902"/>
+      <fbc:geneProduct fbc:id="G_b0903" fbc:name="b0903"/>
+      <fbc:geneProduct fbc:id="G_b0904" fbc:name="b0904"/>
+      <fbc:geneProduct fbc:id="G_b0978" fbc:name="b0978"/>
+      <fbc:geneProduct fbc:id="G_b0979" fbc:name="b0979"/>
+      <fbc:geneProduct fbc:id="G_b1101" fbc:name="b1101"/>
+      <fbc:geneProduct fbc:id="G_b1136" fbc:name="b1136"/>
+      <fbc:geneProduct fbc:id="G_b1241" fbc:name="b1241"/>
+      <fbc:geneProduct fbc:id="G_b1276" fbc:name="b1276"/>
+      <fbc:geneProduct fbc:id="G_b1297" fbc:name="b1297"/>
+      <fbc:geneProduct fbc:id="G_b1380" fbc:name="b1380"/>
+      <fbc:geneProduct fbc:id="G_b1478" fbc:name="b1478"/>
+      <fbc:geneProduct fbc:id="G_b1479" fbc:name="b1479"/>
+      <fbc:geneProduct fbc:id="G_b1524" fbc:name="b1524"/>
+      <fbc:geneProduct fbc:id="G_b1602" fbc:name="b1602"/>
+      <fbc:geneProduct fbc:id="G_b1603" fbc:name="b1603"/>
+      <fbc:geneProduct fbc:id="G_b1611" fbc:name="b1611"/>
+      <fbc:geneProduct fbc:id="G_b1612" fbc:name="b1612"/>
+      <fbc:geneProduct fbc:id="G_b1621" fbc:name="b1621"/>
+      <fbc:geneProduct fbc:id="G_b1676" fbc:name="b1676"/>
+      <fbc:geneProduct fbc:id="G_b1702" fbc:name="b1702"/>
+      <fbc:geneProduct fbc:id="G_b1723" fbc:name="b1723"/>
+      <fbc:geneProduct fbc:id="G_b1761" fbc:name="b1761"/>
+      <fbc:geneProduct fbc:id="G_b1773" fbc:name="b1773"/>
+      <fbc:geneProduct fbc:id="G_b1779" fbc:name="b1779"/>
+      <fbc:geneProduct fbc:id="G_b1812" fbc:name="b1812"/>
+      <fbc:geneProduct fbc:id="G_b1817" fbc:name="b1817"/>
+      <fbc:geneProduct fbc:id="G_b1818" fbc:name="b1818"/>
+      <fbc:geneProduct fbc:id="G_b1819" fbc:name="b1819"/>
+      <fbc:geneProduct fbc:id="G_b1849" fbc:name="b1849"/>
+      <fbc:geneProduct fbc:id="G_b1852" fbc:name="b1852"/>
+      <fbc:geneProduct fbc:id="G_b1854" fbc:name="b1854"/>
+      <fbc:geneProduct fbc:id="G_b2029" fbc:name="b2029"/>
+      <fbc:geneProduct fbc:id="G_b2097" fbc:name="b2097"/>
+      <fbc:geneProduct fbc:id="G_b2133" fbc:name="b2133"/>
+      <fbc:geneProduct fbc:id="G_b2276" fbc:name="b2276"/>
+      <fbc:geneProduct fbc:id="G_b2277" fbc:name="b2277"/>
+      <fbc:geneProduct fbc:id="G_b2278" fbc:name="b2278"/>
+      <fbc:geneProduct fbc:id="G_b2279" fbc:name="b2279"/>
+      <fbc:geneProduct fbc:id="G_b2280" fbc:name="b2280"/>
+      <fbc:geneProduct fbc:id="G_b2281" fbc:name="b2281"/>
+      <fbc:geneProduct fbc:id="G_b2282" fbc:name="b2282"/>
+      <fbc:geneProduct fbc:id="G_b2283" fbc:name="b2283"/>
+      <fbc:geneProduct fbc:id="G_b2284" fbc:name="b2284"/>
+      <fbc:geneProduct fbc:id="G_b2285" fbc:name="b2285"/>
+      <fbc:geneProduct fbc:id="G_b2286" fbc:name="b2286"/>
+      <fbc:geneProduct fbc:id="G_b2287" fbc:name="b2287"/>
+      <fbc:geneProduct fbc:id="G_b2288" fbc:name="b2288"/>
+      <fbc:geneProduct fbc:id="G_b2296" fbc:name="b2296"/>
+      <fbc:geneProduct fbc:id="G_b2297" fbc:name="b2297"/>
+      <fbc:geneProduct fbc:id="G_b2415" fbc:name="b2415"/>
+      <fbc:geneProduct fbc:id="G_b2416" fbc:name="b2416"/>
+      <fbc:geneProduct fbc:id="G_b2417" fbc:name="b2417"/>
+      <fbc:geneProduct fbc:id="G_b2458" fbc:name="b2458"/>
+      <fbc:geneProduct fbc:id="G_b2463" fbc:name="b2463"/>
+      <fbc:geneProduct fbc:id="G_b2464" fbc:name="b2464"/>
+      <fbc:geneProduct fbc:id="G_b2465" fbc:name="b2465"/>
+      <fbc:geneProduct fbc:id="G_b2492" fbc:name="b2492"/>
+      <fbc:geneProduct fbc:id="G_b2579" fbc:name="b2579"/>
+      <fbc:geneProduct fbc:id="G_b2587" fbc:name="b2587"/>
+      <fbc:geneProduct fbc:id="G_b2779" fbc:name="b2779"/>
+      <fbc:geneProduct fbc:id="G_b2914" fbc:name="b2914"/>
+      <fbc:geneProduct fbc:id="G_b2925" fbc:name="b2925"/>
+      <fbc:geneProduct fbc:id="G_b2926" fbc:name="b2926"/>
+      <fbc:geneProduct fbc:id="G_b2935" fbc:name="b2935"/>
+      <fbc:geneProduct fbc:id="G_b2975" fbc:name="b2975"/>
+      <fbc:geneProduct fbc:id="G_b2976" fbc:name="b2976"/>
+      <fbc:geneProduct fbc:id="G_b2987" fbc:name="b2987"/>
+      <fbc:geneProduct fbc:id="G_b3114" fbc:name="b3114"/>
+      <fbc:geneProduct fbc:id="G_b3115" fbc:name="b3115"/>
+      <fbc:geneProduct fbc:id="G_b3212" fbc:name="b3212"/>
+      <fbc:geneProduct fbc:id="G_b3213" fbc:name="b3213"/>
+      <fbc:geneProduct fbc:id="G_b3236" fbc:name="b3236"/>
+      <fbc:geneProduct fbc:id="G_b3386" fbc:name="b3386"/>
+      <fbc:geneProduct fbc:id="G_b3403" fbc:name="b3403"/>
+      <fbc:geneProduct fbc:id="G_b3493" fbc:name="b3493"/>
+      <fbc:geneProduct fbc:id="G_b3528" fbc:name="b3528"/>
+      <fbc:geneProduct fbc:id="G_b3603" fbc:name="b3603"/>
+      <fbc:geneProduct fbc:id="G_b3612" fbc:name="b3612"/>
+      <fbc:geneProduct fbc:id="G_b3731" fbc:name="b3731"/>
+      <fbc:geneProduct fbc:id="G_b3732" fbc:name="b3732"/>
+      <fbc:geneProduct fbc:id="G_b3733" fbc:name="b3733"/>
+      <fbc:geneProduct fbc:id="G_b3734" fbc:name="b3734"/>
+      <fbc:geneProduct fbc:id="G_b3735" fbc:name="b3735"/>
+      <fbc:geneProduct fbc:id="G_b3736" fbc:name="b3736"/>
+      <fbc:geneProduct fbc:id="G_b3737" fbc:name="b3737"/>
+      <fbc:geneProduct fbc:id="G_b3738" fbc:name="b3738"/>
+      <fbc:geneProduct fbc:id="G_b3739" fbc:name="b3739"/>
+      <fbc:geneProduct fbc:id="G_b3870" fbc:name="b3870"/>
+      <fbc:geneProduct fbc:id="G_b3916" fbc:name="b3916"/>
+      <fbc:geneProduct fbc:id="G_b3919" fbc:name="b3919"/>
+      <fbc:geneProduct fbc:id="G_b3925" fbc:name="b3925"/>
+      <fbc:geneProduct fbc:id="G_b3951" fbc:name="b3951"/>
+      <fbc:geneProduct fbc:id="G_b3952" fbc:name="b3952"/>
+      <fbc:geneProduct fbc:id="G_b3956" fbc:name="b3956"/>
+      <fbc:geneProduct fbc:id="G_b3962" fbc:name="b3962"/>
+      <fbc:geneProduct fbc:id="G_b4014" fbc:name="b4014"/>
+      <fbc:geneProduct fbc:id="G_b4015" fbc:name="b4015"/>
+      <fbc:geneProduct fbc:id="G_b4025" fbc:name="b4025"/>
+      <fbc:geneProduct fbc:id="G_b4077" fbc:name="b4077"/>
+      <fbc:geneProduct fbc:id="G_b4090" fbc:name="b4090"/>
+      <fbc:geneProduct fbc:id="G_b4122" fbc:name="b4122"/>
+      <fbc:geneProduct fbc:id="G_b4151" fbc:name="b4151"/>
+      <fbc:geneProduct fbc:id="G_b4152" fbc:name="b4152"/>
+      <fbc:geneProduct fbc:id="G_b4153" fbc:name="b4153"/>
+      <fbc:geneProduct fbc:id="G_b4154" fbc:name="b4154"/>
+      <fbc:geneProduct fbc:id="G_b4232" fbc:name="b4232"/>
+      <fbc:geneProduct fbc:id="G_b4301" fbc:name="b4301"/>
+      <fbc:geneProduct fbc:id="G_b4395" fbc:name="b4395"/>
+      <fbc:geneProduct fbc:id="G_s0001" fbc:name="s0001"/>
     </fbc:listOfGeneProducts>
   </model>
 </sbml>

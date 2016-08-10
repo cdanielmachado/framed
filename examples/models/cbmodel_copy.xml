@@ -515,9 +515,9 @@
       <reaction id="R_ACALD" name="acetaldehyde dehydrogenase (acetylating)" reversible="true">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
-            <p>GENE_ASSOCIATION: (b0351 or b1241)</p>
             <p>GENE_LIST: b0351 b1241</p>
             <p>SUBSYSTEM: Pyruvate Metabolism</p>
+            <p>GENE_ASSOCIATION: (G_b0351 or G_b1241)</p>
           </html>
         </notes>
         <listOfReactants>
@@ -544,9 +544,9 @@
       <reaction id="R_ACALDt" name="acetaldehyde reversible transport" reversible="true">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
-            <p>GENE_ASSOCIATION: s0001</p>
             <p>GENE_LIST: s0001</p>
             <p>SUBSYSTEM: Transport, Extracellular</p>
+            <p>GENE_ASSOCIATION: G_s0001</p>
           </html>
         </notes>
         <listOfReactants>
@@ -569,9 +569,9 @@
       <reaction id="R_ACKr" name="acetate kinase" reversible="true">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
-            <p>GENE_ASSOCIATION: (b1849 or b2296 or b3115)</p>
             <p>GENE_LIST: b1849 b2296 b3115</p>
             <p>SUBSYSTEM: Pyruvate Metabolism</p>
+            <p>GENE_ASSOCIATION: (G_b1849 or G_b2296 or G_b3115)</p>
           </html>
         </notes>
         <listOfReactants>
@@ -596,9 +596,9 @@
       <reaction id="R_ACONTa" name="aconitase (half-reaction A, Citrate hydro-lyase)" reversible="true">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
-            <p>GENE_ASSOCIATION: (b0118 or b1276)</p>
             <p>GENE_LIST: b0118 b1276</p>
             <p>SUBSYSTEM: Citric Acid Cycle</p>
+            <p>GENE_ASSOCIATION: (G_b0118 or G_b1276)</p>
           </html>
         </notes>
         <listOfReactants>
@@ -622,9 +622,9 @@
       <reaction id="R_ACONTb" name="aconitase (half-reaction B, Isocitrate hydro-lyase)" reversible="true">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
-            <p>GENE_ASSOCIATION: (b0118 or b1276)</p>
             <p>GENE_LIST: b0118 b1276</p>
             <p>SUBSYSTEM: Citric Acid Cycle</p>
+            <p>GENE_ASSOCIATION: (G_b0118 or G_b1276)</p>
           </html>
         </notes>
         <listOfReactants>
@@ -673,9 +673,9 @@
       <reaction id="R_ADK1" name="adenylate kinase" reversible="true">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
-            <p>GENE_ASSOCIATION: b0474</p>
             <p>GENE_LIST: b0474</p>
             <p>SUBSYSTEM: Oxidative Phosphorylation</p>
+            <p>GENE_ASSOCIATION: G_b0474</p>
           </html>
         </notes>
         <listOfReactants>
@@ -699,9 +699,9 @@
       <reaction id="R_AKGDH" name="2-Oxoglutarate dehydrogenase" reversible="false">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
-            <p>GENE_ASSOCIATION: (b0116 and b0726 and b0727)</p>
             <p>GENE_LIST: b0116 b0726 b0727</p>
             <p>SUBSYSTEM: Citric Acid Cycle</p>
+            <p>GENE_ASSOCIATION: (G_b0116 and G_b0726 and G_b0727)</p>
           </html>
         </notes>
         <listOfReactants>
@@ -728,9 +728,9 @@
       <reaction id="R_AKGt2r" name="2-oxoglutarate reversible transport via symport" reversible="true">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
-            <p>GENE_ASSOCIATION: b2587</p>
             <p>GENE_LIST: b2587</p>
             <p>SUBSYSTEM: Transport, Extracellular</p>
+            <p>GENE_ASSOCIATION: G_b2587</p>
           </html>
         </notes>
         <listOfReactants>
@@ -755,9 +755,9 @@
       <reaction id="R_ALCD2x" name="alcohol dehydrogenase (ethanol)" reversible="true">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
-            <p>GENE_ASSOCIATION: (b0356 or b1241 or b1478)</p>
             <p>GENE_LIST: b0356 b1241 b1478</p>
             <p>SUBSYSTEM: Pyruvate Metabolism</p>
+            <p>GENE_ASSOCIATION: (G_b0356 or G_b1241 or G_b1478)</p>
           </html>
         </notes>
         <listOfReactants>
@@ -809,9 +809,9 @@
       <reaction id="R_ATPS4r" name="ATP synthase (four protons for one ATP)" reversible="true">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
-            <p>GENE_ASSOCIATION: ((b3731 and b3732 and b3733 and b3734 and b3735 and b3736 and b3737 and b3738) or (b3731 and b3732 and b3733 and b3734 and b3735 and b3736 and b3737 and b3738 and b3739))</p>
             <p>GENE_LIST: b3731 b3732 b3733 b3734 b3735 b3736 b3737 b3738 b3739</p>
             <p>SUBSYSTEM: Oxidative Phosphorylation</p>
+            <p>GENE_ASSOCIATION: ((G_b3731 and G_b3732 and G_b3733 and G_b3734 and G_b3735 and G_b3736 and G_b3737 and G_b3738) or (G_b3731 and G_b3732 and G_b3733 and G_b3734 and G_b3735 and G_b3736 and G_b3737 and G_b3738 and G_b3739))</p>
           </html>
         </notes>
         <listOfReactants>
@@ -877,9 +877,9 @@
       <reaction id="R_CO2t" name="CO2 transporter via diffusion" reversible="true">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
-            <p>GENE_ASSOCIATION: s0001</p>
             <p>GENE_LIST: s0001</p>
             <p>SUBSYSTEM: Transport, Extracellular</p>
+            <p>GENE_ASSOCIATION: G_s0001</p>
           </html>
         </notes>
         <listOfReactants>
@@ -902,9 +902,9 @@
       <reaction id="R_CS" name="citrate synthase" reversible="false">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
-            <p>GENE_ASSOCIATION: b0720</p>
             <p>GENE_LIST: b0720</p>
             <p>SUBSYSTEM: Citric Acid Cycle</p>
+            <p>GENE_ASSOCIATION: G_b0720</p>
           </html>
         </notes>
         <listOfReactants>
@@ -931,9 +931,9 @@
       <reaction id="R_CYTBD" name="cytochrome oxidase bd (ubiquinol-8: 2 protons)" reversible="false">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
-            <p>GENE_ASSOCIATION: ((b0733 and b0734) or (b0978 and b0979))</p>
             <p>GENE_LIST: b0733 b0734 b0978 b0979</p>
             <p>SUBSYSTEM: Oxidative Phosphorylation</p>
+            <p>GENE_ASSOCIATION: ((G_b0733 and G_b0734) or (G_b0978 and G_b0979))</p>
           </html>
         </notes>
         <listOfReactants>
@@ -960,9 +960,9 @@
       <reaction id="R_D_LACt2" name="D-lactate transport via proton symport" reversible="true">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
-            <p>GENE_ASSOCIATION: (b2975 or b3603)</p>
             <p>GENE_LIST: b2975 b3603</p>
             <p>SUBSYSTEM: Transport, Extracellular</p>
+            <p>GENE_ASSOCIATION: (G_b2975 or G_b3603)</p>
           </html>
         </notes>
         <listOfReactants>
@@ -987,9 +987,9 @@
       <reaction id="R_ENO" name="enolase" reversible="true">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
-            <p>GENE_ASSOCIATION: b2779</p>
             <p>GENE_LIST: b2779</p>
             <p>SUBSYSTEM: Glycolysis/Gluconeogenesis</p>
+            <p>GENE_ASSOCIATION: G_b2779</p>
           </html>
         </notes>
         <listOfReactants>
@@ -1438,9 +1438,9 @@
       <reaction id="R_FBA" name="fructose-bisphosphate aldolase" reversible="true">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
-            <p>GENE_ASSOCIATION: (b1773 or b2097 or b2925)</p>
             <p>GENE_LIST: b1773 b2097 b2925</p>
             <p>SUBSYSTEM: Glycolysis/Gluconeogenesis</p>
+            <p>GENE_ASSOCIATION: (G_b1773 or G_b2097 or G_b2925)</p>
           </html>
         </notes>
         <listOfReactants>
@@ -1464,9 +1464,9 @@
       <reaction id="R_FBP" name="fructose-bisphosphatase" reversible="false">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
-            <p>GENE_ASSOCIATION: (b3925 or b4232)</p>
             <p>GENE_LIST: b3925 b4232</p>
             <p>SUBSYSTEM: Glycolysis/Gluconeogenesis</p>
+            <p>GENE_ASSOCIATION: (G_b3925 or G_b4232)</p>
           </html>
         </notes>
         <listOfReactants>
@@ -1491,9 +1491,9 @@
       <reaction id="R_FORt2" name="formate transport via proton symport (uptake only)" reversible="false">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
-            <p>GENE_ASSOCIATION: (b0904 or b2492)</p>
             <p>GENE_LIST: b0904 b2492</p>
             <p>SUBSYSTEM: Transport, Extracellular</p>
+            <p>GENE_ASSOCIATION: (G_b0904 or G_b2492)</p>
           </html>
         </notes>
         <listOfReactants>
@@ -1518,9 +1518,9 @@
       <reaction id="R_FORti" name="formate transport via diffusion" reversible="false">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
-            <p>GENE_ASSOCIATION: (b0904 or b2492)</p>
             <p>GENE_LIST: b0904 b2492</p>
             <p>SUBSYSTEM: Transport, Extracellular</p>
+            <p>GENE_ASSOCIATION: (G_b0904 or G_b2492)</p>
           </html>
         </notes>
         <listOfReactants>
@@ -1543,9 +1543,9 @@
       <reaction id="R_FRD7" name="fumarate reductase" reversible="false">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
-            <p>GENE_ASSOCIATION: (b4151 and b4152 and b4153 and b4154)</p>
             <p>GENE_LIST: b4151 b4152 b4153 b4154</p>
             <p>SUBSYSTEM: Oxidative Phosphorylation</p>
+            <p>GENE_ASSOCIATION: (G_b4151 and G_b4152 and G_b4153 and G_b4154)</p>
           </html>
         </notes>
         <listOfReactants>
@@ -1570,9 +1570,9 @@
       <reaction id="R_FRUpts2" name="Fructose transport via PEP:Pyr PTS (f6p generating)" reversible="false">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
-            <p>GENE_ASSOCIATION: (b1817 and b1818 and b1819 and b2415 and b2416)</p>
             <p>GENE_LIST: b1817 b1818 b1819 b2415 b2416</p>
             <p>SUBSYSTEM: Transport, Extracellular</p>
+            <p>GENE_ASSOCIATION: (G_b1817 and G_b1818 and G_b1819 and G_b2415 and G_b2416)</p>
           </html>
         </notes>
         <listOfReactants>
@@ -1597,9 +1597,9 @@
       <reaction id="R_FUM" name="fumarase" reversible="true">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
-            <p>GENE_ASSOCIATION: (b1611 or b1612 or b4122)</p>
             <p>GENE_LIST: b1611 b1612 b4122</p>
             <p>SUBSYSTEM: Citric Acid Cycle</p>
+            <p>GENE_ASSOCIATION: (G_b1611 or G_b1612 or G_b4122)</p>
           </html>
         </notes>
         <listOfReactants>
@@ -1623,9 +1623,9 @@
       <reaction id="R_FUMt2_2" name="Fumarate transport via proton symport (2 H)" reversible="false">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
-            <p>GENE_ASSOCIATION: b3528</p>
             <p>GENE_LIST: b3528</p>
             <p>SUBSYSTEM: Transport, Extracellular</p>
+            <p>GENE_ASSOCIATION: G_b3528</p>
           </html>
         </notes>
         <listOfReactants>
@@ -1650,9 +1650,9 @@
       <reaction id="R_G6PDH2r" name="glucose 6-phosphate dehydrogenase" reversible="true">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
-            <p>GENE_ASSOCIATION: b1852</p>
             <p>GENE_LIST: b1852</p>
             <p>SUBSYSTEM: Pentose Phosphate Pathway</p>
+            <p>GENE_ASSOCIATION: G_b1852</p>
           </html>
         </notes>
         <listOfReactants>
@@ -1678,9 +1678,9 @@
       <reaction id="R_GAPD" name="glyceraldehyde-3-phosphate dehydrogenase" reversible="true">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
-            <p>GENE_ASSOCIATION: b1779</p>
             <p>GENE_LIST: b1779</p>
             <p>SUBSYSTEM: Glycolysis/Gluconeogenesis</p>
+            <p>GENE_ASSOCIATION: G_b1779</p>
           </html>
         </notes>
         <listOfReactants>
@@ -1707,9 +1707,9 @@
       <reaction id="R_GLCpts" name="D-glucose transport via PEP:Pyr PTS" reversible="false">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
-            <p>GENE_ASSOCIATION: ((b1101 and b2415 and b2416 and b2417) or (b1621 and b2415 and b2416 and b2417) or (b1817 and b1818 and b1819 and b2415 and b2416))</p>
             <p>GENE_LIST: b1101 b1621 b1817 b1818 b1819 b2415 b2416 b2417</p>
             <p>SUBSYSTEM: Transport, Extracellular</p>
+            <p>GENE_ASSOCIATION: ((G_b1101 and G_b2415 and G_b2416 and G_b2417) or (G_b1621 and G_b2415 and G_b2416 and G_b2417) or (G_b1817 and G_b1818 and G_b1819 and G_b2415 and G_b2416))</p>
           </html>
         </notes>
         <listOfReactants>
@@ -1734,9 +1734,9 @@
       <reaction id="R_GLNS" name="glutamine synthetase" reversible="false">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
-            <p>GENE_ASSOCIATION: (b1297 or b3870)</p>
             <p>GENE_LIST: b1297 b3870</p>
             <p>SUBSYSTEM: Glutamate Metabolism</p>
+            <p>GENE_ASSOCIATION: (G_b1297 or G_b3870)</p>
           </html>
         </notes>
         <listOfReactants>
@@ -1764,9 +1764,9 @@
       <reaction id="R_GLNabc" name="L-glutamine transport via ABC system" reversible="false">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
-            <p>GENE_ASSOCIATION: (b0809 and b0810 and b0811)</p>
             <p>GENE_LIST: b0809 b0810 b0811</p>
             <p>SUBSYSTEM: Transport, Extracellular</p>
+            <p>GENE_ASSOCIATION: (G_b0809 and G_b0810 and G_b0811)</p>
           </html>
         </notes>
         <listOfReactants>
@@ -1794,9 +1794,9 @@
       <reaction id="R_GLUDy" name="glutamate dehydrogenase (NADP)" reversible="true">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
-            <p>GENE_ASSOCIATION: b1761</p>
             <p>GENE_LIST: b1761</p>
             <p>SUBSYSTEM: Glutamate Metabolism</p>
+            <p>GENE_ASSOCIATION: G_b1761</p>
           </html>
         </notes>
         <listOfReactants>
@@ -1824,9 +1824,9 @@
       <reaction id="R_GLUN" name="glutaminase" reversible="false">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
-            <p>GENE_ASSOCIATION: (b0485 or b1524 or b1812)</p>
             <p>GENE_LIST: b0485 b1524 b1812</p>
             <p>SUBSYSTEM: Glutamate Metabolism</p>
+            <p>GENE_ASSOCIATION: (G_b0485 or G_b1524 or G_b1812)</p>
           </html>
         </notes>
         <listOfReactants>
@@ -1851,9 +1851,9 @@
       <reaction id="R_GLUSy" name="glutamate synthase (NADPH)" reversible="false">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
-            <p>GENE_ASSOCIATION: (b3212 and b3213)</p>
             <p>GENE_LIST: b3212 b3213</p>
             <p>SUBSYSTEM: Glutamate Metabolism</p>
+            <p>GENE_ASSOCIATION: (G_b3212 and G_b3213)</p>
           </html>
         </notes>
         <listOfReactants>
@@ -1880,9 +1880,9 @@
       <reaction id="R_GLUt2r" name="L-glutamate transport via proton symport, reversible (periplasm)" reversible="true">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
-            <p>GENE_ASSOCIATION: b4077</p>
             <p>GENE_LIST: b4077</p>
             <p>SUBSYSTEM: Transport, Extracellular</p>
+            <p>GENE_ASSOCIATION: G_b4077</p>
           </html>
         </notes>
         <listOfReactants>
@@ -1907,9 +1907,9 @@
       <reaction id="R_GND" name="phosphogluconate dehydrogenase" reversible="false">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
-            <p>GENE_ASSOCIATION: b2029</p>
             <p>GENE_LIST: b2029</p>
             <p>SUBSYSTEM: Pentose Phosphate Pathway</p>
+            <p>GENE_ASSOCIATION: G_b2029</p>
           </html>
         </notes>
         <listOfReactants>
@@ -1935,9 +1935,9 @@
       <reaction id="R_H2Ot" name="H2O transport via diffusion" reversible="true">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
-            <p>GENE_ASSOCIATION: (b0875 or s0001)</p>
             <p>GENE_LIST: b0875 s0001</p>
             <p>SUBSYSTEM: Transport, Extracellular</p>
+            <p>GENE_ASSOCIATION: (G_b0875 or G_s0001)</p>
           </html>
         </notes>
         <listOfReactants>
@@ -1960,9 +1960,9 @@
       <reaction id="R_ICDHyr" name="isocitrate dehydrogenase (NADP)" reversible="true">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
-            <p>GENE_ASSOCIATION: b1136</p>
             <p>GENE_LIST: b1136</p>
             <p>SUBSYSTEM: Citric Acid Cycle</p>
+            <p>GENE_ASSOCIATION: G_b1136</p>
           </html>
         </notes>
         <listOfReactants>
@@ -1988,9 +1988,9 @@
       <reaction id="R_ICL" name="Isocitrate lyase" reversible="false">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
-            <p>GENE_ASSOCIATION: b4015</p>
             <p>GENE_LIST: b4015</p>
             <p>SUBSYSTEM: Anaplerotic reactions</p>
+            <p>GENE_ASSOCIATION: G_b4015</p>
           </html>
         </notes>
         <listOfReactants>
@@ -2014,9 +2014,9 @@
       <reaction id="R_LDH_D" name="D lactate dehydrogenase" reversible="true">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
-            <p>GENE_ASSOCIATION: (b1380 or b2133)</p>
             <p>GENE_LIST: b1380 b2133</p>
             <p>SUBSYSTEM: Pyruvate Metabolism</p>
+            <p>GENE_ASSOCIATION: (G_b1380 or G_b2133)</p>
           </html>
         </notes>
         <listOfReactants>
@@ -2042,9 +2042,9 @@
       <reaction id="R_MALS" name="malate synthase" reversible="false">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
-            <p>GENE_ASSOCIATION: (b2976 or b4014)</p>
             <p>GENE_LIST: b2976 b4014</p>
             <p>SUBSYSTEM: Anaplerotic reactions</p>
+            <p>GENE_ASSOCIATION: (G_b2976 or G_b4014)</p>
           </html>
         </notes>
         <listOfReactants>
@@ -2071,9 +2071,9 @@
       <reaction id="R_MALt2_2" name="Malate transport via proton symport (2 H)" reversible="false">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
-            <p>GENE_ASSOCIATION: b3528</p>
             <p>GENE_LIST: b3528</p>
             <p>SUBSYSTEM: Transport, Extracellular</p>
+            <p>GENE_ASSOCIATION: G_b3528</p>
           </html>
         </notes>
         <listOfReactants>
@@ -2098,9 +2098,9 @@
       <reaction id="R_MDH" name="malate dehydrogenase" reversible="true">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
-            <p>GENE_ASSOCIATION: b3236</p>
             <p>GENE_LIST: b3236</p>
             <p>SUBSYSTEM: Citric Acid Cycle</p>
+            <p>GENE_ASSOCIATION: G_b3236</p>
           </html>
         </notes>
         <listOfReactants>
@@ -2126,9 +2126,9 @@
       <reaction id="R_ME1" name="malic enzyme (NAD)" reversible="false">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
-            <p>GENE_ASSOCIATION: b1479</p>
             <p>GENE_LIST: b1479</p>
             <p>SUBSYSTEM: Anaplerotic reactions</p>
+            <p>GENE_ASSOCIATION: G_b1479</p>
           </html>
         </notes>
         <listOfReactants>
@@ -2154,9 +2154,9 @@
       <reaction id="R_ME2" name="malic enzyme (NADP)" reversible="false">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
-            <p>GENE_ASSOCIATION: b2463</p>
             <p>GENE_LIST: b2463</p>
             <p>SUBSYSTEM: Anaplerotic reactions</p>
+            <p>GENE_ASSOCIATION: G_b2463</p>
           </html>
         </notes>
         <listOfReactants>
@@ -2182,9 +2182,9 @@
       <reaction id="R_NADH16" name="NADH dehydrogenase (ubiquinone-8 &amp; 3 protons)" reversible="false">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
-            <p>GENE_ASSOCIATION: (b2276 and b2277 and b2278 and b2279 and b2280 and b2281 and b2282 and b2283 and b2284 and b2285 and b2286 and b2287 and b2288)</p>
             <p>GENE_LIST: b2276 b2277 b2278 b2279 b2280 b2281 b2282 b2283 b2284 b2285 b2286 b2287 b2288</p>
             <p>SUBSYSTEM: Oxidative Phosphorylation</p>
+            <p>GENE_ASSOCIATION: (G_b2276 and G_b2277 and G_b2278 and G_b2279 and G_b2280 and G_b2281 and G_b2282 and G_b2283 and G_b2284 and G_b2285 and G_b2286 and G_b2287 and G_b2288)</p>
           </html>
         </notes>
         <listOfReactants>
@@ -2211,9 +2211,9 @@
       <reaction id="R_NADTRHD" name="NAD transhydrogenase" reversible="false">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
-            <p>GENE_ASSOCIATION: (b3962 or (b1602 and b1603))</p>
             <p>GENE_LIST: b1602 b1603 b3962</p>
             <p>SUBSYSTEM: Oxidative Phosphorylation</p>
+            <p>GENE_ASSOCIATION: (G_b3962 or (G_b1602 and G_b1603))</p>
           </html>
         </notes>
         <listOfReactants>
@@ -2238,9 +2238,9 @@
       <reaction id="R_NH4t" name="ammonia reversible transport" reversible="true">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
-            <p>GENE_ASSOCIATION: (b0451 or s0001)</p>
             <p>GENE_LIST: b0451 s0001</p>
             <p>SUBSYSTEM: Inorganic Ion Transport and Metabolism</p>
+            <p>GENE_ASSOCIATION: (G_b0451 or G_s0001)</p>
           </html>
         </notes>
         <listOfReactants>
@@ -2263,9 +2263,9 @@
       <reaction id="R_O2t" name="o2 transport via diffusion" reversible="true">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
-            <p>GENE_ASSOCIATION: s0001</p>
             <p>GENE_LIST: s0001</p>
             <p>SUBSYSTEM: Transport, Extracellular</p>
+            <p>GENE_ASSOCIATION: G_s0001</p>
           </html>
         </notes>
         <listOfReactants>
@@ -2288,9 +2288,9 @@
       <reaction id="R_PDH" name="pyruvate dehydrogenase" reversible="false">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
-            <p>GENE_ASSOCIATION: (b0114 and b0115 and b0116)</p>
             <p>GENE_LIST: b0114 b0115 b0116</p>
             <p>SUBSYSTEM: Glycolysis/Gluconeogenesis</p>
+            <p>GENE_ASSOCIATION: (G_b0114 and G_b0115 and G_b0116)</p>
           </html>
         </notes>
         <listOfReactants>
@@ -2317,9 +2317,9 @@
       <reaction id="R_PFK" name="phosphofructokinase" reversible="false">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
-            <p>GENE_ASSOCIATION: (b1723 or b3916)</p>
             <p>GENE_LIST: b1723 b3916</p>
             <p>SUBSYSTEM: Glycolysis/Gluconeogenesis</p>
+            <p>GENE_ASSOCIATION: (G_b1723 or G_b3916)</p>
           </html>
         </notes>
         <listOfReactants>
@@ -2345,9 +2345,9 @@
       <reaction id="R_PFL" name="pyruvate formate lyase" reversible="false">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
-            <p>GENE_ASSOCIATION: ((b0902 and b0903) or (b0902 and b3114) or (b3951 and b3952) or (b0902 and b0903 and b2579))</p>
             <p>GENE_LIST: b0902 b0903 b2579 b3114 b3951 b3952</p>
             <p>SUBSYSTEM: Pyruvate Metabolism</p>
+            <p>GENE_ASSOCIATION: ((G_b0902 and G_b0903) or (G_b0902 and G_b3114) or (G_b3951 and G_b3952) or (G_b0902 and G_b0903 and G_b2579))</p>
           </html>
         </notes>
         <listOfReactants>
@@ -2372,9 +2372,9 @@
       <reaction id="R_PGI" name="glucose-6-phosphate isomerase" reversible="true">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
-            <p>GENE_ASSOCIATION: b4025</p>
             <p>GENE_LIST: b4025</p>
             <p>SUBSYSTEM: Glycolysis/Gluconeogenesis</p>
+            <p>GENE_ASSOCIATION: G_b4025</p>
           </html>
         </notes>
         <listOfReactants>
@@ -2397,9 +2397,9 @@
       <reaction id="R_PGK" name="phosphoglycerate kinase" reversible="true">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
-            <p>GENE_ASSOCIATION: b2926</p>
             <p>GENE_LIST: b2926</p>
             <p>SUBSYSTEM: Glycolysis/Gluconeogenesis</p>
+            <p>GENE_ASSOCIATION: G_b2926</p>
           </html>
         </notes>
         <listOfReactants>
@@ -2424,9 +2424,9 @@
       <reaction id="R_PGL" name="6-phosphogluconolactonase" reversible="false">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
-            <p>GENE_ASSOCIATION: b0767</p>
             <p>GENE_LIST: b0767</p>
             <p>SUBSYSTEM: Pentose Phosphate Pathway</p>
+            <p>GENE_ASSOCIATION: G_b0767</p>
           </html>
         </notes>
         <listOfReactants>
@@ -2451,9 +2451,9 @@
       <reaction id="R_PGM" name="phosphoglycerate mutase" reversible="true">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
-            <p>GENE_ASSOCIATION: (b0755 or b3612 or b4395)</p>
             <p>GENE_LIST: b0755 b3612 b4395</p>
             <p>SUBSYSTEM: Glycolysis/Gluconeogenesis</p>
+            <p>GENE_ASSOCIATION: (G_b0755 or G_b3612 or G_b4395)</p>
           </html>
         </notes>
         <listOfReactants>
@@ -2476,9 +2476,9 @@
       <reaction id="R_PIt2r" name="phosphate reversible transport via proton symport" reversible="true">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
-            <p>GENE_ASSOCIATION: (b2987 or b3493)</p>
             <p>GENE_LIST: b2987 b3493</p>
             <p>SUBSYSTEM: Inorganic Ion Transport and Metabolism</p>
+            <p>GENE_ASSOCIATION: (G_b2987 or G_b3493)</p>
           </html>
         </notes>
         <listOfReactants>
@@ -2503,9 +2503,9 @@
       <reaction id="R_PPC" name="phosphoenolpyruvate carboxylase" reversible="false">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
-            <p>GENE_ASSOCIATION: b3956</p>
             <p>GENE_LIST: b3956</p>
             <p>SUBSYSTEM: Anaplerotic reactions</p>
+            <p>GENE_ASSOCIATION: G_b3956</p>
           </html>
         </notes>
         <listOfReactants>
@@ -2532,9 +2532,9 @@
       <reaction id="R_PPCK" name="phosphoenolpyruvate carboxykinase" reversible="false">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
-            <p>GENE_ASSOCIATION: b3403</p>
             <p>GENE_LIST: b3403</p>
             <p>SUBSYSTEM: Anaplerotic reactions</p>
+            <p>GENE_ASSOCIATION: G_b3403</p>
           </html>
         </notes>
         <listOfReactants>
@@ -2560,9 +2560,9 @@
       <reaction id="R_PPS" name="phosphoenolpyruvate synthase" reversible="false">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
-            <p>GENE_ASSOCIATION: b1702</p>
             <p>GENE_LIST: b1702</p>
             <p>SUBSYSTEM: Glycolysis/Gluconeogenesis</p>
+            <p>GENE_ASSOCIATION: G_b1702</p>
           </html>
         </notes>
         <listOfReactants>
@@ -2590,9 +2590,9 @@
       <reaction id="R_PTAr" name="phosphotransacetylase" reversible="true">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
-            <p>GENE_ASSOCIATION: (b2297 or b2458)</p>
             <p>GENE_LIST: b2297 b2458</p>
             <p>SUBSYSTEM: Pyruvate Metabolism</p>
+            <p>GENE_ASSOCIATION: (G_b2297 or G_b2458)</p>
           </html>
         </notes>
         <listOfReactants>
@@ -2617,9 +2617,9 @@
       <reaction id="R_PYK" name="pyruvate kinase" reversible="false">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
-            <p>GENE_ASSOCIATION: (b1676 or b1854)</p>
             <p>GENE_LIST: b1676 b1854</p>
             <p>SUBSYSTEM: Glycolysis/Gluconeogenesis</p>
+            <p>GENE_ASSOCIATION: (G_b1676 or G_b1854)</p>
           </html>
         </notes>
         <listOfReactants>
@@ -2670,9 +2670,9 @@
       <reaction id="R_RPE" name="ribulose 5-phosphate 3-epimerase" reversible="true">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
-            <p>GENE_ASSOCIATION: (b3386 or b4301)</p>
             <p>GENE_LIST: b3386 b4301</p>
             <p>SUBSYSTEM: Pentose Phosphate Pathway</p>
+            <p>GENE_ASSOCIATION: (G_b3386 or G_b4301)</p>
           </html>
         </notes>
         <listOfReactants>
@@ -2695,9 +2695,9 @@
       <reaction id="R_RPI" name="ribose-5-phosphate isomerase" reversible="true">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
-            <p>GENE_ASSOCIATION: (b2914 or b4090)</p>
             <p>GENE_LIST: b2914 b4090</p>
             <p>SUBSYSTEM: Pentose Phosphate Pathway</p>
+            <p>GENE_ASSOCIATION: (G_b2914 or G_b4090)</p>
           </html>
         </notes>
         <listOfReactants>
@@ -2720,9 +2720,9 @@
       <reaction id="R_SUCCt2_2" name="succinate transport via proton symport (2 H)" reversible="false">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
-            <p>GENE_ASSOCIATION: b3528</p>
             <p>GENE_LIST: b3528</p>
             <p>SUBSYSTEM: Transport, Extracellular</p>
+            <p>GENE_ASSOCIATION: G_b3528</p>
           </html>
         </notes>
         <listOfReactants>
@@ -2772,9 +2772,9 @@
       <reaction id="R_SUCDi" name="succinate dehydrogenase (irreversible)" reversible="false">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
-            <p>GENE_ASSOCIATION: (b0721 and b0722 and b0723 and b0724)</p>
             <p>GENE_LIST: b0721 b0722 b0723 b0724</p>
             <p>SUBSYSTEM: Oxidative Phosphorylation</p>
+            <p>GENE_ASSOCIATION: (G_b0721 and G_b0722 and G_b0723 and G_b0724)</p>
           </html>
         </notes>
         <listOfReactants>
@@ -2799,9 +2799,9 @@
       <reaction id="R_SUCOAS" name="succinyl-CoA synthetase (ADP-forming)" reversible="true">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
-            <p>GENE_ASSOCIATION: (b0728 and b0729)</p>
             <p>GENE_LIST: b0728 b0729</p>
             <p>SUBSYSTEM: Citric Acid Cycle</p>
+            <p>GENE_ASSOCIATION: (G_b0728 and G_b0729)</p>
           </html>
         </notes>
         <listOfReactants>
@@ -2828,9 +2828,9 @@
       <reaction id="R_TALA" name="transaldolase" reversible="true">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
-            <p>GENE_ASSOCIATION: (b0008 or b2464)</p>
             <p>GENE_LIST: b0008 b2464</p>
             <p>SUBSYSTEM: Pentose Phosphate Pathway</p>
+            <p>GENE_ASSOCIATION: (G_b0008 or G_b2464)</p>
           </html>
         </notes>
         <listOfReactants>
@@ -2855,9 +2855,9 @@
       <reaction id="R_THD2" name="NAD(P) transhydrogenase" reversible="false">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
-            <p>GENE_ASSOCIATION: (b1602 and b1603)</p>
             <p>GENE_LIST: b1602 b1603</p>
             <p>SUBSYSTEM: Oxidative Phosphorylation</p>
+            <p>GENE_ASSOCIATION: (G_b1602 and G_b1603)</p>
           </html>
         </notes>
         <listOfReactants>
@@ -2884,9 +2884,9 @@
       <reaction id="R_TKT1" name="transketolase" reversible="true">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
-            <p>GENE_ASSOCIATION: (b2465 or b2935)</p>
             <p>GENE_LIST: b2465 b2935</p>
             <p>SUBSYSTEM: Pentose Phosphate Pathway</p>
+            <p>GENE_ASSOCIATION: (G_b2465 or G_b2935)</p>
           </html>
         </notes>
         <listOfReactants>
@@ -2911,9 +2911,9 @@
       <reaction id="R_TKT2" name="transketolase" reversible="true">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
-            <p>GENE_ASSOCIATION: (b2465 or b2935)</p>
             <p>GENE_LIST: b2465 b2935</p>
             <p>SUBSYSTEM: Pentose Phosphate Pathway</p>
+            <p>GENE_ASSOCIATION: (G_b2465 or G_b2935)</p>
           </html>
         </notes>
         <listOfReactants>
@@ -2938,9 +2938,9 @@
       <reaction id="R_TPI" name="triose-phosphate isomerase" reversible="true">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
-            <p>GENE_ASSOCIATION: b3919</p>
             <p>GENE_LIST: b3919</p>
             <p>SUBSYSTEM: Glycolysis/Gluconeogenesis</p>
+            <p>GENE_ASSOCIATION: G_b3919</p>
           </html>
         </notes>
         <listOfReactants>

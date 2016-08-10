@@ -117,7 +117,7 @@ class SBMLTestODE(unittest.TestCase):
 
 
 def suite():
-    tests = [COBRA2COBRATest, COBRA2FBCTest, FBC2COBRATest, FBC2FBCTest, PlainTextIOTest, SBMLTestODE]
+    tests = [COBRA2COBRATest, COBRA2FBCTest, FBC2FBCTest, PlainTextIOTest, SBMLTestODE]
 
     test_suite = unittest.TestSuite()
     for test in tests:

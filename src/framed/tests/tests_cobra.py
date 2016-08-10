@@ -24,25 +24,25 @@ KINETIC_MODEL_COPY = '../../../examples/models/odemodel_copy.xml'
 
 GROWTH_RATE = 0.8739
 
-DOUBLE_GENE_KO = ['b3731', 's0001']
+DOUBLE_GENE_KO = ['G_b3731', 'G_s0001']
 DOUBLE_KO_GROWTH_RATE = 0.108
 DOUBLE_KO_SUCC_EX = 3.8188
 
-MOMA_GENE_KO = ['b0721']
+MOMA_GENE_KO = ['G_b0721']
 MOMA_GROWTH_RATE = 0.5745
 MOMA_SUCC_EX = 4.467
 
-LMOMA_GENE_KO = ['b0721']
+LMOMA_GENE_KO = ['G_b0721']
 LMOMA_GROWTH_RATE = 0.5066
 LMOMA_SUCC_EX = 5.311
 
-ROOM_GENE_KO = ['b0721']
+ROOM_GENE_KO = ['G_b0721']
 ROOM_GROWTH_RATE = 0.3120
 ROOM_SUCC_EX = 2.932
-#ROOM_GROWTH_RATE = 0.6293
+#ROOM_GROWTH_RATE = 0.6293 (somehow  a recent Gurobi release changed the results)
 #ROOM_SUCC_EX = 0.001
 
-ESSENTIAL_GENES = ['b0720', 'b1136', 'b1779', 'b2415', 'b2416', 'b2779', 'b2926']
+ESSENTIAL_GENES = ['G_b0720', 'G_b1136', 'G_b1779', 'G_b2415', 'G_b2416', 'G_b2779', 'G_b2926']
 
 
 class FBATest(unittest.TestCase):
@@ -199,7 +199,6 @@ class GeneEssentialityTest(unittest.TestCase):
         model = load_cbmodel(SMALL_TEST_MODEL, flavor='cobra')
         essential = essential_genes(model)
         self.assertListEqual(essential, ESSENTIAL_GENES)
-
 
 
 def suite():
