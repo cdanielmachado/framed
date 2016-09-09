@@ -48,6 +48,17 @@ class Parameter:
     MIP_ABS_GAP = 5
 
 
+default_parameters = {
+    Parameter.FEASIBILITY_TOL: 1e-9,
+    Parameter.OPTIMALITY_TOL: 1e-9,
+}
+
+
+def set_default_parameter(parameter, value):
+    global default_parameters
+    default_parameters[parameter] = value
+
+
 class Solution:
     """ Stores the results of an optimization.
     Invoke without arguments to create an empty Solution representing a failed optimization.
@@ -348,6 +359,16 @@ class Solver:
 
         # An exception is raised if the subclass does not implement this method.
         raise Exception('Not implemented for this solver.')
+
+    def set_parameters(self, parameters):
+        """ Set values for multiple parameters
+
+        Arguments:
+            parameters : dict of Parameter to value -- parameter values
+        """
+
+        for parameter, value in parameters.items():
+            self.set_parameter(parameter, value)
 
     def set_logging(self, enabled=False):
         raise Exception('Not implemented for this solver.')

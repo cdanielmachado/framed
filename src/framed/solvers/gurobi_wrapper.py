@@ -21,24 +21,31 @@ Implementation of a Gurobi based solver interface.
 '''
 
 from collections import OrderedDict
-from .solver import Solver, Solution, Status, VarType, Parameter
+from .solver import Solver, Solution, Status, VarType, Parameter, default_parameters
 from gurobipy import Model as GurobiModel, GRB, quicksum
 
-status_mapping = {GRB.OPTIMAL: Status.OPTIMAL,
-                  GRB.UNBOUNDED: Status.UNBOUNDED,
-                  GRB.INFEASIBLE: Status.INFEASIBLE,
-                  GRB.INF_OR_UNBD: Status.INF_OR_UNB}
 
-vartype_mapping = {VarType.BINARY: GRB.BINARY,
-                   VarType.INTEGER: GRB.INTEGER,
-                   VarType.CONTINUOUS: GRB.CONTINUOUS}
+status_mapping = {
+    GRB.OPTIMAL: Status.OPTIMAL,
+    GRB.UNBOUNDED: Status.UNBOUNDED,
+    GRB.INFEASIBLE: Status.INFEASIBLE,
+    GRB.INF_OR_UNBD: Status.INF_OR_UNB
+}
 
-parameter_mapping = {Parameter.TIME_LIMIT: GRB.Param.TimeLimit,
-                     Parameter.FEASIBILITY_TOL: GRB.Param.FeasibilityTol,
-                     Parameter.INT_FEASIBILITY_TOL: GRB.Param.IntFeasTol,
-                     Parameter.OPTIMALITY_TOL: GRB.Param.OptimalityTol,
-                     Parameter.MIP_ABS_GAP: GRB.Param.MIPGapAbs,
-                     Parameter.MIP_REL_GAP: GRB.Param.MIPGap}
+vartype_mapping = {
+    VarType.BINARY: GRB.BINARY,
+    VarType.INTEGER: GRB.INTEGER,
+    VarType.CONTINUOUS: GRB.CONTINUOUS
+}
+
+parameter_mapping = {
+    Parameter.TIME_LIMIT: GRB.Param.TimeLimit,
+    Parameter.FEASIBILITY_TOL: GRB.Param.FeasibilityTol,
+    Parameter.INT_FEASIBILITY_TOL: GRB.Param.IntFeasTol,
+    Parameter.OPTIMALITY_TOL: GRB.Param.OptimalityTol,
+    Parameter.MIP_ABS_GAP: GRB.Param.MIPGapAbs,
+    Parameter.MIP_REL_GAP: GRB.Param.MIPGap
+}
 
 
 class GurobiSolver(Solver):
@@ -48,6 +55,7 @@ class GurobiSolver(Solver):
         Solver.__init__(self)
         self.problem = GurobiModel()
         self.set_logging()
+        self.set_parameters(default_parameters)
         if model:
             self.build_problem(model)
 

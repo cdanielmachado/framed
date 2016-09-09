@@ -39,10 +39,8 @@ LMOMA_GROWTH_RATE = 0.5066
 LMOMA_SUCC_EX = 5.311
 
 ROOM_GENE_KO = ['G_b0721']
-ROOM_GROWTH_RATE = 0.0316
-ROOM_SUCC_EX = 4.911
-#ROOM_GROWTH_RATE = 0.6293 (somehow a recent Gurobi release changed the results)
-#ROOM_SUCC_EX = 0.001
+ROOM_GROWTH_RATE = 0.3801
+ROOM_SUCC_EX = 6.2885
 
 ESSENTIAL_GENES = ['G_b0720', 'G_b1136', 'G_b1779', 'G_b2415', 'G_b2416', 'G_b2779', 'G_b2926']
 
@@ -151,12 +149,12 @@ class FVATest(unittest.TestCase):
                              for lb, ub in variability.values()]))
 
 
-class GeneDeletionFBATest(unittest.TestCase):
-    """ Test gene deletion with FBA. """
+class GeneDeletionpFBATest(unittest.TestCase):
+    """ Test gene deletion with pFBA. """
 
     def testRun(self):
         model = load_cbmodel(SMALL_TEST_MODEL, flavor='cobra')
-        solution = gene_deletion(model, DOUBLE_GENE_KO)
+        solution = gene_deletion(model, DOUBLE_GENE_KO, 'pFBA')
         self.assertEqual(solution.status, Status.OPTIMAL)
         self.assertAlmostEqual(solution.values[model.detect_biomass_reaction()], DOUBLE_KO_GROWTH_RATE, 3)
         self.assertAlmostEqual(solution.values['R_EX_succ_e'], DOUBLE_KO_SUCC_EX, 3)
@@ -205,7 +203,7 @@ class GeneEssentialityTest(unittest.TestCase):
 
 def suite():
     tests = [FBATest, pFBATest, FBAFromPlainTextTest, FVATest, IrreversibleModelFBATest,
-             SimplifiedModelFBATest, TransformationCommutativityTest, GeneDeletionFBATest, GeneDeletionMOMATest,
+             SimplifiedModelFBATest, TransformationCommutativityTest, GeneDeletionpFBATest, GeneDeletionMOMATest,
              GeneEssentialityTest, GeneDeletionLMOMATest, GeneDeletionROOMTest]
 
     test_suite = unittest.TestSuite()

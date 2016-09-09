@@ -1,5 +1,5 @@
 from collections import OrderedDict
-from .solver import Solver, Solution, Status, VarType, Parameter
+from .solver import Solver, Solution, Status, VarType, Parameter, default_parameters
 from cplex import Cplex, infinity, SparsePair
 import sys
 
@@ -10,28 +10,36 @@ class CplexSolver(Solver):
     def __init__(self, model=None):
         Solver.__init__(self)
         self.problem = Cplex()
+
+        self.status_mapping = {
+            self.problem.solution.status.optimal: Status.OPTIMAL,
+            self.problem.solution.status.optimal_tolerance: Status.OPTIMAL,
+            self.problem.solution.status.unbounded: Status.UNBOUNDED,
+            self.problem.solution.status.infeasible: Status.INFEASIBLE,
+            self.problem.solution.status.infeasible_or_unbounded: Status.INF_OR_UNB,
+            self.problem.solution.status.MIP_optimal: Status.OPTIMAL,
+            self.problem.solution.status.MIP_unbounded: Status.UNBOUNDED,
+            self.problem.solution.status.MIP_infeasible: Status.INFEASIBLE,
+            self.problem.solution.status.MIP_infeasible_or_unbounded: Status.INF_OR_UNB
+        }
+
+        self.vartype_mapping = {
+            VarType.BINARY: self.problem.variables.type.binary,
+            VarType.INTEGER: self.problem.variables.type.integer,
+            VarType.CONTINUOUS: self.problem.variables.type.continuous
+        }
+
+        self.parameter_mapping = {
+            Parameter.TIME_LIMIT: self.problem.parameters.timelimit,
+            Parameter.FEASIBILITY_TOL: self.problem.parameters.simplex.tolerances.feasibility,
+            Parameter.OPTIMALITY_TOL: self.problem.parameters.simplex.tolerances.optimality,
+            Parameter.INT_FEASIBILITY_TOL: self.problem.parameters.mip.tolerances.integrality,
+            Parameter.MIP_ABS_GAP: self.problem.parameters.mip.tolerances.mipgap,
+            Parameter.MIP_REL_GAP: self.problem.parameters.mip.tolerances.absmipgap
+        }
+
         self.set_logging()
-
-        self.status_mapping = {self.problem.solution.status.optimal: Status.OPTIMAL,
-                               self.problem.solution.status.optimal_tolerance: Status.OPTIMAL,
-                               self.problem.solution.status.unbounded: Status.UNBOUNDED,
-                               self.problem.solution.status.infeasible: Status.INFEASIBLE,
-                               self.problem.solution.status.infeasible_or_unbounded: Status.INF_OR_UNB,
-                               self.problem.solution.status.MIP_optimal: Status.OPTIMAL,
-                               self.problem.solution.status.MIP_unbounded: Status.UNBOUNDED,
-                               self.problem.solution.status.MIP_infeasible: Status.INFEASIBLE,
-                               self.problem.solution.status.MIP_infeasible_or_unbounded: Status.INF_OR_UNB}
-
-        self.vartype_mapping = {VarType.BINARY: self.problem.variables.type.binary,
-                                VarType.INTEGER: self.problem.variables.type.integer,
-                                VarType.CONTINUOUS: self.problem.variables.type.continuous}
-
-        self.parameter_mapping = {Parameter.TIME_LIMIT: self.problem.parameters.timelimit,
-                                  Parameter.FEASIBILITY_TOL: self.problem.parameters.simplex.tolerances.feasibility,
-                                  Parameter.OPTIMALITY_TOL: self.problem.parameters.simplex.tolerances.optimality,
-                                  Parameter.INT_FEASIBILITY_TOL: self.problem.parameters.mip.tolerances.integrality,
-                                  Parameter.MIP_ABS_GAP: self.problem.parameters.mip.tolerances.mipgap,
-                                  Parameter.MIP_REL_GAP: self.problem.parameters.mip.tolerances.absmipgap}
+        self.set_parameters(default_parameters)
 
         if model:
             self.build_problem(model)
@@ -52,9 +60,6 @@ class CplexSolver(Solver):
 
         if not persistent:
             self.temp_vars.add(var_id)
-
-        if not update_problem:
-            print 'Warning: CPLEX does not allow lazy updating.'
 
     def add_variables(self, var_ids, lbs, ubs, vartypes):
         lbs = [lb if lb is not None else -infinity for lb in lbs]
@@ -84,9 +89,6 @@ class CplexSolver(Solver):
 
         if not persistent:
             self.temp_constrs.add(constr_id)
-
-        if not update_problem:
-            print 'Warning: CPLEX does not allow lazy updating.'
 
     def add_constraints(self, constr_ids, lhs, senses, rhs):
         """ Add a list of constraints to the current problem.

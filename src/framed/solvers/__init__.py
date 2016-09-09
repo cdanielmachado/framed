@@ -21,6 +21,7 @@ Package implementing interfaces to common solvers.
 """
 
 from warnings import warn
+from .solver import Parameter
 
 solvers = dict()
 

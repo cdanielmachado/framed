@@ -26,7 +26,7 @@ from simulation import FBA, looplessFBA
 from numpy import linspace
 
 
-def FVA(model, obj_percentage=0, reactions=None, constraints=None, loopless=False, internal=None):
+def FVA(model, obj_percentage=0, reactions=None, constraints=None, loopless=False, internal=None, solver=None):
     """ Run Flux Variability Analysis (FVA).
     
     Arguments:
@@ -42,16 +42,16 @@ def FVA(model, obj_percentage=0, reactions=None, constraints=None, loopless=Fals
     if constraints:
         _constraints.update(constraints)
 
+    if not solver:
+        solver = solver_instance(model)
+
     if obj_percentage > 0:
         target = model.detect_biomass_reaction()
-        solution = FBA(model, objective={target: 1}, constraints=constraints)
+        solution = FBA(model, objective={target: 1}, constraints=constraints, solver=solver)
         _constraints[target] = (obj_percentage * solution.fobj, None)
 
     if not reactions:
         reactions = model.reactions.keys()
-
-    solver = solver_instance()
-    solver.build_problem(model)
 
     variability = OrderedDict([(r_id, [None, None]) for r_id in reactions])
 
