@@ -239,6 +239,9 @@ def _load_cobra_gpr(sbml_model, model):
 
 def parse_gpr_rule(rule):
 
+    if not rule:
+        return None
+
     rule = rule.replace('(', '( ').replace(')', ' )')
 
     def replacement(token):
@@ -278,6 +281,7 @@ def parse_gpr_rule(rule):
         protein = Protein()
         protein.genes = [str(expr)]
         gpr.proteins = [protein]
+
 
     return gpr
 

@@ -51,7 +51,7 @@ def fix_reversibility(model):
     """ Make reaction reversibility consistent with the bounds. """
 
     for r_id, (lb, _) in model.bounds.items():
-        model.reactions[r_id].reversibility = True if lb is None else lb < 0
+        model.reactions[r_id].reversible = (lb is None or lb < 0)
 
 
 def clean_bounds(model, threshold=1000):

@@ -205,8 +205,8 @@ class GurobiSolver(Solver):
         problem.setObjective(obj_expr, sense)
         problem.update()
 
-        #from datetime import datetime
-        #self.problem.write("problem_{}.lp".format(str(datetime.now())))
+#        from datetime import datetime
+#        self.problem.write("problem_{}.lp".format(str(datetime.now())))
 
         #run the optimization
         problem.optimize()

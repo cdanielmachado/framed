@@ -234,6 +234,10 @@ class CplexSolver(Solver):
             problem.objective.set_sense(problem.objective.sense.maximize)
 
         #run the optimization
+
+#        from datetime import datetime
+#        self.problem.write("problem_{}.lp".format(str(datetime.now())))
+
         problem.solve()
         cplex_status = problem.solution.get_status()
 
