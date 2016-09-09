@@ -13,7 +13,9 @@ from framed.analysis.deletion import gene_deletion
 from framed.analysis.essentiality import essential_genes
 from framed.solvers.solver import Status
 from framed.core.transformation import make_irreversible, simplify
+from framed.solvers import set_default_solver
 
+#set_default_solver('cplex')
 
 SMALL_TEST_MODEL = '../../../examples/models/ecoli_core_model.xml'
 LARGE_TEST_MODEL = '../../../examples/models/Ec_iAF1260_flux1.xml'
@@ -37,9 +39,9 @@ LMOMA_GROWTH_RATE = 0.5066
 LMOMA_SUCC_EX = 5.311
 
 ROOM_GENE_KO = ['G_b0721']
-ROOM_GROWTH_RATE = 0.3120
-ROOM_SUCC_EX = 2.932
-#ROOM_GROWTH_RATE = 0.6293 (somehow  a recent Gurobi release changed the results)
+ROOM_GROWTH_RATE = 0.0316
+ROOM_SUCC_EX = 4.911
+#ROOM_GROWTH_RATE = 0.6293 (somehow a recent Gurobi release changed the results)
 #ROOM_SUCC_EX = 0.001
 
 ESSENTIAL_GENES = ['G_b0720', 'G_b1136', 'G_b1779', 'G_b2415', 'G_b2416', 'G_b2779', 'G_b2926']

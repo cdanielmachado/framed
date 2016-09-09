@@ -1,6 +1,7 @@
 from collections import OrderedDict
-from .solver import Solver, Solution, Status, VarType
+from .solver import Solver, Solution, Status, VarType, Parameter
 from cplex import Cplex, infinity, SparsePair
+import sys
 
 
 class CplexSolver(Solver):
@@ -9,17 +10,10 @@ class CplexSolver(Solver):
     def __init__(self, model=None):
         Solver.__init__(self)
         self.problem = Cplex()
-
-        self.problem.set_log_stream(None)
-        self.problem.set_error_stream(None)
-        self.problem.set_warning_stream(None)
-        self.problem.set_results_stream(None)
-
-        #self.problem.parameters.preprocessing.presolve.set(0)
-        #self.problem.parameters.lpmethod.set(1)
-        #self.problem.parameters.qpmethod.set(1)
+        self.set_logging()
 
         self.status_mapping = {self.problem.solution.status.optimal: Status.OPTIMAL,
+                               self.problem.solution.status.optimal_tolerance: Status.OPTIMAL,
                                self.problem.solution.status.unbounded: Status.UNBOUNDED,
                                self.problem.solution.status.infeasible: Status.INFEASIBLE,
                                self.problem.solution.status.infeasible_or_unbounded: Status.INF_OR_UNB,
@@ -28,9 +22,16 @@ class CplexSolver(Solver):
                                self.problem.solution.status.MIP_infeasible: Status.INFEASIBLE,
                                self.problem.solution.status.MIP_infeasible_or_unbounded: Status.INF_OR_UNB}
 
-        self.map_types = {VarType.BINARY: self.problem.variables.type.binary,
-                          VarType.INTEGER: self.problem.variables.type.integer,
-                          VarType.CONTINUOUS: self.problem.variables.type.continuous}
+        self.vartype_mapping = {VarType.BINARY: self.problem.variables.type.binary,
+                                VarType.INTEGER: self.problem.variables.type.integer,
+                                VarType.CONTINUOUS: self.problem.variables.type.continuous}
+
+        self.parameter_mapping = {Parameter.TIME_LIMIT: self.problem.parameters.timelimit,
+                                  Parameter.FEASIBILITY_TOL: self.problem.parameters.simplex.tolerances.feasibility,
+                                  Parameter.OPTIMALITY_TOL: self.problem.parameters.simplex.tolerances.optimality,
+                                  Parameter.INT_FEASIBILITY_TOL: self.problem.parameters.mip.tolerances.integrality,
+                                  Parameter.MIP_ABS_GAP: self.problem.parameters.mip.tolerances.mipgap,
+                                  Parameter.MIP_REL_GAP: self.problem.parameters.mip.tolerances.absmipgap}
 
         if model:
             self.build_problem(model)
@@ -58,14 +59,17 @@ class CplexSolver(Solver):
     def add_variables(self, var_ids, lbs, ubs, vartypes):
         lbs = [lb if lb is not None else -infinity for lb in lbs]
         ubs = [ub if ub is not None else infinity for ub in ubs]
-        vartypes = [self.map_types[vartype] for vartype in vartypes]
 
-        self.problem.variables.add(names=var_ids, lb=lbs, ub=ubs, types=vartypes)
+        if set(vartypes) == {VarType.CONTINUOUS}:
+            self.problem.variables.add(names=var_ids, lb=lbs, ub=ubs)
+        else:
+            vartypes = [self.vartype_mapping[vartype] for vartype in vartypes]
+            self.problem.variables.add(names=var_ids, lb=lbs, ub=ubs, types=vartypes)
+
         self.var_ids.extend(var_ids)
 
-
     def add_constraint(self, constr_id, lhs, sense='=', rhs=0, persistent=True, update_problem=True):
-        """ Add a variable to the current problem.
+        """ Add a constraint to the current problem.
 
         Arguments:
             constr_id : str -- constraint identifier
@@ -84,17 +88,14 @@ class CplexSolver(Solver):
         if not update_problem:
             print 'Warning: CPLEX does not allow lazy updating.'
 
-
     def add_constraints(self, constr_ids, lhs, senses, rhs):
-        """ Add a variable to the current problem.
+        """ Add a list of constraints to the current problem.
 
         Arguments:
-            constr_id : str -- constraint identifier
-            lhs : list [of (str, float)] -- variables and respective coefficients
-            sense : {'<', '=', '>'} -- default '='
-            rhs : float -- right-hand side of equation (default: 0)
-            persistent : bool -- if the variable should be reused for multiple calls (default: True)
-            update_problem : bool -- update problem immediately (default: True)
+            constr_ids : list of str -- constraint identifiers
+            lhs : list of dicts -- variables and respective coefficients
+            senses : list of {'<', '=', '>'} -- default '='
+            rhs : float -- right-hand side of equations (default: 0)
         """
 
         map_sense = {'=': 'E',
@@ -110,7 +111,6 @@ class CplexSolver(Solver):
                                             names=constr_ids)
         self.constr_ids.extend(constr_ids)
 
-
     def remove_variable(self, var_id):
         """ Remove a variable from the current problem.
 
@@ -118,7 +118,7 @@ class CplexSolver(Solver):
             var_id : str -- variable identifier
         """
         if var_id in self.var_ids:
-            self.problem.remove(self.problem.variables.delete(var_id))
+            self.problem.variables.delete(var_id)
             self.var_ids.remove(var_id)
 
     def remove_constraint(self, constr_id):
@@ -128,7 +128,7 @@ class CplexSolver(Solver):
             constr_id : str -- constraint identifier
         """
         if constr_id in self.constr_ids:
-            self.problem.remove(self.problem.linear_constraints.delete(constr_id))
+            self.problem.linear_constraints.delete(constr_id)
             self.constr_ids.remove(constr_id)
 
     def update(self):
@@ -235,9 +235,6 @@ class CplexSolver(Solver):
 
         #run the optimization
 
-#        from datetime import datetime
-#        self.problem.write("problem_{}.lp".format(str(datetime.now())))
-
         problem.solve()
         cplex_status = problem.solution.get_status()
 
@@ -275,3 +272,32 @@ class CplexSolver(Solver):
                 problem.variables.set_upper_bounds(r_id, ub)
 
         return solution
+
+    def set_parameter(self, parameter, value):
+        """ Set a parameter value for this optimization problem
+
+        Arguments:
+            parameter : Parameter -- parameter type
+            value : float -- parameter value
+        """
+
+        if parameter in self.parameter_mapping:
+            self.parameter_mapping[parameter].set(value)
+        else:
+            raise Exception('Parameter unknown (or not yet supported).')
+
+    def set_logging(self, enabled=False):
+
+        if enabled:
+            self.problem.set_log_stream(sys.stdout)
+            self.problem.set_error_stream(sys.stderr)
+            self.problem.set_warning_stream(sys.stderr)
+            self.problem.set_results_stream(sys.stdout)
+        else:
+            self.problem.set_log_stream(None)
+            self.problem.set_error_stream(None)
+            self.problem.set_warning_stream(None)
+            self.problem.set_results_stream(None)
+
+    def write_to_file(self, filename):
+        self.problem.write(filename)

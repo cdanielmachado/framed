@@ -21,16 +21,24 @@ Implementation of a Gurobi based solver interface.
 '''
 
 from collections import OrderedDict
-from .solver import Solver, Solution, Status, VarType
-from gurobipy import setParam, Model as GurobiModel, GRB, quicksum
-
-setParam("OutputFlag", 0)
-setParam('IntFeasTol', 1e-9)
+from .solver import Solver, Solution, Status, VarType, Parameter
+from gurobipy import Model as GurobiModel, GRB, quicksum
 
 status_mapping = {GRB.OPTIMAL: Status.OPTIMAL,
                   GRB.UNBOUNDED: Status.UNBOUNDED,
                   GRB.INFEASIBLE: Status.INFEASIBLE,
                   GRB.INF_OR_UNBD: Status.INF_OR_UNB}
+
+vartype_mapping = {VarType.BINARY: GRB.BINARY,
+                   VarType.INTEGER: GRB.INTEGER,
+                   VarType.CONTINUOUS: GRB.CONTINUOUS}
+
+parameter_mapping = {Parameter.TIME_LIMIT: GRB.Param.TimeLimit,
+                     Parameter.FEASIBILITY_TOL: GRB.Param.FeasibilityTol,
+                     Parameter.INT_FEASIBILITY_TOL: GRB.Param.IntFeasTol,
+                     Parameter.OPTIMALITY_TOL: GRB.Param.OptimalityTol,
+                     Parameter.MIP_ABS_GAP: GRB.Param.MIPGapAbs,
+                     Parameter.MIP_REL_GAP: GRB.Param.MIPGap}
 
 
 class GurobiSolver(Solver):
@@ -39,6 +47,7 @@ class GurobiSolver(Solver):
     def __init__(self, model=None):
         Solver.__init__(self)
         self.problem = GurobiModel()
+        self.set_logging()
         if model:
             self.build_problem(model)
 
@@ -56,18 +65,14 @@ class GurobiSolver(Solver):
         """
         lb = lb if lb is not None else -GRB.INFINITY
         ub = ub if ub is not None else GRB.INFINITY
-        
-        map_types = {VarType.BINARY: GRB.BINARY,
-                     VarType.INTEGER: GRB.INTEGER,
-                     VarType.CONTINUOUS: GRB.CONTINUOUS}
 
         if var_id in self.var_ids:
             var = self.problem.getVarByName(var_id)
             var.setAttr('lb', lb)
             var.setAttr('ub', ub)
-            var.setAttr('vtype', map_types[vartype])
+            var.setAttr('vtype', vartype_mapping[vartype])
         else:
-            self.problem.addVar(name=var_id, lb=lb, ub=ub, vtype=map_types[vartype])
+            self.problem.addVar(name=var_id, lb=lb, ub=ub, vtype=vartype_mapping[vartype])
             self.var_ids.append(var_id)
             
         if not persistent:
@@ -205,9 +210,6 @@ class GurobiSolver(Solver):
         problem.setObjective(obj_expr, sense)
         problem.update()
 
-#        from datetime import datetime
-#        self.problem.write("problem_{}.lp".format(str(datetime.now())))
-
         #run the optimization
         problem.optimize()
 
@@ -239,3 +241,23 @@ class GurobiSolver(Solver):
             problem.update()
 
         return solution
+
+    def set_parameter(self, parameter, value):
+        """ Set a parameter value for this optimization problem
+
+        Arguments:
+            parameter : Parameter -- parameter type
+            value : float -- parameter value
+        """
+
+        if parameter in parameter_mapping:
+            grb_param = parameter_mapping[parameter]
+            self.problem.setParam(grb_param, value)
+        else:
+            raise Exception('Parameter unknown (or not yet supported).')
+
+    def set_logging(self, enabled=False):
+        self.problem.setParam('OutputFlag', 1 if enabled else 0)
+
+    def write_to_file(self, filename):
+        self.problem.write(filename)

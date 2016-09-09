@@ -25,26 +25,26 @@ R_CYTBD: 2.0 M_h_c + 0.5 M_o2_c + M_q8h2_c --> M_h2o_c + 2.0 M_h_e + M_q8_c
 R_D_LACt2: M_h_e + M_lac_D_e <-> M_h_c + M_lac_D_c
 R_ENO: M_2pg_c <-> M_h2o_c + M_pep_c
 R_ETOHt2r: M_etoh_e + M_h_e <-> M_etoh_c + M_h_c
-R_EX_ac_e: M_ac_e <->  [0.0, ]
-R_EX_acald_e: M_acald_e <->  [0.0, ]
-R_EX_akg_e: M_akg_e <->  [0.0, ]
+R_EX_ac_e: M_ac_e --> 
+R_EX_acald_e: M_acald_e --> 
+R_EX_akg_e: M_akg_e --> 
 R_EX_co2_e: M_co2_e <-> 
-R_EX_etoh_e: M_etoh_e <->  [0.0, ]
-R_EX_for_e: M_for_e <->  [0.0, ]
-R_EX_fru_e: M_fru_e <->  [0.0, ]
-R_EX_fum_e: M_fum_e <->  [0.0, ]
+R_EX_etoh_e: M_etoh_e --> 
+R_EX_for_e: M_for_e --> 
+R_EX_fru_e: M_fru_e --> 
+R_EX_fum_e: M_fum_e --> 
 R_EX_glc_e: M_glc_D_e <->  [-10.0, ]
-R_EX_gln_L_e: M_gln_L_e <->  [0.0, ]
-R_EX_glu_L_e: M_glu_L_e <->  [0.0, ]
+R_EX_gln_L_e: M_gln_L_e --> 
+R_EX_glu_L_e: M_glu_L_e --> 
 R_EX_h_e: M_h_e <-> 
 R_EX_h2o_e: M_h2o_e <-> 
-R_EX_lac_D_e: M_lac_D_e <->  [0.0, ]
-R_EX_mal_L_e: M_mal_L_e <->  [0.0, ]
+R_EX_lac_D_e: M_lac_D_e --> 
+R_EX_mal_L_e: M_mal_L_e --> 
 R_EX_nh4_e: M_nh4_e <-> 
 R_EX_o2_e: M_o2_e <-> 
 R_EX_pi_e: M_pi_e <-> 
-R_EX_pyr_e: M_pyr_e <->  [0.0, ]
-R_EX_succ_e: M_succ_e <->  [0.0, ]
+R_EX_pyr_e: M_pyr_e --> 
+R_EX_succ_e: M_succ_e --> 
 R_FBA: M_fdp_c <-> M_dhap_c + M_g3p_c
 R_FBP: M_fdp_c + M_h2o_c --> M_f6p_c + M_pi_c
 R_FORt2: M_for_e + M_h_e --> M_for_c + M_h_c

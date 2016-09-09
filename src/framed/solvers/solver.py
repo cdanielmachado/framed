@@ -38,6 +38,16 @@ class VarType:
     CONTINUOUS = 3
 
 
+class Parameter:
+    """ Enumeration of parameters common to all solvers. """
+    TIME_LIMIT = 0
+    FEASIBILITY_TOL = 1
+    INT_FEASIBILITY_TOL = 2
+    OPTIMALITY_TOL = 3
+    MIP_REL_GAP = 4
+    MIP_ABS_GAP = 5
+
+
 class Solution:
     """ Stores the results of an optimization.
     Invoke without arguments to create an empty Solution representing a failed optimization.
@@ -194,16 +204,6 @@ class Solver:
         if model:
             self.build_problem(model)
 
-    def __repr__(self):
-        pass
-
-    def __getstate__(self):
-        pass
-
-    def __setstate__(self):
-        pass
-
-
     def add_variable(self, var_id, lb=None, ub=None, vartype=VarType.CONTINUOUS, persistent=True, update_problem=True):
         """ Add a variable to the current problem.
         
@@ -244,8 +244,7 @@ class Solver:
             constr_id : str -- constraint identifier
         """
         pass
-        
-            
+
     def list_variables(self):
         """ Get a list of the variable ids defined for the current problem.
 
@@ -276,7 +275,6 @@ class Solver:
         if clean_constraints:
             for constr_id in self.temp_constrs:
                 self.remove_constraint(constr_id)
-                
 
     def update(self):
         """ Update internal structure. Used for efficient lazy updating. """
@@ -339,4 +337,20 @@ class Solver:
 
         # An exception is raised if the subclass does not implement this method.
         raise Exception('Not implemented for this solver.')
-    
+
+    def set_parameter(self, parameter, value):
+        """ Set a parameter value for this optimization problem
+
+        Arguments:
+            parameter : Parameter -- parameter type
+            value : float -- parameter value
+        """
+
+        # An exception is raised if the subclass does not implement this method.
+        raise Exception('Not implemented for this solver.')
+
+    def set_logging(self, enabled=False):
+        raise Exception('Not implemented for this solver.')
+
+    def write_to_file(self, filename):
+        raise Exception('Not implemented for this solver.')
