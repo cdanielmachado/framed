@@ -84,9 +84,9 @@ def essentiality(model, kind='reactions', min_growth=0.01, constraints=None):
 
     for elem in elements:
         if kind == 'genes':
-            solution = gene_deletion(model, [elem], solver=solver)
+            solution = gene_deletion(model, [elem], constraints=constraints, solver=solver)
         else:
-            solution = reaction_deletion(model, [elem], solver=solver)
+            solution = reaction_deletion(model, [elem], constraints=constraints, solver=solver)
 
         if solution and (solution.status == Status.OPTIMAL
                          and solution.fobj < min_growth * wt_growth

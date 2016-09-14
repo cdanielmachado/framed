@@ -117,8 +117,8 @@ def deletion(model, elements, kind='reactions', method='FBA', reference=None, co
     """
 
     if kind == 'genes':
-        solution = gene_deletion(model, elements, method, reference, solver)
+        solution = gene_deletion(model, elements, method, reference, constraints, solver)
     else:
-        solution = reaction_deletion(model, elements, method, reference, solver)
+        solution = reaction_deletion(model, elements, method, reference, constraints, solver)
 
     return solution

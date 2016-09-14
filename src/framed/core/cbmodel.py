@@ -52,6 +52,7 @@ class GPRAssociation:
             genes |= set(protein.genes)
         return genes
 
+
 class CBModel(Model):
 
     def __init__(self, model_id):
