@@ -230,7 +230,7 @@ class Model:
                 del self.reactions[r_id]
             else:
                 print 'No such reaction', r_id
-            self._clear_temp()
+        self._clear_temp()
 
     def remove_reaction(self, r_id):
         """ Remove a single reaction from the model.
@@ -241,23 +241,40 @@ class Model:
         """
         self.remove_reactions([r_id])
 
-
-    def remove_compartment(self, c_id, delete_metabolites=True):
+    def remove_compartment(self, c_id, delete_metabolites=True, delete_reactions=False):
         """ Remove a compartment from the model.
-        Removes also all the metabolites in that compartment.
 
         Arguments:
             c_id : str -- compartment id
             delete_metabolites : Bool -- True (default)
+            delete_reactions : Bool -- False (default)
         """
-        if c_id in self.compartments:
-            del self.compartments[c_id]
+        self.remove_compartments([c_id], delete_metabolites, delete_reactions)
 
-            if delete_metabolites:
-                self.remove_metabolites([m_id for m_id, metabolite in self.metabolites.items()
-                                         if metabolite.compartment == c_id])
-        else:
-            print 'No such compartment', c_id
+    def remove_compartments(self, c_ids, delete_metabolites=True, delete_reactions=False):
+        """ Remove a compartment from the model.
+
+        Arguments:
+            c_ids : list of str -- compartment ids
+            delete_metabolites : Bool -- True (default)
+            delete_reactions : Bool -- False (default)
+        """
+
+        for c_id in c_ids:
+            if c_id in self.compartments:
+                del self.compartments[c_id]
+            else:
+                print 'No such compartment', c_id
+
+        if delete_reactions:
+            target_rxns = [r_id for r_id in self.reactions
+                                if len(self.get_reaction_compartments(r_id) & c_ids) > 0]
+            self.remove_reactions(target_rxns)
+
+        if delete_metabolites:
+            target_mets = [m_id for m_id, met in self.metabolites.items() if met.compartment in c_ids]
+            self.remove_metabolites(target_mets)
+
 
     def get_metabolite_sources(self, m_id):
         """ Return the list of input reactions for one metabolite
