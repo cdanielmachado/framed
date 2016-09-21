@@ -37,9 +37,9 @@ def simplify(model):
 
     del_reactions = blocked_reactions(model)
     model.remove_reactions(del_reactions)
-    del_metabolites = _disconnected_metabolites(model)
+    del_metabolites = disconnected_metabolites(model)
     model.remove_metabolites(del_metabolites)
-    del_genes = _disconnected_genes(model)
+    del_genes = disconnected_genes(model)
     model.remove_genes(del_genes)
     return del_reactions, del_metabolites, del_genes
 
@@ -85,13 +85,12 @@ def make_irreversible(model):
     return mapping
 
 
-
-def _disconnected_metabolites(model):
+def disconnected_metabolites(model):
     m_r_table = model.metabolite_reaction_lookup_table()
     return [m_id for m_id, edges in m_r_table.items() if not edges]
 
 
-def _disconnected_genes(model):
+def disconnected_genes(model):
     disconnected = set(model.genes)
     for gpr in model.gpr_associations.values():
         if gpr:
