@@ -3,6 +3,7 @@ Unit testing module for core features.
 
 @author: Daniel Machado
 """
+
 import unittest
 
 from framed.io_utils.sbml import load_cbmodel

@@ -1,23 +1,8 @@
-''' This module implements methods for combinatorial deletions.
+""" This module implements methods for combinatorial deletions.
 
 @author: Daniel Machado
 
-   Copyright 2013 Novo Nordisk Foundation Center for Biosustainability,
-   Technical University of Denmark.
-
-   Licensed under the Apache License, Version 2.0 (the "License");
-   you may not use this file except in compliance with the License.
-   You may obtain a copy of the License at
-
-       http://www.apache.org/licenses/LICENSE-2.0
-
-   Unless required by applicable law or agreed to in writing, software
-   distributed under the License is distributed on an "AS IS" BASIS,
-   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   See the License for the specific language governing permissions and
-   limitations under the License.
-   
-'''
+"""
 
 from itertools import combinations
 from collections import OrderedDict
@@ -34,7 +19,7 @@ def combinatorial_gene_deletion(model, objective, max_dels, targets=None, method
     
     Arguments:
         model : CBModel -- model
-        objective : dict (of str to float) -- optimization objective (reaction ids and coefficients)
+        fobj : function -- optimization objective function
         max_dels : maximum number of deletions
         method : str -- simulation method: FBA (default) or MOMA
         targets : list (of str) -- deletion targets (default: all)
@@ -54,7 +39,7 @@ def combinatorial_reaction_deletion(model, objective, max_dels, targets=None, me
     
     Arguments:
         model : CBModel -- model
-        objective : dict (of str to float) -- optimization objective (reaction ids and coefficients)
+        fobj : function -- optimization objective function
         max_dels : maximum number of deletions
         method : str -- simulation method: FBA (default) or MOMA
         targets : list (of str) -- deletion targets (default: all)
@@ -75,7 +60,7 @@ def combinatorial_deletion(model, fobj, max_dels, kind='reactions', targets=None
     
     Arguments:
         model : CBModel -- model
-        objective : dict (of str to float) -- optimization objective (reaction ids and coefficients)
+        fobj : function -- optimization objective function
         max_dels : maximum number of deletions
         kind : str -- genes or reactions (default)
         method : str -- simulation method: FBA (default) or MOMA
@@ -93,8 +78,7 @@ def combinatorial_deletion(model, fobj, max_dels, kind='reactions', targets=None
         kind = 'reactions'
         targets = model.reactions if not targets else targets
 
-    solver = solver_instance()
-    solver.build_problem(model)
+    solver = solver_instance(model)
 
     if not reference:
         #don't reuse solver here, we don't want the temp variables from pFBA to be persistent

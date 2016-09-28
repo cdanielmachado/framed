@@ -4,7 +4,7 @@ FRAMED
 FRAMED (**FRA**mework for **M**etabolic **E**ngineering and **D**esign)
 is a python package for analysis and simulation of metabolic models.
 
-This package is under development (no stable release yet). Some of the current functionality includes:
+This package is continuously under development. Some of the current functionality includes:
 
 * Import/Export of SBML files (constraint-based and kinetic models)
 * Import/Export from plain text (constraint-based only)
@@ -21,6 +21,10 @@ This is an overview of the package structure:
 
 ### Credits and License
 
-Initial development at the Novo Nordisk Fundation Center for Biosustainability (Technical University of Denmark)
-and currently at the Centre of Biological Engineering (University of Minho). Released under an Apache License.
+Developed at:
+* The Novo Nordisk Fundation Center for Biosustainability (2013)
+* Centre of Biological Engineering, University of Minho (2014-2015)
+* European Molecular Biology Laboratory (2016)
+
+Released under an Apache License.
 

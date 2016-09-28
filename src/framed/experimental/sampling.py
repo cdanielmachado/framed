@@ -18,8 +18,7 @@ def lp_sampler(model, n_samples=1000, weights=None, constraints=None, select_pro
                        and variation_threshold < (ub - lb) < futile_cycle_threshold}
 
     samples = []
-    solver = solver_instance()
-    solver.build_problem(model)
+    solver = solver_instance(model)
 
     for i in range(n_samples):
         objective = {r_id: gauss(0, 1)*W for r_id, W in weights.items()

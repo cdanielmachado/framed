@@ -1,8 +1,9 @@
-'''
+"""
 Unit testing for gap filling algorithm.
 
 @author: Marta Matos
-'''
+"""
+
 import unittest
 
 from framed.core.fixes import fix_cobra_model

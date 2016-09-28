@@ -4,20 +4,6 @@ This module implements the Phenotype Phase Plane Analysis.
 
 @author: Kai Zhuang
 
-   Copyright 2013 Novo Nordisk Foundation Center for Biosustainability,
-   Technical University of Denmark.
-
-   Licensed under the Apache License, Version 2.0 (the "License");
-   you may not use this file except in compliance with the License.
-   You may obtain a copy of the License at
-
-       http://www.apache.org/licenses/LICENSE-2.0
-
-   Unless required by applicable law or agreed to in writing, software
-   distributed under the License is distributed on an "AS IS" BASIS,
-   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   See the License for the specific language governing permissions and
-   limitations under the License.
 """
 __author__ = 'kaizhuang'
 
@@ -133,8 +119,7 @@ def PhPP(model, rxn_x, rxn_y, rxn_x_range, rxn_y_range, target=None, maximize=Tr
     :param maximize: True or False. the sense of the optimization
     :return: phaseplane
     """
-    solver = solver_instance()
-    solver.build_problem(model)
+    solver = solver_instance(model)
 
     # find metabolite ids corresponding to reactions x and y
     met_x = model.reactions[rxn_x].stoichiometry.keys()[0]

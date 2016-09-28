@@ -1,8 +1,9 @@
-'''
+"""
 Unit testing for gap finding.
 
 @author: Marta Matos
-'''
+"""
+
 import re
 import unittest
 

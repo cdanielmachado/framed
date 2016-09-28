@@ -1,23 +1,9 @@
-''' This module implements the method to fill gaps in the network
+""" This module implements the method to fill gaps in the network
 
 @author: Marta Matos
-
-   Copyright 2013 Novo Nordisk Foundation Center for Biosustainability,
-   Technical University of Denmark.
-
-   Licensed under the Apache License, Version 2.0 (the "License");
-   you may not use this file except in compliance with the License.
-   You may obtain a copy of the License at
-
-       http://www.apache.org/licenses/LICENSE-2.0
-
-   Unless required by applicable law or agreed to in writing, software
-   distributed under the License is distributed on an "AS IS" BASIS,
-   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   See the License for the specific language governing permissions and
-   limitations under the License.
    
-'''
+"""
+
 from framed.core.model import Reaction, Compartment, Metabolite
 from framed.io_utils.plaintext import _parse_bounds, _parse_coefficients, _parse_objective, id_re, pos_float_re, float_re, compound, expression, bounds, reaction, regex_compound, regex_bounds, regex_reaction, objective
 from framed.io_utils.sbml import LB_TAG, UB_TAG, OBJ_TAG

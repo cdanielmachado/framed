@@ -26,13 +26,6 @@ from .solver import Parameter
 solvers = dict()
 
 try:
-    from .pulp_wrapper import PuLPSolver
-
-    solvers['pulp'] = PuLPSolver
-except:
-    pass
-
-try:
     from .glpk_wrapper import GlpkSolver
 
     solvers['glpk'] = GlpkSolver
@@ -82,6 +75,9 @@ def set_default_solver(solvername):
 
 def solver_instance(model=None):
     """ Returns a new instance of the currently selected solver.
+
+    Arguments:
+        model : CBModel (optional) -- immediatly instantiate problem with given model
 
     Returns:
         Solver

@@ -35,8 +35,7 @@ def GIMME(model, gene_exp, cutoff=25, growth_frac=0.9, constraints=None, parsimo
     threshold = percentile(rxn_exp.values(), cutoff)
     coeffs = {r_id: threshold-val for r_id, val in rxn_exp.items() if val < threshold}
 
-    solver = solver_instance()
-    solver.build_problem(model)
+    solver = solver_instance(model)
 
     wt_solution = FBA(model, constraints=constraints, solver=solver)
 

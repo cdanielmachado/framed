@@ -6,20 +6,6 @@ titer, and productivity.
 
 @author: Kai Zhuang
 
-   Copyright 2013 Novo Nordisk Foundation Center for Biosustainability,
-   Technical University of Denmark.
-
-   Licensed under the Apache License, Version 2.0 (the "License");
-   you may not use this file except in compliance with the License.
-   You may obtain a copy of the License at
-
-       http://www.apache.org/licenses/LICENSE-2.0
-
-   Unless required by applicable law or agreed to in writing, software
-   distributed under the License is distributed on an "AS IS" BASIS,
-   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   See the License for the specific language governing permissions and
-   limitations under the License.
 """
 
 import numpy
@@ -142,8 +128,7 @@ def calculate_performance(strain, bioreactor, r_substrate, r_target, t0, tf, dt,
     if hasattr(strain, 'solver'):
         fba_solution = strain.solver.solve_lp(strain.fba_objective, minimize=False, constraints=strain.fba_constraints)
     else:
-        strain.solver = solver_instance()
-        strain.solver.build_problem(strain.model)
+        strain.solver = solver_instance(strain.model)
         fba_solution = strain.solver.solve_lp(strain.fba_objective, minimize=False, constraints=strain.fba_constraints)
 
     # growth, substrate uptake, and target production rates from FBA solution

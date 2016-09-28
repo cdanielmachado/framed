@@ -44,8 +44,7 @@ class OrganismTest(unittest.TestCase):
         self.assertTrue(solution1.status)
         self.assertEqual(correct_solution.fobj, solution1.fobj)
 
-        solver = solver_instance()
-        solver.build_problem(self.ec1.model)
+        solver = solver_instance(self.ec1.model)
         obj = {self.ec1.model.detect_biomass_reaction(): 1}
         solution2 = solver.solve_lp(obj, minimize=False)
         self.assertTrue(solution2.status)

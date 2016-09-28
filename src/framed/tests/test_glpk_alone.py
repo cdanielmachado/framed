@@ -1,8 +1,3 @@
-'''
-Created on Oct 25, 2013
-
-@author: Marta Matos
-'''
 
 from glpk.glpkpi import *
 

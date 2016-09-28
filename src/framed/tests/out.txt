@@ -1,7 +1,0 @@
-CPLEX Parameter File Version 12.6.3.0
-CPX_PARAM_PREIND                 0
-CPX_PARAM_DATACHECK              1
-CPX_PARAM_LPMETHOD               1
-CPX_PARAM_QPMETHOD               1
-CPX_PARAM_APIENCODING            "UTF-8"
-CPX_PARAM_MIPCBREDLP             0

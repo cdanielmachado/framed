@@ -1,23 +1,8 @@
-''' This module implements common constraint-based simulation methods.
+""" This module implements common constraint-based simulation methods.
 
 @author: Daniel Machado
 
-   Copyright 2013 Novo Nordisk Foundation Center for Biosustainability,
-   Technical University of Denmark.
-
-   Licensed under the Apache License, Version 2.0 (the "License");
-   you may not use this file except in compliance with the License.
-   You may obtain a copy of the License at
-
-       http://www.apache.org/licenses/LICENSE-2.0
-
-   Unless required by applicable law or agreed to in writing, software
-   distributed under the License is distributed on an "AS IS" BASIS,
-   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   See the License for the specific language governing permissions and
-   limitations under the License.
-   
-'''
+"""
 
 from framed.experimental.mathutils import nullspace
 from ..solvers import solver_instance
@@ -46,8 +31,7 @@ def FBA(model, objective=None, minimize=False, constraints=None, solver=None, ge
         objective = model.objective
 
     if not solver:
-        solver = solver_instance()
-        solver.build_problem(model)
+        solver = solver_instance(model)
 
     solution = solver.solve_lp(objective, minimize=minimize, constraints=constraints, get_values=get_values,
                                get_shadow_prices=get_shadow_prices, get_reduced_costs=get_reduced_costs)
@@ -70,8 +54,7 @@ def pFBA(model, objective=None, minimize=False, constraints=None, reactions=None
     """
 
     if not solver:
-        solver = solver_instance()
-        solver.build_problem(model)
+        solver = solver_instance(model)
 
     if not objective:
         objective = model.objective
@@ -132,8 +115,7 @@ def looplessFBA(model, objective=None, minimize=False, constraints=None, interna
     M = 1e4
 
     if not solver:
-        solver = solver_instance()
-        solver.build_problem(model)
+        solver = solver_instance(model)
 
     if not objective:
         objective = model.objective
@@ -202,8 +184,7 @@ def MOMA(model, reference=None, constraints=None, solver=None):
     lin_obj = {r_id: -2 * x for r_id, x in reference.items()}
 
     if not solver:
-        solver = solver_instance()
-        solver.build_problem(model)
+        solver = solver_instance(model)
 
     solution = solver.solve_qp(quad_obj, lin_obj, minimize=True, constraints=constraints)
 
@@ -228,8 +209,7 @@ def lMOMA(model, reference=None, constraints=None, solver=None):
         reference = wt_solution.values
 
     if not solver:
-        solver = solver_instance()
-        solver.build_problem(model)
+        solver = solver_instance(model)
 
     if not hasattr(solver, 'lMOMA_flag'): #for speed (about 3x faster)
         solver.lMOMA_flag = True
@@ -285,8 +265,7 @@ def ROOM(model, reference=None, constraints=None, solver=None, delta=0.03, epsil
         reference = wt_solution.values
 
     if not solver:
-        solver = solver_instance()
-        solver.build_problem(model)
+        solver = solver_instance(model)
 
     objective = dict()
     if not hasattr(solver, 'ROOM_flag'): #for speed (a LOT faster)
