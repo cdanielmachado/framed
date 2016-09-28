@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name = 'framed',
-    # version = __version__, # should probably include some version infromation here, maybe the commit hash (if not a proper release)?
+    version = '0.2.1',
     package_dir = {'':'src'},
     packages = find_packages('src'),
     install_requires = [], # e.g. ["numpy>=1.3.0"]
@@ -12,9 +12,9 @@ setup(
     license = 'Apache License Version 2.0',
     keywords = 'biology metabolism bioinformatics',
     url = 'https://github.com/cdanielmachado/framed',
-    long_description = open('README.md').read(),
+    long_description = open('README.rst').read(),
     classifiers = [
-        'Development Status :: 3 - Alpha',
+        'Development Status :: 4 - Beta',
         'Topic :: Utilities',
         'Programming Language :: Python :: 2.5',
         'Programming Language :: Python :: 2.6',

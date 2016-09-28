@@ -1,9 +1,3 @@
-build
-
-.setup.py.swp
-
-docopt.egg-info
-
 .DS_Store
 
 .project
@@ -16,12 +10,8 @@ docopt.egg-info
 
 .idea
 
-.settings/org.eclipse.ltk.core.refactoring.prefs
+build
 
-src/framed/tests/yeast_project.py
+dist
 
-.settings/org.eclipse.core.resources.prefs
-
-datasets/ishii2007/fluxomics.csv
-
-src/framed/tests/main.py
+src/framed.egg-info
