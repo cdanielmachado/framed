@@ -1,8 +1,8 @@
 FRAMED
 ~~~~~~
 
-FRAMED (**FRA**\ mework for **M**\ etabolic **E**\ ngineering and
-**D**\ esign) is a python package for analysis and simulation of
+FRAMED (FRAmework for Metabolic Engineering and
+Design) is a python package for analysis and simulation of
 metabolic models.
 
 This package is continuously under development. Some of the current
@@ -28,10 +28,8 @@ Developed at:
 
 - The Novo Nordisk Fundation Center for Biosustainability
 (2013)
-
 - Centre of Biological Engineering, University of Minho
 (2014-2015)
-
 - European Molecular Biology Laboratory (2016)
 
 Released under an Apache License.

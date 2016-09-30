@@ -1,8 +1,7 @@
 FRAMED
 ======
 
-FRAMED (**FRA**mework for **M**etabolic **E**ngineering and **D**esign)
-is a python package for analysis and simulation of metabolic models.
+FRAMED (**FRA**mework for **M**etabolic **E**ngineering and **D**esign) is a python package for analysis and simulation of metabolic models.
 
 This package is continuously under development. Some of the current functionality includes:
 
@@ -19,9 +18,16 @@ This is an overview of the package structure:
 
 ![package overview](https://raw.githubusercontent.com/cdanielmachado/framed/master/docs/package_overview.png)
 
+### Instalation
+
+```
+pip install framed
+```
+
 ### Credits and License
 
 Developed at:
+
 * The Novo Nordisk Fundation Center for Biosustainability (2013)
 * Centre of Biological Engineering, University of Minho (2014-2015)
 * European Molecular Biology Laboratory (2016)
