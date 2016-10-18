@@ -36,18 +36,15 @@ def flux_distance(original, other, normalize=False, quadratic=False):
         return dist
 
 
-def compare_fluxes(original, other, third=None, tolerance=1e-6, pairwise=None):
-    res = []
-    for r_id in original:
-        if third:
-            if not pairwise:
-                pairwise = (tolerance, tolerance, tolerance)
-            x, y, z = original[r_id], other[r_id], third[r_id]
-            if abs(x - y) > pairwise[0] or abs(x-z) > pairwise[1] or abs(y-z) > pairwise[2]:
-                res.append(r_id)
-                print '{: <16} {: < 10.3g} {: < 10.3g} {: < 10.3g}'.format(r_id, x, y, z)
-        else:
-            x, y = original[r_id], other[r_id]
-            if abs(x - y) > tolerance:
-                res.append(r_id)
-                print '{: <16} {: < 10.3g} {: < 10.3g}'.format(r_id, x, y)
+def compare_fluxes(original, other, tolerance=1e-6, sort_values=False):
+
+    common = sorted(set(original.keys()) & set(other.keys()))
+    diff = [(r_id, abs(original[r_id] - other[r_id])) for r_id in common]
+
+    if sort_values:
+        diff.sort(key=lambda x: x[1], reverse=True)
+
+    for r_id, val in diff:
+        if val > tolerance:
+            print '{: <16} {: < 10.3g} {: < 10.3g}'.format(r_id, original[r_id], other[r_id])
+
