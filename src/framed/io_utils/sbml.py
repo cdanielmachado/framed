@@ -7,7 +7,7 @@
 from ..core.model import Model, Metabolite, Reaction, Compartment
 from ..core.odemodel import ODEModel
 from ..core.cbmodel import CBModel, Gene, Protein, GPRAssociation
-from ..core.fixes import fix_cobra_model
+from ..core.fixes import fix_cb_model
 
 from collections import OrderedDict
 from sympy.parsing.sympy_parser import parse_expr
@@ -69,11 +69,11 @@ def load_sbml_model(filename, kind=None, flavor=None):
     return model
 
 
-def load_cbmodel(filename, flavor=COBRA_MODEL, apply_fixes=True):
+def load_cbmodel(filename, flavor=None, apply_fixes=True):
     model = load_sbml_model(filename, kind=CB_MODEL, flavor=flavor)
 
     if apply_fixes:
-        fix_cobra_model(model)
+        fix_cb_model(model, flavor=flavor)
 
     return model
 
@@ -107,7 +107,7 @@ def _load_metabolites(sbml_model, model):
 
 
 def _load_metabolite(species):
-    metabolite = Metabolite(species.getId(), species.getName(), species.getCompartment())
+    metabolite = Metabolite(species.getId(), species.getName(), species.getCompartment(), species.getBoundaryCondition())
     _load_metadata(species, metabolite)
     return metabolite
 
@@ -160,7 +160,7 @@ def _load_cbmodel(sbml_model, flavor):
     _load_compartments(sbml_model, model)
     _load_metabolites(sbml_model, model)
     _load_reactions(sbml_model, model)
-    if flavor == COBRA_MODEL:
+    if not flavor or flavor == COBRA_MODEL:
         _load_cobra_bounds(sbml_model, model)
         _load_cobra_objective(sbml_model, model)
         _load_cobra_gpr(sbml_model, model)
@@ -416,7 +416,7 @@ def save_sbml_model(model, filename, flavor=None):
 
 
 def save_cbmodel(model, filename, flavor=COBRA_MODEL):
-     save_sbml_model(model, filename, flavor)
+    save_sbml_model(model, filename, flavor)
 
 
 def _save_compartments(model, sbml_model):
@@ -434,6 +434,7 @@ def _save_metabolites(model, sbml_model):
         species.setId(metabolite.id)
         species.setName(metabolite.name)
         species.setCompartment(metabolite.compartment)
+        species.setBoundaryCondition(metabolite.boundary)
         _save_metadata(metabolite, species)
 
 

@@ -6,30 +6,41 @@ Fixes to clean up common models from different sources/groups.
 """
 
 
-def fix_cobra_model(model, boundary_metabolites=True, reversibility=True, bounds=True, bigg_ids=True):
-    """ Fix models from Cobra.
-    
-    Arguments:
-        boundary_metabolites : bool -- remove boundary metabolites (ending with '_b') (default: True) 
-        reversibility : bool -- make reaction reversibility consistent with the bounds (default: True) 
-        clean_bounds : bool -- remove artificially large bounds (unbounded = no bounds) (default: True) 
-        bigg_ids : bool -- remove _LPAREN_, _RPAREN_, _DASH_ from the ids (default: True) 
-    """
-    if boundary_metabolites:
-        remove_boundary_metabolites(model)
-    if reversibility:
+def fix_cb_model(model, flavor=None):
+
+    if flavor == 'cobra':
+        fix_cobra_model(model)
+    else:
+        default_fixes(model)
+
+
+def default_fixes(model):
+    remove_boundary_metabolites(model)
+    fix_reversibility(model)
+    clean_bounds(model)
+
+
+def fix_cobra_model(model, remove_boundary=True, set_reversibilty=True, use_infinity=True, clean_ids=True):
+
+    if remove_boundary:
+        remove_boundary_metabolites(model, tag='_b')
+    if set_reversibilty:
         fix_reversibility(model)
-    if bounds:
+    if use_infinity:
         clean_bounds(model)
-    if bigg_ids:
+    if clean_ids:
         clean_bigg_ids(model)
 
 
-def remove_boundary_metabolites(model):
-    """ Remove remove boundary metabolites (ending with '_b'). """
+def remove_boundary_metabolites(model, tag=None):
+    """ Remove remove boundary metabolites. """
 
-    drains = filter(lambda m_id: m_id.endswith('_b'), model.metabolites)
-    model.remove_metabolites(drains)
+    if tag:
+        boundary = filter(lambda m_id: m_id.endswith(tag), model.metabolites)
+    else:
+        boundary = [m_id for m_id, met in model.metabolites.items() if met.boundary]
+
+    model.remove_metabolites(boundary)
 
 
 def fix_reversibility(model):
@@ -68,4 +79,3 @@ def clean_bigg_ids(model):
 
         for m_id in reaction.stoichiometry.keys():
             key_replace(reaction.stoichiometry, m_id, clean(m_id))
-        

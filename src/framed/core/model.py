@@ -11,17 +11,18 @@ from copy import deepcopy
 class Metabolite:
     """ Base class for modeling metabolites. """
 
-
-    def __init__(self, elem_id, name=None, compartment=None):
+    def __init__(self, elem_id, name=None, compartment=None, boundary=False):
         """
         Arguments:
             elem_id : String -- a valid unique identifier
             name : String -- common metabolite name
             compartment : String -- compartment containing the metabolite
+            boundary : Bool -- boundary condition
         """
         self.id = elem_id
         self.name = name
         self.compartment = compartment
+        self.boundary = boundary
         self.metadata = OrderedDict()
 
     def __str__(self):

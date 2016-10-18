@@ -6,78 +6,78 @@
       <compartment id="e" name="extracellular space" size="NaN"/>
     </listOfCompartments>
     <listOfSpecies>
-      <species id="M_13dpg_c" name="3-Phospho-D-glyceroyl phosphate" compartment="c"/>
-      <species id="M_2pg_c" name="D-Glycerate 2-phosphate" compartment="c"/>
-      <species id="M_3pg_c" name="3-Phospho-D-glycerate" compartment="c"/>
-      <species id="M_6pgc_c" name="6-Phospho-D-gluconate" compartment="c"/>
-      <species id="M_6pgl_c" name="6-phospho-D-glucono-1,5-lactone" compartment="c"/>
-      <species id="M_ac_c" name="Acetate" compartment="c"/>
-      <species id="M_ac_e" name="Acetate" compartment="e"/>
-      <species id="M_acald_c" name="Acetaldehyde" compartment="c"/>
-      <species id="M_acald_e" name="Acetaldehyde" compartment="e"/>
-      <species id="M_accoa_c" name="Acetyl-CoA" compartment="c"/>
-      <species id="M_acon_C_c" name="Cis-Aconitate" compartment="c"/>
-      <species id="M_actp_c" name="Acetyl phosphate" compartment="c"/>
-      <species id="M_adp_c" name="ADP" compartment="c"/>
-      <species id="M_akg_c" name="2-Oxoglutarate" compartment="c"/>
-      <species id="M_akg_e" name="2-Oxoglutarate" compartment="e"/>
-      <species id="M_amp_c" name="AMP" compartment="c"/>
-      <species id="M_atp_c" name="ATP" compartment="c"/>
-      <species id="M_cit_c" name="Citrate" compartment="c"/>
-      <species id="M_co2_c" name="CO2" compartment="c"/>
-      <species id="M_co2_e" name="CO2" compartment="e"/>
-      <species id="M_coa_c" name="Coenzyme A" compartment="c"/>
-      <species id="M_dhap_c" name="Dihydroxyacetone phosphate" compartment="c"/>
-      <species id="M_e4p_c" name="D-Erythrose 4-phosphate" compartment="c"/>
-      <species id="M_etoh_c" name="Ethanol" compartment="c"/>
-      <species id="M_etoh_e" name="Ethanol" compartment="e"/>
-      <species id="M_f6p_c" name="D-Fructose 6-phosphate" compartment="c"/>
-      <species id="M_fdp_c" name="D-Fructose 1,6-bisphosphate" compartment="c"/>
-      <species id="M_for_c" name="Formate" compartment="c"/>
-      <species id="M_for_e" name="Formate" compartment="e"/>
-      <species id="M_fru_e" name="D-Fructose" compartment="e"/>
-      <species id="M_fum_c" name="Fumarate" compartment="c"/>
-      <species id="M_fum_e" name="Fumarate" compartment="e"/>
-      <species id="M_g3p_c" name="Glyceraldehyde 3-phosphate" compartment="c"/>
-      <species id="M_g6p_c" name="D-Glucose 6-phosphate" compartment="c"/>
-      <species id="M_glc__D_e" name="D-Glucose" compartment="e"/>
-      <species id="M_gln__L_c" name="L-Glutamine" compartment="c"/>
-      <species id="M_gln__L_e" name="L-Glutamine" compartment="e"/>
-      <species id="M_glu__L_c" name="L-Glutamate" compartment="c"/>
-      <species id="M_glu__L_e" name="L-Glutamate" compartment="e"/>
-      <species id="M_glx_c" name="Glyoxylate" compartment="c"/>
-      <species id="M_h2o_c" name="H2O" compartment="c"/>
-      <species id="M_h2o_e" name="H2O" compartment="e"/>
-      <species id="M_h_c" name="H+" compartment="c"/>
-      <species id="M_h_e" name="H+" compartment="e"/>
-      <species id="M_icit_c" name="Isocitrate" compartment="c"/>
-      <species id="M_lac__D_c" name="D-Lactate" compartment="c"/>
-      <species id="M_lac__D_e" name="D-Lactate" compartment="e"/>
-      <species id="M_mal__L_c" name="L-Malate" compartment="c"/>
-      <species id="M_mal__L_e" name="L-Malate" compartment="e"/>
-      <species id="M_nad_c" name="Nicotinamide adenine dinucleotide" compartment="c"/>
-      <species id="M_nadh_c" name="Nicotinamide adenine dinucleotide - reduced" compartment="c"/>
-      <species id="M_nadp_c" name="Nicotinamide adenine dinucleotide phosphate" compartment="c"/>
-      <species id="M_nadph_c" name="Nicotinamide adenine dinucleotide phosphate - reduced" compartment="c"/>
-      <species id="M_nh4_c" name="Ammonium" compartment="c"/>
-      <species id="M_nh4_e" name="Ammonium" compartment="e"/>
-      <species id="M_o2_c" name="O2" compartment="c"/>
-      <species id="M_o2_e" name="O2" compartment="e"/>
-      <species id="M_oaa_c" name="Oxaloacetate" compartment="c"/>
-      <species id="M_pep_c" name="Phosphoenolpyruvate" compartment="c"/>
-      <species id="M_pi_c" name="Phosphate" compartment="c"/>
-      <species id="M_pi_e" name="Phosphate" compartment="e"/>
-      <species id="M_pyr_c" name="Pyruvate" compartment="c"/>
-      <species id="M_pyr_e" name="Pyruvate" compartment="e"/>
-      <species id="M_q8_c" name="Ubiquinone-8" compartment="c"/>
-      <species id="M_q8h2_c" name="Ubiquinol-8" compartment="c"/>
-      <species id="M_r5p_c" name="Alpha-D-Ribose 5-phosphate" compartment="c"/>
-      <species id="M_ru5p__D_c" name="D-Ribulose 5-phosphate" compartment="c"/>
-      <species id="M_s7p_c" name="Sedoheptulose 7-phosphate" compartment="c"/>
-      <species id="M_succ_c" name="Succinate" compartment="c"/>
-      <species id="M_succ_e" name="Succinate" compartment="e"/>
-      <species id="M_succoa_c" name="Succinyl-CoA" compartment="c"/>
-      <species id="M_xu5p__D_c" name="D-Xylulose 5-phosphate" compartment="c"/>
+      <species id="M_13dpg_c" name="3-Phospho-D-glyceroyl phosphate" compartment="c" boundaryCondition="false"/>
+      <species id="M_2pg_c" name="D-Glycerate 2-phosphate" compartment="c" boundaryCondition="false"/>
+      <species id="M_3pg_c" name="3-Phospho-D-glycerate" compartment="c" boundaryCondition="false"/>
+      <species id="M_6pgc_c" name="6-Phospho-D-gluconate" compartment="c" boundaryCondition="false"/>
+      <species id="M_6pgl_c" name="6-phospho-D-glucono-1,5-lactone" compartment="c" boundaryCondition="false"/>
+      <species id="M_ac_c" name="Acetate" compartment="c" boundaryCondition="false"/>
+      <species id="M_ac_e" name="Acetate" compartment="e" boundaryCondition="false"/>
+      <species id="M_acald_c" name="Acetaldehyde" compartment="c" boundaryCondition="false"/>
+      <species id="M_acald_e" name="Acetaldehyde" compartment="e" boundaryCondition="false"/>
+      <species id="M_accoa_c" name="Acetyl-CoA" compartment="c" boundaryCondition="false"/>
+      <species id="M_acon_C_c" name="Cis-Aconitate" compartment="c" boundaryCondition="false"/>
+      <species id="M_actp_c" name="Acetyl phosphate" compartment="c" boundaryCondition="false"/>
+      <species id="M_adp_c" name="ADP" compartment="c" boundaryCondition="false"/>
+      <species id="M_akg_c" name="2-Oxoglutarate" compartment="c" boundaryCondition="false"/>
+      <species id="M_akg_e" name="2-Oxoglutarate" compartment="e" boundaryCondition="false"/>
+      <species id="M_amp_c" name="AMP" compartment="c" boundaryCondition="false"/>
+      <species id="M_atp_c" name="ATP" compartment="c" boundaryCondition="false"/>
+      <species id="M_cit_c" name="Citrate" compartment="c" boundaryCondition="false"/>
+      <species id="M_co2_c" name="CO2" compartment="c" boundaryCondition="false"/>
+      <species id="M_co2_e" name="CO2" compartment="e" boundaryCondition="false"/>
+      <species id="M_coa_c" name="Coenzyme A" compartment="c" boundaryCondition="false"/>
+      <species id="M_dhap_c" name="Dihydroxyacetone phosphate" compartment="c" boundaryCondition="false"/>
+      <species id="M_e4p_c" name="D-Erythrose 4-phosphate" compartment="c" boundaryCondition="false"/>
+      <species id="M_etoh_c" name="Ethanol" compartment="c" boundaryCondition="false"/>
+      <species id="M_etoh_e" name="Ethanol" compartment="e" boundaryCondition="false"/>
+      <species id="M_f6p_c" name="D-Fructose 6-phosphate" compartment="c" boundaryCondition="false"/>
+      <species id="M_fdp_c" name="D-Fructose 1,6-bisphosphate" compartment="c" boundaryCondition="false"/>
+      <species id="M_for_c" name="Formate" compartment="c" boundaryCondition="false"/>
+      <species id="M_for_e" name="Formate" compartment="e" boundaryCondition="false"/>
+      <species id="M_fru_e" name="D-Fructose" compartment="e" boundaryCondition="false"/>
+      <species id="M_fum_c" name="Fumarate" compartment="c" boundaryCondition="false"/>
+      <species id="M_fum_e" name="Fumarate" compartment="e" boundaryCondition="false"/>
+      <species id="M_g3p_c" name="Glyceraldehyde 3-phosphate" compartment="c" boundaryCondition="false"/>
+      <species id="M_g6p_c" name="D-Glucose 6-phosphate" compartment="c" boundaryCondition="false"/>
+      <species id="M_glc__D_e" name="D-Glucose" compartment="e" boundaryCondition="false"/>
+      <species id="M_gln__L_c" name="L-Glutamine" compartment="c" boundaryCondition="false"/>
+      <species id="M_gln__L_e" name="L-Glutamine" compartment="e" boundaryCondition="false"/>
+      <species id="M_glu__L_c" name="L-Glutamate" compartment="c" boundaryCondition="false"/>
+      <species id="M_glu__L_e" name="L-Glutamate" compartment="e" boundaryCondition="false"/>
+      <species id="M_glx_c" name="Glyoxylate" compartment="c" boundaryCondition="false"/>
+      <species id="M_h2o_c" name="H2O" compartment="c" boundaryCondition="false"/>
+      <species id="M_h2o_e" name="H2O" compartment="e" boundaryCondition="false"/>
+      <species id="M_h_c" name="H+" compartment="c" boundaryCondition="false"/>
+      <species id="M_h_e" name="H+" compartment="e" boundaryCondition="false"/>
+      <species id="M_icit_c" name="Isocitrate" compartment="c" boundaryCondition="false"/>
+      <species id="M_lac__D_c" name="D-Lactate" compartment="c" boundaryCondition="false"/>
+      <species id="M_lac__D_e" name="D-Lactate" compartment="e" boundaryCondition="false"/>
+      <species id="M_mal__L_c" name="L-Malate" compartment="c" boundaryCondition="false"/>
+      <species id="M_mal__L_e" name="L-Malate" compartment="e" boundaryCondition="false"/>
+      <species id="M_nad_c" name="Nicotinamide adenine dinucleotide" compartment="c" boundaryCondition="false"/>
+      <species id="M_nadh_c" name="Nicotinamide adenine dinucleotide - reduced" compartment="c" boundaryCondition="false"/>
+      <species id="M_nadp_c" name="Nicotinamide adenine dinucleotide phosphate" compartment="c" boundaryCondition="false"/>
+      <species id="M_nadph_c" name="Nicotinamide adenine dinucleotide phosphate - reduced" compartment="c" boundaryCondition="false"/>
+      <species id="M_nh4_c" name="Ammonium" compartment="c" boundaryCondition="false"/>
+      <species id="M_nh4_e" name="Ammonium" compartment="e" boundaryCondition="false"/>
+      <species id="M_o2_c" name="O2" compartment="c" boundaryCondition="false"/>
+      <species id="M_o2_e" name="O2" compartment="e" boundaryCondition="false"/>
+      <species id="M_oaa_c" name="Oxaloacetate" compartment="c" boundaryCondition="false"/>
+      <species id="M_pep_c" name="Phosphoenolpyruvate" compartment="c" boundaryCondition="false"/>
+      <species id="M_pi_c" name="Phosphate" compartment="c" boundaryCondition="false"/>
+      <species id="M_pi_e" name="Phosphate" compartment="e" boundaryCondition="false"/>
+      <species id="M_pyr_c" name="Pyruvate" compartment="c" boundaryCondition="false"/>
+      <species id="M_pyr_e" name="Pyruvate" compartment="e" boundaryCondition="false"/>
+      <species id="M_q8_c" name="Ubiquinone-8" compartment="c" boundaryCondition="false"/>
+      <species id="M_q8h2_c" name="Ubiquinol-8" compartment="c" boundaryCondition="false"/>
+      <species id="M_r5p_c" name="Alpha-D-Ribose 5-phosphate" compartment="c" boundaryCondition="false"/>
+      <species id="M_ru5p__D_c" name="D-Ribulose 5-phosphate" compartment="c" boundaryCondition="false"/>
+      <species id="M_s7p_c" name="Sedoheptulose 7-phosphate" compartment="c" boundaryCondition="false"/>
+      <species id="M_succ_c" name="Succinate" compartment="c" boundaryCondition="false"/>
+      <species id="M_succ_e" name="Succinate" compartment="e" boundaryCondition="false"/>
+      <species id="M_succoa_c" name="Succinyl-CoA" compartment="c" boundaryCondition="false"/>
+      <species id="M_xu5p__D_c" name="D-Xylulose 5-phosphate" compartment="c" boundaryCondition="false"/>
     </listOfSpecies>
     <listOfParameters>
       <parameter id="cobra_default_lb" value="-1000"/>
