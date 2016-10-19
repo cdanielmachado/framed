@@ -10,9 +10,9 @@ import unittest
 from framed.model.fixes import fix_cobra_model
 from framed.io.plaintext import read_model_from_file
 from framed.io.sbml import load_cbmodel
-from framed.solvers.glpk_wrapper_lazy import GlpkSolverLazy
-from framed.reconstruction.gapFind import GapFind
-from framed.solvers.gurobi_wrapper import GurobiSolver
+from framed.cobra.reconstruction import GapFind
+from framed.solvers.glpk import GlpkSolver
+from framed.solvers.gurobi import GurobiSolver
 
 class GapFindTest(unittest.TestCase):
 
@@ -74,7 +74,7 @@ class GapFindTest(unittest.TestCase):
         """ Finds gaps in 7 models using Glpk
         """
         for i in range(1,8):
-            solver = GlpkSolverLazy(tol_int="default")
+            solver = GlpkSolver(tol_int="default")
  
             model = '../../../examples/reconstruction/gapFind/ecoli_core_model' + str(i) + '.xml'
             self.model = load_cbmodel(model, flavor='cobra')
@@ -111,7 +111,7 @@ class GapFind_exp(unittest.TestCase):
     """
     
     def test_gapFind_exp(self):
-        solver = GlpkSolverLazy()
+        solver = GlpkSolver()
         model = '../../../examples/reconstruction/toy_model'
         self.model = read_model_from_file(model, kind='cb')
         fix_cobra_model(self.model)

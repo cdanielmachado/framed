@@ -8,22 +8,15 @@ Package implementing interfaces to common solvers.
 solvers = dict()
 
 try:
-    from .glpk_wrapper import GlpkSolver
+    from .glpk import GlpkSolver
 
     solvers['glpk'] = GlpkSolver
 except:
     pass
 
-try:
-    from .glpk_wrapper_lazy import GlpkSolverLazy
-
-    solvers['glpk_lazy'] = GlpkSolverLazy
-except:
-    pass
-
 
 try:
-    from .gurobi_wrapper import GurobiSolver
+    from .gurobi import GurobiSolver
 
     solvers['gurobi'] = GurobiSolver
 except:
@@ -31,7 +24,7 @@ except:
 
 
 try:
-    from .cplex_wrapper import CplexSolver
+    from .cplex import CplexSolver
 
     solvers['cplex'] = CplexSolver
 except:
