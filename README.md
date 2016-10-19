@@ -16,7 +16,7 @@ This package is continuously under development. Some of the current functionalit
 
 This is an overview of the package structure:
 
-![package overview](https://raw.githubusercontent.com/cdanielmachado/framed/master/docs/package_overview.png)
+![package overview](https://raw.githubusercontent.com/cdanielmachado/framed/master/misc/package_overview.png)
 
 ### Instalation
 

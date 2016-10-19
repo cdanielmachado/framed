@@ -1,0 +1,187 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>framed.experimental package &#8212; framed 0.2.1 documentation</title>
+    
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '0.2.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="top" title="framed 0.2.1 documentation" href="index.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body role="document">
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="framed-experimental-package">
+<h1>framed.experimental package<a class="headerlink" href="#framed-experimental-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-framed.experimental.benchmark">
+<span id="framed-experimental-benchmark-module"></span><h2>framed.experimental.benchmark module<a class="headerlink" href="#module-framed.experimental.benchmark" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="framed.experimental.benchmark.benchmark">
+<code class="descclassname">framed.experimental.benchmark.</code><code class="descname">benchmark</code><span class="sig-paren">(</span><em>method</em>, <em>model</em>, <em>dataset</em>, <em>conditions=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.experimental.benchmark.benchmark" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="framed.experimental.benchmark.evaluate">
+<code class="descclassname">framed.experimental.benchmark.</code><code class="descname">evaluate</code><span class="sig-paren">(</span><em>method</em>, <em>model</em>, <em>dataset</em>, <em>condition</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.experimental.benchmark.evaluate" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="framed.experimental.benchmark.run_method">
+<code class="descclassname">framed.experimental.benchmark.</code><code class="descname">run_method</code><span class="sig-paren">(</span><em>method</em>, <em>model</em>, <em>constraints</em>, <em>dataset</em>, <em>condition</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.experimental.benchmark.run_method" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-framed.experimental.fluxutils">
+<span id="framed-experimental-fluxutils-module"></span><h2>framed.experimental.fluxutils module<a class="headerlink" href="#module-framed.experimental.fluxutils" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="framed.experimental.fluxutils.compare_fluxes">
+<code class="descclassname">framed.experimental.fluxutils.</code><code class="descname">compare_fluxes</code><span class="sig-paren">(</span><em>original</em>, <em>other</em>, <em>tolerance=1e-06</em>, <em>sort_values=False</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.experimental.fluxutils.compare_fluxes" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="framed.experimental.fluxutils.fit_fluxes_to_model">
+<code class="descclassname">framed.experimental.fluxutils.</code><code class="descname">fit_fluxes_to_model</code><span class="sig-paren">(</span><em>model</em>, <em>fluxes</em>, <em>constraints=None</em>, <em>quadratic=False</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.experimental.fluxutils.fit_fluxes_to_model" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="framed.experimental.fluxutils.flux_distance">
+<code class="descclassname">framed.experimental.fluxutils.</code><code class="descname">flux_distance</code><span class="sig-paren">(</span><em>original</em>, <em>other</em>, <em>normalize=False</em>, <em>quadratic=False</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.experimental.fluxutils.flux_distance" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-framed.experimental.mathutils">
+<span id="framed-experimental-mathutils-module"></span><h2>framed.experimental.mathutils module<a class="headerlink" href="#module-framed.experimental.mathutils" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="framed.experimental.mathutils.nullspace">
+<code class="descclassname">framed.experimental.mathutils.</code><code class="descname">nullspace</code><span class="sig-paren">(</span><em>M</em>, <em>eps=1e-12</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.experimental.mathutils.nullspace" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-framed.experimental.reduction">
+<span id="framed-experimental-reduction-module"></span><h2>framed.experimental.reduction module<a class="headerlink" href="#module-framed.experimental.reduction" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="framed.experimental.reduction.balanced_model_reduction">
+<code class="descclassname">framed.experimental.reduction.</code><code class="descname">balanced_model_reduction</code><span class="sig-paren">(</span><em>model</em>, <em>metabolites</em>, <em>fluxes</em>, <em>must_keep=None</em>, <em>max_degree=None</em>, <em>clean_null_fluxes=True</em>, <em>clean_disconnected=True</em>, <em>abstol=1e-09</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.experimental.reduction.balanced_model_reduction" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="framed.experimental.reduction.remove_balanced_metabolite">
+<code class="descclassname">framed.experimental.reduction.</code><code class="descname">remove_balanced_metabolite</code><span class="sig-paren">(</span><em>model</em>, <em>m_id</em>, <em>fluxes</em>, <em>must_keep=None</em>, <em>abstol=1e-09</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.experimental.reduction.remove_balanced_metabolite" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-framed.experimental.sampling">
+<span id="framed-experimental-sampling-module"></span><h2>framed.experimental.sampling module<a class="headerlink" href="#module-framed.experimental.sampling" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="framed.experimental.sampling.lp_sampler">
+<code class="descclassname">framed.experimental.sampling.</code><code class="descname">lp_sampler</code><span class="sig-paren">(</span><em>model</em>, <em>n_samples=1000</em>, <em>weights=None</em>, <em>constraints=None</em>, <em>select_probability=0.01</em>, <em>futile_cycle_threshold=100.0</em>, <em>variation_threshold=0.0001</em>, <em>merge_keys=False</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.experimental.sampling.lp_sampler" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="framed.experimental.sampling.random">
+<code class="descclassname">framed.experimental.sampling.</code><code class="descname">random</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &rarr; x in the interval [0, 1).<a class="headerlink" href="#framed.experimental.sampling.random" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-framed.experimental">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-framed.experimental" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">framed.experimental package</a><ul>
+<li><a class="reference internal" href="#submodules">Submodules</a></li>
+<li><a class="reference internal" href="#module-framed.experimental.benchmark">framed.experimental.benchmark module</a></li>
+<li><a class="reference internal" href="#module-framed.experimental.fluxutils">framed.experimental.fluxutils module</a></li>
+<li><a class="reference internal" href="#module-framed.experimental.mathutils">framed.experimental.mathutils module</a></li>
+<li><a class="reference internal" href="#module-framed.experimental.reduction">framed.experimental.reduction module</a></li>
+<li><a class="reference internal" href="#module-framed.experimental.sampling">framed.experimental.sampling module</a></li>
+<li><a class="reference internal" href="#module-framed.experimental">Module contents</a></li>
+</ul>
+</li>
+</ul>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+</div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/framed.experimental.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2016, Daniel.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.4.8</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.9</a>
+      
+      |
+      <a href="_sources/framed.experimental.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

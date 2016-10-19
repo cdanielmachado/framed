@@ -1,0 +1,242 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>framed.io_utils package &#8212; framed 0.2.1 documentation</title>
+    
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '0.2.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="top" title="framed 0.2.1 documentation" href="index.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body role="document">
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="framed-io-utils-package">
+<h1>framed.io_utils package<a class="headerlink" href="#framed-io-utils-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-framed.io_utils.plaintext">
+<span id="framed-io-utils-plaintext-module"></span><h2>framed.io_utils.plaintext module<a class="headerlink" href="#module-framed.io_utils.plaintext" title="Permalink to this headline">¶</a></h2>
+<p>This module implements methods for reading and writing models from a plain text format.</p>
+<p>&#64;author: Daniel Machado</p>
+<dl class="function">
+<dt id="framed.io_utils.plaintext.add_reaction_from_str">
+<code class="descclassname">framed.io_utils.plaintext.</code><code class="descname">add_reaction_from_str</code><span class="sig-paren">(</span><em>model</em>, <em>reaction_str</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.io_utils.plaintext.add_reaction_from_str" title="Permalink to this definition">¶</a></dt>
+<dd><p>Parse a reaction from a string and add it to the model.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>model</strong> &#8211; Model &#8211; model</li>
+<li><strong>reaction_str</strong> &#8211; str &#8211; string representation a the reaction</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="framed.io_utils.plaintext.read_model_from_file">
+<code class="descclassname">framed.io_utils.plaintext.</code><code class="descname">read_model_from_file</code><span class="sig-paren">(</span><em>filename</em>, <em>kind=None</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.io_utils.plaintext.read_model_from_file" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reads a model from a file.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>filename</strong> &#8211; str &#8211; file path</li>
+<li><strong>kind</strong> &#8211; None or &#8216;cb&#8217; &#8211; define kind of model to read (optional)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">Model &#8211; simple model or subclass</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="framed.io_utils.plaintext.write_model_to_file">
+<code class="descclassname">framed.io_utils.plaintext.</code><code class="descname">write_model_to_file</code><span class="sig-paren">(</span><em>model</em>, <em>filename</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.io_utils.plaintext.write_model_to_file" title="Permalink to this definition">¶</a></dt>
+<dd><p>Writes a model to a file.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>model</strong> &#8211; Model &#8211; Model (or CBModel)</li>
+<li><strong>filename</strong> &#8211; str &#8211; file path</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="module-framed.io_utils.sbml">
+<span id="framed-io-utils-sbml-module"></span><h2>framed.io_utils.sbml module<a class="headerlink" href="#module-framed.io_utils.sbml" title="Permalink to this headline">¶</a></h2>
+<p>This module implements methods for reading and writing SBML files.</p>
+<p>&#64;author: Daniel Machado</p>
+<dl class="function">
+<dt id="framed.io_utils.sbml.load_cbmodel">
+<code class="descclassname">framed.io_utils.sbml.</code><code class="descname">load_cbmodel</code><span class="sig-paren">(</span><em>filename</em>, <em>flavor=None</em>, <em>apply_fixes=True</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.io_utils.sbml.load_cbmodel" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="framed.io_utils.sbml.load_odemodel">
+<code class="descclassname">framed.io_utils.sbml.</code><code class="descname">load_odemodel</code><span class="sig-paren">(</span><em>filename</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.io_utils.sbml.load_odemodel" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="framed.io_utils.sbml.load_sbml_model">
+<code class="descclassname">framed.io_utils.sbml.</code><code class="descname">load_sbml_model</code><span class="sig-paren">(</span><em>filename</em>, <em>kind=None</em>, <em>flavor=None</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.io_utils.sbml.load_sbml_model" title="Permalink to this definition">¶</a></dt>
+<dd><p>Loads a metabolic model from a file.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>filename</strong> &#8211; String &#8211; SBML file path</li>
+<li><strong>kind</strong> &#8211; {None (default), CB_MODEL, ODE_MODEL} &#8211; define kind of model to load (optional)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">Model &#8211; Simple model or respective subclass</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="framed.io_utils.sbml.parse_gpr_rule">
+<code class="descclassname">framed.io_utils.sbml.</code><code class="descname">parse_gpr_rule</code><span class="sig-paren">(</span><em>rule</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.io_utils.sbml.parse_gpr_rule" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="framed.io_utils.sbml.save_cbmodel">
+<code class="descclassname">framed.io_utils.sbml.</code><code class="descname">save_cbmodel</code><span class="sig-paren">(</span><em>model</em>, <em>filename</em>, <em>flavor='cobra'</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.io_utils.sbml.save_cbmodel" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="framed.io_utils.sbml.save_sbml_model">
+<code class="descclassname">framed.io_utils.sbml.</code><code class="descname">save_sbml_model</code><span class="sig-paren">(</span><em>model</em>, <em>filename</em>, <em>flavor=None</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.io_utils.sbml.save_sbml_model" title="Permalink to this definition">¶</a></dt>
+<dd><p>Save a model to an SBML file.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>model</strong> &#8211; Model (or any subclass) &#8211; model</li>
+<li><strong>filename</strong> &#8211; String &#8211; SBML file path</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="module-framed.io_utils">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-framed.io_utils" title="Permalink to this headline">¶</a></h2>
+<p>Package implementing all I/O methods for reading and writing models.</p>
+<p>&#64;author: Daniel Machado</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">framed.io_utils package</a><ul>
+<li><a class="reference internal" href="#submodules">Submodules</a></li>
+<li><a class="reference internal" href="#module-framed.io_utils.plaintext">framed.io_utils.plaintext module</a></li>
+<li><a class="reference internal" href="#module-framed.io_utils.sbml">framed.io_utils.sbml module</a></li>
+<li><a class="reference internal" href="#module-framed.io_utils">Module contents</a></li>
+</ul>
+</li>
+</ul>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+</div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/framed.io_utils.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2016, Daniel.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.4.8</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.9</a>
+      
+      |
+      <a href="_sources/framed.io_utils.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

@@ -1,0 +1,926 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>framed.core package &#8212; framed 0.2.1 documentation</title>
+    
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '0.2.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="top" title="framed 0.2.1 documentation" href="index.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body role="document">
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="framed-core-package">
+<h1>framed.core package<a class="headerlink" href="#framed-core-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-framed.core.cbmodel">
+<span id="framed-core-cbmodel-module"></span><h2>framed.core.cbmodel module<a class="headerlink" href="#module-framed.core.cbmodel" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="framed.core.cbmodel.CBModel">
+<em class="property">class </em><code class="descclassname">framed.core.cbmodel.</code><code class="descname">CBModel</code><span class="sig-paren">(</span><em>model_id</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.core.cbmodel.CBModel" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#framed.core.model.Model" title="framed.core.model.Model"><code class="xref py py-class docutils literal"><span class="pre">framed.core.model.Model</span></code></a></p>
+<dl class="method">
+<dt id="framed.core.cbmodel.CBModel.add_gene">
+<code class="descname">add_gene</code><span class="sig-paren">(</span><em>gene</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.core.cbmodel.CBModel.add_gene" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add a gene metabolite to the model.
+If a gene with the same id exists, it will be replaced.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>gene</strong> &#8211; Gene</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="framed.core.cbmodel.CBModel.add_ratio_constraint">
+<code class="descname">add_ratio_constraint</code><span class="sig-paren">(</span><em>r_id_num</em>, <em>r_id_den</em>, <em>ratio</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.core.cbmodel.CBModel.add_ratio_constraint" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add a flux ratio constraint to the model.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>r_id_num</strong> &#8211; str &#8211; id of the numerator</li>
+<li><strong>r_id_num</strong> &#8211; str &#8211; id of the denominator</li>
+<li><strong>ratio</strong> &#8211; float &#8211; ratio value</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">identifier of the pseudo-metabolite</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">str</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="framed.core.cbmodel.CBModel.add_reaction">
+<code class="descname">add_reaction</code><span class="sig-paren">(</span><em>reaction</em>, <em>lb=None</em>, <em>ub=None</em>, <em>coeff=0</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.core.cbmodel.CBModel.add_reaction" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add a single reaction to the model.
+If a reaction with the same id exists, it will be replaced.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>reaction</strong> &#8211; Reaction</li>
+<li><strong>lb</strong> &#8211; float &#8211; lower bound (default: None)</li>
+<li><strong>ub</strong> &#8211; float &#8211; upper bound (default: None)</li>
+<li><strong>coeff</strong> &#8211; float &#8211; objective coefficient (default: 0)</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="framed.core.cbmodel.CBModel.detect_biomass_reaction">
+<code class="descname">detect_biomass_reaction</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#framed.core.cbmodel.CBModel.detect_biomass_reaction" title="Permalink to this definition">¶</a></dt>
+<dd><p>Detects biomass reaction in the model (searches by objective coefficient)</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">str &#8211; first reaction that matches (or else None)</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="framed.core.cbmodel.CBModel.eval_GPR">
+<code class="descname">eval_GPR</code><span class="sig-paren">(</span><em>active_genes</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.core.cbmodel.CBModel.eval_GPR" title="Permalink to this definition">¶</a></dt>
+<dd><p>Evaluate the GPR associations.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>active_genes</strong> &#8211; list (of str) &#8211; set of active genes</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">list (of str) &#8211; set of active reactions</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="framed.core.cbmodel.CBModel.print_reaction">
+<code class="descname">print_reaction</code><span class="sig-paren">(</span><em>r_id</em>, <em>reaction_names=False</em>, <em>metabolite_names=False</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.core.cbmodel.CBModel.print_reaction" title="Permalink to this definition">¶</a></dt>
+<dd><p>Print a reaction to a text based representation.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>r_id</strong> &#8211; str &#8211; reaction id</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">str &#8211; reaction string</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="framed.core.cbmodel.CBModel.remove_gene">
+<code class="descname">remove_gene</code><span class="sig-paren">(</span><em>gene_id</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.core.cbmodel.CBModel.remove_gene" title="Permalink to this definition">¶</a></dt>
+<dd><p>Remove a gene from the model.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>str</strong> &#8211; Gene id</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="framed.core.cbmodel.CBModel.remove_genes">
+<code class="descname">remove_genes</code><span class="sig-paren">(</span><em>gene_list</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.core.cbmodel.CBModel.remove_genes" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="docutils">
+<dt>Remove a set of genes from the model.</dt>
+<dd>TODO: When switching to a GPR class representation, make sure to clean up rules as well</dd>
+</dl>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>of str</strong> (<em>list</em>) &#8211; Gene ids</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="framed.core.cbmodel.CBModel.remove_ratio_constraint">
+<code class="descname">remove_ratio_constraint</code><span class="sig-paren">(</span><em>r_id_num</em>, <em>r_id_den</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.core.cbmodel.CBModel.remove_ratio_constraint" title="Permalink to this definition">¶</a></dt>
+<dd><p>Remove a flux ratio constraint from the model.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>r_id_num</strong> &#8211; str &#8211; id of the numerator</li>
+<li><strong>r_id_num</strong> &#8211; str &#8211; id of the denominator</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="framed.core.cbmodel.CBModel.remove_reactions">
+<code class="descname">remove_reactions</code><span class="sig-paren">(</span><em>id_list</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.core.cbmodel.CBModel.remove_reactions" title="Permalink to this definition">¶</a></dt>
+<dd><p>Remove a list of reactions from the model.
+Also removes all the edges connected to the reactions.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>id_list</strong> &#8211; list of str &#8211; reaction ids</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="framed.core.cbmodel.CBModel.set_flux_bounds">
+<code class="descname">set_flux_bounds</code><span class="sig-paren">(</span><em>r_id</em>, <em>lb</em>, <em>ub</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.core.cbmodel.CBModel.set_flux_bounds" title="Permalink to this definition">¶</a></dt>
+<dd><p>Define flux bounds for one reaction</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>r_id</strong> &#8211; str &#8211; reaction id</li>
+<li><strong>lb</strong> &#8211; float &#8211; lower bound (use None to represent negative infinity)</li>
+<li><strong>ub</strong> &#8211; float &#8211; upper bound (use None to represent positive infinity)</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="framed.core.cbmodel.CBModel.set_gpr_association">
+<code class="descname">set_gpr_association</code><span class="sig-paren">(</span><em>r_id</em>, <em>gpr</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.core.cbmodel.CBModel.set_gpr_association" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="framed.core.cbmodel.CBModel.set_lower_bound">
+<code class="descname">set_lower_bound</code><span class="sig-paren">(</span><em>r_id</em>, <em>lb</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.core.cbmodel.CBModel.set_lower_bound" title="Permalink to this definition">¶</a></dt>
+<dd><p>Define lower bound for one reaction</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>r_id</strong> &#8211; str &#8211; reaction id</li>
+<li><strong>lb</strong> &#8211; float &#8211; lower bound (use None to represent negative infinity)</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="framed.core.cbmodel.CBModel.set_objective">
+<code class="descname">set_objective</code><span class="sig-paren">(</span><em>coefficients</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.core.cbmodel.CBModel.set_objective" title="Permalink to this definition">¶</a></dt>
+<dd><p>Define objective coefficients for a list of reactions</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="framed.core.cbmodel.CBModel.set_reaction_objective">
+<code class="descname">set_reaction_objective</code><span class="sig-paren">(</span><em>r_id</em>, <em>coeff=0</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.core.cbmodel.CBModel.set_reaction_objective" title="Permalink to this definition">¶</a></dt>
+<dd><p>Define objective coefficient for a single reaction</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>r_id</strong> &#8211; str &#8211; reaction id</li>
+<li><strong>coeff</strong> &#8211; float &#8211; reaction objective (default: 0)</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="framed.core.cbmodel.CBModel.set_upper_bound">
+<code class="descname">set_upper_bound</code><span class="sig-paren">(</span><em>r_id</em>, <em>ub</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.core.cbmodel.CBModel.set_upper_bound" title="Permalink to this definition">¶</a></dt>
+<dd><p>Define upper bound for one reaction</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>r_id</strong> &#8211; str &#8211; reaction id</li>
+<li><strong>ub</strong> &#8211; float &#8211; upper bound (use None to represent positive infinity)</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="framed.core.cbmodel.GPRAssociation">
+<em class="property">class </em><code class="descclassname">framed.core.cbmodel.</code><code class="descname">GPRAssociation</code><a class="headerlink" href="#framed.core.cbmodel.GPRAssociation" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="method">
+<dt id="framed.core.cbmodel.GPRAssociation.get_genes">
+<code class="descname">get_genes</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#framed.core.cbmodel.GPRAssociation.get_genes" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="framed.core.cbmodel.Gene">
+<em class="property">class </em><code class="descclassname">framed.core.cbmodel.</code><code class="descname">Gene</code><span class="sig-paren">(</span><em>elem_id</em>, <em>name=None</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.core.cbmodel.Gene" title="Permalink to this definition">¶</a></dt>
+<dd><p>Base class for modeling genes.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="framed.core.cbmodel.Protein">
+<em class="property">class </em><code class="descclassname">framed.core.cbmodel.</code><code class="descname">Protein</code><a class="headerlink" href="#framed.core.cbmodel.Protein" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-framed.core.fixes">
+<span id="framed-core-fixes-module"></span><h2>framed.core.fixes module<a class="headerlink" href="#module-framed.core.fixes" title="Permalink to this headline">¶</a></h2>
+<p>Fixes to clean up common models from different sources/groups.</p>
+<p>&#64;author: Daniel Machado</p>
+<dl class="function">
+<dt id="framed.core.fixes.clean_bigg_ids">
+<code class="descclassname">framed.core.fixes.</code><code class="descname">clean_bigg_ids</code><span class="sig-paren">(</span><em>model</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.core.fixes.clean_bigg_ids" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="framed.core.fixes.clean_bounds">
+<code class="descclassname">framed.core.fixes.</code><code class="descname">clean_bounds</code><span class="sig-paren">(</span><em>model</em>, <em>threshold=1000</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.core.fixes.clean_bounds" title="Permalink to this definition">¶</a></dt>
+<dd><p>Remove artificially large bounds (unbounded = no bounds).</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="framed.core.fixes.default_fixes">
+<code class="descclassname">framed.core.fixes.</code><code class="descname">default_fixes</code><span class="sig-paren">(</span><em>model</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.core.fixes.default_fixes" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="framed.core.fixes.fix_cb_model">
+<code class="descclassname">framed.core.fixes.</code><code class="descname">fix_cb_model</code><span class="sig-paren">(</span><em>model</em>, <em>flavor=None</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.core.fixes.fix_cb_model" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="framed.core.fixes.fix_cobra_model">
+<code class="descclassname">framed.core.fixes.</code><code class="descname">fix_cobra_model</code><span class="sig-paren">(</span><em>model</em>, <em>remove_boundary=True</em>, <em>set_reversibilty=True</em>, <em>use_infinity=True</em>, <em>clean_ids=True</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.core.fixes.fix_cobra_model" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="framed.core.fixes.fix_reversibility">
+<code class="descclassname">framed.core.fixes.</code><code class="descname">fix_reversibility</code><span class="sig-paren">(</span><em>model</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.core.fixes.fix_reversibility" title="Permalink to this definition">¶</a></dt>
+<dd><p>Make reaction reversibility consistent with the bounds.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="framed.core.fixes.remove_boundary_metabolites">
+<code class="descclassname">framed.core.fixes.</code><code class="descname">remove_boundary_metabolites</code><span class="sig-paren">(</span><em>model</em>, <em>tag=None</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.core.fixes.remove_boundary_metabolites" title="Permalink to this definition">¶</a></dt>
+<dd><p>Remove remove boundary metabolites.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-framed.core.model">
+<span id="framed-core-model-module"></span><h2>framed.core.model module<a class="headerlink" href="#module-framed.core.model" title="Permalink to this headline">¶</a></h2>
+<p>This module defines base classes for metabolic modeling.</p>
+<p>&#64;author: Daniel Machado</p>
+<dl class="class">
+<dt id="framed.core.model.Compartment">
+<em class="property">class </em><code class="descclassname">framed.core.model.</code><code class="descname">Compartment</code><span class="sig-paren">(</span><em>elem_id</em>, <em>name=None</em>, <em>size=1.0</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.core.model.Compartment" title="Permalink to this definition">¶</a></dt>
+<dd><p>Base class for modeling compartments.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="framed.core.model.Metabolite">
+<em class="property">class </em><code class="descclassname">framed.core.model.</code><code class="descname">Metabolite</code><span class="sig-paren">(</span><em>elem_id</em>, <em>name=None</em>, <em>compartment=None</em>, <em>boundary=False</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.core.model.Metabolite" title="Permalink to this definition">¶</a></dt>
+<dd><p>Base class for modeling metabolites.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="framed.core.model.Model">
+<em class="property">class </em><code class="descclassname">framed.core.model.</code><code class="descname">Model</code><span class="sig-paren">(</span><em>model_id</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.core.model.Model" title="Permalink to this definition">¶</a></dt>
+<dd><p>Base class for all metabolic models implemented as a bipartite network.
+Contains the list of metabolites, reactions, compartments, and stoichiometry.</p>
+<dl class="method">
+<dt id="framed.core.model.Model.add_compartment">
+<code class="descname">add_compartment</code><span class="sig-paren">(</span><em>compartment</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.core.model.Model.add_compartment" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add a single compartment to the model.
+If a compartment with the same id exists, it will be replaced.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>compartment</strong> &#8211; Compartment</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="framed.core.model.Model.add_metabolite">
+<code class="descname">add_metabolite</code><span class="sig-paren">(</span><em>metabolite</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.core.model.Model.add_metabolite" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add a single metabolite to the model.
+If a metabolite with the same id exists, it will be replaced.
+If the metabolite compartment is defined, then it must exist in the model.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>metabolite</strong> &#8211; Metabolite</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="framed.core.model.Model.add_reaction">
+<code class="descname">add_reaction</code><span class="sig-paren">(</span><em>reaction</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.core.model.Model.add_reaction" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add a single reaction to the model.
+If a reaction with the same id exists, it will be replaced.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>reaction</strong> &#8211; Reaction</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="framed.core.model.Model.add_reaction_activator">
+<code class="descname">add_reaction_activator</code><span class="sig-paren">(</span><em>r_id</em>, <em>m_id</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.core.model.Model.add_reaction_activator" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="framed.core.model.Model.add_reaction_inhibitor">
+<code class="descname">add_reaction_inhibitor</code><span class="sig-paren">(</span><em>r_id</em>, <em>m_id</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.core.model.Model.add_reaction_inhibitor" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="framed.core.model.Model.add_reaction_regulator">
+<code class="descname">add_reaction_regulator</code><span class="sig-paren">(</span><em>r_id</em>, <em>m_id</em>, <em>kind='?'</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.core.model.Model.add_reaction_regulator" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="framed.core.model.Model.copy">
+<code class="descname">copy</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#framed.core.model.Model.copy" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="framed.core.model.Model.get_activation_targets">
+<code class="descname">get_activation_targets</code><span class="sig-paren">(</span><em>m_id</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.core.model.Model.get_activation_targets" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="framed.core.model.Model.get_inhibition_targets">
+<code class="descname">get_inhibition_targets</code><span class="sig-paren">(</span><em>m_id</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.core.model.Model.get_inhibition_targets" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="framed.core.model.Model.get_metabolite_sinks">
+<code class="descname">get_metabolite_sinks</code><span class="sig-paren">(</span><em>m_id</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.core.model.Model.get_metabolite_sinks" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the list of output reactions for one metabolite</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>m_id</strong> &#8211; str &#8211; metabolite id</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">list [of str] &#8211; output reactions list</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="framed.core.model.Model.get_metabolite_sources">
+<code class="descname">get_metabolite_sources</code><span class="sig-paren">(</span><em>m_id</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.core.model.Model.get_metabolite_sources" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the list of input reactions for one metabolite</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>m_id</strong> &#8211; str &#8211; metabolite id</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">list [of str] &#8211; input reactions list</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="framed.core.model.Model.get_reaction_compartments">
+<code class="descname">get_reaction_compartments</code><span class="sig-paren">(</span><em>r_id</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.core.model.Model.get_reaction_compartments" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="framed.core.model.Model.get_stoichiometry">
+<code class="descname">get_stoichiometry</code><span class="sig-paren">(</span><em>m_id</em>, <em>r_id</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.core.model.Model.get_stoichiometry" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="framed.core.model.Model.metabolite_reaction_lookup_table">
+<code class="descname">metabolite_reaction_lookup_table</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#framed.core.model.Model.metabolite_reaction_lookup_table" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the network topology as a nested map: metabolite id -&gt; reaction id -&gt; coefficient</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">OrderedDict (of str to OrderedDict of str to float) &#8211; lookup table</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="framed.core.model.Model.print_reaction">
+<code class="descname">print_reaction</code><span class="sig-paren">(</span><em>r_id</em>, <em>reaction_names=False</em>, <em>metabolite_names=False</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.core.model.Model.print_reaction" title="Permalink to this definition">¶</a></dt>
+<dd><p>Print a reaction to a text based representation.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>r_id</strong> &#8211; str &#8211; reaction id</li>
+<li><strong>reaction_names</strong> &#8211; bool &#8211; print reaction names instead of ids (default: False)</li>
+<li><strong>metabolite_names</strong> &#8211; bool &#8211; print metabolite names instead of ids (default: False)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">str &#8211; reaction string</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="framed.core.model.Model.regulatory_lookup_table">
+<code class="descname">regulatory_lookup_table</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#framed.core.model.Model.regulatory_lookup_table" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="framed.core.model.Model.remove_compartment">
+<code class="descname">remove_compartment</code><span class="sig-paren">(</span><em>c_id</em>, <em>delete_metabolites=True</em>, <em>delete_reactions=False</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.core.model.Model.remove_compartment" title="Permalink to this definition">¶</a></dt>
+<dd><p>Remove a compartment from the model.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>c_id</strong> &#8211; str &#8211; compartment id</li>
+<li><strong>delete_metabolites</strong> &#8211; Bool &#8211; True (default)</li>
+<li><strong>delete_reactions</strong> &#8211; Bool &#8211; False (default)</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="framed.core.model.Model.remove_compartments">
+<code class="descname">remove_compartments</code><span class="sig-paren">(</span><em>c_ids</em>, <em>delete_metabolites=True</em>, <em>delete_reactions=False</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.core.model.Model.remove_compartments" title="Permalink to this definition">¶</a></dt>
+<dd><p>Remove a compartment from the model.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>c_ids</strong> &#8211; list of str &#8211; compartment ids</li>
+<li><strong>delete_metabolites</strong> &#8211; Bool &#8211; True (default)</li>
+<li><strong>delete_reactions</strong> &#8211; Bool &#8211; False (default)</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="framed.core.model.Model.remove_metabolite">
+<code class="descname">remove_metabolite</code><span class="sig-paren">(</span><em>m_id</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.core.model.Model.remove_metabolite" title="Permalink to this definition">¶</a></dt>
+<dd><p>Remove a single metabolite from the model.
+Also removes all the edges connected to the metabolite.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>m_id</strong> &#8211; str &#8211; metabolite id</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="framed.core.model.Model.remove_metabolites">
+<code class="descname">remove_metabolites</code><span class="sig-paren">(</span><em>id_list</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.core.model.Model.remove_metabolites" title="Permalink to this definition">¶</a></dt>
+<dd><p>Remove a list of metabolites from the model.
+Also removes all the edges connected to the metabolites.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>id_list</strong> &#8211; list of str &#8211; metabolite ids</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="framed.core.model.Model.remove_reaction">
+<code class="descname">remove_reaction</code><span class="sig-paren">(</span><em>r_id</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.core.model.Model.remove_reaction" title="Permalink to this definition">¶</a></dt>
+<dd><p>Remove a single reaction from the model.
+Also removes all the edges connected to the reaction.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>r_id</strong> &#8211; str &#8211; reaction id</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="framed.core.model.Model.remove_reactions">
+<code class="descname">remove_reactions</code><span class="sig-paren">(</span><em>id_list</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.core.model.Model.remove_reactions" title="Permalink to this definition">¶</a></dt>
+<dd><p>Remove a list of reactions from the model.
+Also removes all the edges connected to the reactions.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>id_list</strong> &#8211; list of str &#8211; reaction ids</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="framed.core.model.Model.set_stoichiometry">
+<code class="descname">set_stoichiometry</code><span class="sig-paren">(</span><em>m_id</em>, <em>r_id</em>, <em>coeff</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.core.model.Model.set_stoichiometry" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="framed.core.model.Model.stoichiometric_matrix">
+<code class="descname">stoichiometric_matrix</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#framed.core.model.Model.stoichiometric_matrix" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the full stoichiometric matrix represented by the network topology</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">list (of list of float) &#8211; stoichiometric matrix</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="framed.core.model.Model.to_string">
+<code class="descname">to_string</code><span class="sig-paren">(</span><em>reaction_names=False</em>, <em>metabolite_names=False</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.core.model.Model.to_string" title="Permalink to this definition">¶</a></dt>
+<dd><p>Print the model to a text based representation.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">str &#8211; model string</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="framed.core.model.Reaction">
+<em class="property">class </em><code class="descclassname">framed.core.model.</code><code class="descname">Reaction</code><span class="sig-paren">(</span><em>elem_id</em>, <em>name=None</em>, <em>reversible=True</em>, <em>stoichiometry=None</em>, <em>regulators=None</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.core.model.Reaction" title="Permalink to this definition">¶</a></dt>
+<dd><p>Base class for modeling reactions.</p>
+<dl class="method">
+<dt id="framed.core.model.Reaction.get_activators">
+<code class="descname">get_activators</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#framed.core.model.Reaction.get_activators" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="framed.core.model.Reaction.get_inhibitors">
+<code class="descname">get_inhibitors</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#framed.core.model.Reaction.get_inhibitors" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="framed.core.model.Reaction.get_products">
+<code class="descname">get_products</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#framed.core.model.Reaction.get_products" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="framed.core.model.Reaction.get_substrates">
+<code class="descname">get_substrates</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#framed.core.model.Reaction.get_substrates" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-framed.core.odemodel">
+<span id="framed-core-odemodel-module"></span><h2>framed.core.odemodel module<a class="headerlink" href="#module-framed.core.odemodel" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="framed.core.odemodel.ODEModel">
+<em class="property">class </em><code class="descclassname">framed.core.odemodel.</code><code class="descname">ODEModel</code><span class="sig-paren">(</span><em>model_id</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.core.odemodel.ODEModel" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#framed.core.model.Model" title="framed.core.model.Model"><code class="xref py py-class docutils literal"><span class="pre">framed.core.model.Model</span></code></a></p>
+<dl class="method">
+<dt id="framed.core.odemodel.ODEModel.add_reaction">
+<code class="descname">add_reaction</code><span class="sig-paren">(</span><em>reaction</em>, <em>ratelaw=''</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.core.odemodel.ODEModel.add_reaction" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="framed.core.odemodel.ODEModel.build_ode">
+<code class="descname">build_ode</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#framed.core.odemodel.ODEModel.build_ode" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="framed.core.odemodel.ODEModel.build_rate_functions">
+<code class="descname">build_rate_functions</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#framed.core.odemodel.ODEModel.build_rate_functions" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="framed.core.odemodel.ODEModel.get_ode">
+<code class="descname">get_ode</code><span class="sig-paren">(</span><em>r_dict=None</em>, <em>params=None</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.core.odemodel.ODEModel.get_ode" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="framed.core.odemodel.ODEModel.get_parameters">
+<code class="descname">get_parameters</code><span class="sig-paren">(</span><em>exclude_compartments=False</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.core.odemodel.ODEModel.get_parameters" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="framed.core.odemodel.ODEModel.merge_constants">
+<code class="descname">merge_constants</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#framed.core.odemodel.ODEModel.merge_constants" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="framed.core.odemodel.ODEModel.parse_rate">
+<code class="descname">parse_rate</code><span class="sig-paren">(</span><em>r_id</em>, <em>rate</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.core.odemodel.ODEModel.parse_rate" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="framed.core.odemodel.ODEModel.parse_rule">
+<code class="descname">parse_rule</code><span class="sig-paren">(</span><em>rule</em>, <em>parsed_rates</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.core.odemodel.ODEModel.parse_rule" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="framed.core.odemodel.ODEModel.print_balance">
+<code class="descname">print_balance</code><span class="sig-paren">(</span><em>m_id</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.core.odemodel.ODEModel.print_balance" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="framed.core.odemodel.ODEModel.remove_reactions">
+<code class="descname">remove_reactions</code><span class="sig-paren">(</span><em>id_list</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.core.odemodel.ODEModel.remove_reactions" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="framed.core.odemodel.ODEModel.set_assignment_rule">
+<code class="descname">set_assignment_rule</code><span class="sig-paren">(</span><em>p_id</em>, <em>rule</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.core.odemodel.ODEModel.set_assignment_rule" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="framed.core.odemodel.ODEModel.set_concentration">
+<code class="descname">set_concentration</code><span class="sig-paren">(</span><em>m_id</em>, <em>concentration</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.core.odemodel.ODEModel.set_concentration" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="framed.core.odemodel.ODEModel.set_global_parameter">
+<code class="descname">set_global_parameter</code><span class="sig-paren">(</span><em>key</em>, <em>value</em>, <em>constant=True</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.core.odemodel.ODEModel.set_global_parameter" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="framed.core.odemodel.ODEModel.set_local_parameter">
+<code class="descname">set_local_parameter</code><span class="sig-paren">(</span><em>r_id</em>, <em>p_id</em>, <em>value</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.core.odemodel.ODEModel.set_local_parameter" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="framed.core.odemodel.ODEModel.set_ratelaw">
+<code class="descname">set_ratelaw</code><span class="sig-paren">(</span><em>r_id</em>, <em>ratelaw</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.core.odemodel.ODEModel.set_ratelaw" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-framed.core.transformation">
+<span id="framed-core-transformation-module"></span><h2>framed.core.transformation module<a class="headerlink" href="#module-framed.core.transformation" title="Permalink to this headline">¶</a></h2>
+<p>Module for model transformation operations.</p>
+<p>&#64;author: Daniel Machado</p>
+<dl class="function">
+<dt id="framed.core.transformation.disconnected_genes">
+<code class="descclassname">framed.core.transformation.</code><code class="descname">disconnected_genes</code><span class="sig-paren">(</span><em>model</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.core.transformation.disconnected_genes" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="framed.core.transformation.disconnected_metabolites">
+<code class="descclassname">framed.core.transformation.</code><code class="descname">disconnected_metabolites</code><span class="sig-paren">(</span><em>model</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.core.transformation.disconnected_metabolites" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="framed.core.transformation.make_irreversible">
+<code class="descclassname">framed.core.transformation.</code><code class="descname">make_irreversible</code><span class="sig-paren">(</span><em>model</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.core.transformation.make_irreversible" title="Permalink to this definition">¶</a></dt>
+<dd><p>Splits all reversible reactions into forward and backward directions.
+For efficiency the given model is converted. To keep a copy use deepcopy first.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>model</strong> &#8211; Model (or CBmodel)</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>dictionary</strong> &#8211; mapping of old reaction ids to splitted reaction ids</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">str to (str, str</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="framed.core.transformation.simplify">
+<code class="descclassname">framed.core.transformation.</code><code class="descname">simplify</code><span class="sig-paren">(</span><em>model</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.core.transformation.simplify" title="Permalink to this definition">¶</a></dt>
+<dd><p>Removes all blocked reactions in a constraint based model</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>model</strong> &#8211; CBModel</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>(list</strong> &#8211; lists of removed reactions, metabolites, and genes</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">of str</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="module-framed.core">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-framed.core" title="Permalink to this headline">¶</a></h2>
+<p>Package implementing the core features for building and manipulating metabolic models.</p>
+<p>&#64;author: Daniel Machado</p>
+<blockquote>
+<div>Copyright 2013 Novo Nordisk Foundation Center for Biosustainability,
+Technical University of Denmark.</div></blockquote>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">framed.core package</a><ul>
+<li><a class="reference internal" href="#submodules">Submodules</a></li>
+<li><a class="reference internal" href="#module-framed.core.cbmodel">framed.core.cbmodel module</a></li>
+<li><a class="reference internal" href="#module-framed.core.fixes">framed.core.fixes module</a></li>
+<li><a class="reference internal" href="#module-framed.core.model">framed.core.model module</a></li>
+<li><a class="reference internal" href="#module-framed.core.odemodel">framed.core.odemodel module</a></li>
+<li><a class="reference internal" href="#module-framed.core.transformation">framed.core.transformation module</a></li>
+<li><a class="reference internal" href="#module-framed.core">Module contents</a></li>
+</ul>
+</li>
+</ul>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+</div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/framed.core.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2016, Daniel.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.4.8</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.9</a>
+      
+      |
+      <a href="_sources/framed.core.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

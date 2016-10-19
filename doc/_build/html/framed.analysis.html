@@ -1,0 +1,638 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>framed.analysis package &#8212; framed 0.2.1 documentation</title>
+    
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '0.2.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="top" title="framed 0.2.1 documentation" href="index.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body role="document">
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="framed-analysis-package">
+<h1>framed.analysis package<a class="headerlink" href="#framed-analysis-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-framed.analysis.deletion">
+<span id="framed-analysis-deletion-module"></span><h2>framed.analysis.deletion module<a class="headerlink" href="#module-framed.analysis.deletion" title="Permalink to this headline">¶</a></h2>
+<p>This module implements gene and reaction deletion methods.</p>
+<p>&#64;author: Daniel Machado</p>
+<dl class="function">
+<dt id="framed.analysis.deletion.deleted_genes_to_reactions">
+<code class="descclassname">framed.analysis.deletion.</code><code class="descname">deleted_genes_to_reactions</code><span class="sig-paren">(</span><em>model</em>, <em>genes</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.analysis.deletion.deleted_genes_to_reactions" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert a set of deleted genes to the respective deleted reactions.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>model</strong> &#8211; CBModel &#8211; model</li>
+<li><strong>genes</strong> &#8211; list (of str) &#8211; genes to delete</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">list (of str) &#8211; list of deleted reactions</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="framed.analysis.deletion.deletion">
+<code class="descclassname">framed.analysis.deletion.</code><code class="descname">deletion</code><span class="sig-paren">(</span><em>model</em>, <em>elements</em>, <em>kind='reactions'</em>, <em>method='FBA'</em>, <em>reference=None</em>, <em>constraints=None</em>, <em>solver=None</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.analysis.deletion.deletion" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generic interface for gene or reaction deletion.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>model</strong> &#8211; CBModel &#8211; model</li>
+<li><strong>elements</strong> &#8211; list (of str) &#8211; elements to delete</li>
+<li><strong>kind</strong> &#8211; str &#8211; genes or reactions (default)</li>
+<li><strong>method</strong> &#8211; str &#8211; simulation method: FBA (default) or MOMA</li>
+<li><strong>reference</strong> &#8211; dict (of str to float) &#8211; reference flux distribution for MOMA (optional)</li>
+<li><strong>constraints</strong> &#8211; dict (of str to (float, float)) &#8211; additional constraints</li>
+<li><strong>solver</strong> &#8211; Solver &#8211; solver instance instantiated with the model, for speed (optional)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">Solution &#8211; solution</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="framed.analysis.deletion.gene_deletion">
+<code class="descclassname">framed.analysis.deletion.</code><code class="descname">gene_deletion</code><span class="sig-paren">(</span><em>model</em>, <em>genes</em>, <em>method='FBA'</em>, <em>reference=None</em>, <em>constraints=None</em>, <em>solver=None</em>, <em>compute_silent_deletions=False</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.analysis.deletion.gene_deletion" title="Permalink to this definition">¶</a></dt>
+<dd><p>Simulate the deletion of a set of genes.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>model</strong> &#8211; CBModel &#8211; model</li>
+<li><strong>genes</strong> &#8211; list (of str) &#8211; genes to delete</li>
+<li><strong>method</strong> &#8211; str &#8211; simulation method: FBA (default) or MOMA</li>
+<li><strong>reference</strong> &#8211; dict (of str to float) &#8211; reference flux distribution for MOMA (optional)</li>
+<li><strong>constraints</strong> &#8211; dict (of str to (float, float)) &#8211; additional constraints</li>
+<li><strong>solver</strong> &#8211; Solver &#8211; solver instance instantiated with the model, for speed (optional)</li>
+<li><strong>compute_silent_deletions</strong> &#8211; Bool &#8211; don&#8217;t compute gene deletion if no reactions are affected (optional, default: True)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">Solution &#8211; solution</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="framed.analysis.deletion.reaction_deletion">
+<code class="descclassname">framed.analysis.deletion.</code><code class="descname">reaction_deletion</code><span class="sig-paren">(</span><em>model</em>, <em>reactions</em>, <em>method='FBA'</em>, <em>reference=None</em>, <em>constraints=None</em>, <em>solver=None</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.analysis.deletion.reaction_deletion" title="Permalink to this definition">¶</a></dt>
+<dd><p>Simulate the deletion of a set of reactions.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>model</strong> &#8211; CBModel &#8211; model</li>
+<li><strong>reactions</strong> &#8211; list (of str) &#8211; reactions to delete</li>
+<li><strong>method</strong> &#8211; str &#8211; simulation method: FBA (default) or MOMA</li>
+<li><strong>reference</strong> &#8211; dict (of str to float) &#8211; reference flux distribution for MOMA (optional)</li>
+<li><strong>constraints</strong> &#8211; dict (of str to (float, float)) &#8211; additional constraints</li>
+<li><strong>solver</strong> &#8211; Solver &#8211; solver instance instantiated with the model, for speed (optional)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">Solution &#8211; solution</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="module-framed.analysis.essentiality">
+<span id="framed-analysis-essentiality-module"></span><h2>framed.analysis.essentiality module<a class="headerlink" href="#module-framed.analysis.essentiality" title="Permalink to this headline">¶</a></h2>
+<p>This module implements methods to compute gene and reaction essentiality.</p>
+<p>&#64;author: Daniel Machado</p>
+<dl class="function">
+<dt id="framed.analysis.essentiality.essential_genes">
+<code class="descclassname">framed.analysis.essentiality.</code><code class="descname">essential_genes</code><span class="sig-paren">(</span><em>model</em>, <em>min_growth=0.01</em>, <em>constraints=None</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.analysis.essentiality.essential_genes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute the set of essential genes.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>model</strong> &#8211; CBModel &#8211; model</li>
+<li><strong>min_growth</strong> &#8211; float &#8211; minimum fraction of growth rate to consider a deletion non-letal (default: 0.01)</li>
+<li><strong>constraints</strong> &#8211; dict (of str to float) &#8211; environmental or additional constraints (optional)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">list (of str) &#8211; essential genes</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="framed.analysis.essentiality.essential_reactions">
+<code class="descclassname">framed.analysis.essentiality.</code><code class="descname">essential_reactions</code><span class="sig-paren">(</span><em>model</em>, <em>min_growth=0.01</em>, <em>constraints=None</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.analysis.essentiality.essential_reactions" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute the set of essential reactions.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>model</strong> &#8211; CBModel &#8211; model</li>
+<li><strong>min_growth</strong> &#8211; float &#8211; minimum fraction of growth rate to consider a deletion non-letal (default: 0.01)</li>
+<li><strong>constraints</strong> &#8211; dict (of str to float) &#8211; environmental or additional constraints (optional)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">list (of str) &#8211; essential reactions</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="framed.analysis.essentiality.essentiality">
+<code class="descclassname">framed.analysis.essentiality.</code><code class="descname">essentiality</code><span class="sig-paren">(</span><em>model</em>, <em>kind='reactions'</em>, <em>min_growth=0.01</em>, <em>constraints=None</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.analysis.essentiality.essentiality" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generic interface for computing gene or reaction essentiality.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>model</strong> &#8211; CBModel &#8211; model</li>
+<li><strong>kind</strong> &#8211; str &#8211; genes or reactions (default)</li>
+<li><strong>min_growth</strong> &#8211; float &#8211; minimum fraction of growth rate to consider a deletion non-letal (default: 0.01)</li>
+<li><strong>constraints</strong> &#8211; dict (of str to float) &#8211; environmental or additional constraints (optional)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">list (of str) &#8211; essential elements</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="module-framed.analysis.phaseplane">
+<span id="framed-analysis-phaseplane-module"></span><h2>framed.analysis.phaseplane module<a class="headerlink" href="#module-framed.analysis.phaseplane" title="Permalink to this headline">¶</a></h2>
+<p>This module implements the Phenotype Phase Plane Analysis.
+(Edwards et al. 2001, Characterizing the metabolic phenotype: A phenotype phase plane analysis)</p>
+<p>&#64;author: Kai Zhuang</p>
+<dl class="function">
+<dt id="framed.analysis.phaseplane.PhPP">
+<code class="descclassname">framed.analysis.phaseplane.</code><code class="descname">PhPP</code><span class="sig-paren">(</span><em>model</em>, <em>rxn_x</em>, <em>rxn_y</em>, <em>rxn_x_range</em>, <em>rxn_y_range</em>, <em>target=None</em>, <em>maximize=True</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.analysis.phaseplane.PhPP" title="Permalink to this definition">¶</a></dt>
+<dd><p>Phenotype Phase Plane Analysis
+analyze the changes in the objective function and the shadow prices</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>model</strong> &#8211; CBModel &#8211; the metabolic model</li>
+<li><strong>rxn_x</strong> &#8211; str &#8211; reaction to be plotted along x axis.  must be of a type convertable to numpy.array</li>
+<li><strong>rxn_y</strong> &#8211; str &#8211; reaction to be plotted along y axis.  must be of a type convertable to numpy.array</li>
+<li><strong>rxn_x_range</strong> &#8211; list or array &#8211; the range of the reaction x</li>
+<li><strong>rxn_y_range</strong> &#8211; list or array &#8211; the range of the reaction y</li>
+<li><strong>target</strong> &#8211; str &#8211; the  reaction id of the optimization target.
+if None is included, it will attempt to detect the biomass function</li>
+<li><strong>maximize</strong> &#8211; True or False. the sense of the optimization</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">phaseplane</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="class">
+<dt id="framed.analysis.phaseplane.PhenotypePhasePlane">
+<em class="property">class </em><code class="descclassname">framed.analysis.phaseplane.</code><code class="descname">PhenotypePhasePlane</code><span class="sig-paren">(</span><em>rxn_x</em>, <em>rxn_y</em>, <em>rxn_x_range</em>, <em>rxn_y_range</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.analysis.phaseplane.PhenotypePhasePlane" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<dl class="method">
+<dt id="framed.analysis.phaseplane.PhenotypePhasePlane.plot_objective_function">
+<code class="descname">plot_objective_function</code><span class="sig-paren">(</span><em>new_figure=True</em>, <em>show_plot=True</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.analysis.phaseplane.PhenotypePhasePlane.plot_objective_function" title="Permalink to this definition">¶</a></dt>
+<dd><p>new_figure: if set to True, a new matplotlib figure will be created.
+show_plot: if set to True, current figure will be shown</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="framed.analysis.phaseplane.PhenotypePhasePlane.plot_shadow_price_x">
+<code class="descname">plot_shadow_price_x</code><span class="sig-paren">(</span><em>new_figure=True</em>, <em>show_plot=True</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.analysis.phaseplane.PhenotypePhasePlane.plot_shadow_price_x" title="Permalink to this definition">¶</a></dt>
+<dd><p>this method plots the shadow price of metabolites that are associated with reaction x
+new_figure: if set to True, a new matplotlib figure will be created.
+show_plot: if set to True, current figure will be shown</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="framed.analysis.phaseplane.PhenotypePhasePlane.plot_shadow_price_y">
+<code class="descname">plot_shadow_price_y</code><span class="sig-paren">(</span><em>new_figure=True</em>, <em>show_plot=True</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.analysis.phaseplane.PhenotypePhasePlane.plot_shadow_price_y" title="Permalink to this definition">¶</a></dt>
+<dd><p>this method plots the shadow price of metabolites that are associated with reaction x
+new_figure: if set to True, a new matplotlib figure will be created.
+show_plot: if set to True, current figure will be shown</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-framed.analysis.plotting">
+<span id="framed-analysis-plotting-module"></span><h2>framed.analysis.plotting module<a class="headerlink" href="#module-framed.analysis.plotting" title="Permalink to this headline">¶</a></h2>
+<p>This module implements some basic plotting utilities for common methods.</p>
+<p>&#64;author: Daniel Machado</p>
+<dl class="function">
+<dt id="framed.analysis.plotting.plot_flux_envelope">
+<code class="descclassname">framed.analysis.plotting.</code><code class="descname">plot_flux_envelope</code><span class="sig-paren">(</span><em>model</em>, <em>r_x</em>, <em>r_y</em>, <em>substrate=None</em>, <em>constraints=None</em>, <em>reference=None</em>, <em>alternatives=None</em>, <em>label_x=None</em>, <em>label_y=None</em>, <em>filename=None</em>, <em>steps=10</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.analysis.plotting.plot_flux_envelope" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plots the flux envelope for a pair of reactions.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>model</strong> &#8211; CBModel &#8211; the model</li>
+<li><strong>r_x</strong> &#8211; str &#8211; reaction on x-axis</li>
+<li><strong>r_y</strong> &#8211; str &#8211; reaction on y-axis</li>
+<li><strong>substrate</strong> &#8211; str &#8211; compute yields instead of rates (optional)</li>
+<li><strong>constraints</strong> &#8211; dict (of str to (float, float)) &#8211; additional constraints</li>
+<li><strong>filename</strong> &#8211; str &#8211; filename to save image (optional), otherwise display on screen (default)</li>
+<li><strong>steps</strong> &#8211; int &#8211; number of steps to compute (default: 10)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">list (of float), list (of float), list (of float) &#8211; x values, y min values, y max values</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="module-framed.analysis.simulation">
+<span id="framed-analysis-simulation-module"></span><h2>framed.analysis.simulation module<a class="headerlink" href="#module-framed.analysis.simulation" title="Permalink to this headline">¶</a></h2>
+<p>This module implements common constraint-based simulation methods.</p>
+<p>&#64;author: Daniel Machado</p>
+<dl class="function">
+<dt id="framed.analysis.simulation.FBA">
+<code class="descclassname">framed.analysis.simulation.</code><code class="descname">FBA</code><span class="sig-paren">(</span><em>model</em>, <em>objective=None</em>, <em>minimize=False</em>, <em>constraints=None</em>, <em>solver=None</em>, <em>get_values=True</em>, <em>get_shadow_prices=False</em>, <em>get_reduced_costs=False</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.analysis.simulation.FBA" title="Permalink to this definition">¶</a></dt>
+<dd><p>Run a Flux Balance Analysis (FBA) simulation:</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>model</strong> &#8211; CBModel &#8211; a constraint-based model</li>
+<li><strong>objective</strong> &#8211; dict (of str to float) &#8211; objective coefficients (optional)</li>
+<li><strong>minimize</strong> &#8211; bool (False) &#8211; sense of optimization (maximize by default)</li>
+<li><strong>constraints</strong> &#8211; dict (of str to (float, float)) &#8211; environmental or additional constraints (optional)</li>
+<li><strong>solver</strong> &#8211; Solver &#8211; solver instance instantiated with the model, for speed (optional)</li>
+<li><strong>get_values</strong> &#8211; bool &#8211; set to false for speedup if you only care about the objective value (optional, default: True)</li>
+<li><strong>get_shadow_prices</strong> &#8211; Bool &#8211; retrieve shadow prices (default: False)</li>
+<li><strong>get_reduced_costs</strong> &#8211; Bool &#8211; retrieve reduced costs (default: False)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">Solution &#8211; solution</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="framed.analysis.simulation.MOMA">
+<code class="descclassname">framed.analysis.simulation.</code><code class="descname">MOMA</code><span class="sig-paren">(</span><em>model</em>, <em>reference=None</em>, <em>constraints=None</em>, <em>solver=None</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.analysis.simulation.MOMA" title="Permalink to this definition">¶</a></dt>
+<dd><p>Run a Minimization Of Metabolic Adjustment (MOMA) simulation:</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>model</strong> &#8211; CBModel &#8211; a constraint-based model</li>
+<li><strong>reference</strong> &#8211; dict (of str to float) &#8211; reference flux distribution (optional)</li>
+<li><strong>constraints</strong> &#8211; dict (of str to (float, float)) &#8211; environmental or additional constraints (optional)</li>
+<li><strong>solver</strong> &#8211; Solver &#8211; solver instance instantiated with the model, for speed (optional)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">Solution &#8211; solution</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="framed.analysis.simulation.ROOM">
+<code class="descclassname">framed.analysis.simulation.</code><code class="descname">ROOM</code><span class="sig-paren">(</span><em>model</em>, <em>reference=None</em>, <em>constraints=None</em>, <em>solver=None</em>, <em>delta=0.03</em>, <em>epsilon=0.001</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.analysis.simulation.ROOM" title="Permalink to this definition">¶</a></dt>
+<dd><p>Run a Regulatory On/Off Minimization (ROOM) simulation:</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>model</strong> &#8211; CBModel &#8211; a constraint-based model</li>
+<li><strong>reference</strong> &#8211; dict (of str to float) &#8211; reference flux distribution (optional)</li>
+<li><strong>constraints</strong> &#8211; dict (of str to (float, float)) &#8211; environmental or additional constraints (optional)</li>
+<li><strong>solver</strong> &#8211; Solver &#8211; solver instance instantiated with the model, for speed (optional)</li>
+<li><strong>delta</strong> &#8211; float &#8211; relative tolerance (default: 0.03)</li>
+<li><strong>epsilon</strong> &#8211; float &#8211; absolute tolerance (default: 0.001)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">Solution &#8211; solution</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="framed.analysis.simulation.lMOMA">
+<code class="descclassname">framed.analysis.simulation.</code><code class="descname">lMOMA</code><span class="sig-paren">(</span><em>model</em>, <em>reference=None</em>, <em>constraints=None</em>, <em>solver=None</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.analysis.simulation.lMOMA" title="Permalink to this definition">¶</a></dt>
+<dd><p>Run a (linear version of) Minimization Of Metabolic Adjustment (lMOMA) simulation:</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>model</strong> &#8211; CBModel &#8211; a constraint-based model</li>
+<li><strong>reference</strong> &#8211; dict (of str to float) &#8211; reference flux distribution (optional)</li>
+<li><strong>constraints</strong> &#8211; dict (of str to (float, float)) &#8211; environmental or additional constraints (optional)</li>
+<li><strong>solver</strong> &#8211; Solver &#8211; solver instance instantiated with the model, for speed (optional)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">Solution &#8211; solution</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="framed.analysis.simulation.looplessFBA">
+<code class="descclassname">framed.analysis.simulation.</code><code class="descname">looplessFBA</code><span class="sig-paren">(</span><em>model</em>, <em>objective=None</em>, <em>minimize=False</em>, <em>constraints=None</em>, <em>internal=None</em>, <em>solver=None</em>, <em>get_values=True</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.analysis.simulation.looplessFBA" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="framed.analysis.simulation.pFBA">
+<code class="descclassname">framed.analysis.simulation.</code><code class="descname">pFBA</code><span class="sig-paren">(</span><em>model</em>, <em>objective=None</em>, <em>minimize=False</em>, <em>constraints=None</em>, <em>reactions=None</em>, <em>solver=None</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.analysis.simulation.pFBA" title="Permalink to this definition">¶</a></dt>
+<dd><p>Run a parsimonious Flux Balance Analysis (pFBA) simulation:</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>model</strong> &#8211; CBModel &#8211; a constraint-based model</li>
+<li><strong>objective</strong> &#8211; dict (of str to float) &#8211; objective coefficients (optional)</li>
+<li><strong>minimize</strong> &#8211; bool (False) &#8211; sense of optimization (maximize by default)</li>
+<li><strong>constraints</strong> &#8211; dict (of str to (float, float)) &#8211; environmental or additional constraints (optional)</li>
+<li><strong>reactions</strong> &#8211; list of str &#8211; list of reactions to be minimized (optional, default: all)</li>
+<li><strong>solver</strong> &#8211; Solver &#8211; solver instance instantiated with the model, for speed (optional)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">Solution &#8211; solution</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="module-framed.analysis.variability">
+<span id="framed-analysis-variability-module"></span><h2>framed.analysis.variability module<a class="headerlink" href="#module-framed.analysis.variability" title="Permalink to this headline">¶</a></h2>
+<p>This module implements flux variability analysis methods.</p>
+<p>&#64;author: Daniel Machado, Kai Zhuang</p>
+<dl class="function">
+<dt id="framed.analysis.variability.FVA">
+<code class="descclassname">framed.analysis.variability.</code><code class="descname">FVA</code><span class="sig-paren">(</span><em>model</em>, <em>obj_percentage=0</em>, <em>reactions=None</em>, <em>constraints=None</em>, <em>loopless=False</em>, <em>internal=None</em>, <em>solver=None</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.analysis.variability.FVA" title="Permalink to this definition">¶</a></dt>
+<dd><p>Run Flux Variability Analysis (FVA).</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>model</strong> &#8211; CBModel &#8211; a constraint-based model</li>
+<li><strong>obj_percentage</strong> &#8211; float &#8211; minimum percentage of growth rate (default 0.0, max: 1.0)</li>
+<li><strong>reactions</strong> &#8211; list (of str) &#8211; list of reactions to analyze (default: all)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">dict (of str to (float, float)) &#8211; flux variation ranges</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="framed.analysis.variability.blocked_reactions">
+<code class="descclassname">framed.analysis.variability.</code><code class="descname">blocked_reactions</code><span class="sig-paren">(</span><em>model</em>, <em>abstol=1e-09</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.analysis.variability.blocked_reactions" title="Permalink to this definition">¶</a></dt>
+<dd><p>Find all blocked reactions in a model</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>model</strong> &#8211; CBModel &#8211; a constraint-based model</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">list (of str) &#8211; blocked reactions</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="framed.analysis.variability.flux_envelope">
+<code class="descclassname">framed.analysis.variability.</code><code class="descname">flux_envelope</code><span class="sig-paren">(</span><em>model</em>, <em>r_x</em>, <em>r_y</em>, <em>steps=10</em>, <em>constraints=None</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.analysis.variability.flux_envelope" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate the flux envelope for a pair of reactions.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>model</strong> &#8211; CBModel &#8211; the model</li>
+<li><strong>r_x</strong> &#8211; str &#8211; reaction on x-axis</li>
+<li><strong>r_y</strong> &#8211; str &#8211; reaction on y-axis</li>
+<li><strong>steps</strong> &#8211; int &#8211; number of steps to compute (default: 10)</li>
+<li><strong>constraints</strong> &#8211; dict &#8211; custom constraints to the FBA problem</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">list (of float), list (of float), list (of float) &#8211; x values, y min values, y max values</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="framed.analysis.variability.flux_envelope_3d">
+<code class="descclassname">framed.analysis.variability.</code><code class="descname">flux_envelope_3d</code><span class="sig-paren">(</span><em>model</em>, <em>r_x</em>, <em>r_y</em>, <em>r_z</em>, <em>steps=10</em>, <em>constraints=None</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.analysis.variability.flux_envelope_3d" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate the flux envelope for a triplet of reactions.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>model</strong> &#8211; CBModel &#8211; the model</li>
+<li><strong>r_x</strong> &#8211; str &#8211; reaction on x-axis</li>
+<li><strong>r_y</strong> &#8211; str &#8211; reaction on y-axis</li>
+<li><strong>r_z</strong> &#8211; str &#8211; reaction on z-axis</li>
+<li><strong>steps</strong> &#8211; int &#8211; number of steps to compute along both x and y axis (default: 10)</li>
+<li><strong>constraints</strong> &#8211; dict &#8211; custom constraints to the FBA problem</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">list (of float), list (of float), list (of float), list (of float) &#8211; z min values, z max values, x coordinates, y coordinates</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="framed.analysis.variability.production_envelope">
+<code class="descclassname">framed.analysis.variability.</code><code class="descname">production_envelope</code><span class="sig-paren">(</span><em>model</em>, <em>r_target</em>, <em>r_biomass=None</em>, <em>steps=10</em>, <em>constraints=None</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.analysis.variability.production_envelope" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate the production envelope of the target reaction</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>model</strong> &#8211; CBModel &#8211; the model</li>
+<li><strong>r_target</strong> &#8211; str &#8211; the target reaction id</li>
+<li><strong>steps</strong> &#8211; int &#8211; number of steps along the envelope to be calculated (default: 10)</li>
+<li><strong>r_biomass</strong> &#8211; str &#8211; the biomass reaction id (default: None)</li>
+<li><strong>constraints</strong> &#8211; dict &#8211; custom constraints to the FBA problem</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">list (of float), list (of float), list (of float) &#8211; biomass values, target minimum values, target maximum values</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="module-framed.analysis">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-framed.analysis" title="Permalink to this headline">¶</a></h2>
+<p>Package implementing constraint-based analysis methods.</p>
+<p>&#64;author: Daniel Machado</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">framed.analysis package</a><ul>
+<li><a class="reference internal" href="#submodules">Submodules</a></li>
+<li><a class="reference internal" href="#module-framed.analysis.deletion">framed.analysis.deletion module</a></li>
+<li><a class="reference internal" href="#module-framed.analysis.essentiality">framed.analysis.essentiality module</a></li>
+<li><a class="reference internal" href="#module-framed.analysis.phaseplane">framed.analysis.phaseplane module</a></li>
+<li><a class="reference internal" href="#module-framed.analysis.plotting">framed.analysis.plotting module</a></li>
+<li><a class="reference internal" href="#module-framed.analysis.simulation">framed.analysis.simulation module</a></li>
+<li><a class="reference internal" href="#module-framed.analysis.variability">framed.analysis.variability module</a></li>
+<li><a class="reference internal" href="#module-framed.analysis">Module contents</a></li>
+</ul>
+</li>
+</ul>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+</div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/framed.analysis.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2016, Daniel.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.4.8</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.9</a>
+      
+      |
+      <a href="_sources/framed.analysis.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
