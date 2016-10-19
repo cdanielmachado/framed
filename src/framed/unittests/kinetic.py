@@ -1,4 +1,4 @@
-from framed.io_utils.sbml import load_odemodel
+from framed.io.sbml import load_odemodel
 from matplotlib.pyplot import show
 from framed.kinetic.fitting import fit_from_metabolomics
 from framed.kinetic.plotting import plot_simulation, plot_sampling_results, plot_simulation_vs_data

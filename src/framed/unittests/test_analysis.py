@@ -5,8 +5,8 @@ __author__ = 'kaizhuang'
 
 import unittest
 
-from framed.io_utils.sbml import load_cbmodel
-from framed.analysis.variability import FVA, flux_envelope, production_envelope
+from framed.io.sbml import load_cbmodel
+from framed.cobra.variability import FVA, flux_envelope, production_envelope
 from framed.bioreactor import *
 
 SMALL_TEST_MODEL = '../../../examples/models/ecoli_core_model.xml'

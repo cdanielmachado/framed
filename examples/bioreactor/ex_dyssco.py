@@ -2,9 +2,9 @@ __author__ = 'kaizhuang'
 
 import matplotlib.pyplot as plt
 
-from framed.io_utils.sbml import load_sbml_model, CONSTRAINT_BASED
-from framed.io_utils.plaintext import add_reaction_from_str
-from framed.core.fixes import fix_cobra_model
+from framed.io.sbml import load_sbml_model, CONSTRAINT_BASED
+from framed.io.plaintext import add_reaction_from_str
+from framed.model.fixes import fix_cobra_model
 from framed.bioreactor import *
 
 import framed.bioreactor.dyssco as dyssco

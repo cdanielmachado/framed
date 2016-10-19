@@ -1,6 +1,6 @@
 from collections import OrderedDict
 
-from framed.core.model import Model
+from framed.model.model import Model
 
 
 class ODEModel(Model):

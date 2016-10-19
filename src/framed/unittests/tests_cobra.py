@@ -6,14 +6,14 @@ Unit testing module for core features.
 
 import unittest
 
-from framed.io_utils.sbml import load_cbmodel
-from framed.analysis.simulation import FBA, pFBA
-from framed.analysis.variability import FVA
-from framed.io_utils.plaintext import read_model_from_file, write_model_to_file
-from framed.analysis.deletion import gene_deletion
-from framed.analysis.essentiality import essential_genes
+from framed.io.sbml import load_cbmodel
+from framed.cobra.simulation import FBA, pFBA
+from framed.cobra.variability import FVA
+from framed.io.plaintext import read_model_from_file, write_model_to_file
+from framed.cobra.deletion import gene_deletion
+from framed.cobra.essentiality import essential_genes
 from framed.solvers.solver import Status
-from framed.core.transformation import make_irreversible, simplify
+from framed.model.transformation import make_irreversible, simplify
 from framed.solvers import set_default_solver
 
 #set_default_solver('cplex')

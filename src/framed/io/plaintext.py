@@ -4,8 +4,8 @@
 
 """
 
-from ..core.model import Metabolite, Reaction, Model
-from framed.core.cbmodel import CBModel
+from ..model.model import Metabolite, Reaction, Model
+from framed.model.cbmodel import CBModel
 from re import compile
 from os.path import splitext, basename
 

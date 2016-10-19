@@ -8,8 +8,8 @@ __author__ = 'kaizhuang'
 
 import matplotlib.pyplot as plt
 
-from framed.io_utils.sbml import load_sbml_model, CONSTRAINT_BASED
-from framed.core.fixes import fix_cobra_model
+from framed.io.sbml import load_sbml_model, CONSTRAINT_BASED
+from framed.model.fixes import fix_cobra_model
 from framed.bioreactor import *
 from framed.bioreactor.bioreactors import *
 

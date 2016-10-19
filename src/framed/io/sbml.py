@@ -4,10 +4,10 @@
    
 """
 
-from ..core.model import Model, Metabolite, Reaction, Compartment
-from ..core.odemodel import ODEModel
-from ..core.cbmodel import CBModel, Gene, Protein, GPRAssociation
-from ..core.fixes import fix_cb_model
+from ..model.model import Model, Metabolite, Reaction, Compartment
+from ..model.odemodel import ODEModel
+from ..model.cbmodel import CBModel, Gene, Protein, GPRAssociation
+from ..model.fixes import fix_cb_model
 
 from collections import OrderedDict
 from sympy.parsing.sympy_parser import parse_expr

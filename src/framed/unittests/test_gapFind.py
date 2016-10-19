@@ -7,9 +7,9 @@ Unit testing for gap finding.
 import re
 import unittest
 
-from framed.core.fixes import fix_cobra_model
-from framed.io_utils.plaintext import read_model_from_file
-from framed.io_utils.sbml import load_cbmodel
+from framed.model.fixes import fix_cobra_model
+from framed.io.plaintext import read_model_from_file
+from framed.io.sbml import load_cbmodel
 from framed.solvers.glpk_wrapper_lazy import GlpkSolverLazy
 from framed.reconstruction.gapFind import GapFind
 from framed.solvers.gurobi_wrapper import GurobiSolver

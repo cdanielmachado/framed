@@ -1,5 +1,5 @@
 from .fluxutils import fit_fluxes_to_model, flux_distance
-from ..analysis.deletion import gene_deletion
+from ..cobra.deletion import gene_deletion
 
 
 def evaluate(method, model, dataset, condition, **kwargs):

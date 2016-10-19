@@ -1,5 +1,5 @@
 from framed.solvers import solver_instance
-from framed.analysis.simulation import FBA, pFBA
+from framed.cobra.simulation import FBA, pFBA
 from numpy import percentile
 
 

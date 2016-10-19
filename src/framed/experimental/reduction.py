@@ -1,5 +1,5 @@
-from framed.core.model import Reaction
-from framed.core.cbmodel import CBModel
+from framed.model.model import Reaction
+from framed.model.cbmodel import CBModel
 from uuid import uuid4
 
 """ Implementation of the conjunctive reduction method proposed in:

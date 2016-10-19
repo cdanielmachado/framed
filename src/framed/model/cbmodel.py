@@ -1,6 +1,6 @@
 from collections import OrderedDict
 
-from framed.core.model import Model, Metabolite
+from framed.model.model import Model, Metabolite
 
 
 class Gene:

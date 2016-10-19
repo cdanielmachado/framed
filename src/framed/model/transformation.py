@@ -6,8 +6,8 @@ Module for model transformation operations.
 """
 
 from model import Metabolite, Reaction
-from framed.core.cbmodel import CBModel
-from ..analysis.variability import blocked_reactions
+from framed.model.cbmodel import CBModel
+from ..cobra.variability import blocked_reactions
 
 
 def simplify(model):

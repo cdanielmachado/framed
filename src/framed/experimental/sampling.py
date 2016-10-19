@@ -1,8 +1,8 @@
 from collections import OrderedDict
 from random import gauss, random
 
-from framed.analysis.simulation import pFBA
-from framed.analysis.variability import FVA
+from framed.cobra.simulation import pFBA
+from framed.cobra.variability import FVA
 from framed.solvers import solver_instance
 from framed.solvers.solver import Status
 

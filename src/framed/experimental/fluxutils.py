@@ -1,5 +1,5 @@
 from collections import OrderedDict
-from framed.analysis.simulation import MOMA, lMOMA
+from framed.cobra.simulation import MOMA, lMOMA
 from framed.solvers.solver import Status
 from numpy import array, sqrt, sum, abs
 

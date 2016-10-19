@@ -6,9 +6,9 @@ Unit testing for gap filling algorithm.
 
 import unittest
 
-from framed.core.fixes import fix_cobra_model
-from framed.io_utils.plaintext import read_model_from_file
-from framed.io_utils.sbml import load_cbmodel
+from framed.model.fixes import fix_cobra_model
+from framed.io.plaintext import read_model_from_file
+from framed.io.sbml import load_cbmodel
 from framed.solvers.glpk_wrapper import GlpkSolver
 from framed.solvers.glpk_wrapper_lazy import GlpkSolverLazy
 from framed.reconstruction.gapFill import GapFill

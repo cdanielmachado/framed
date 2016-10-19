@@ -12,7 +12,7 @@ import numpy
 
 from base import *
 from framed.bioreactor.dfba import dFBA
-from ..analysis.variability import production_envelope
+from ..cobra.variability import production_envelope
 
 
 def make_envelope_strains(base_organism, r_substrate, r_target, N=10, constraints=None):

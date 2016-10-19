@@ -5,9 +5,9 @@ __author__ = 'kaizhuang'
 
 import unittest
 
-from framed.io_utils.sbml import load_cbmodel
+from framed.io.sbml import load_cbmodel
 from framed.bioreactor.base import *
-from framed.analysis.simulation import FBA
+from framed.cobra.simulation import FBA
 
 SMALL_TEST_MODEL = '../../../examples/models/ecoli_core_model.xml'
 ec_core_model = load_cbmodel(SMALL_TEST_MODEL, flavor='cobra')
