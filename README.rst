@@ -1,36 +1,40 @@
 FRAMED
-~~~~~~
+======
 
-FRAMED (FRAmework for Metabolic Engineering and
-Design) is a python package for analysis and simulation of
-metabolic models.
+**framed** is a python package for analysis and simulation of metabolic
+models. The main focus is to provide support for different modeling
+approaches.
 
-This package is continuously under development. Some of the current
-functionality includes:
+-  Modeling: Constraint-based models, Kinetic models, Bioprocess models
 
--  Import/Export of SBML files (constraint-based and kinetic models)
--  Import/Export from plain text (constraint-based only)
--  Simulation methods: FBA, pFBA, MOMA, linearMOMA, ROOM, loopless-FBA,
-   dynamicFBA (single and multi-species)
--  Analysis tools: FVA, PhPP, production envelope plotting, gene
-   essentiality analysis
--  Reconstruction: gapFind, gapFill
--  Rational strain design: combinatorial, greedy (gene and
-   reaction-based)
--  Omics integration: GIMME, E-Flux
--  Kinetic models (experimental support): time-course and steady-state
-   simulation, sampling, plotting utils
+-  I/O: Import/Export from SBML and/or plain text formats
+
+-  Solver support: Gurobi, CPLEX, GLPK
+
+-  COBRA tools: Simulation: FBA, pFBA, loopless-FBA, MOMA, linearMOMA,
+   ROOM Analysis: FVA, gene essentiality, PhPP, flux envelope plots
+   Reconstruction: gapFind, gapFill Strain design: brute force, hill
+   climbing Omics integration: GIMME, E-Flux
+
+-  Kinetic tools: Time-course and steady-state simulation Parameter and
+   flux sampling Parameter calibration from data Plotting utilities
+
+-  Bioprocess modeling: Dynamic FBA (single and multi-species)
+
+Instalation
+~~~~~~~~~~~
+
+::
+
+    pip install framed
 
 Credits and License
 ~~~~~~~~~~~~~~~~~~~
 
-Developed at: 
+Developed at:
 
-- The Novo Nordisk Fundation Center for Biosustainability
-(2013)
-- Centre of Biological Engineering, University of Minho
-(2014-2015)
-- European Molecular Biology Laboratory (2016)
+-  The Novo Nordisk Fundation Center for Biosustainability (2013)
+-  Centre of Biological Engineering, University of Minho (2014-2015)
+-  European Molecular Biology Laboratory (2016)
 
 Released under an Apache License.
-
