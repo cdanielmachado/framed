@@ -1,6 +1,6 @@
 """ This module implements methods for reading and writing SBML files.
 
-@author: Daniel Machado
+Author: Daniel Machado
    
 """
 
@@ -44,12 +44,14 @@ def load_sbml_model(filename, kind=None, flavor=None):
     """ Loads a metabolic model from a file.
     
     Arguments:
-        filename : String -- SBML file path
-        kind : {None (default), CB_MODEL, ODE_MODEL} -- define kind of model to load (optional)
+        filename (str): SBML file path
+        kind (str): define kind of model to load ('cb' or 'ode', optional)
+        flavor (str): adapt to different modeling conventions (optional, currently available: 'cobra', 'fbc2')
     
     Returns:
-        Model -- Simple model or respective subclass
+        Model: Simple model or respective subclass
     """
+
     reader = SBMLReader()
     document = reader.readSBML(filename)
     sbml_model = document.getModel()
@@ -391,8 +393,9 @@ def save_sbml_model(model, filename, flavor=None):
     """ Save a model to an SBML file.
     
     Arguments:
-        model : Model (or any subclass) -- model
-        filename : String -- SBML file path
+        model (Model): model
+        filename (str): file path
+        flavor (str): adapt to different modeling conventions (optional, currently available: 'cobra', 'fbc2')
     """
 
     document = SBMLDocument(DEFAULT_SBML_LEVEL, DEFAULT_SBML_VERSION)

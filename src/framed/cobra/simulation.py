@@ -1,6 +1,6 @@
-""" This module implements common constraint-based simulation methods.
+""" This module implements several constraint-based simulation methods.
 
-@author: Daniel Machado
+Author: Daniel Machado
 
 """
 
@@ -14,17 +14,17 @@ def FBA(model, objective=None, minimize=False, constraints=None, solver=None, ge
     """ Run a Flux Balance Analysis (FBA) simulation:
     
     Arguments:
-        model : CBModel -- a constraint-based model
-        objective : dict (of str to float) -- objective coefficients (optional)
-        minimize : bool (False) -- sense of optimization (maximize by default)
-        constraints: dict (of str to (float, float)) -- environmental or additional constraints (optional)
-        solver : Solver -- solver instance instantiated with the model, for speed (optional)
-        get_values : bool -- set to false for speedup if you only care about the objective value (optional, default: True)
-        get_shadow_prices : Bool -- retrieve shadow prices (default: False)
-        get_reduced_costs : Bool -- retrieve reduced costs (default: False)
+        model (CBModel): a constraint-based model
+        objective (dict: objective coefficients (optional)
+        minimize (bool): minimize objective function (False by default)
+        constraints (dict): environmental or additional constraints (optional)
+        solver (Solver): solver instance instantiated with the model, for speed (optional)
+        get_values (bool): set to false for speedup if you only care about the objective value (optional, default: True)
+        get_shadow_prices (bool): retrieve shadow prices (default: False)
+        get_reduced_costs (bool): retrieve reduced costs (default: False)
        
     Returns:
-        Solution -- solution
+        Solution: solution
     """
 
     if not objective:
@@ -42,15 +42,15 @@ def pFBA(model, objective=None, minimize=False, constraints=None, reactions=None
     """ Run a parsimonious Flux Balance Analysis (pFBA) simulation:
     
     Arguments:
-        model : CBModel -- a constraint-based model
-        objective : dict (of str to float) -- objective coefficients (optional)
-        minimize : bool (False) -- sense of optimization (maximize by default)
-        constraints: dict (of str to (float, float)) -- environmental or additional constraints (optional)
-        reactions: list of str -- list of reactions to be minimized (optional, default: all)
-        solver : Solver -- solver instance instantiated with the model, for speed (optional)
+        model (CBModel): a constraint-based model
+        objective (dict): objective coefficients (optional)
+        minimize (bool): sense of optimization (maximize by default)
+        constraints (dict: environmental or additional constraints (optional)
+        reactions (list): list of reactions to be minimized (optional, default: all)
+        solver (Solver): solver instance instantiated with the model, for speed (optional)
        
     Returns:
-        Solution -- solution
+        Solution: solution
     """
 
     if not solver:
@@ -111,6 +111,20 @@ def pFBA(model, objective=None, minimize=False, constraints=None, reactions=None
 
 
 def looplessFBA(model, objective=None, minimize=False, constraints=None, internal=None, solver=None, get_values=True):
+    """ Run loopless FBA simulation (aka Energy Balance Analysis as defined in Beard et al, 2002):
+    
+    Arguments:
+        model (CBModel): a constraint-based model
+        objective (dict): objective coefficients (optional)
+        minimize (bool): sense of optimization (maximize by default)
+        constraints (dict: environmental or additional constraints (optional)
+        internal (list): list of internal reactions (optional)
+        solver (Solver): solver instance instantiated with the model, for speed (optional)
+        get_values (bool): set to false for speedup if you only care about the objective value (optional, default: True)
+       
+    Returns:
+        Solution: solution
+    """
 
     M = 1e4
 
@@ -167,13 +181,13 @@ def MOMA(model, reference=None, constraints=None, solver=None):
     """ Run a Minimization Of Metabolic Adjustment (MOMA) simulation:
     
     Arguments:
-        model : CBModel -- a constraint-based model
-        reference : dict (of str to float) -- reference flux distribution (optional)
-        constraints: dict (of str to (float, float)) -- environmental or additional constraints (optional)
-        solver : Solver -- solver instance instantiated with the model, for speed (optional)
+        model (CBModel): a constraint-based model
+        reference (dict): reference flux distribution (optional)
+        constraints (dict): environmental or additional constraints (optional)
+        solver (Solver): solver instance instantiated with the model, for speed (optional)
        
     Returns:
-        Solution -- solution
+        Solution: solution
     """
 
     if not reference:
@@ -195,13 +209,13 @@ def lMOMA(model, reference=None, constraints=None, solver=None):
     """ Run a (linear version of) Minimization Of Metabolic Adjustment (lMOMA) simulation:
     
     Arguments:
-        model : CBModel -- a constraint-based model
-        reference : dict (of str to float) -- reference flux distribution (optional)
-        constraints: dict (of str to (float, float)) -- environmental or additional constraints (optional)
-        solver : Solver -- solver instance instantiated with the model, for speed (optional)
+        model (CBModel): a constraint-based model
+        reference (dict): reference flux distribution (optional)
+        constraints (dict): environmental or additional constraints (optional)
+        solver (Solver): solver instance instantiated with the model, for speed (optional)
        
     Returns:
-        Solution -- solution
+        Solution: solution
     """
 
     if not reference:
@@ -246,15 +260,15 @@ def ROOM(model, reference=None, constraints=None, solver=None, delta=0.03, epsil
     """ Run a Regulatory On/Off Minimization (ROOM) simulation:
     
     Arguments:
-        model : CBModel -- a constraint-based model
-        reference : dict (of str to float) -- reference flux distribution (optional)
-        constraints: dict (of str to (float, float)) -- environmental or additional constraints (optional)
-        solver : Solver -- solver instance instantiated with the model, for speed (optional)
-        delta : float -- relative tolerance (default: 0.03)
-        epsilon : float -- absolute tolerance (default: 0.001)
+        model (CBModel): a constraint-based model
+        reference (dict): reference flux distribution (optional)
+        constraints (dict): environmental or additional constraints (optional)
+        solver (Solver): solver instance instantiated with the model, for speed (optional)
+        delta (float): relative tolerance (default: 0.03)
+        epsilon (float): absolute tolerance (default: 0.001)
        
     Returns:
-        Solution -- solution
+        Solution: solution
     """
 
     U = 1e6;

@@ -1,5 +1,5 @@
 """ 
 Package for unit testing.
 
-@author: Daniel Machado, Kai Zhuang
+Authors: Daniel Machado, Kai Zhuang, Marta Matos
 """

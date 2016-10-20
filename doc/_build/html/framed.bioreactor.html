@@ -49,7 +49,7 @@
 <div class="section" id="module-framed.bioreactor.base">
 <span id="framed-bioreactor-base-module"></span><h2>framed.bioreactor.base module<a class="headerlink" href="#module-framed.bioreactor.base" title="Permalink to this headline">¶</a></h2>
 <p>This module defines the base classes used for modeling and analyzing bioreactors</p>
-<p>&#64;author: Kai Zhuang</p>
+<p>Author: Kai Zhuang</p>
 <dl class="class">
 <dt id="framed.bioreactor.base.Bioreactor">
 <em class="property">class </em><code class="descclassname">framed.bioreactor.base.</code><code class="descname">Bioreactor</code><span class="sig-paren">(</span><em>organisms=[]</em>, <em>metabolites=[]</em>, <em>id='Generic Bioreactor'</em>, <em>flow_rate_in=0</em>, <em>flow_rate_out=0</em>, <em>volume_max=None</em>, <em>Xfeed=None</em>, <em>Sfeed=None</em>, <em>deltaX=None</em>, <em>deltaS=None</em>, <em>initial_conditions=[]</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.bioreactor.base.Bioreactor" title="Permalink to this definition">¶</a></dt>
@@ -336,10 +336,8 @@ It is intended to provide legacy support for the name &#8220;dFBA&#8221;</p>
 <dl class="function">
 <dt id="framed.bioreactor.dfba.dFBA_combination">
 <code class="descclassname">framed.bioreactor.dfba.</code><code class="descname">dFBA_combination</code><span class="sig-paren">(</span><em>organisms</em>, <em>bioreactors</em>, <em>t0</em>, <em>tf</em>, <em>dt</em>, <em>initial_conditions=None</em>, <em>solver='dopri5'</em>, <em>verbose=False</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.bioreactor.dfba.dFBA_combination" title="Permalink to this definition">¶</a></dt>
-<dd><p>Run dFBA for all possible combinations of the given organisms and reactors.
-For example,</p>
-<blockquote>
-<div><p>given two organisms &#8220;ecoli&#8221; and &#8220;scerevisiae&#8221;, and two reactors &#8220;batch&#8221; and &#8220;fedbatch&#8221;,
+<dd><p>Run dFBA for all possible combinations of the given organisms and reactors.</p>
+<p>For example, given two organisms &#8220;ecoli&#8221; and &#8220;scerevisiae&#8221;, and two reactors &#8220;batch&#8221; and &#8220;fedbatch&#8221;,
 the call dFBA_combination([ecoli, scerevisiae], [batch, fedbatch], t0, ft, dt] will perform four simulations:</p>
 <blockquote>
 <div><ol class="arabic simple">
@@ -348,7 +346,6 @@ the call dFBA_combination([ecoli, scerevisiae], [batch, fedbatch], t0, ft, dt] w
 <li>scerevisiae in batch</li>
 <li>scerevisiae in fedbtach</li>
 </ol>
-</div></blockquote>
 </div></blockquote>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />

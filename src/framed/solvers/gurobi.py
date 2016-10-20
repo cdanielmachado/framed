@@ -1,7 +1,7 @@
 """
-Implementation of a Gurobi based solver interface.
+Implementation of a Gurobi solver interface.
 
-@author: Daniel Machado
+Author: Daniel Machado
 
 """
 
@@ -47,15 +47,16 @@ class GurobiSolver(Solver):
             
     def add_variable(self, var_id, lb=None, ub=None, vartype=VarType.CONTINUOUS, persistent=True, update_problem=True):
         """ Add a variable to the current problem.
-        
+
         Arguments:
-            var_id : str -- variable identifier
-            lb : float -- lower bound
-            ub : float -- upper bound
-            vartype : VarType -- variable type (default: CONTINUOUS)
-            persistent : bool -- if the variable should be reused for multiple calls (default: true)
-            update_problem : bool -- update problem immediately (default: True)
+            var_id (str): variable identifier
+            lb (float): lower bound
+            ub (float): upper bound
+            vartype (VarType): variable type (default: CONTINUOUS)
+            persistent (bool): if the variable should be reused for multiple calls (default: true)
+            update_problem (bool): update problem immediately (default: True)
         """
+
         lb = lb if lb is not None else -GRB.INFINITY
         ub = ub if ub is not None else GRB.INFINITY
 
@@ -75,15 +76,15 @@ class GurobiSolver(Solver):
             self.problem.update()
 
     def add_constraint(self, constr_id, lhs, sense='=', rhs=0, persistent=True, update_problem=True):
-        """ Add a variable to the current problem.
-        
+        """ Add a constraint to the current problem.
+
         Arguments:
-            constr_id : str -- constraint identifier
-            lhs : list [of (str, float)] -- variables and respective coefficients
-            sense : {'<', '=', '>'} -- default '='
-            rhs : float -- right-hand side of equation (default: 0)
-            persistent : bool -- if the variable should be reused for multiple calls (default: True)
-            update_problem : bool -- update problem immediately (default: True)
+            constr_id (str): constraint identifier
+            lhs (list): variables and respective coefficients
+            sense (str): constraint sense (any of: '<', '=', '>'; default '=')
+            rhs (float): right-hand side of equation (default: 0)
+            persistent (bool): if the variable should be reused for multiple calls (default: True)
+            update_problem (bool): update problem immediately (default: True)
         """
 
         grb_sense = {'=': GRB.EQUAL,
@@ -108,7 +109,7 @@ class GurobiSolver(Solver):
         """ Remove a variable from the current problem.
         
         Arguments:
-            var_id : str -- variable identifier
+            var_id (str): variable identifier
         """
         if var_id in self.var_ids:
             self.problem.remove(self.problem.getVarByName(var_id))
@@ -118,7 +119,7 @@ class GurobiSolver(Solver):
         """ Remove a constraint from the current problem.
         
         Arguments:
-            constr_id : str -- constraint identifier
+            constr_id (str): constraint identifier
         """
         if constr_id in self.constr_ids:
             self.problem.remove(self.problem.getConstrByName(constr_id))
@@ -134,36 +135,36 @@ class GurobiSolver(Solver):
         """ Solve an LP optimization problem.
 
         Arguments:
-            objective : dict (of str to float) -- reaction ids in the objective function and respective
-                        coefficients, the sense is maximization by default
-            model : CBModel -- model (optional, leave blank to reuse previous model structure)
-            minimize : bool -- minimization problem (default: True) set False to maximize
-            constraints : dict (of str to float or (float, float)) -- environmental or additional constraints (optional)
-            get_values : bool -- set to false for speedup if you only care about the objective value (optional, default: True)
-            get_shadow_prices : bool -- return shadow price information if available (optional, default: False)
-            get_reduced_costs : bool -- return reduced costs information if available (optional, default: False)
+            objective (dict): linear objective
+            minimize (bool): minimization problem (default: True)
+            model (CBModel): model (optional, leave blank to reuse previous model structure)
+            constraints (dict): additional constraints (optional)
+            get_values (bool): set to false for speedup if you only care about the objective value (default: True)
+            get_shadow_prices (bool): return shadow prices if available (default: False)
+            get_reduced_costs (bool): return reduced costs if available (default: False)
+
         Returns:
-            Solution
+            Solution: solution
         """
 
         return self._generic_solve(None, objective, minimize, model, constraints, get_values, get_shadow_prices, get_reduced_costs)
 
     def solve_qp(self, quad_obj, lin_obj, minimize=True, model=None, constraints=None, get_values=True,
                  get_shadow_prices=False, get_reduced_costs=False):
-        """ Solve an LP optimization problem.
+        """ Solve a QP optimization problem.
 
         Arguments:
-            quad_obj : dict (of (str, str) to float) -- map reaction pairs to respective coefficients
-            lin_obj : dict (of str to float) -- map single reaction ids to respective linear coefficients
-            model : CBModel -- model (optional, leave blank to reuse previous model structure)
-            minimize : bool -- minimization problem (default: True) set False to maximize
-            constraints : dict (of str to float or (float, float)) -- environmental or additional constraints (optional)
-            get_values : bool -- set to false for speedup if you only care about the objective value (optional, default: True)
-            get_shadow_prices : bool -- return shadow price information if available (default: False)
-            get_reduced_costs : bool -- return reduced costs information if available (default: False)
+            quad_obj (dict): quadradict objective
+            lin_obj (dict): linear objective
+            minimize (bool): minimization problem (default: True) set False to maximize
+            model (CBModel): model (optional, leave blank to reuse previous model structure)
+            constraints (dict): additional constraints (optional)
+            get_values (bool): set to false for speedup if you only care about the objective value (default: True)
+            get_shadow_prices (bool): return shadow prices if available (default: False)
+            get_reduced_costs (bool): return reduced costs if available (default: False)
 
         Returns:
-            Solution
+            Solution: solution
         """
 
 
@@ -239,8 +240,8 @@ class GurobiSolver(Solver):
         """ Set a parameter value for this optimization problem
 
         Arguments:
-            parameter : Parameter -- parameter type
-            value : float -- parameter value
+            parameter (Parameter): parameter type
+            value (float): parameter value
         """
 
         if parameter in parameter_mapping:
@@ -250,7 +251,19 @@ class GurobiSolver(Solver):
             raise Exception('Parameter unknown (or not yet supported).')
 
     def set_logging(self, enabled=False):
+        """ Enable or disable log output:
+
+        Arguments:
+            enabled (bool): turn logging on (default: False)
+        """
+
         self.problem.setParam('OutputFlag', 1 if enabled else 0)
 
     def write_to_file(self, filename):
+        """ Write problem to file:
+
+        Arguments:
+            filename (str): file path
+        """
+
         self.problem.write(filename)

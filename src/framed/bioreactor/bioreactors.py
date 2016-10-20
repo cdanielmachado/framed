@@ -42,9 +42,9 @@ class IdealBatch(Bioreactor_ox):
         Arguments:
             organisms: list of Organism
             metabolites: list of string
-            volume_max: float -- liquid capacity of the bioreactor
+            volume_max (float): liquid capacity of the bioreactor
             deltaX: custom defined terms to dX/dt [g/L/hr]
-            deltaS: list of float -- special custom defined terms to dX/dt [mmol/L/hr]
+            deltaS (list of float): special custom defined terms to dX/dt [mmol/L/hr]
             initial_conditions: list of float
         """
 
@@ -80,11 +80,11 @@ class IdealFedbatch(Bioreactor_ox):
         :param organisms: list of Organism
         :param metabolites: list of string
         :param Sfeed: concentration of metabolites in the feed stream [mmol/L]
-        :param primary_substrate: string -- usually the carbon & energy source.
-        :param volume_max: float -- liquid capacity of the bioreactor
+        :param primary_substrate (string): usually the carbon & energy source.
+        :param volume_max (float): liquid capacity of the bioreactor
         :param Xfeed: concentration of organisms in the feed stream [g/L]
         :param deltaX: custom defined terms to dX/dt [g/L/hr]
-        :param deltaS: list of float -- special custom defined terms to dX/dt [mmol/L/hr]
+        :param deltaS (list of float): special custom defined terms to dX/dt [mmol/L/hr]
         :param initial_conditions: list of float
         :return:
         """
@@ -106,7 +106,7 @@ class IdealFedbatch(Bioreactor_ox):
             - if liquid volume >= volume_max, then the tank is full, set flow_rate_in to zero
             - otherwise, calculate the flow rate so that d_substrate/dt = 0
 
-        :param time: float -- the simulation time.  can be used in subclasses to trigger time-specific events
+        :param time (float): the simulation time.  can be used in subclasses to trigger time-specific events
         """
         if self.volume_max and (self.V >= self.volume_max):
             self.flow_rate_in = 0

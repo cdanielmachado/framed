@@ -1,6 +1,8 @@
 """ 
 Package implementing all I/O methods for reading and writing models.
 
-@author: Daniel Machado
+Currently supports SBML files and an in-house plain text format.
+
+Author: Daniel Machado
    
 """

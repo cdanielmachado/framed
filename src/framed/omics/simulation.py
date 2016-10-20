@@ -1,3 +1,9 @@
+""" This module implements omics-based simulation methods. 
+
+Author: Daniel Machado
+
+"""
+
 from framed.solvers import solver_instance
 from framed.cobra.simulation import FBA, pFBA
 from numpy import percentile
@@ -31,6 +37,21 @@ def gene_to_reaction_expression(model, gene_exp, and_func=min, or_func=sum):
 
 
 def GIMME(model, gene_exp, cutoff=25, growth_frac=0.9, constraints=None, parsimonious=False):
+    """ Run a GIMME simulation (Becker and Palsson, 2008).
+
+    Arguments:
+        model (CBModel): model
+        gene_exp (dict): transcriptomics data
+        cutoff (int): percentile cuttof (default: 25)
+        growth_frac (float): minimum growth requirement (default: 0.9)
+        constraints (dict): additional constraints
+        parsimonious (bool): compute a parsimonious solution (default: False)
+
+    Returns:
+        Solution: solution
+    """
+
+
     rxn_exp = gene_to_reaction_expression(model, gene_exp, or_func=max)
     threshold = percentile(rxn_exp.values(), cutoff)
     coeffs = {r_id: threshold-val for r_id, val in rxn_exp.items() if val < threshold}
@@ -92,6 +113,19 @@ def GIMME(model, gene_exp, cutoff=25, growth_frac=0.9, constraints=None, parsimo
 
 
 def eflux(model, gene_exp, scale_rxn, scale_value, constraints=None, parsimonious=False):
+    """ Run an E-Flux simulation (Colijn et al, 2009).
+
+    Arguments:
+        model (CBModel): model
+        gene_exp (dict): transcriptomics data
+        scale_rxn (str): reaction to scale flux vector
+        scale_value (float): scaling factor
+        constraints (dict): additional constraints
+        parsimonious (bool): compute a parsimonious solution (default: False)
+
+    Returns:
+        Solution: solution
+    """
 
     rxn_exp = gene_to_reaction_expression(model, gene_exp)
     max_exp = max(rxn_exp.values())

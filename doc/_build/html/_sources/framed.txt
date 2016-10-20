@@ -6,17 +6,15 @@ Subpackages
 
 .. toctree::
 
-    framed.analysis
     framed.bioreactor
-    framed.core
-    framed.design
+    framed.cobra
     framed.experimental
-    framed.io_utils
+    framed.io
     framed.kinetic
+    framed.model
     framed.omics
-    framed.reconstruction
     framed.solvers
-    framed.tests
+    framed.unittests
 
 Module contents
 ---------------

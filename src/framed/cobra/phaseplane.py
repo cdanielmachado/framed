@@ -2,10 +2,9 @@
 This module implements the Phenotype Phase Plane Analysis.
 (Edwards et al. 2001, Characterizing the metabolic phenotype: A phenotype phase plane analysis)
 
-@author: Kai Zhuang
+Author: Kai Zhuang
 
 """
-__author__ = 'kaizhuang'
 
 from simulation import FBA
 from ..solvers import solver_instance
@@ -109,15 +108,18 @@ def PhPP(model, rxn_x, rxn_y, rxn_x_range, rxn_y_range, target=None, maximize=Tr
     Phenotype Phase Plane Analysis
     analyze the changes in the objective function and the shadow prices
 
-    :param model: CBModel -- the metabolic model
-    :param rxn_x: str -- reaction to be plotted along x axis.  must be of a type convertable to numpy.array
-    :param rxn_y: str -- reaction to be plotted along y axis.  must be of a type convertable to numpy.array
-    :param rxn_x_range: list or array -- the range of the reaction x
-    :param rxn_y_range: list or array -- the range of the reaction y
-    :param target: str -- the  reaction id of the optimization target.
-                   if None is included, it will attempt to detect the biomass function
-    :param maximize: True or False. the sense of the optimization
-    :return: phaseplane
+    Arguments:
+        model (CBModel): the metabolic model
+        rxn_x (str): reaction to be plotted along x axis.  must be of a type convertable to numpy.array
+        rxn_y (str): reaction to be plotted along y axis.  must be of a type convertable to numpy.array
+        rxn_x_range (list or array): the range of the reaction x
+        rxn_y_range (list or array): the range of the reaction y
+        target (str): the  reaction id of the optimization target.
+                       if None is included, it will attempt to detect the biomass function
+        maximize: True or False. the sense of the optimization
+    
+    Returns:
+        phaseplane
     """
     solver = solver_instance(model)
 

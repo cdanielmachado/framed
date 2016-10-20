@@ -1,4 +1,9 @@
-__author__ = 'daniel'
+"""
+This module implements time-course and steady-state simulation for kinetic models.
+
+Author: Daniel Machado
+"""
+
 
 from numpy import linspace, array, dot, isnan
 from numpy.linalg import norm
@@ -7,7 +12,22 @@ from collections import OrderedDict
 from warnings import warn
 
 
-def simulate(model, time=0, steps=100, t_steps=None, parameters=None, compute_rates=False, integrator_args=None):
+def simulate(model, time, steps=100, t_steps=None, parameters=None, compute_rates=False, integrator_args=None):
+    """ Perform a time-course simulation using a kinetic model.
+
+    Args:
+        model (ODEModel): kinetic model
+        time (float): final simulation time
+        steps (int): number of simulations steps (default: 100)
+        t_steps (list): list of exact time steps to evaluate (optional)
+        parameters (dict): override model parameters (optional)
+        compute_rates (bool): also compute time-course profile of reaction rates (default: False)
+        integrator_args (dict): additional parameters to pass along to scipy odeint integrator
+
+    Returns:
+        tuple: time steps, metabolite concentrations[, reaction rates (optional)]
+
+    """
     r = OrderedDict()
     f = model.get_ode(r, parameters)
     f2 = lambda x, t: f(t, x)
@@ -54,6 +74,18 @@ def simulate(model, time=0, steps=100, t_steps=None, parameters=None, compute_ra
 
 
 def find_steady_state(model, parameters=None, endtime=1e9, abstol=1e-6):
+    """ Finds a steady-state flux distribution for a kinetic model
+
+    Args:
+        model (ODEModel): kinetic model
+        parameters (dict): override model parameters
+        endtime (float): final integration time (default: 1e9)
+        abstol (float): maximum tolerance for norm(S*v)
+
+    Returns:
+        dict: steady-state flux distribution
+
+    """
 
     _, X, v_ss = simulate(model, t_steps=[0, endtime], parameters=parameters, compute_rates=True)
 

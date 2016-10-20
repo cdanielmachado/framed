@@ -1,7 +1,7 @@
 """
-Package implementing interfaces to common solvers.
+Package implementing interfaces to linear programming solvers.
 
-@author: Daniel Machado
+Author: Daniel Machado, Marta Matos
 
 """
 

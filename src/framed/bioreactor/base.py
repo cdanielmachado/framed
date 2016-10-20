@@ -1,6 +1,6 @@
 """ This module defines the base classes used for modeling and analyzing bioreactors
 
-@author: Kai Zhuang
+Author: Kai Zhuang
 
 """
 __author__ = 'kaizhuang'
@@ -21,9 +21,9 @@ class Organism(object):
     def __init__(self, model, id=None, fba_objective=None, fba_constraints={}, model_deepcopy=True):
         """
         :param model: the mathematical model of the organism
-        :param fba_objective: dict -- the FBA objective function.  (only useful if model is a FBA model)
-        :param fba_constraints: dict -- none standard FBA constraints.  This can be useful for creating knockout strains
-        :param model_deepcopy: bool -- if True, a deepcopy of the model will be created inside the Organism instance,
+        :param fba_objective (dict): the FBA objective function.  (only useful if model is a FBA model)
+        :param fba_constraints (dict): none standard FBA constraints.  This can be useful for creating knockout strains
+        :param model_deepcopy (bool): if True, a deepcopy of the model will be created inside the Organism instance,
                                         otherwise, a reference of the model will be created
         :return: none
         """
@@ -55,7 +55,7 @@ class Organism(object):
             the metabolite concentrations.
 
         ** this is an abstract method, must be implemented in strain specific subclasses **
-         """
+        """
 
         raise NotImplementedError
 
@@ -125,7 +125,7 @@ class DynamicSystem(object):
         :param t0: initial time
         :param tf: final time
         :param dt: time step
-        :param initial_conditions: array-like -- initial conditions of the ODE system
+        :param initial_conditions (array-like): initial conditions of the ODE system
         :param solver: the designated solver
         :return:
         """
@@ -190,11 +190,11 @@ class Bioreactor(Environment, DynamicSystem):
         :param metabolites: list of string
         :param flow_rate_in:
         :param flow_rate_out:
-        :param volume_max: float -- liquid capacity of the bioreactor
+        :param volume_max (float): liquid capacity of the bioreactor
         :param Xfeed: concentration of organisms in the feed stream [g/L]
         :param Sfeed: concentration of metabolites in the feed stream [mmol/L]
         :param deltaX: custom defined terms to dX/dt [g/L/hr]
-        :param deltaS: list of float -- special custom defined terms to dX/dt [mmol/L/hr]
+        :param deltaS (list of float): special custom defined terms to dX/dt [mmol/L/hr]
         :param initial_conditions: list of float
         :return:
         """

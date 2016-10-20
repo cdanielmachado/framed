@@ -1,6 +1,6 @@
 """ This module implements some naive strain design methods.
 
-@author: Daniel Machado
+Author: Daniel Machado
 
 """
 
@@ -18,16 +18,16 @@ def combinatorial_gene_deletion(model, objective, max_dels, targets=None, method
     """ Compute solutions for a set of combinatorial gene deletions.
 
     Arguments:
-        model : CBModel -- model
-        fobj : function -- optimization objective function
-        max_dels : maximum number of deletions
-        method : str -- simulation method: FBA (default) or MOMA
-        targets : list (of str) -- deletion targets (default: all)
-        min_growth : float -- minimum fraction of growth rate to consider a deletion non-letal (default: 0.01)
-        abstol : float -- minimum objective function value (default: 1e-4)
+        model (CBModel): model
+        fobj (function): optimization objective function
+        max_dels (int) : maximum number of deletions
+        method (str): simulation method: FBA (default) or pFBA, MOMA, lMOMA, ROOM, etc.
+        targets (list): deletion targets (default: all)
+        min_growth (float): minimum fraction of growth rate to consider a deletion non-letal (default: 0.01)
+        abstol (float): minimum objective function value (default: 1e-3)
 
     Returns:
-        list (of (list of str, float)) -- valid solutions
+        list: solutions
     """
 
     return combinatorial_deletion(model, objective, max_dels, 'genes', targets, method, reference, min_growth, abstol)
@@ -38,16 +38,16 @@ def combinatorial_reaction_deletion(model, objective, max_dels, targets=None, me
     """ Compute solutions for a set of combinatorial reaction deletions.
 
     Arguments:
-        model : CBModel -- model
-        fobj : function -- optimization objective function
-        max_dels : maximum number of deletions
-        method : str -- simulation method: FBA (default) or MOMA
-        targets : list (of str) -- deletion targets (default: all)
-        min_growth : float -- minimum fraction of growth rate to consider a deletion non-letal (default: 0.01)
-        abstol : float -- minimum objective function value (default: 1e-4)
+        model (CBModel): model
+        fobj (function): optimization objective function
+        max_dels (int): maximum number of deletions
+        method (str): simulation method: FBA (default) or pFBA, MOMA, lMOMA, ROOM, etc.
+        targets (list (of str)): deletion targets (default: all)
+        min_growth (float): minimum fraction of growth rate to consider a deletion non-letal (default: 0.01)
+        abstol (float): minimum objective function value (default: 1e-3)
 
     Returns:
-        list (of (list of str, float)) -- valid solutions
+        list: solutions
     """
 
     return combinatorial_deletion(model, objective, max_dels, 'reactions', targets, method, reference, min_growth,
@@ -59,17 +59,17 @@ def combinatorial_deletion(model, fobj, max_dels, kind='reactions', targets=None
     """ Generic interface for computing for a set of combinatorial gene or reaction deletions.
 
     Arguments:
-        model : CBModel -- model
-        fobj : function -- optimization objective function
-        max_dels : maximum number of deletions
-        kind : str -- genes or reactions (default)
-        method : str -- simulation method: FBA (default) or MOMA
-        targets : list (of str) -- deletion targets (default: all)
-        min_growth : float -- minimum fraction of growth rate to consider a deletion non-letal (default: 0.01)
-        abstol : float -- minimum objective function value (default: 1e-4)
+        model (CBModel): model
+        fobj (function): optimization objective function
+        max_dels (int): maximum number of deletions
+        kind (str): genes or reactions (default)
+        method (str): simulation method: FBA (default) or pFBA, MOMA, lMOMA, ROOM, etc.
+        targets (list (of str)): deletion targets (default: all)
+        min_growth (float): minimum fraction of growth rate to consider a deletion non-letal (default: 0.01)
+        abstol (float): minimum objective function value (default: 1e-3)
 
     Returns:
-        list (of (list of str, float)) -- valid solutions
+        list: solutions
     """
 
     if kind == 'genes':
@@ -117,17 +117,17 @@ def greedy_deletion(model, fobj, max_dels, kind='reactions', targets=None, metho
     """ Generic interface for finding an optimal set of gene or reaction deletions using a greedy approach.
 
     Arguments:
-        model : CBModel -- model
-        objective : dict (of str to float) -- optimization objective (reaction ids and coefficients)
-        max_dels : maximum number of deletions
-        kind : str -- genes or reactions (default)
-        method : str -- simulation method: FBA (default) or MOMA
-        targets : list (of str) -- deletion targets (default: all)
-        min_growth : float -- minimum percentage of growth rate to consider a deletion non-letal (default: 0.01)
-        abstol : float -- minimum objective function value (default: 1e-4)
+        model (CBModel): model
+        fobj (function): optimization objective function
+        max_dels (int): maximum number of deletions
+        kind (str): genes or reactions (default)
+        method (str): simulation method: FBA (default) or pFBA, MOMA, lMOMA, ROOM, etc.
+        targets (list): deletion targets (default: all)
+        min_growth (float): minimum percentage of growth rate to consider a deletion non-letal (default: 0.01)
+        abstol (float): minimum objective function value (default: 1e-4)
 
     Returns:
-        list (of (list of str, float)) -- valid solutions
+        list: solutions
     """
 
     if kind == 'genes':

@@ -1,12 +1,12 @@
-from framed.model.model import Reaction
-from framed.model.cbmodel import CBModel
-from uuid import uuid4
-
 """ Implementation of the conjunctive reduction method proposed in:
 
 Machado, D, et al. (2010) "Model transformation of metabolic networks using a Petri net based framework."
 International Workshop on Biological Processes & Petri Nets (BioPPN).
 """
+
+from framed.model.model import Reaction
+from framed.model.cbmodel import CBModel
+from uuid import uuid4
 
 
 def balanced_model_reduction(model, metabolites, fluxes, must_keep=None, max_degree=None, clean_null_fluxes=True,

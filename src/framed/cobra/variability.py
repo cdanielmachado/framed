@@ -1,6 +1,6 @@
-""" This module implements flux variability analysis methods.
+""" This module implements a few flux variability analysis methods.
 
-@author: Daniel Machado, Kai Zhuang
+Authors: Daniel Machado, Kai Zhuang
 
 """
 
@@ -15,12 +15,16 @@ def FVA(model, obj_percentage=0, reactions=None, constraints=None, loopless=Fals
     """ Run Flux Variability Analysis (FVA).
     
     Arguments:
-        model : CBModel -- a constraint-based model
-        obj_percentage : float -- minimum percentage of growth rate (default 0.0, max: 1.0)
-        reactions : list (of str) -- list of reactions to analyze (default: all)
+        model (CBModel): a constraint-based model
+        obj_percentage (float): minimum percentage of growth rate (default 0.0, max: 1.0)
+        reactions (list): list of reactions to analyze (default: all)
+        constraints (dict): additional constraints (optional)
+        loopless (bool): run looplessFBA internally (very slow) (default: false)
+        internal (list): list of internal reactions for looplessFBA (optional)
+        solver (Solver): pre-instantiated solver instance (optional)
         
     Returns:
-        dict (of str to (float, float)) -- flux variation ranges
+        dict: flux variation ranges
     """
 
     _constraints = {}
@@ -79,10 +83,11 @@ def blocked_reactions(model, abstol=1e-9):
     """ Find all blocked reactions in a model
     
     Arguments:
-        model : CBModel -- a constraint-based model
+        model (CBModel): a constraint-based model
+        abstol (float): absolute tolerance (default: 1e-9)
         
     Returns:
-        list (of str) -- blocked reactions
+        list: blocked reactions
     """
 
     variability = FVA(model)
@@ -95,14 +100,14 @@ def flux_envelope(model, r_x, r_y, steps=10, constraints=None):
     """ Calculate the flux envelope for a pair of reactions.
 
     Arguments:
-        model : CBModel -- the model
-        r_x : str -- reaction on x-axis
-        r_y : str -- reaction on y-axis
-        steps : int -- number of steps to compute (default: 10)
-        constraints : dict -- custom constraints to the FBA problem
+        model (CBModel): the model
+        r_x (str): reaction on x-axis
+        r_y (str): reaction on y-axis
+        steps (int): number of steps to compute (default: 10)
+        constraints (dict): custom constraints to the FBA problem
 
     Returns:
-        list (of float), list (of float), list (of float) -- x values, y min values, y max values
+        tuple: x values, y min values, y max values
     """
 
     x_range = FVA(model, reactions=[r_x], constraints=constraints)
@@ -128,14 +133,14 @@ def production_envelope(model, r_target, r_biomass=None, steps=10, constraints=N
     """ Calculate the production envelope of the target reaction
 
     Arguments:
-        model : CBModel -- the model
-        r_target: str -- the target reaction id
-        steps: int -- number of steps along the envelope to be calculated (default: 10)
-        r_biomass: str -- the biomass reaction id (default: None)
-        constraints : dict -- custom constraints to the FBA problem
+        model (CBModel): the model
+        r_target (str): the target reaction id
+        steps (int): number of steps along the envelope to be calculated (default: 10)
+        r_biomass (str): the biomass reaction id (optional)
+        constraints (dict): custom constraints to the FBA problem
 
     Returns:
-        list (of float), list (of float), list (of float) -- biomass values, target minimum values, target maximum values
+        tuple: biomass values, target minimum values, target maximum values
     """
     if not r_biomass:
         r_biomass = model.detect_biomass_reaction()
@@ -147,15 +152,15 @@ def flux_envelope_3d(model, r_x, r_y, r_z, steps=10, constraints=None):
     """ Calculate the flux envelope for a triplet of reactions.
 
     Arguments:
-        model : CBModel -- the model
-        r_x : str -- reaction on x-axis
-        r_y : str -- reaction on y-axis
-        r_z : str -- reaction on z-axis
-        steps : int -- number of steps to compute along both x and y axis (default: 10)
-        constraints : dict -- custom constraints to the FBA problem
+        model (CBModel): the model
+        r_x (str): reaction on x-axis
+        r_y (str): reaction on y-axis
+        r_z (str): reaction on z-axis
+        steps (int): number of steps to compute along both x and y axis (default: 10)
+        constraints (dict): custom constraints to the FBA problem
 
     Returns:
-        list (of float), list (of float), list (of float), list (of float) -- z min values, z max values, x coordinates, y coordinates
+        tuple: z min values, z max values, x coordinates, y coordinates
     """
 
     xvals, ymins, ymaxs = flux_envelope(model, r_x, r_y, steps, constraints)

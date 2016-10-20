@@ -1,11 +1,31 @@
+"""
+This module implements kinetic model calibration methods.
+
+Author: Daniel Machado
+"""
+
+
 from framed.kinetic.simulation import simulate
 from numpy import array, sum, isfinite
 from scipy.optimize import minimize
 
-__author__ = 'daniel'
-
 
 def fit_from_metabolomics(model, t_steps, data, parameters=None, bounds=None, method=None, update_model=False):
+    """ Fit model parameters using time-course metabolomics data
+
+    Args:
+        model (ODEModel): kinetic model
+        t_steps (list): measured time steps
+        data (list): metabolomics data in matrix format (nested list or numpy array)
+        parameters (list): specify list of parameters to be calibrated (optional, default: all)
+        bounds (list): list of bounds for each parameter (optional, default: (0, None))
+        method (str): optimization method (optional, see `scipy.optimize.minimize` for details)
+        update_model (bool): automatically update model with new parameters (default: False)
+
+    Returns:
+        dict: fitted parameters
+
+    """
 
     model_params = model.get_parameters(exclude_compartments=True)
     if parameters:

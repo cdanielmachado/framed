@@ -1,6 +1,6 @@
-""" This module implements methods for reading and writing models from a plain text format.
+""" This module implements methods for reading and writing models using a plain text format.
 
-@author: Daniel Machado
+Author: Daniel Machado
 
 """
 
@@ -45,11 +45,11 @@ def read_model_from_file(filename, kind=None):
     """ Reads a model from a file.
     
     Arguments:
-        filename : str -- file path
-        kind: None or 'cb' -- define kind of model to read (optional)
+        filename (str): file path
+        kind (str): define kind of model to read (None or 'cb', optional)
 
     Returns:
-        Model -- simple model or subclass
+        Model: model (or respective subclass)
     """
 
     try:
@@ -78,8 +78,8 @@ def add_reaction_from_str(model, reaction_str):
     """ Parse a reaction from a string and add it to the model.
     
     Arguments:
-        model : Model -- model
-        reaction_str: str -- string representation a the reaction
+        model (Model): model
+        reaction_str (str): string representation a the reaction
     """
 
     match = regex_reaction.match(reaction_str)
@@ -134,22 +134,26 @@ def _parse_bounds(expression, reversible):
 
     return lb, ub
 
+
 def _parse_objective(expression):
     obj = 0
     if expression:
         obj = float(expression[1:])
     return obj
 
-def write_model_to_file(model, filename):
+
+def write_model_to_file(model, filename, print_instructions=True):
     """ Writes a model to a file.
     
     Arguments:
-        model: Model -- Model (or CBModel)
-        filename : str -- file path
+        model (Model): model (currently supports Model and CBModel)
+        filename (str): file path
+        print_instructions (bool): print plain text format instructions as header
     """
     try:
         with open(filename, 'w') as stream:
-            stream.write(INSTRUCTIONS)
+            if print_instructions:
+                stream.write(INSTRUCTIONS)
             stream.write(str(model))
     except Exception as e:
         print e

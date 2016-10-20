@@ -1,6 +1,6 @@
 """ This module implements the method to find and fill gaps in the network
 
-@author: Marta Matos
+Author: Marta Matos
 
 """
 
@@ -215,12 +215,12 @@ def GapFill(model, reactions_db, solver, output_reaction, flux_ouput, DB_type, t
 
     Arguments:
         model : a constraint based model
-        reactions_db: str -- name of the constraint based model to be used
+        reactions_db (str): name of the constraint based model to be used
                      as a reference database (supposed to be temporary) in
                      sbml or plain text format
         solver : a solver instance
-        biomass_output : float -- the amount of biomass that should be produced
-        DB_type : str -- either 'sbml' or 'txt', depending on the format the
+        biomass_output (float): the amount of biomass that should be produced
+        DB_type (str): either 'sbml' or 'txt', depending on the format the
                   reactions_db file is in
 
     Returns:
@@ -294,7 +294,7 @@ def extend_model_with_DB_SBML(model, reactionsDB):
 
     Arguments:
         model : the constraint based model to be extended
-        reactions : String -- SBML file path for the reactionsDB model
+        reactionsDB (str): SBML file path for the reactionsDB model
 
     Returns:
         model: the given model extended with the database reactions/metabolites
@@ -334,7 +334,7 @@ def extend_model_with_DB_plainText(model, reactionsDB):
 
     Arguments:
         model : the constraint based model to be extended
-        reactions : String -- plain text file path for the reactionsDB model
+        reactionsDB (str): plain text file path for the reactionsDB model
 
     Returns:
         model: the given model extended with the database reactions/metabolites

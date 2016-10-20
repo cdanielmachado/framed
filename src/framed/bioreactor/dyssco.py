@@ -21,14 +21,14 @@ def make_envelope_strains(base_organism, r_substrate, r_target, N=10, constraint
         (Used for Steps 1 and 2 of DySScO strategy)
 
     Arguments:
-        base_organism: Organism -- the host organism used to product the target product
-        r_substrate: str -- the rxn id of the substrate
-        r_target: str -- the rxn id of the target product
-        N: int -- the number of strains to be generated along the production envelope
-        constraints: dict -- custom constraints
+        base_organism (Organism): the host organism used to product the target product
+        r_substrate (str): the rxn id of the substrate
+        r_target (str): the rxn id of the target product
+        N (int): the number of strains to be generated along the production envelope
+        constraints (dict): custom constraints
 
     Returns:
-        strains: list of Organism -- N strains that are fixed to the production envelope
+        strains (list of Organism): N strains that are fixed to the production envelope
     """
     strains = []
 
@@ -67,21 +67,21 @@ def calculate_performances(strains, bioreactor, r_substrate, r_target, t0, tf, d
     Arguments:
         strains: list (of Organism)
         bioreactor: Bioreactor
-        r_substrate: str -- reaction id of the substrate uptake reaction
-        r_target: str -- reaction id of the target metabolite exchange reaction
-        t0: float -- initial time
-        tf: float -- final time
-        dt: float -- time step
-        initial_conditions: list (of float) -- the initial conditions in the order of V0, X0, S0 (default: None)
-        dfba_solver: str -- ODE solver.  (default: 'dopri5')
-        additional_yields: list (of str) -- the reaction ids of the additional yields (yields other than target yield)
+        r_substrate (str): reaction id of the substrate uptake reaction
+        r_target (str): reaction id of the target metabolite exchange reaction
+        t0 (float): initial time
+        tf (float): final time
+        dt (float): time step
+        initial_conditions (list (of float)): the initial conditions in the order of V0, X0, S0 (default: None)
+        dfba_solver (str): ODE solver.  (default: 'dopri5')
+        additional_yields (list (of str)): the reaction ids of the additional yields (yields other than target yield)
                                             to be calculated.
-        verbose: bool -- Verbosity control.  (default: False).
-        save_dfba_solution: bool -- controls whether dfba solutions are returned (default: False)
-        func_dfba2yield: function -- if None, yield is calculated from FBA solutions.
+        verbose (bool): Verbosity control.  (default: False).
+        save_dfba_solution (bool): controls whether dfba solutions are returned (default: False)
+        func_dfba2yield (function): if None, yield is calculated from FBA solutions.
                                      if a function is passed in, yield is calculated from dFBA solutions.
     Returns:
-        performances: list (of Dict) -- a list of dictionaries, each entry contains the calculated performance metrics
+        performances (list (of Dict)): a list of dictionaries, each entry contains the calculated performance metrics
         of a strain
     """
 
@@ -104,20 +104,20 @@ def calculate_performance(strain, bioreactor, r_substrate, r_target, t0, tf, dt,
     Arguments:
         strain: Organism
         bioreactor: Bioreactor
-        r_substrate: str -- reaction id of the substrate uptake reaction
-        r_target: str -- reaction id of the target metabolite exchange reaction
-        t0: float -- initial time
-        tf: float -- final time
-        dt: float -- time step
-        initial_conditions: list (of float) -- the initial conditions in the order of V0, X0, S0 (default: None)
-        dfba_solver: str -- ODE solver.  (default: 'dopri5')
-        additional_yields: list (of str) -- the reaction ids of the additional yields (yields other than target yield)
+        r_substrate (str): reaction id of the substrate uptake reaction
+        r_target (str): reaction id of the target metabolite exchange reaction
+        t0 (float): initial time
+        tf (float): final time
+        dt (float): time step
+        initial_conditions (list (of float)): the initial conditions in the order of V0, X0, S0 (default: None)
+        dfba_solver (str): ODE solver.  (default: 'dopri5')
+        additional_yields (list (of str)): the reaction ids of the additional yields (yields other than target yield)
                                             to be calculated.
-        verbose: bool -- Verbosity control.  (default: False).
-        save_dfba_solution: bool -- controls whether dfba solutions are returned (default: False)
+        verbose (bool): Verbosity control.  (default: False).
+        save_dfba_solution (bool): controls whether dfba solutions are returned (default: False)
 
     Returns:
-        performance: Dict -- contains the calculated performance metrics of a strain
+        performance (Dict): contains the calculated performance metrics of a strain
     """
     performance = {'strain_id': strain.id}
     r_biomass = strain.model.detect_biomass_reaction()

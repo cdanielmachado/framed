@@ -15,12 +15,12 @@ def essential_genes(model, min_growth=0.01, constraints=None):
     """ Compute the set of essential genes.
     
     Arguments:
-        model : CBModel -- model
-        min_growth : float -- minimum fraction of growth rate to consider a deletion non-letal (default: 0.01)
-        constraints: dict (of str to float) -- environmental or additional constraints (optional)
+        model (CBModel): model
+        min_growth (float): minimum fraction of growth rate to consider a deletion non-letal (default: 0.01)
+        constraints (dict): environmental or additional constraints (optional)
 
     Returns:
-        list (of str) -- essential genes
+        list: essential genes
     """
     return essentiality(model, 'genes', min_growth, constraints)
 
@@ -29,12 +29,12 @@ def essential_reactions(model, min_growth=0.01, constraints=None):
     """ Compute the set of essential reactions.
     
     Arguments:
-        model : CBModel -- model
-        min_growth : float -- minimum fraction of growth rate to consider a deletion non-letal (default: 0.01)
-        constraints: dict (of str to float) -- environmental or additional constraints (optional)
+        model (CBModel): model
+        min_growth (float): minimum fraction of growth rate to consider a deletion non-letal (default: 0.01)
+        constraints (dict): environmental or additional constraints (optional)
 
     Returns:
-        list (of str) -- essential reactions
+        list: essential reactions
     """
 
     return essentiality(model, 'reactions', min_growth, constraints)
@@ -44,13 +44,13 @@ def essentiality(model, kind='reactions', min_growth=0.01, constraints=None):
     """ Generic interface for computing gene or reaction essentiality.
     
     Arguments:
-        model : CBModel -- model
-        kind : str -- genes or reactions (default)
-        min_growth : float -- minimum fraction of growth rate to consider a deletion non-letal (default: 0.01)
-        constraints: dict (of str to float) -- environmental or additional constraints (optional)
+        model (CBModel): model
+        kind (str): genes or reactions (default: reactions)
+        min_growth (float): minimum fraction of growth rate to consider a deletion non-letal (default: 0.01)
+        constraints (dict): environmental or additional constraints (optional)
 
     Returns:
-        list (of str) -- essential elements
+        list: essential elements
     """
 
     solver = solver_instance(model)

@@ -1,11 +1,10 @@
 """
-Implementation of a Glpk based solver interface with lazy loading only
-for buil_problem().
+Implementation of a Glpk based solver interface.
 
-@author: Marta Matos
+Author: Marta Matos
    
-   Note: to use this wrapper you need python-glpk, the instructions to 
-   install it on Mac OS can be found on the framed/misc folder
+Note: to use this wrapper you need python-glpk, the instructions to 
+install it on Mac OS can be found on the misc folder
 """
 
 import tempfile
@@ -24,7 +23,6 @@ status_mapping = {GLP_OPT: Status.OPTIMAL,
 
 
 class GlpkSolver(Solver):
-
     """ Implements the solver interface using python-GLPK. """
 
     def __init__(self, tol_int=1e-9, time_limit=None):
@@ -55,22 +53,6 @@ class GlpkSolver(Solver):
         # glpk does not print any output
         glp_term_out(GLP_OFF)
 
-    def __getstate__(self):
-        tmp_file = tempfile.mktemp(suffix=".lp")
-        glp_write_lp(self.problem, None, tmp_file)
-        cplex_form = open(tmp_file).read()
-        repr_dict = {'var_ids': self.var_ids, 'constr_ids':
-                     self.constr_ids, 'cplex_form': cplex_form}
-        return repr_dict
-
-    def __setstate__(self, repr_dict):
-        self.__init__()
-        tmp_file = tempfile.mktemp(suffix=".lp")
-        open(tmp_file, 'w').write(repr_dict['cplex_form'])
-        glp_read_lp(self.problem, None, tmp_file)
-        glp_create_index(self.problem)
-        self.var_ids = repr_dict['var_ids']
-        self.constr_ids = repr_dict['constr_ids']
 
     def build_problem(self, model):
         """ Create problem structure for a given model.
@@ -92,13 +74,12 @@ class GlpkSolver(Solver):
         """ Add a variable to the current problem.
 
         Arguments:
-            var_id : str -- variable identifier
-            lb : float -- lower bound
-            ub : float -- upper bound
-            vartype : VarType -- variable type (default: CONTINUOUS)
-            persistent : bool -- if the variable should be reused for multiple calls (default: true)
-            update_problem : bool -- update problem immediately (default: True). update_problem is not
-                              used in glpk, it is kept only for compatibility with the gurobi wrapper
+            var_id (str): variable identifier
+            lb (float): lower bound
+            ub (float): upper bound
+            vartype (VarType): variable type (default: CONTINUOUS)
+            persistent (bool): if the variable should be reused for multiple calls (default: true)
+            update_problem (bool): update problem immediately (not supported in GLPK interface)
         """
 
         var_type_mapping = {VarType.BINARY: GLP_BV,
@@ -124,12 +105,12 @@ class GlpkSolver(Solver):
         """ Add a constraint to the current problem.
 
         Arguments:
-            constr_id : str -- constraint identifier
-            lhs : list [of (str, float)] -- variables and respective coefficients
-            sense : {'<', '=', '>'} -- default '='
-            rhs : float -- right-hand side of equation (default: 0)
-            persistent : bool -- if the variable should be reused for multiple calls (default: True)
-            update_problem : bool -- update problem immediately (default: True)
+            constr_id (str): constraint identifier
+            lhs (list): variables and respective coefficients
+            sense (str): constraint sense (any of: '<', '=', '>'; default '=')
+            rhs (float): right-hand side of equation (default: 0)
+            persistent (bool): if the variable should be reused for multiple calls (default: True)
+            update_problem (bool): update problem immediately (not supported in GLPK interface)
         """
 
         if constr_id in self.constr_ids:
@@ -162,16 +143,7 @@ class GlpkSolver(Solver):
             self.temp_constrs.add(constr_id)
 
     def __add_constraint_lazy(self, constr_id, lhs, sense='=', rhs=0, persistent=True, update_problem=True):
-        """ Add a constraint to the current problem.
 
-        Arguments:
-            constr_id : str -- constraint identifier
-            lhs : list [of (str, float)] -- variables and respective coefficients
-            sense : {'<', '=', '>'} -- default '='
-            rhs : float -- right-hand side of equation (default: 0)
-            persistent : bool -- if the variable should be reused for multiple calls (default: True)
-            update_problem : bool -- update problem immediately (default: True)
-        """
 
         glp_add_rows(self.problem, 1)
         ind_row = glp_get_num_rows(self.problem)
@@ -191,7 +163,7 @@ class GlpkSolver(Solver):
         """ Remove a variable from the current problem.
 
         Arguments:
-            var_id : str -- variable identifier
+            var_id (str): variable identifier
         """
         col_to_delete = intArray(2)
         col_to_delete[1] = glp_find_col(self.problem, var_id)
@@ -202,7 +174,7 @@ class GlpkSolver(Solver):
         """ Remove a constraint from the current problem.
 
         Arguments:
-            constr_id : str -- constraint identifier
+            constr_id (str): constraint identifier
         """
         row_to_delete = intArray(2)
         row_to_delete[1] = glp_find_row(self.problem, constr_id)
@@ -235,22 +207,24 @@ class GlpkSolver(Solver):
         """ Set glpk presolver on or off
 
         Arguments:
-            active : bool -- uses glpk presolver  (default: False)
+            active (bool): uses glpk presolver  (default: False)
         """
         self.presolve = active
 
-    def solve_lp(self, objective, model=None, constraints=None, get_shadow_prices=False, get_reduced_costs=False):
+    def solve_lp(self, objective, minimize=True, model=None, constraints=None, get_shadow_prices=False, get_reduced_costs=False):
         """ Solve an LP optimization problem.
 
         Arguments:
-            objective : dict (of str to float) -- reaction ids in the objective function and respective
-                        coefficients, the sense is maximization by default
-            model : CBModel -- model (optional, leave blank to reuse previous model structure)
-            constraints : dict (of str to (float, float)) -- environmental or additional constraints (optional)
-            get_shadow_prices : bool -- return shadow price information if available (optional, default: False)
-            get_reduced_costs : bool -- return reduced costs information if available (optional, default: False)
+            objective (dict): linear objective
+            minimize (bool): minimization problem (default: True)
+            model (CBModel): model (optional, leave blank to reuse previous model structure)
+            constraints (dict): additional constraints (optional)
+            get_values (bool): set to false for speedup if you only care about the objective value (default: True)
+            get_shadow_prices (bool): return shadow prices if available (default: False)
+            get_reduced_costs (bool): return reduced costs if available (default: False)
+
         Returns:
-            Solution
+            Solution: solution
         """
 
         return self._generic_solve(
@@ -258,26 +232,15 @@ class GlpkSolver(Solver):
             get_reduced_costs)
 
     def solve_qp(
-        self, quad_obj, lin_obj, model=None, constraints=None, get_shadow_prices=False, get_reduced_costs=False):
-        """ Solve a QP optimization problem. However, this is not possible with gurobi
+        self, quad_obj, lin_obj, minimize=True, model=None, constraints=None, get_shadow_prices=False, get_reduced_costs=False):
+        """ Solve a QP optimization problem.
 
-        Arguments:
-            quad_obj : dict (of (str, str) to float) -- map reaction pairs to respective coefficients
-            lin_obj : dict (of str to float) -- map single reaction ids to respective linear coefficients
-            model : CBModel -- model (optional, leave blank to reuse previous model structure)
-            constraints : dict (of str to (float, float)) -- overriding constraints (optional)
-            get_shadow_prices : bool -- return shadow price information if available (default: False)
-            get_reduced_costs : bool -- return reduced costs information if available (default: False)
-
-        Returns:
-            Solution
+        Not available for the GLPK interface. An exception will be raised.
         """
 
-        # An exception is raised if the user attempts to solve a quadratic
-        # program with GLPK
         raise Exception('GLPK does not solve quadratic programming problems')
 
-    def _generic_solve(self, quad_obj, lin_obj, sense, model=None, constraints=None, get_shadow_prices=False,
+    def _generic_solve(self, quad_obj, lin_obj, minimize=True, model=None, constraints=None, get_shadow_prices=False,
                        get_reduced_costs=False):
 
         if model:
@@ -285,6 +248,8 @@ class GlpkSolver(Solver):
 
         if not self.problem:
             raise Exception('A model must be given if solver is used for the first time.')
+
+        sense = GPL_MIN if minimize else GPL_MAX
 
         if constraints:
             old_constraints = {}
@@ -409,9 +374,9 @@ class GlpkSolver(Solver):
         """ Defines the given column/variable lower and upper bounds.
 
         Arguments:
-            ind_col : int -- the index of the column/variable whose bounds are to be defined 
-            lb: float -- lower bound for the given variable
-            ub : float -- upper bound for the given variable
+            ind_col (int): the index of the column/variable whose bounds are to be defined 
+            lb (float): lower bound for the given variable
+            ub (float): upper bound for the given variable
         """
 
         if (lb is None or lb <= -10e6) and (ub is None or ub >= 10e6):
@@ -429,9 +394,9 @@ class GlpkSolver(Solver):
         """ Defines then give row/constraint bounds.
 
         Arguments:
-            ind_row : int -- the index of the row/constraint whose bounds are to be defined 
-            sense: str -- the sense of the constraint, must be '>', '<', or "="
-            rhs : float -- the right-hand side of the constraint
+            ind_row (int): the index of the row/constraint whose bounds are to be defined 
+            sense (str): the sense of the constraint, must be '>', '<', or "="
+            rhs (float): the right-hand side of the constraint
         """
 
         if rhs is not None:
@@ -450,9 +415,9 @@ class GlpkSolver(Solver):
         variables in the problem.
 
         Returns:
-            coef_ind : intArray -- the column indexes in the matrix row
-            coef_val : doubleArray -- the entries in the matrix row
-            n_vars: int --  the number of variables in the given problem
+            coef_ind (intArray): the column indexes in the matrix row
+            coef_val (doubleArray): the entries in the matrix row
+            n_vars (int): the number of variables in the given problem
         """
 
         n_vars = glp_get_num_cols(self.problem)

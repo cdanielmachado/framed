@@ -1,4 +1,8 @@
-__author__ = 'daniel'
+"""
+This module implements plotting utilities for kinetic models.
+
+Author: Daniel Machado
+"""
 
 from ..kinetic.simulation import simulate
 from matplotlib.pyplot import figure, subplot2grid
@@ -7,6 +11,21 @@ from numpy import array
 
 
 def plot_simulation(model, time, steps=100, parameters=None, metabolites=None, xlabel=None, ylabel=None):
+    """ Plot a time-course simulation using a kinetic model.
+
+    Args:
+        model (ODEModel): kinetic model
+        time (float): final simulation time
+        steps (int): number of simulations steps (default: 100)
+        parameters (dict): override model parameters (optional)
+        metabolites (list): only plot specific metabolites (optional)
+        xlabel (str): specify label for x axis (optional)
+        ylabel (str): specify label for y axis (optional)
+
+    Returns:
+        AxesSubplot: axes handle from matplotlib
+
+    """
     t, X = simulate(model, time, steps=steps, parameters=parameters)
     fig = figure()
     ax = fig.add_subplot(111)
@@ -22,10 +41,22 @@ def plot_simulation(model, time, steps=100, parameters=None, metabolites=None, x
     if ylabel:
         ax.set_ylabel(ylabel)
 
-    return ax
-
 
 def plot_simulation_vs_data(model, t_steps, data, parameters=None, metabolites=None, xlabel=None, ylabel=None):
+    """ Plot time course simulaiton vs metabolomics data
+
+    Args:
+        model (ODEModel): kinetic model
+        t_steps (list): measured time steps
+        data (list): metabolomics data in matrix format (nested list or numpy array)
+        parameters (dict): override model parameters (optional)
+        metabolites (list): only plot specific metabolites (optional)
+        xlabel (str): specify label for x axis (optional)
+        ylabel (str): specify label for y axis (optional)
+
+    Returns:
+        AxesSubplot: axes handle from matplotlib
+    """
     if not metabolites:
         metabolites = data.keys()
 
@@ -37,6 +68,14 @@ def plot_simulation_vs_data(model, t_steps, data, parameters=None, metabolites=N
 
 
 def plot_sampling_results(model, sample, reactions=None):
+    """ Plot flux sampling results.
+
+    Args:
+        model (ODEModel): kinetic model
+        sample (list): flux vector samples
+        reactions (list): only plot specified reactions (default: all)
+
+    """
     # TODO: this is generic enough to be kinetic/cobra compatible (move to core.plotting ?)
 
     if not reactions:
@@ -80,4 +119,3 @@ def plot_sampling_results(model, sample, reactions=None):
             ax.set_xlim(x_lim)
             if i != j:
                 ax.set_ylim(y_lim)
-

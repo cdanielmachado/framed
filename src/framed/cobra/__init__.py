@@ -1,6 +1,6 @@
 """ 
-Package implementing constraint-based analysis methods.
+Package implementing several constraint-based methods.
 
-@author: Daniel Machado
+Author: Daniel Machado
    
 """

@@ -1,6 +1,6 @@
-""" This module implements some basic plotting utilities for common methods.
+""" This module implements some basic plotting utilities for cobra analysis.
 
-@author: Daniel Machado
+Author: Daniel Machado
    
 """
 
@@ -14,16 +14,16 @@ def plot_flux_envelope(model, r_x, r_y, substrate=None, constraints=None, refere
     """ Plots the flux envelope for a pair of reactions.
     
     Arguments:
-        model : CBModel -- the model
-        r_x : str -- reaction on x-axis
-        r_y : str -- reaction on y-axis
-        substrate: str -- compute yields instead of rates (optional)
-        constraints : dict (of str to (float, float)) -- additional constraints
-        filename : str -- filename to save image (optional), otherwise display on screen (default)
-        steps : int -- number of steps to compute (default: 10)
+        model (CBModel): the model
+        r_x (str): reaction on x-axis
+        r_y (str): reaction on y-axis
+        substrate (str): compute yields instead of rates (optional)
+        constraints (dict): additional constraints
+        filename (str): filename to save image (optional), otherwise display on screen (default)
+        steps (int): number of steps to compute (default: 10)
         
     Returns:
-        list (of float), list (of float), list (of float) -- x values, y min values, y max values
+        tuple: x values, y min values, y max values
     """
 
     xvals, ymins, ymaxs = flux_envelope(model, r_x, r_y, steps, constraints)
