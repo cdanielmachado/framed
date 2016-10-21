@@ -1,12 +1,22 @@
 """
 Fixes to clean up common models from different sources/groups.
 
-@author: Daniel Machado
+Author: Daniel Machado
    
 """
 
 
 def fix_cb_model(model, flavor=None):
+    """ Apply fixes to known issues in a constraint baised model.
+
+    Args:
+        model (CBModel): model
+        flavor (str): model *flavor* (optional)
+
+    Notes:
+        Currently supported *flavors*: 'cobra' (old style format from the Palsson lab)
+
+    """
 
     if flavor == 'cobra':
         fix_cobra_model(model)
@@ -15,6 +25,14 @@ def fix_cb_model(model, flavor=None):
 
 
 def default_fixes(model):
+    """ Apply default fixes to a constraint-based model
+
+    Args:
+        model:
+
+    Returns:
+
+    """
     remove_boundary_metabolites(model)
     fix_reversibility(model)
     clean_bounds(model)

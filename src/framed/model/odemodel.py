@@ -95,7 +95,7 @@ class ODEModel(Model):
 
     def print_balance(self, m_id):
         c_id = self.metabolites[m_id].compartment
-        table = self.metabolite_reaction_lookup_table()
+        table = self.metabolite_reaction_lookup()
         terms = ["{:+g} * r['{}']".format(coeff, r_id) for r_id, coeff in table[m_id].items()]
         expr = "1/p['{}'] * ({})".format(c_id, ' '.join(terms))
         return expr

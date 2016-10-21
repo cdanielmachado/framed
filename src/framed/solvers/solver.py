@@ -152,8 +152,8 @@ class Solution:
         if not self.values:
             return None
         
-        inputs = model.get_metabolite_sources(m_id)
-        outputs = model.get_metabolite_sinks(m_id)
+        inputs = model.get_metabolite_producers(m_id)
+        outputs = model.get_metabolite_consumers(m_id)
         
         fwd_in = [(r_id, model.reactions[r_id].stoichiometry[m_id] * self.values[r_id], '--> o')
                   for r_id in inputs if self.values[r_id] > 0 or zeros and self.values[r_id] == 0]
@@ -198,7 +198,7 @@ class Solution:
             dict: metabolite turnover rates
         """
 
-        m_r_table = model.metabolite_reaction_lookup_table()
+        m_r_table = model.metabolite_reaction_lookup()
         t = {m_id: 0.5*sum([abs(coeff * self.values[r_id]) for r_id, coeff in neighbours.items()])
              for m_id, neighbours in m_r_table.items()}
         return t
@@ -306,7 +306,7 @@ class Solver:
             self.add_variable(r_id, lb, ub, update_problem=False)
         self.update()
         
-        table = model.metabolite_reaction_lookup_table()
+        table = model.metabolite_reaction_lookup()
         for m_id in model.metabolites:
             self.add_constraint(m_id, table[m_id].items(), update_problem=False)
         self.update()

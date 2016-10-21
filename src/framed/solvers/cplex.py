@@ -165,7 +165,7 @@ class CplexSolver(Solver):
         self.add_variables(var_ids, lbs, ubs, var_types)
 
         constr_ids = model.metabolites.keys()
-        table = model.metabolite_reaction_lookup_table()
+        table = model.metabolite_reaction_lookup()
         lhs = table.values()
         senses = ['='] * len(constr_ids)
         rhs = [0] * len(constr_ids)

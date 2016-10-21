@@ -125,7 +125,7 @@ def GapFind(model, solver, root_gaps_only=False, tol=1e-5):
 
         # add constraints from model and specific for MILP
         objective_coeffs = {}
-        table = model.metabolite_reaction_lookup_table()
+        table = model.metabolite_reaction_lookup()
 
         for m_id in model.metabolites:
             x_var_name = 'x-' + m_id
@@ -244,7 +244,7 @@ def GapFill(model, reactions_db, solver, output_reaction, flux_ouput, DB_type, t
     for r_id, (lb, ub) in model_extended.bounds.items():
         solver.add_variable(r_id, lb, ub)
 
-    table = model_extended.metabolite_reaction_lookup_table()
+    table = model_extended.metabolite_reaction_lookup()
     for m_id in model_extended.metabolites:
         solver.add_constraint(m_id, table[m_id].items(), update_problem=False)
 

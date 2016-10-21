@@ -1,7 +1,7 @@
 """
 Module for model transformation operations.
 
-@author: Daniel Machado
+Author: Daniel Machado
    
 """
 
@@ -10,15 +10,19 @@ from framed.model.cbmodel import CBModel
 from ..cobra.variability import blocked_reactions
 
 
-def simplify(model):
+def simplify(model, inplace=True):
     """ Removes all blocked reactions in a constraint based model
     
     Arguments:
-        model : CBModel
+        model (CBModel): model
+        inplace (bool): change model inplace (default), otherwise create a copy first
         
     Returns:
-        (list (of str), list (of str), list (of str)) : lists of removed reactions, metabolites, and genes
+        tuple: lists of removed reactions, metabolites, and genes
     """
+
+    if not inplace:
+        model = model.copy()
 
     del_reactions = blocked_reactions(model)
     model.remove_reactions(del_reactions)
@@ -29,16 +33,20 @@ def simplify(model):
     return del_reactions, del_metabolites, del_genes
 
 
-def make_irreversible(model):
+def make_irreversible(model, inplace=True):
     """ Splits all reversible reactions into forward and backward directions.
-    For efficiency the given model is converted. To keep a copy use deepcopy first.
     
     Arguments:
         model : Model (or CBmodel)
+        inplace (bool): change model inplace (default), otherwise create a copy first
         
     Returns:
-        dictionary (str to (str, str)): mapping of old reaction ids to splitted reaction ids
+        dict: mapping of old reaction ids to splitted reaction ids
     """
+
+
+    if not inplace:
+        model = model.copy()
 
     mapping = dict()
 
@@ -71,7 +79,7 @@ def make_irreversible(model):
 
 
 def disconnected_metabolites(model):
-    m_r_table = model.metabolite_reaction_lookup_table()
+    m_r_table = model.metabolite_reaction_lookup()
     return [m_id for m_id, edges in m_r_table.items() if not edges]
 
 

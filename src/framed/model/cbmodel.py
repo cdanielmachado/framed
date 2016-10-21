@@ -1,6 +1,6 @@
 from collections import OrderedDict
 
-from framed.model.model import Model, Metabolite
+from .model import Model, Metabolite, Reaction, AttrOrderedDict
 
 
 class Gene:
@@ -9,8 +9,8 @@ class Gene:
     def __init__(self, elem_id, name=None):
         """
         Arguments:
-            elem_id : String -- a valid unique identifier
-            name : String -- common gene name
+            elem_id (str): a valid unique identifier
+            name (str): common gene name
         """
         self.id = elem_id
         self.name = name if name is not None else elem_id
@@ -21,6 +21,10 @@ class Gene:
 
 
 class Protein:
+    """ Base class for modeling proteins. 
+        
+        One protein is composed of a list of genes encoding one or more subunits.
+    """
 
     def __init__(self):
         self.genes = []
@@ -34,6 +38,11 @@ class Protein:
 
 
 class GPRAssociation:
+    """ Base class for modeling Gene-Protein-Reaction associations. 
+
+        Each GPR association is composed by a list of proteins that can catalyze a reaction.
+        Each protein is encoded by one or several genes.
+    """
 
     def __init__(self):
         self.proteins = []
@@ -47,6 +56,8 @@ class GPRAssociation:
             return gpr_str
 
     def get_genes(self):
+        """ Return the set of all genes associated with the respective reaction. """
+
         genes = set()
         for protein in self.proteins:
             genes |= set(protein.genes)
@@ -58,12 +69,12 @@ class CBModel(Model):
     def __init__(self, model_id):
         """
         Arguments:
-            model_id : String -- a valid unique identifier
+            model_id (string): a valid unique identifier
         """
         Model.__init__(self, model_id)
         self.bounds = OrderedDict()
         self.objective = OrderedDict()
-        self.genes = OrderedDict()
+        self.genes = AttrOrderedDict()
         self.gpr_associations = OrderedDict()
         self.rule_functions = OrderedDict()
         self.biomass_reaction = None
@@ -72,9 +83,9 @@ class CBModel(Model):
         """ Define flux bounds for one reaction
 
         Arguments:
-            r_id : str -- reaction id
-            lb : float -- lower bound (use None to represent negative infinity)
-            ub : float -- upper bound (use None to represent positive infinity)
+            r_id (str): reaction id
+            lb (float): lower bound (use None to represent negative infinity)
+            ub (float): upper bound (use None to represent positive infinity)
         """
         if r_id in self.reactions:
             self.bounds[r_id] = (lb, ub)
@@ -85,8 +96,8 @@ class CBModel(Model):
         """ Define lower bound for one reaction
 
         Arguments:
-            r_id : str -- reaction id
-            lb : float -- lower bound (use None to represent negative infinity)
+            r_id (str): reaction id
+            lb (float): lower bound (use None to represent negative infinity)
         """
         if r_id in self.reactions:
             _, ub = self.bounds[r_id]
@@ -98,8 +109,8 @@ class CBModel(Model):
         """ Define upper bound for one reaction
 
         Arguments:
-            r_id : str -- reaction id
-            ub : float -- upper bound (use None to represent positive infinity)
+            r_id (str): reaction id
+            ub (float): upper bound (use None to represent positive infinity)
         """
         if r_id in self.reactions:
             lb, _ = self.bounds[r_id]
@@ -110,6 +121,9 @@ class CBModel(Model):
     def set_objective(self, coefficients):
         """ Define objective coefficients for a list of reactions
 
+        Arguments:
+            coefficients (dict): dictionary of reactions and coefficients
+
         """
         for r_id, coeff, in coefficients.items():
             self.set_reaction_objective(r_id, coeff)
@@ -118,8 +132,8 @@ class CBModel(Model):
         """ Define objective coefficient for a single reaction
 
         Arguments:
-            r_id : str -- reaction id
-            coeff : float -- reaction objective (default: 0)
+            r_id (str): reaction id
+            coeff (float): reaction objective (default: 0)
         """
         if r_id in self.reactions:
             self.objective[r_id] = coeff
@@ -132,13 +146,13 @@ class CBModel(Model):
 
         Arguments:
             reaction : Reaction
-            lb : float -- lower bound (default: None)
-            ub : float -- upper bound (default: None)
-            coeff : float -- objective coefficient (default: 0)
+            lb (float): lower bound (default: None if reversible else 0)
+            ub (float): upper bound (default: None)
+            coeff (float): objective coefficient (default: 0)
         """
         Model.add_reaction(self, reaction)
 
-        if lb == None and not reaction.reversible:
+        if lb is None and not reaction.reversible:
             lb = 0
 
         self.bounds[reaction.id] = (lb, ub)
@@ -150,7 +164,7 @@ class CBModel(Model):
         Also removes all the edges connected to the reactions.
 
         Arguments:
-            id_list : list of str -- reaction ids
+            id_list (list): reaction ids
         """
         for r_id in id_list:
             if r_id in self.reactions:
@@ -164,10 +178,12 @@ class CBModel(Model):
         """ Print a reaction to a text based representation.
 
         Arguments:
-            r_id : str -- reaction id
+            r_id (str): reaction id
+            reaction_names (bool): print reaction names instead of ids (default: False)
+            metabolite_names (bool): print metabolite names instead of ids (default: False)
 
         Returns:
-            str -- reaction string
+            str: reaction in string format
         """
         res = Model.print_reaction(self, r_id, reaction_names, metabolite_names)
         lb, ub = self.bounds[r_id]
@@ -185,7 +201,7 @@ class CBModel(Model):
         """ Detects biomass reaction in the model (searches by objective coefficient)
 
         Returns:
-            str -- first reaction that matches (or else None)
+            str: first reaction that matches (or else None)
         """
 
         if not self.biomass_reaction:
@@ -207,7 +223,7 @@ class CBModel(Model):
         If a gene with the same id exists, it will be replaced.
 
         Arguments:
-            gene : Gene
+            gene (Gene): gene
         """
         self.genes[gene.id] = gene
 
@@ -221,11 +237,12 @@ class CBModel(Model):
 
     def remove_genes(self, gene_list):
         """ Remove a set of genes from the model.
-            TODO: When switching to a GPR class representation, make sure to clean up rules as well
 
         Arguments:
-            list of str : Gene ids
+            list : Gene ids
         """
+
+        #TODO: remove genes from GPR associations as well
 
         for gene_id in gene_list:
             if gene_id in self.genes:
@@ -234,6 +251,12 @@ class CBModel(Model):
                 print 'No such gene', gene_id
 
     def set_gpr_association(self, r_id, gpr):
+        """ Set GPR association for a given reaction:
+
+        Arguments:
+            r_id (str): reaction id
+            gpr (GPRAssociation): GPR association
+        """
 
         if r_id in self.reactions:
             self.gpr_associations[r_id] = gpr
@@ -242,13 +265,13 @@ class CBModel(Model):
             print 'No such reaction', r_id
 
     def eval_GPR(self, active_genes):
-        """ Evaluate the GPR associations.
+        """ Boolean evaluation of the GPR associations for a given set of active genes.
 
         Arguments:
-            active_genes : list (of str) -- set of active genes
+            active_genes (list): list of active genes
 
         Returns:
-            list (of str) -- set of active reactions
+            list: list of active reactions
         """
         genes_state = {gene: gene in active_genes for gene in self.genes}
         return [r_id for r_id, f in self.rule_functions.items() if f(genes_state)]
@@ -267,9 +290,9 @@ class CBModel(Model):
         """ Add a flux ratio constraint to the model.
 
         Arguments:
-            r_id_num : str -- id of the numerator
-            r_id_num : str -- id of the denominator
-            ratio : float -- ratio value
+            r_id_num (str): id of the numerator
+            r_id_num (str): id of the denominator
+            ratio (float): ratio value
 
         Returns:
             str : identifier of the pseudo-metabolite
@@ -288,8 +311,8 @@ class CBModel(Model):
         """ Remove a flux ratio constraint from the model.
 
         Arguments:
-            r_id_num : str -- id of the numerator
-            r_id_num : str -- id of the denominator
+            r_id_num (str): id of the numerator
+            r_id_num (str): id of the denominator
 
         """
 
@@ -301,3 +324,26 @@ class CBModel(Model):
                 print 'No ratio constraint for {}/{}'.format(r_id_num, r_id_den)
         else:
             print 'Invalid reactions.'
+
+    def add_reaction_from_str(self, reaction_str, default_compartment=None):
+        """ Parse a reaction from a string and add it to the model.
+
+        Arguments:
+            reaction_str (str): string representation a the reaction
+            default_compartment (str): default compartment id (optional)
+
+        Notes:
+            If the metabolites specified in the reaction are not yet in the model, they will be automatically added.
+            You can specify the compartment for new metabolites using the optional argument. However, if you want to
+            use multiple compartments you will have to change them manually afterwards.
+        """
+
+        r_id, reversible, stoichiometry, lb, ub, obj_coeff = \
+            self._parser.parse_reaction(reaction_str, kind='cb')
+
+        for m_id in stoichiometry:
+            if m_id not in self.metabolites:
+                self.add_metabolite(Metabolite(m_id, m_id, compartment=default_compartment))
+
+        reaction = Reaction(r_id, r_id, reversible, stoichiometry)
+        self.add_reaction(reaction, lb, ub, obj_coeff)

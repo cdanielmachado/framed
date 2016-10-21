@@ -13,7 +13,7 @@ from collections import OrderedDict
 from sympy.parsing.sympy_parser import parse_expr
 from sympy import to_dnf, Or, And
 from sympy.logic.boolalg import is_dnf
-from libsbml import SBMLReader, SBMLWriter, SBMLDocument, XMLNode, AssignmentRule, parseL3FormulaWithModel, FbcExtension
+from libsbml import readSBMLFromFile, writeSBMLToFile, SBMLDocument, XMLNode, AssignmentRule, parseL3FormulaWithModel, FbcExtension
 
 DEFAULT_SBML_LEVEL = 3
 DEFAULT_SBML_VERSION = 1
@@ -52,8 +52,7 @@ def load_sbml_model(filename, kind=None, flavor=None):
         Model: Simple model or respective subclass
     """
 
-    reader = SBMLReader()
-    document = reader.readSBML(filename)
+    document = readSBMLFromFile(filename)
     sbml_model = document.getModel()
 
     if sbml_model is None:
@@ -414,8 +413,7 @@ def save_sbml_model(model, filename, flavor=None):
         _save_kineticlaws(model, sbml_model)
         _save_assignment_rules(model, sbml_model)
     _save_metadata(model, sbml_model)
-    writer = SBMLWriter()
-    writer.writeSBML(document, filename)
+    writeSBMLToFile(document, filename)
 
 
 def save_cbmodel(model, filename, flavor=COBRA_MODEL):

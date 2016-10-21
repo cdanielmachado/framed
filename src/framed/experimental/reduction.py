@@ -15,7 +15,7 @@ def balanced_model_reduction(model, metabolites, fluxes, must_keep=None, max_deg
         model.remove_reactions([r_id for r_id, val in fluxes.items() if abs(val) < abstol])
 
     if max_degree:
-        m_r_table = model.metabolite_reaction_lookup_table()
+        m_r_table = model.metabolite_reaction_lookup()
         metabolites = [m_id for m_id in metabolites if len(m_r_table[m_id]) <= max_degree]
 
     for m_id in metabolites:
@@ -82,7 +82,7 @@ def _reaction_neighbours(model, reactions):
 
 def _get_neighbours(model, elements, kind):
     if kind == 'metabolites':
-        table = model.metabolite_reaction_lookup_table()
+        table = model.metabolite_reaction_lookup()
     elif kind == 'reactions':
         table = model.reaction_metabolite_lookup_table()
     neighbours = []
@@ -94,7 +94,7 @@ def _get_neighbours(model, elements, kind):
 
 
 def _verify_balance(model, metabolites, fluxes, abstol=1e-9):
-    m_r_table = model.metabolite_reaction_lookup_table()
+    m_r_table = model.metabolite_reaction_lookup()
 
     success = True
 
@@ -108,7 +108,7 @@ def _verify_balance(model, metabolites, fluxes, abstol=1e-9):
 
 
 def _disconnected_metabolites(model):
-    m_r_table = model.metabolite_reaction_lookup_table()
+    m_r_table = model.metabolite_reaction_lookup()
     return [m_id for m_id, edges in m_r_table.items() if not edges]
 
 

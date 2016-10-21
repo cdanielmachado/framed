@@ -65,7 +65,7 @@ class GlpkSolver(Solver):
             self.add_variable(r_id, lb, ub, update_problem=False)
         self.update()
 
-        table = model.metabolite_reaction_lookup_table()
+        table = model.metabolite_reaction_lookup()
         for m_id in model.metabolites:
             self.__add_constraint_lazy(m_id, table[m_id].items(), update_problem=False)
         self.update()
