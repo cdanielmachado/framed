@@ -41,6 +41,8 @@ def plot_simulation(model, time, steps=100, parameters=None, metabolites=None, x
     if ylabel:
         ax.set_ylabel(ylabel)
 
+    return ax
+
 
 def plot_simulation_vs_data(model, t_steps, data, parameters=None, metabolites=None, xlabel=None, ylabel=None):
     """ Plot time course simulaiton vs metabolomics data

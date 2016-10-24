@@ -356,7 +356,6 @@ def _load_odemodel(sbml_model):
     _load_local_parameters(sbml_model, model)
     _load_ratelaws(sbml_model, model)
     _load_assignment_rules(sbml_model, model)
-    model.build_rate_functions()
 
     return model
 

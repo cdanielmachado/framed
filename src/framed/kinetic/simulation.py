@@ -12,12 +12,12 @@ from collections import OrderedDict
 from warnings import warn
 
 
-def simulate(model, time, steps=100, t_steps=None, parameters=None, compute_rates=False, integrator_args=None):
+def simulate(model, time=0, steps=100, t_steps=None, parameters=None, compute_rates=False, integrator_args=None):
     """ Perform a time-course simulation using a kinetic model.
 
     Args:
         model (ODEModel): kinetic model
-        time (float): final simulation time
+        time (float): final simulation time (optional if t_steps is used instead)
         steps (int): number of simulations steps (default: 100)
         t_steps (list): list of exact time steps to evaluate (optional)
         parameters (dict): override model parameters (optional)

@@ -23,7 +23,7 @@ def run_sampling():
     model = load_odemodel(KINETIC_MODEL)
     params = model.merge_constants()
     vmaxs = [p_id for p_id in params.keys() if 'max' in p_id]
-    p_sample, v_sample = sample(model, 10,  parameters=vmaxs, scale='log2', dist='normal', dist_args=(0, 1))
+    p_sample, v_sample = sample(model, 10,  parameters=vmaxs, log_scale=True, distribution='normal', dist_args=(0, 1))
     reactions = model.reactions.keys()[:3]
     plot_sampling_results(model, v_sample, reactions)
     show()

@@ -92,7 +92,6 @@ class ODEModel(Model):
 
         return parameters
 
-
     def print_balance(self, m_id):
         c_id = self.metabolites[m_id].compartment
         table = self.metabolite_reaction_lookup()
@@ -126,7 +125,6 @@ class ODEModel(Model):
 
         return rate
 
-
     def parse_rule(self, rule, parsed_rates):
 
         symbols = '()+*-/,'
@@ -158,7 +156,7 @@ class ODEModel(Model):
         parsed_rules = {p_id: self.parse_rule(rule, parsed_rates)
                         for p_id, rule in self.assignment_rules.items()}
 
-        rate_exprs = ["    r['{}'] = {}".format(r_id,parsed_rates[r_id])
+        rate_exprs = ["    r['{}'] = {}".format(r_id, parsed_rates[r_id])
                       for r_id in self.reactions]
 
         balances = [' '*8 + self.print_balance(m_id) for m_id in self.metabolites]
@@ -194,9 +192,3 @@ class ODEModel(Model):
 
         f = lambda t, x: ode_func(t, x, r, p, v)
         return f
-
-    def build_rate_functions(self):
-        self.rates = OrderedDict()
-        for r_id, ratelaw in self.ratelaws.items():
-            rate = self.parse_rate(r_id, ratelaw)
-            self.rates[r_id] = eval('lambda x, p, v: ' + rate)
