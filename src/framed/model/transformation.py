@@ -33,13 +33,14 @@ def simplify(model, inplace=True):
     return del_reactions, del_metabolites, del_genes
 
 
-def make_irreversible(model, inplace=True):
+def make_irreversible(model, inplace=True, reactions=None):
     """ Splits all reversible reactions into forward and backward directions.
     
     Arguments:
         model : Model (or CBmodel)
         inplace (bool): change model inplace (default), otherwise create a copy first
-        
+        reactions (list) : split only reactions in this list (optional)
+
     Returns:
         dict: mapping of old reaction ids to splitted reaction ids
     """
@@ -47,10 +48,13 @@ def make_irreversible(model, inplace=True):
     if not inplace:
         model = model.copy()
 
+    if reactions is None:
+        reactions = model.reactions.keys()
+
     mapping = dict()
 
     for r_id, reaction in model.reactions.items():
-        if reaction.reversible:
+        if reaction.reversible and r_id in reactions:
             fwd_id = reaction.id + '_f'
             bwd_id = reaction.id + '_b'
             mapping[r_id] = (fwd_id, bwd_id)

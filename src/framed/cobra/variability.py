@@ -57,8 +57,11 @@ def FVA(model, obj_percentage=0, reactions=None, constraints=None, loopless=Fals
             variability[r_id][0] = None
         elif solution.status == Status.INF_OR_UNB: #taking a wild guess here!
             variability[r_id][0] = None
-        else:
+        elif solution.status == Status.INFEASIBLE:
             variability[r_id][0] = 0
+        else:
+            print 'Warning: unknown solver status'
+            variability[r_id][0] = None
 
     for r_id in reactions:
         if loopless:
@@ -73,8 +76,11 @@ def FVA(model, obj_percentage=0, reactions=None, constraints=None, loopless=Fals
             variability[r_id][1] = None
         elif solution.status == Status.INF_OR_UNB: #taking a wild guess here!
             variability[r_id][1] = None
-        else:
+        elif solution.status == Status.INFEASIBLE:
             variability[r_id][1] = 0
+        else:
+            print 'Warning: unknown solver status'
+            variability[r_id][1] = None
 
     return variability
 
@@ -165,9 +171,15 @@ def flux_envelope_3d(model, r_x, r_y, r_z, steps=10, constraints=None):
 
     xvals, ymins, ymaxs = flux_envelope(model, r_x, r_y, steps, constraints)
 
-    yvals=[None]*steps
+    yvals = [None]*steps
     zmins, zmaxs = [None] * steps, [None] * steps
     x_coors, y_coors = [None] * steps, [None] * steps
+
+    if constraints is None:
+        _constraints = {}
+    else:
+        _constraints = {}
+        _constraints.update(constraints)
 
     for i, xval in enumerate(xvals):
 
@@ -181,9 +193,9 @@ def flux_envelope_3d(model, r_x, r_y, r_z, steps=10, constraints=None):
             y_coors[i][j] = yval
             x_constraint = {r_x: xval}
             y_constraint = {r_y: yval}
-            constraints.update(x_constraint)
-            constraints.update(y_constraint)
-            z_range = FVA(model, reactions=[r_z], constraints=constraints)
+            _constraints.update(x_constraint)
+            _constraints.update(y_constraint)
+            z_range = FVA(model, reactions=[r_z], constraints=_constraints)
 
             zmins[i][j], zmaxs[i][j] = z_range[r_z]
     return zmins, zmaxs, x_coors, y_coors

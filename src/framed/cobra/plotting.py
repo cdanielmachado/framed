@@ -57,11 +57,11 @@ def plot_flux_envelope(model, r_x, r_y, substrate=None, constraints=None, refere
     ylabel(label_y) if label_y else ylabel(model.reactions[r_y].name)
 
     xmin, xmax = min(xvals), max(xvals)
-    dx = 0.1 * (xmax - xmin)
+    dx = 0.03 * (xmax - xmin)
     xlim((xmin - dx, xmax + dx))
 
     ymin, ymax = min(ymins), max(ymaxs)
-    dy = 0.1 * (ymax - ymin)
+    dy = 0.03 * (ymax - ymin)
     ylim((ymin - dy, ymax + dy))
 
     if filename:
