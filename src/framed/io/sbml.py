@@ -484,15 +484,13 @@ def _save_gpr_associations(model, sbml_model, flavor):
 
 
 def _save_cobra_parameters(model, sbml_model, set_default_bounds=False):
-    for r_id in model.reactions:
-        lb, ub = model.bounds[r_id]
-        coeff = model.objective[r_id]
+    for r_id, reaction in model.reactions.items():
         sbml_reaction = sbml_model.getReaction(r_id)
         kineticLaw = sbml_reaction.createKineticLaw()
         kineticLaw.setFormula('0')
         if set_default_bounds:
-            lb = DEFAULT_LOWER_BOUND if lb is None else lb
-            ub = DEFAULT_UPPER_BOUND if ub is None else ub
+            lb = DEFAULT_LOWER_BOUND if reaction.lb is None else reaction.lb
+            ub = DEFAULT_UPPER_BOUND if reaction.ub is None else reaction.ub
         if lb is not None:
             lbParameter = kineticLaw.createParameter()
             lbParameter.setId(LB_TAG)
@@ -503,14 +501,13 @@ def _save_cobra_parameters(model, sbml_model, set_default_bounds=False):
             ubParameter.setValue(ub)
         objParameter = kineticLaw.createParameter()
         objParameter.setId(OBJ_TAG)
-        objParameter.setValue(coeff)
+        objParameter.setValue(reaction.objective)
 
 
 def _save_cobra_gprs(model, sbml_model):
-    for r_id, gpr in model.gpr_associations.items():
-        if gpr:
-            reaction = model.reactions[r_id]
-            reaction.metadata[GPR_TAG] = str(gpr)
+    for r_id, reaction in model.reactions.items():
+        if reaction.gpr:
+            reaction.metadata[GPR_TAG] = str(reaction.gpr)
             sbml_reaction = sbml_model.getReaction(r_id)
             _save_metadata(reaction, sbml_reaction)
 
@@ -529,40 +526,40 @@ def _save_fbc_fluxbounds(model, sbml_model):
     zero_bound.setId(DEFAULT_ZERO_BOUND_ID)
     zero_bound.setValue(0)
 
-    for r_id, (lb, ub) in model.bounds.items():
+    for r_id, reaction in model.reactions.items():
         fbcrxn = sbml_model.getReaction(r_id).getPlugin('fbc')
 
-        if lb is None or lb <= DEFAULT_LOWER_BOUND:
+        if reaction.lb is None or reaction.lb <= DEFAULT_LOWER_BOUND:
             fbcrxn.setLowerFluxBound(DEFAULT_LOWER_BOUND_ID)
-        elif lb == 0:
+        elif reaction.lb == 0:
             fbcrxn.setLowerFluxBound(DEFAULT_ZERO_BOUND_ID)
         else:
             lb_id = '{}_lower_bound'.format(r_id)
             lb_param = sbml_model.createParameter()
             lb_param.setId(lb_id)
-            lb_param.setValue(lb)
+            lb_param.setValue(reaction.lb)
             fbcrxn.setLowerFluxBound(lb_id)
 
-        if ub is None or ub >= DEFAULT_UPPER_BOUND:
+        if reaction.ub is None or reaction.ub >= DEFAULT_UPPER_BOUND:
             fbcrxn.setUpperFluxBound(DEFAULT_UPPER_BOUND_ID)
-        elif lb == 0:
+        elif reaction.ub == 0:
             fbcrxn.setUpperFluxBound(DEFAULT_ZERO_BOUND_ID)
         else:
             ub_id = '{}_upper_bound'.format(r_id)
             ub_param = sbml_model.createParameter()
             ub_param.setId(ub_id)
-            ub_param.setValue(ub)
+            ub_param.setValue(reaction.ub)
             fbcrxn.setUpperFluxBound(ub_id)
 
 
 def _save_fbc_objective(model, sbml_model):
     fbcmodel = sbml_model.getPlugin('fbc')
     obj = fbcmodel.createObjective()
-    for r_id, coeff in model.objective.items():
-        if coeff:
+    for r_id, reaction in model.reactions.items():
+        if reaction.objective:
             r_obj = obj.createFluxObjective()
             r_obj.setReaction(r_id)
-            r_obj.setCoefficient(coeff)
+            r_obj.setCoefficient(reaction.objective)
 
 
 def _save_fbc_gprs(model, sbml_model):
@@ -572,15 +569,15 @@ def _save_fbc_gprs(model, sbml_model):
         gene_prod.setId(gene.id)
         gene_prod.setName(gene.name)
 
-    for r_id, gpr in model.gpr_associations.items():
-        if gpr:
+    for r_id, reaction in model.reactions.items():
+        if reaction.gpr:
             fbcrxn = sbml_model.getReaction(r_id).getPlugin('fbc')
             gpr_assoc = fbcrxn.createGeneProductAssociation()
 
-            if len(gpr.proteins) > 1:
+            if len(reaction.gpr.proteins) > 1:
                 gpr_assoc = gpr_assoc.createOr()
 
-            for protein in gpr.proteins:
+            for protein in reaction.gpr.proteins:
                 if len(protein.genes) > 1:
                     protein_assoc = gpr_assoc.createAnd()
                 else:
@@ -650,5 +647,3 @@ def _load_metadata(sbml_elem, elem):
             if ':' in note_str:
                 key, value = note_str.split(':', 1)
                 elem.metadata[key.strip()] = value.strip()
-
-

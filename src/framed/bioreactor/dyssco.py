@@ -43,7 +43,7 @@ def make_envelope_strains(base_organism, r_substrate, r_target, N=10, constraint
     if r_substrate in base_organism.fba_constraints:
         vSmax = base_organism.fba_constraints[r_substrate][0]
     else:
-        vSmax = base_organism.model.bounds[r_substrate][0]
+        vSmax = base_organism.model.reactions[r_substrate].lb
 
     # create new strains along the production envelope
     for i, mu in enumerate(xvals):

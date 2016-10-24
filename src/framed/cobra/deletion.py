@@ -44,7 +44,7 @@ def deleted_genes_to_reactions(model, genes):
         list: list of deleted reactions
     """
     active_genes = set(model.genes) - set(genes)
-    active_reactions = model.eval_GPR(active_genes)
+    active_reactions = model.evaluate_gprs(active_genes)
     inactive_reactions = set(model.reactions) - set(active_reactions)
 
     return inactive_reactions

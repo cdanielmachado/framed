@@ -1,6 +1,6 @@
 """ This module defines base classes for metabolic modeling.
 
-@author: Daniel Machado
+Author: Daniel Machado
 
 """
 
@@ -198,37 +198,6 @@ class Model:
         """
         self.compartments[compartment.id] = compartment
 
-    def get_stoichiometry(self, m_id, r_id):
-        coeff = None
-        if m_id in self.metabolites and r_id in self.reactions:
-            coeff = 0.0
-            if m_id in self.reactions[r_id].stoichiometry:
-                coeff = self.reactions[r_id].stoichiometry[m_id]
-        return coeff
-
-    def set_stoichiometry(self, m_id, r_id, coeff):
-        if m_id in self.metabolites and r_id in self.reactions:
-            if not coeff and m_id in self.reactions[r_id].stoichiometry:
-                del self.reactions[r_id].stoichiometry[m_id]
-            else:
-                self.reactions[r_id].stoichiometry[m_id] = coeff
-        else:
-            print 'Failed to set stoichiometry of', m_id, r_id, '(invalid identifier)'
-
-        self._clear_temp()
-
-    def add_reaction_regulator(self, r_id, m_id, kind='?'):
-        if m_id in self.metabolites and r_id in self.reactions:
-            self.reactions[r_id].regulators[m_id] = kind
-        else:
-            print 'Failed to set stoichiometry of', m_id, r_id, '(invalid identifier)'
-
-    def add_reaction_activator(self, r_id, m_id):
-        self.add_reaction_regulator(r_id, m_id, '+')
-
-    def add_reaction_inhibitor(self, r_id, m_id):
-        self.add_reaction_regulator(r_id, m_id, '-')
-
     def remove_metabolites(self, id_list):
         """ Remove a list of metabolites from the model.
 
@@ -333,11 +302,11 @@ class Model:
         return [r_id for r_id, coeff in table[m_id].items() if coeff < 0]
 
     def get_activation_targets(self, m_id):
-        table = self.regulatory_lookup_table()
+        table = self.regulatory_lookup()
         return [r_id for r_id, kind in table[m_id].items() if kind == '+']
 
     def get_inhibition_targets(self, m_id):
-        table = self.regulatory_lookup_table()
+        table = self.regulatory_lookup()
         return [r_id for r_id, kind in table[m_id].items() if kind == '-']
 
     def get_reaction_compartments(self, r_id):
@@ -362,7 +331,7 @@ class Model:
 
         return self._m_r_lookup
 
-    def regulatory_lookup_table(self):
+    def regulatory_lookup(self):
         if not self._reg_lookup:
             self._reg_lookup = OrderedDict([(m_id, OrderedDict()) for m_id in self.metabolites])
 

@@ -302,8 +302,8 @@ class Solver:
             model : CBModel
         """
 
-        for r_id, (lb, ub) in model.bounds.items():
-            self.add_variable(r_id, lb, ub, update_problem=False)
+        for r_id, reaction in model.reactions.items():
+            self.add_variable(r_id, reaction.lb, reaction.ub, update_problem=False)
         self.update()
         
         table = model.metabolite_reaction_lookup()

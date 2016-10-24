@@ -64,15 +64,16 @@ def remove_boundary_metabolites(model, tag=None):
 def fix_reversibility(model):
     """ Make reaction reversibility consistent with the bounds. """
 
-    for r_id, (lb, _) in model.bounds.items():
-        model.reactions[r_id].reversible = (lb is None or lb < 0)
+    for reaction in model.reactions.values():
+        reaction.reversible = (reaction.lb is None or reaction.lb < 0)
 
 
 def clean_bounds(model, threshold=1000):
     """ Remove artificially large bounds (unbounded = no bounds). """
 
-    for r_id, (lb, ub) in model.bounds.items():
-        model.bounds[r_id] = (lb if lb > -threshold else None, ub if ub < threshold else None)
+    for reaction in model.reactions.values():
+        reaction.lb = reaction.lb if reaction.lb > -threshold else None
+        reaction.ub = reaction.ub if reaction.ub < threshold else None
 
 
 def clean_bigg_ids(model):
@@ -90,10 +91,6 @@ def clean_bigg_ids(model):
     for r_id, reaction in model.reactions.items():
         reaction.id = clean(r_id)
         key_replace(model.reactions, r_id, reaction.id)
-        key_replace(model.bounds, r_id, reaction.id)
-        key_replace(model.objective, r_id, reaction.id)
-        key_replace(model.gpr_associations, r_id, reaction.id)
-        key_replace(model.rule_functions, r_id, reaction.id)
 
         for m_id in reaction.stoichiometry.keys():
             key_replace(reaction.stoichiometry, m_id, clean(m_id))

@@ -28,9 +28,9 @@ def gene2rxn(gpr, gene_exp, and_func=min, or_func=sum):
 
 def gene_to_reaction_expression(model, gene_exp, and_func=min, or_func=sum):
     rxn_exp = {}
-    for r_id, gpr in model.gpr_associations.items():
-        if gpr is not None:
-            level = gene2rxn(gpr, gene_exp, and_func, or_func)
+    for r_id, reaction in model.reactions.items():
+        if reaction.gpr is not None:
+            level = gene2rxn(reaction.gpr, gene_exp, and_func, or_func)
             if level is not None:
                 rxn_exp[r_id] = level
     return rxn_exp
@@ -131,10 +131,10 @@ def eflux(model, gene_exp, scale_rxn, scale_value, constraints=None, parsimoniou
     max_exp = max(rxn_exp.values())
     bounds = {}
 
-    for r_id, (lb, ub) in model.bounds.items():
+    for r_id, reaction in model.reactions.items():
         val = rxn_exp[r_id] / max_exp if r_id in rxn_exp else 1
-        lb2 = -val if lb is None or lb < 0 else 0
-        ub2 = val if ub is None or ub > 0 else 0
+        lb2 = -val if reaction.lb is None or reaction.lb < 0 else 0
+        ub2 = val if reaction.ub is None or reaction.ub > 0 else 0
         bounds[r_id] = (lb2, ub2)
 
     if constraints:

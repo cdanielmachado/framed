@@ -115,8 +115,8 @@ def GapFind(model, solver, root_gaps_only=False, tol=1e-5):
         eps = 0.0001
 
         # add model variables (reactions) and respective bounds
-        for r_id, (lb, ub) in model.bounds.items():
-            solver.add_variable(r_id, lb, ub)
+        for r_id, reaction in model.reactions.items():
+            solver.add_variable(r_id, reaction.lb, reaction.ub)
 
         # add binary variables for metabolites
         for m_id in model.metabolites:
@@ -241,8 +241,8 @@ def GapFill(model, reactions_db, solver, output_reaction, flux_ouput, DB_type, t
     # the lazy loading with glpk can be used for the whole problem.
     # If the problem is updated twice when using glpk, its content
     # from the first update is erased
-    for r_id, (lb, ub) in model_extended.bounds.items():
-        solver.add_variable(r_id, lb, ub)
+    for r_id, reaction in model_extended.reactions.items():
+        solver.add_variable(r_id, reaction.lb, reaction.ub)
 
     table = model_extended.metabolite_reaction_lookup()
     for m_id in model_extended.metabolites:

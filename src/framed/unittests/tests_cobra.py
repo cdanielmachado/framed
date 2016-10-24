@@ -135,10 +135,15 @@ class TransformationCommutativityTest(unittest.TestCase):
         self.assertEqual(model.id, model2.id)
         self.assertListEqual(model.metabolites.keys(), model2.metabolites.keys())
         self.assertListEqual(model.reactions.keys(), model2.reactions.keys())
-        self.assertDictEqual(model.bounds, model2.bounds)
         self.assertListEqual(model.genes.keys(), model2.genes.keys())
-        for gpr1, gpr2 in zip(model.gpr_associations.values(), model2.gpr_associations.values()):
-            self.assertEqual(str(gpr1), str(gpr2))
+        for r1, r2 in zip(model.reactions.values(), model2.reactions.values()):
+            self.assertEqual(r1.name, r2.name)
+            self.assertEqual(r1.reversible, r2.reversible)
+            self.assertDictEqual(r1.stoichiometry, r2.stoichiometry)
+            self.assertEqual(r1.lb, r2.lb)
+            self.assertEqual(r1.ub, r2.ub)
+            self.assertEqual(str(r1.gpr), str(r2.gpr))
+        self.assertSetEqual(set(model.genes.keys()), set(model2.genes.keys()))
 
 class FVATest(unittest.TestCase):
     """ Test flux variability analysis """

@@ -28,7 +28,7 @@ def FBA(model, objective=None, minimize=False, constraints=None, solver=None, ge
     """
 
     if not objective:
-        objective = model.objective
+        objective = model.get_objective()
 
     if not solver:
         solver = solver_instance(model)
@@ -57,7 +57,7 @@ def pFBA(model, objective=None, minimize=False, constraints=None, reactions=None
         solver = solver_instance(model)
 
     if not objective:
-        objective = model.objective
+        objective = model.get_objective()
 
     pre_solution = FBA(model, objective, minimize, constraints, solver)
 
@@ -132,7 +132,7 @@ def looplessFBA(model, objective=None, minimize=False, constraints=None, interna
         solver = solver_instance(model)
 
     if not objective:
-        objective = model.objective
+        objective = model.get_objective()
 
     if not hasattr(solver, 'll_FBA_flag'):
         solver.ll_FBA_flag = True

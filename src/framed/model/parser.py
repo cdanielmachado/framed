@@ -1,6 +1,7 @@
 from re import compile
 from collections import OrderedDict
 
+
 class ReactionParser:
 
     def __init__(self):
