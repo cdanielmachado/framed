@@ -76,7 +76,6 @@ class Solution:
 
         return 'Objective: {}\nStatus: {}\nMessage: {}\n'.format(self.fobj, status_codes[self.status], self.message)
 
-
     def show_values(self, zeros=False, pattern=None):
         """ Show solution results.
 
@@ -106,7 +105,6 @@ class Solution:
 
         return '\n'.join(entries)
 
-
     def show_shadow_prices(self, zeros=False, pattern=None):
         """ Show shadow prices results.
 
@@ -132,8 +130,7 @@ class Solution:
         entries = ['{:<12} {: .6g}'.format(m_id, val) for (m_id, val) in values]
 
         return '\n'.join(entries)
-    
-    
+
     def show_metabolite_balance(self, m_id, model, zeros=False, sort=False, percentage=False, equations=False):
         """ Show metabolite balance details.
 
@@ -187,7 +184,6 @@ class Solution:
         
         return '\n'.join(lines)
 
-
     def get_metabolites_turnover(self, model):
         """ Calculate metabolite turnover.
 
@@ -236,7 +232,7 @@ class Solver:
 
         Arguments:
             constr_id (str): constraint identifier
-            lhs (list): variables and respective coefficients
+            lhs (dict): variables and respective coefficients
             sense (str): constraint sense (any of: '<', '=', '>'; default '=')
             rhs (float): right-hand side of equation (default: 0)
             persistent (bool): if the variable should be reused for multiple calls (default: True)
@@ -308,37 +304,17 @@ class Solver:
         
         table = model.metabolite_reaction_lookup()
         for m_id in model.metabolites:
-            self.add_constraint(m_id, table[m_id].items(), update_problem=False)
+            self.add_constraint(m_id, table[m_id], update_problem=False)
         self.update()
             
-    def solve_lp(self, objective, minimize=True, model=None, constraints=None, get_values=True,
-                 get_shadow_prices=False, get_reduced_costs=False):
-        """ Solve an LP optimization problem.
+    def solve(self, objective, quadratic=None, minimize=True, model=None, constraints=None, get_values=True,
+              get_shadow_prices=False, get_reduced_costs=False):
+        """ Solve the optimization problem.
 
         Arguments:
             objective (dict): linear objective
+            quadratic (dict): quadratic objective (optional)
             minimize (bool): minimization problem (default: True)
-            model (CBModel): model (optional, leave blank to reuse previous model structure)
-            constraints (dict): additional constraints (optional)
-            get_values (bool): set to false for speedup if you only care about the objective value (default: True)
-            get_shadow_prices (bool): return shadow prices if available (default: False)
-            get_reduced_costs (bool): return reduced costs if available (default: False)
-
-        Returns:
-            Solution: solution
-        """
-
-        # An exception is raised if the subclass does not implement this method.
-        raise Exception('Not implemented for this solver.')
-
-    def solve_qp(self, quad_obj, lin_obj,  minimize=True, model=None, constraints=None, get_values=True,
-                 get_shadow_prices=False, get_reduced_costs=False):
-        """ Solve a QP optimization problem.
-
-        Arguments:
-            quad_obj (dict): quadradict objective
-            lin_obj (dict): linear objective
-            minimize (bool): minimization problem (default: True) set False to maximize
             model (CBModel): model (optional, leave blank to reuse previous model structure)
             constraints (dict): additional constraints (optional)
             get_values (bool): set to false for speedup if you only care about the objective value (default: True)

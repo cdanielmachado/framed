@@ -106,7 +106,7 @@ class GlpkSolver(Solver):
 
         Arguments:
             constr_id (str): constraint identifier
-            lhs (list): variables and respective coefficients
+            lhs (dict): variables and respective coefficients
             sense (str): constraint sense (any of: '<', '=', '>'; default '=')
             rhs (float): right-hand side of equation (default: 0)
             persistent (bool): if the variable should be reused for multiple calls (default: True)
@@ -117,7 +117,7 @@ class GlpkSolver(Solver):
             ind_row = glp_find_row(self.problem, constr_id)
             coef_ind, coef_val, n_vars = self.init_constr_arrays()
 
-            for r_id, coeff in lhs:
+            for r_id, coeff in lhs.items():
                 coef_ind_col = glp_find_col(self.problem, r_id)
                 coef_val[coef_ind_col] = coeff
 
@@ -131,7 +131,7 @@ class GlpkSolver(Solver):
 
             coef_ind, coef_val, n_vars = self.init_constr_arrays()
 
-            for r_id, coeff in lhs:
+            for r_id, coeff in lhs.items():
                 coef_ind_col = glp_find_col(self.problem, r_id)
                 coef_val[coef_ind_col] = coeff
 
@@ -211,11 +211,12 @@ class GlpkSolver(Solver):
         """
         self.presolve = active
 
-    def solve_lp(self, objective, minimize=True, model=None, constraints=None, get_shadow_prices=False, get_reduced_costs=False):
-        """ Solve an LP optimization problem.
+    def solve(self, objective, quadratic=None, minimize=True, model=None, constraints=None, get_shadow_prices=False, get_reduced_costs=False):
+        """ Solve the optimization problem.
 
         Arguments:
             objective (dict): linear objective
+            quadratic (dict): quadratic objective (optional)
             minimize (bool): minimization problem (default: True)
             model (CBModel): model (optional, leave blank to reuse previous model structure)
             constraints (dict): additional constraints (optional)
@@ -226,22 +227,6 @@ class GlpkSolver(Solver):
         Returns:
             Solution: solution
         """
-
-        return self._generic_solve(
-            None, objective, GLP_MAX, model, constraints, get_shadow_prices,
-            get_reduced_costs)
-
-    def solve_qp(
-        self, quad_obj, lin_obj, minimize=True, model=None, constraints=None, get_shadow_prices=False, get_reduced_costs=False):
-        """ Solve a QP optimization problem.
-
-        Not available for the GLPK interface. An exception will be raised.
-        """
-
-        raise Exception('GLPK does not solve quadratic programming problems')
-
-    def _generic_solve(self, quad_obj, lin_obj, minimize=True, model=None, constraints=None, get_shadow_prices=False,
-                       get_reduced_costs=False):
 
         if model:
             self.build_problem(model)
@@ -259,14 +244,14 @@ class GlpkSolver(Solver):
                 old_constraints[r_id] = (glp_get_col_lb(self.problem, ind_col), glp_get_col_ub(self.problem, ind_col))
                 self.set_var_bounds(ind_col, lb, ub)
 
-        if lin_obj:
-            for r_id, f in lin_obj.items():
+        if objective:
+            for r_id, f in objective.items():
                 if f:
                     ind_col = glp_find_col(self.problem, r_id)
                     glp_set_obj_coef(self.problem, ind_col, f)
 
-        if quad_obj:
-            warn('GLPK does not solve quadratic programming self.problems')
+        if quadratic:
+            raise Exception('GLPK does not solve quadratic programming self.problems')
 
         glp_set_obj_dir(self.problem, sense)
 

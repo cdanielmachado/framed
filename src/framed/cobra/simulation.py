@@ -33,8 +33,8 @@ def FBA(model, objective=None, minimize=False, constraints=None, solver=None, ge
     if not solver:
         solver = solver_instance(model)
 
-    solution = solver.solve_lp(objective, minimize=minimize, constraints=constraints, get_values=get_values,
-                               get_shadow_prices=get_shadow_prices, get_reduced_costs=get_reduced_costs)
+    solution = solver.solve(objective, minimize=minimize, constraints=constraints, get_values=get_values,
+                            get_shadow_prices=get_shadow_prices, get_reduced_costs=get_reduced_costs)
     return solution
 
 
@@ -64,7 +64,7 @@ def pFBA(model, objective=None, minimize=False, constraints=None, reactions=None
     if pre_solution.status != Status.OPTIMAL:
         return pre_solution
 
-    solver.add_constraint('obj', objective.items(), '=', pre_solution.fobj)
+    solver.add_constraint('obj', objective, '=', pre_solution.fobj)
 
     if not reactions:
         reactions = model.reactions.keys()
@@ -80,8 +80,8 @@ def pFBA(model, objective=None, minimize=False, constraints=None, reactions=None
         for r_id in reactions:
             if model.reactions[r_id].reversible:
                 pos, neg = r_id + '+', r_id + '-'
-                solver.add_constraint('c' + pos, [(r_id, -1), (pos, 1)], '>', 0, persistent=False, update_problem=False)
-                solver.add_constraint('c' + neg, [(r_id, 1), (neg, 1)], '>', 0, persistent=False, update_problem=False)
+                solver.add_constraint('c' + pos, {r_id: -1, pos: 1}, '>', 0, persistent=False, update_problem=False)
+                solver.add_constraint('c' + neg, {r_id: 1, neg: 1}, '>', 0, persistent=False, update_problem=False)
         solver.update()
 
     objective = dict()
@@ -93,7 +93,7 @@ def pFBA(model, objective=None, minimize=False, constraints=None, reactions=None
         else:
             objective[r_id] = 1
 
-    solution = solver.solve_lp(objective, minimize=True, constraints=constraints)
+    solution = solver.solve(objective, minimize=True, constraints=constraints)
 
     #post process
     
@@ -156,15 +156,14 @@ def looplessFBA(model, objective=None, minimize=False, constraints=None, interna
 
         for r_id in internal:
             a, g = 'a' + r_id, 'g' + r_id
-            solver.add_constraint('c1_' + r_id, [(a, M), (r_id, -1)], '<', M, persistent=False, update_problem=False)
-            solver.add_constraint('c2_' + r_id, [(a, -M), (r_id, 1)], '<', 0, persistent=False, update_problem=False)
-            solver.add_constraint('c3_' + r_id, [(a, M+1), (g, 1)], '>', 1, persistent=False, update_problem=False)
-            solver.add_constraint('c4_' + r_id, [(a, M+1), (g, 1)], '<', M, persistent=False, update_problem=False)
+            solver.add_constraint('c1_' + r_id, {a: M, r_id: -1}, '<', M, persistent=False, update_problem=False)
+            solver.add_constraint('c2_' + r_id, {a: -M, r_id: 1}, '<', 0, persistent=False, update_problem=False)
+            solver.add_constraint('c3_' + r_id, {a: M+1, g: 1}, '>', 1, persistent=False, update_problem=False)
+            solver.add_constraint('c4_' + r_id, {a: M+1, g: 1}, '<', M, persistent=False, update_problem=False)
         solver.update()
 
-
         for i, row in enumerate(Nint):
-            expr = [('g' + r_id, coeff) for r_id, coeff in zip(internal, row) if abs(coeff) > 1e-12]
+            expr = {'g' + r_id: coeff for r_id, coeff in zip(internal, row) if abs(coeff) > 1e-12}
             solver.add_constraint('n{}'.format(i), expr, '=', 0, persistent=False, update_problem=False)
 
         solver.update()
@@ -172,7 +171,7 @@ def looplessFBA(model, objective=None, minimize=False, constraints=None, interna
     if not constraints:
         constraints = dict()
 
-    solution = solver.solve_lp(objective, minimize=minimize, constraints=constraints, get_values=get_values)
+    solution = solver.solve(objective, minimize=minimize, constraints=constraints, get_values=get_values)
 
     return solution
 
@@ -200,7 +199,7 @@ def MOMA(model, reference=None, constraints=None, solver=None):
     if not solver:
         solver = solver_instance(model)
 
-    solution = solver.solve_qp(quad_obj, lin_obj, minimize=True, constraints=constraints)
+    solution = solver.solve(lin_obj, quadratic=quad_obj, minimize=True, constraints=constraints)
 
     return solution
 
@@ -234,8 +233,8 @@ def lMOMA(model, reference=None, constraints=None, solver=None):
         solver.update()
         for r_id in reference.keys():
             d_pos, d_neg = r_id + '_d+', r_id + '_d-'
-            solver.add_constraint('c' + d_pos, [(r_id, -1), (d_pos, 1)], '>', -reference[r_id], persistent=False, update_problem=False)
-            solver.add_constraint('c' + d_neg, [(r_id, 1), (d_neg, 1)], '>', reference[r_id], persistent=False, update_problem=False)
+            solver.add_constraint('c' + d_pos, {r_id: -1, d_pos: 1}, '>', -reference[r_id], persistent=False, update_problem=False)
+            solver.add_constraint('c' + d_neg, {r_id: 1, d_neg: 1}, '>', reference[r_id], persistent=False, update_problem=False)
         solver.update()
         
     objective = dict()
@@ -244,7 +243,7 @@ def lMOMA(model, reference=None, constraints=None, solver=None):
         objective[d_pos] = 1
         objective[d_neg] = 1
 
-    solution = solver.solve_lp(objective, minimize=True, constraints=constraints)
+    solution = solver.solve(objective, minimize=True, constraints=constraints)
 
     #post process
     if solution.status == Status.OPTIMAL:
@@ -296,11 +295,11 @@ def ROOM(model, reference=None, constraints=None, solver=None, delta=0.03, epsil
             w_i = reference[r_id]
             w_u = w_i + delta*abs(w_i) + epsilon
             w_l = w_i - delta*abs(w_i) - epsilon
-            solver.add_constraint('c' + r_id + '_u', [(r_id, 1), (y_i, (w_u - U))], '<', w_u, persistent=False, update_problem=False)
-            solver.add_constraint('c' + r_id + '_l', [(r_id, 1), (y_i, (w_l - L))], '>', w_l, persistent=False, update_problem=False)
+            solver.add_constraint('c' + r_id + '_u', {r_id: 1, y_i: (w_u - U)}, '<', w_u, persistent=False, update_problem=False)
+            solver.add_constraint('c' + r_id + '_l', {r_id: 1, y_i: (w_l - L)}, '>', w_l, persistent=False, update_problem=False)
         solver.update()
 
-    solution = solver.solve_lp(objective, minimize=True, constraints=constraints)
+    solution = solver.solve(objective, minimize=True, constraints=constraints)
     
     #post process
     if solution.status == Status.OPTIMAL:

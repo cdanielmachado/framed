@@ -44,7 +44,6 @@ class GurobiSolver(Solver):
         if model:
             self.build_problem(model)
 
-            
     def add_variable(self, var_id, lb=None, ub=None, vartype=VarType.CONTINUOUS, persistent=True, update_problem=True):
         """ Add a variable to the current problem.
 
@@ -80,7 +79,7 @@ class GurobiSolver(Solver):
 
         Arguments:
             constr_id (str): constraint identifier
-            lhs (list): variables and respective coefficients
+            lhs (dict): variables and respective coefficients
             sense (str): constraint sense (any of: '<', '=', '>'; default '=')
             rhs (float): right-hand side of equation (default: 0)
             persistent (bool): if the variable should be reused for multiple calls (default: True)
@@ -95,7 +94,7 @@ class GurobiSolver(Solver):
             constr = self.problem.getConstrByName(constr_id)
             self.problem.remove(constr)
 
-        expr = quicksum([coeff * self.problem.getVarByName(r_id) for r_id, coeff in lhs if coeff])
+        expr = quicksum([coeff * self.problem.getVarByName(r_id) for r_id, coeff in lhs.items() if coeff])
         self.problem.addConstr(expr, grb_sense[sense], rhs, constr_id)
         self.constr_ids.append(constr_id)
             
@@ -129,13 +128,13 @@ class GurobiSolver(Solver):
         """ Update internal structure. Used for efficient lazy updating. """
         self.problem.update()
 
-        
-    def solve_lp(self, objective, minimize=True, model=None, constraints=None, get_values=True,
-                 get_shadow_prices=False, get_reduced_costs=False):
-        """ Solve an LP optimization problem.
+    def solve(self, objective, quadratic=None, minimize=True, model=None, constraints=None, get_values=True,
+              get_shadow_prices=False, get_reduced_costs=False):
+        """ Solve the optimization problem.
 
         Arguments:
             objective (dict): linear objective
+            quadratic (dict): quadratic objective (optional)
             minimize (bool): minimization problem (default: True)
             model (CBModel): model (optional, leave blank to reuse previous model structure)
             constraints (dict): additional constraints (optional)
@@ -146,32 +145,6 @@ class GurobiSolver(Solver):
         Returns:
             Solution: solution
         """
-
-        return self._generic_solve(None, objective, minimize, model, constraints, get_values, get_shadow_prices, get_reduced_costs)
-
-    def solve_qp(self, quad_obj, lin_obj, minimize=True, model=None, constraints=None, get_values=True,
-                 get_shadow_prices=False, get_reduced_costs=False):
-        """ Solve a QP optimization problem.
-
-        Arguments:
-            quad_obj (dict): quadradict objective
-            lin_obj (dict): linear objective
-            minimize (bool): minimization problem (default: True) set False to maximize
-            model (CBModel): model (optional, leave blank to reuse previous model structure)
-            constraints (dict): additional constraints (optional)
-            get_values (bool): set to false for speedup if you only care about the objective value (default: True)
-            get_shadow_prices (bool): return shadow prices if available (default: False)
-            get_reduced_costs (bool): return reduced costs if available (default: False)
-
-        Returns:
-            Solution: solution
-        """
-
-
-        return self._generic_solve(quad_obj, lin_obj, minimize, model, constraints, get_values, get_shadow_prices, get_reduced_costs)
-
-    def _generic_solve(self, quad_obj, lin_obj, minimize=True, model=None, constraints=None, get_values=True,
-                       get_shadow_prices=False, get_reduced_costs=False):
 
         if model:
             self.build_problem(model)
@@ -193,10 +166,10 @@ class GurobiSolver(Solver):
 
         #create objective function
         quad_obj_expr = [q * problem.getVarByName(r_id1) * problem.getVarByName(r_id2)
-                         for (r_id1, r_id2), q in quad_obj.items() if q] if quad_obj else []
+                         for (r_id1, r_id2), q in quadratic.items() if q] if quadratic else []
 
         lin_obj_expr = [f * problem.getVarByName(r_id)
-                        for r_id, f in lin_obj.items() if f] if lin_obj else []
+                        for r_id, f in objective.items() if f] if objective else []
 
         obj_expr = quicksum(quad_obj_expr + lin_obj_expr)
         sense = GRB.MINIMIZE if minimize else GRB.MAXIMIZE

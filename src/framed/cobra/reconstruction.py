@@ -132,8 +132,8 @@ def GapFind(model, solver, root_gaps_only=False, tol=1e-5):
 
             # build objective function
             objective_coeffs[x_var_name] = 1
-            lhs = table[m_id].items()
-            constr_five = [(x_var_name, -1)]
+            lhs = table[m_id]
+            constr_five = {x_var_name: -1}
 
             for r_id, coeff in lhs:
                 w_var_name = 'w-' + m_id + '-' + r_id
@@ -141,22 +141,22 @@ def GapFind(model, solver, root_gaps_only=False, tol=1e-5):
                 if model.reactions[r_id].reversible == False and coeff > 0:
                     solver.add_variable(w_var_name, 0, 1, VarType.BINARY, True)
                     # add MILP constraint (2)
-                    solver.add_constraint(m_id + '-c1' + '-' + w_var_name, [(r_id, coeff), (w_var_name, -eps)], '>', 0,
+                    solver.add_constraint(m_id + '-c1' + '-' + w_var_name, {r_id: coeff, w_var_name: -eps}, '>', 0,
                                           update_problem=False)
                     # add MILP constraint (3)
-                    solver.add_constraint(m_id + '-c2' + '-' + w_var_name, [(r_id, coeff), (w_var_name, -n_reactions)],
+                    solver.add_constraint(m_id + '-c2' + '-' + w_var_name, {r_id: coeff, w_var_name: -n_reactions},
                                           '<', 0, update_problem=False)
-                    constr_five.append((w_var_name, 1))
+                    constr_five[w_var_name] = 1
 
                 if model.reactions[r_id].reversible == True and coeff != 0:
                     solver.add_variable(w_var_name, 0, 1, VarType.BINARY, True)
                     # add MILP constraint (4)
-                    solver.add_constraint(m_id + '-c3' + '-' + w_var_name, [(r_id, coeff), (w_var_name, -n_reactions)],
+                    solver.add_constraint(m_id + '-c3' + '-' + w_var_name, {r_id: coeff, w_var_name: -n_reactions},
                                           '>', eps - n_reactions, update_problem=False)
                     # add MILP constraint (5)
-                    solver.add_constraint(m_id + '-c4' + '-' + w_var_name, [(r_id, coeff), (w_var_name, -n_reactions)],
+                    solver.add_constraint(m_id + '-c4' + '-' + w_var_name, {r_id: coeff, w_var_name: -n_reactions},
                                           '<', 0, update_problem=False)
-                    constr_five.append((w_var_name, 1))
+                    constr_five[w_var_name] = 1
 
             # add model constraints (1)
             solver.add_constraint(m_id, lhs, update_problem=False)
@@ -167,7 +167,7 @@ def GapFind(model, solver, root_gaps_only=False, tol=1e-5):
         solver.update()
 
         # solve problem
-        solution = solver.solve_lp(objective_coeffs, minimize=False)
+        solution = solver.solve(objective_coeffs, minimize=False)
 
         if solution.status == Status.OPTIMAL or solution.status == Status.SUBOPTIMAL:
             # get gap metabolites
@@ -246,7 +246,7 @@ def GapFill(model, reactions_db, solver, output_reaction, flux_ouput, DB_type, t
 
     table = model_extended.metabolite_reaction_lookup()
     for m_id in model_extended.metabolites:
-        solver.add_constraint(m_id, table[m_id].items(), update_problem=False)
+        solver.add_constraint(m_id, table[m_id], update_problem=False)
 
     objective_coeffs = {}
 
@@ -257,19 +257,19 @@ def GapFill(model, reactions_db, solver, output_reaction, flux_ouput, DB_type, t
         # add binary variables
         solver.add_variable(binary_variable, 0, 1, VarType.BINARY)
         # add constraint (2)
-        solver.add_constraint(r_id + '_lb', [(r_id, 1), (binary_variable, 1e3)], '>', 0, update_problem=False)
+        solver.add_constraint(r_id + '_lb', {r_id: 1, binary_variable: 1e3}, '>', 0, update_problem=False)
         # add constraint (3)
-        solver.add_constraint(r_id + '_ub', [(r_id, 1), (binary_variable, -1e3)], '<', 0, update_problem=False)
+        solver.add_constraint(r_id + '_ub', {r_id: 1, binary_variable: -1e3}, '<', 0, update_problem=False)
 
     # add biomass production constraint (4)
 
-    solver.add_constraint("R_tomax", [(output_reaction, 1)], '>', flux_ouput, update_problem=False)
+    solver.add_constraint("R_tomax", {output_reaction: 1}, '>', flux_ouput, update_problem=False)
 
     # update MILP problem - lazy loading
     solver.update()
 
     # solve the MILP problem
-    solution = solver.solve_lp(objective_coeffs, minimize=True)
+    solution = solver.solve(objective_coeffs, minimize=True)
 
     if (solution.status == Status.OPTIMAL or solution.status == Status.SUBOPTIMAL) and solution.values != None:
         # get the DB reactions added to the model

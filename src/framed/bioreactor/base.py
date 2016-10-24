@@ -307,8 +307,8 @@ class Bioreactor(Environment, DynamicSystem):
             if t == 0:
                 organism.solver = solver_instance(organism.model)
 
-            organism.fba_solution = organism.solver.solve_lp(organism.fba_objective, minimize=False,
-                                                             constraints=organism.fba_constraints)
+            organism.fba_solution = organism.solver.solve(organism.fba_objective, minimize=False,
+                                                          constraints=organism.fba_constraints)
 
             if organism.fba_solution.status == Status.OPTIMAL:
                 mu[i] = organism.fba_solution.fobj

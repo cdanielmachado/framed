@@ -16,7 +16,7 @@ from framed.solvers.solver import Status
 from framed.model.transformation import make_irreversible, simplify
 from framed.solvers import set_default_solver
 
-#set_default_solver('cplex')
+set_default_solver('cplex')
 
 SMALL_TEST_MODEL = '../../../examples/models/ecoli_core_model.xml'
 LARGE_TEST_MODEL = '../../../examples/models/Ec_iAF1260_flux1.xml'

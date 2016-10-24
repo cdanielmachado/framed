@@ -67,7 +67,7 @@ def GIMME(model, gene_exp, cutoff=25, growth_frac=0.9, constraints=None, parsimo
     constraints[biomass] = (growth_frac * wt_solution.values[biomass], None)
 
     if not parsimonious:
-        solution = solver.solve_lp(coeffs, minimize=True, constraints=constraints)
+        solution = solver.solve(coeffs, minimize=True, constraints=constraints)
 
     else:
         for r_id in model.reactions:
@@ -80,8 +80,8 @@ def GIMME(model, gene_exp, cutoff=25, growth_frac=0.9, constraints=None, parsimo
         for r_id in model.reactions:
             if model.reactions[r_id].reversible:
                 pos, neg = r_id + '+', r_id + '-'
-                solver.add_constraint('c' + pos, [(r_id, -1), (pos, 1)], '>', 0, persistent=False, update_problem=False)
-                solver.add_constraint('c' + neg, [(r_id, 1), (neg, 1)], '>', 0, persistent=False, update_problem=False)
+                solver.add_constraint('c' + pos, {r_id: -1, pos: 1}, '>', 0, persistent=False, update_problem=False)
+                solver.add_constraint('c' + neg, {r_id: 1, neg: 1}, '>', 0, persistent=False, update_problem=False)
         solver.update()
 
         objective = dict()
@@ -93,8 +93,8 @@ def GIMME(model, gene_exp, cutoff=25, growth_frac=0.9, constraints=None, parsimo
             else:
                 objective[r_id] = val
 
-        pre_solution = solver.solve_lp(objective, minimize=True, constraints=constraints)
-        solver.add_constraint('obj', objective.items(), '=', pre_solution.fobj)
+        pre_solution = solver.solve(objective, minimize=True, constraints=constraints)
+        solver.add_constraint('obj', objective, '=', pre_solution.fobj)
         objective = dict()
 
         for r_id in model.reactions:
@@ -105,7 +105,7 @@ def GIMME(model, gene_exp, cutoff=25, growth_frac=0.9, constraints=None, parsimo
             else:
                 objective[r_id] = 1
 
-        solution = solver.solve_lp(objective, minimize=True, constraints=constraints)
+        solution = solver.solve(objective, minimize=True, constraints=constraints)
         solver.remove_constraint('obj')
         solution.pre_solution = pre_solution
 
