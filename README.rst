@@ -1,32 +1,32 @@
 FRAMED
 ======
 
-**framed** is a python package for analysis and simulation of metabolic
+*framed* is a python package for analysis and simulation of metabolic
 models. The main focus is to provide support for different modeling
 approaches.
 
 -  Modeling: Constraint-based models, Kinetic models, Bioprocess models
-
 -  I/O: Import/Export from SBML and/or plain text formats
-
 -  Solver support: Gurobi, CPLEX, GLPK
-
 -  COBRA tools:
 
    -  Simulation: FBA, pFBA, loopless-FBA, MOMA, linearMOMA, ROOM
    -  Analysis: FVA, gene essentiality, PhPP, flux envelope plots
-   -  Reconstruction: gapFind, gapFill
-   -  Strain design: brute force, hill climbing
    -  Omics integration: GIMME, E-Flux
+   -  Strain design: brute force, hill climbing
 
 -  Kinetic tools:
 
    -  Time-course and steady-state simulation
    -  Parameter and flux sampling
-   -  Parameter calibration from data
-   -  Plotting utilities
+   -  Calibration from metabolomics data
 
 -  Bioprocess modeling: Dynamic FBA (single and multi-species)
+
+Documentation
+~~~~~~~~~~~~~
+
+For documentation and API please check: http://framed.readthedocs.io/
 
 Instalation
 ~~~~~~~~~~~
