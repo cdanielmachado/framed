@@ -7,12 +7,10 @@ Note: to use this wrapper you need python-glpk, the instructions to
 install it on Mac OS can be found on the misc folder
 """
 
-import tempfile
-import os
+
 from collections import OrderedDict
 from .solver import Solver, Solution, Status, VarType
-from glpk_interface.glpkpi import *
-from warnings import warn
+from glpkpi import *
 
 status_mapping = {GLP_OPT: Status.OPTIMAL,
                   GLP_FEAS: Status.SUBOPTIMAL,
