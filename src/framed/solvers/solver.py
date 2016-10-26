@@ -1,7 +1,7 @@
 """
-Abstract classes for solver specific implementations.
+This module implements abstract classes common to any solver interface.
 
-@author: Daniel Machado
+Author: Daniel Machado
 
 """
 
@@ -41,13 +41,21 @@ default_parameters = {
 
 
 def set_default_parameter(parameter, value):
+    """ Change the value for a given parameter (see list of supported parameters).
+
+    Arguments:
+        parameter (Parameter): parameter type
+        value (float): parameter value
+    """
+
     global default_parameters
     default_parameters[parameter] = value
 
 
 class Solution:
     """ Stores the results of an optimization.
-    Invoke without arguments to create an empty Solution representing a failed optimization.
+
+    Instantiate without arguments to create an empty Solution representing a failed optimization.
     """
 
     def __init__(self, status=Status.UNKNOWN, message=None, fobj=None, values=None, shadow_prices=None, reduced_costs=None):
@@ -66,18 +74,17 @@ class Solution:
                         Status.INFEASIBLE: 'Infeasible',
                         Status.INF_OR_UNB: 'Infeasible or Unbounded'}
 
-        return 'Objective: {}\nStatus: {}\nMessage: {}\n'.format(self.fobj, status_codes[self.status], self.message)
-
+        return 'Objective: {}\nStatus: {}\n'.format(self.fobj, status_codes[self.status])
 
     def show_values(self, zeros=False, pattern=None):
         """ Show solution results.
 
         Arguments:
-            zeros : bool - show zero values (default: False)
-            pattern: str - show only reactions that contain pattern (optional)
+            zeros (bool): show zero values (default: False)
+            pattern (str): show only reactions that contain pattern (optional)
             
         Returns:
-            str : printed table with variable values (and reduced costs if calculated) 
+            str: printed table with variable values (and reduced costs if calculated) 
         """
 
         if not self.values:
@@ -98,16 +105,15 @@ class Solution:
 
         return '\n'.join(entries)
 
-
     def show_shadow_prices(self, zeros=False, pattern=None):
         """ Show shadow prices results.
 
         Arguments:
-            zeros : bool - show zero values (default: False)
-            pattern: str - show only metabolites that contain pattern (optional)
+            zeros (bool): show zero values (default: False)
+            pattern (str): show only metabolites that contain pattern (optional)
         
         Returns:
-            str : printed table with shadow prices 
+            str: printed table with shadow prices 
         """
 
         if not self.shadow_prices:
@@ -124,28 +130,27 @@ class Solution:
         entries = ['{:<12} {: .6g}'.format(m_id, val) for (m_id, val) in values]
 
         return '\n'.join(entries)
-    
-    
+
     def show_metabolite_balance(self, m_id, model, zeros=False, sort=False, percentage=False, equations=False):
         """ Show metabolite balance details.
 
         Arguments:
-            m_id: str - metabolite id
-            model: CBModel - model that generated the solution
-            zeros: bool - show zero entries (default: False)
-            sort: bool - sort reactions by flux (default: False)
-            percentage: bool - show percentage of carried flux instead of absolute flux (default: False)
-            equations: bool - show reaction equations (default: False)
+            m_id (str): metabolite id
+            model (CBModel): model that generated the solution
+            zeros (bool): show zero entries (default: False)
+            sort (bool): sort reactions by flux (default: False)
+            percentage (bool): show percentage of total turnover instead of flux (default: False)
+            equations (bool): show reaction equations (default: False)
         
         Returns:
-            str : formatted output
+            str: formatted output
         """
                 
         if not self.values:
             return None
         
-        inputs = model.get_metabolite_sources(m_id)
-        outputs = model.get_metabolite_sinks(m_id)
+        inputs = model.get_metabolite_producers(m_id)
+        outputs = model.get_metabolite_consumers(m_id)
         
         fwd_in = [(r_id, model.reactions[r_id].stoichiometry[m_id] * self.values[r_id], '--> o')
                   for r_id in inputs if self.values[r_id] > 0 or zeros and self.values[r_id] == 0]
@@ -179,9 +184,17 @@ class Solution:
         
         return '\n'.join(lines)
 
-
     def get_metabolites_turnover(self, model):
-        m_r_table = model.metabolite_reaction_lookup_table()
+        """ Calculate metabolite turnover.
+
+        Arguments:
+            model (CBModel): model that generated the solution
+        
+        Returns:
+            dict: metabolite turnover rates
+        """
+
+        m_r_table = model.metabolite_reaction_lookup()
         t = {m_id: 0.5*sum([abs(coeff * self.values[r_id]) for r_id, coeff in neighbours.items()])
              for m_id, neighbours in m_r_table.items()}
         return t
@@ -189,7 +202,8 @@ class Solution:
 
 class Solver:
     """ Abstract class representing a generic solver.
-    All solver interfaces should implement the basic methods.
+
+    All solver interfaces should implement the methods defined in this class.
     """
 
     def __init__(self, model=None):
@@ -205,24 +219,24 @@ class Solver:
         """ Add a variable to the current problem.
         
         Arguments:
-            var_id : str -- variable identifier
-            lb : float -- lower bound
-            ub : float -- upper bound
-            vartype : VarType -- variable type (default: CONTINUOUS)
-            persistent : bool -- if the variable should be reused for multiple calls (default: true)
-            update_problem : bool -- update problem immediately (default: True)
+            var_id (str): variable identifier
+            lb (float): lower bound
+            ub (float): upper bound
+            vartype (VarType): variable type (default: CONTINUOUS)
+            persistent (bool): if the variable should be reused for multiple calls (default: true)
+            update_problem (bool): update problem immediately (default: True)
         """
 
     def add_constraint(self, constr_id, lhs, sense='=', rhs=0, persistent=True, update_problem=True):
-        """ Add a variable to the current problem.
-        
+        """ Add a constraint to the current problem.
+
         Arguments:
-            constr_id : str -- constraint identifier
-            lhs : list [of (str, float)] -- variables and respective coefficients
-            sense : {'<', '=', '>'} -- default '='
-            rhs : float -- right-hand side of equation (default: 0)
-            persistent : bool -- if the variable should be reused for multiple calls (default: True)
-            update_problem : bool -- update problem immediately (default: True)
+            constr_id (str): constraint identifier
+            lhs (dict): variables and respective coefficients
+            sense (str): constraint sense (any of: '<', '=', '>'; default '=')
+            rhs (float): right-hand side of equation (default: 0)
+            persistent (bool): if the variable should be reused for multiple calls (default: True)
+            update_problem (bool): update problem immediately (default: True)
         """
         pass
     
@@ -230,7 +244,7 @@ class Solver:
         """ Remove a variable from the current problem.
         
         Arguments:
-            var_id : str -- variable identifier
+            var_id (str): variable identifier
         """
         pass
     
@@ -238,7 +252,7 @@ class Solver:
         """ Remove a constraint from the current problem.
         
         Arguments:
-            constr_id : str -- constraint identifier
+            constr_id (str): constraint identifier
         """
         pass
 
@@ -246,7 +260,7 @@ class Solver:
         """ Get a list of the variable ids defined for the current problem.
 
         Returns:
-            list [of str] -- variable ids
+            list: variable ids
         """
         return self.var_ids
 
@@ -254,7 +268,7 @@ class Solver:
         """ Get a list of the constraint ids defined for the current problem.
 
         Returns:
-            list [of str] -- constraint ids
+            list: constraint ids
         """
         return self.constr_ids
     
@@ -262,8 +276,8 @@ class Solver:
         """ Clean up all non persistent elements in the problem.
         
         Arguments:
-            clean_variables : bool -- remove non persistent variables (default: True)
-            clean_constraints : bool -- remove non persistent constraints (default: True)
+            clean_variables (bool): remove non persistent variables (default: True)
+            clean_constraints (bool): remove non persistent constraints (default: True)
         """
         if clean_variables:
             for var_id in self.temp_vars:
@@ -284,52 +298,31 @@ class Solver:
             model : CBModel
         """
 
-        for r_id, (lb, ub) in model.bounds.items():
-            self.add_variable(r_id, lb, ub, update_problem=False)
+        for r_id, reaction in model.reactions.items():
+            self.add_variable(r_id, reaction.lb, reaction.ub, update_problem=False)
         self.update()
         
-        table = model.metabolite_reaction_lookup_table()
+        table = model.metabolite_reaction_lookup()
         for m_id in model.metabolites:
-            self.add_constraint(m_id, table[m_id].items(), update_problem=False)
+            self.add_constraint(m_id, table[m_id], update_problem=False)
         self.update()
             
-    def solve_lp(self, objective, minimize=True, model=None, constraints=None, get_values=True,
-                 get_shadow_prices=False, get_reduced_costs=False):
-        """ Solve an LP optimization problem.
-        
-        Arguments:
-            objective : dict (of str to float) -- reaction ids in the objective function and respective
-                        coefficients, the sense is maximization by default
-            model : CBModel -- model (optional, leave blank to reuse previous model structure)
-            minimize : bool -- minimization problem (default: True) set False to maximize
-            constraints : dict (of str to float or (float, float)) -- environmental or additional constraints (optional)
-            get_values : bool -- set to false for speedup if you only care about the objective value (optional, default: True)
-            get_shadow_prices : bool -- return shadow price information if available (optional, default: False)
-            get_reduced_costs : bool -- return reduced costs information if available (optional, default: False)
-            
-        Returns:
-            Solution
-        """
+    def solve(self, objective, quadratic=None, minimize=True, model=None, constraints=None, get_values=True,
+              get_shadow_prices=False, get_reduced_costs=False):
+        """ Solve the optimization problem.
 
-        # An exception is raised if the subclass does not implement this method.
-        raise Exception('Not implemented for this solver.')
-
-    def solve_qp(self, quad_obj, lin_obj,  minimize=True, model=None, constraints=None, get_values=True,
-                 get_shadow_prices=False, get_reduced_costs=False):
-        """ Solve an LP optimization problem.
-        
         Arguments:
-            quad_obj : dict (of (str, str) to float) -- map reaction pairs to respective coefficients
-            lin_obj : dict (of str to float) -- map single reaction ids to respective linear coefficients
-            model : CBModel -- model (optional, leave blank to reuse previous model structure)
-            minimize : bool -- minimization problem (default: True) set False to maximize
-            constraints : dict (of str to float or (float, float)) -- environmental or additional constraints (optional)
-            get_values : bool -- set to false for speedup if you only care about the objective value (optional, default: True)
-            get_shadow_prices : bool -- return shadow price information if available (default: False)
-            get_reduced_costs : bool -- return reduced costs information if available (default: False)
-        
+            objective (dict): linear objective
+            quadratic (dict): quadratic objective (optional)
+            minimize (bool): minimization problem (default: True)
+            model (CBModel): model (optional, leave blank to reuse previous model structure)
+            constraints (dict): additional constraints (optional)
+            get_values (bool): set to false for speedup if you only care about the objective value (default: True)
+            get_shadow_prices (bool): return shadow prices if available (default: False)
+            get_reduced_costs (bool): return reduced costs if available (default: False)
+
         Returns:
-            Solution
+            Solution: solution
         """
 
         # An exception is raised if the subclass does not implement this method.
@@ -339,8 +332,8 @@ class Solver:
         """ Set a parameter value for this optimization problem
 
         Arguments:
-            parameter : Parameter -- parameter type
-            value : float -- parameter value
+            parameter (Parameter): parameter type
+            value (float): parameter value
         """
 
         # An exception is raised if the subclass does not implement this method.
@@ -350,14 +343,26 @@ class Solver:
         """ Set values for multiple parameters
 
         Arguments:
-            parameters : dict of Parameter to value -- parameter values
+            parameters (dict of Parameter to value): parameter values
         """
 
         for parameter, value in parameters.items():
             self.set_parameter(parameter, value)
 
     def set_logging(self, enabled=False):
+        """ Enable or disable log output:
+
+        Arguments:
+            enabled (bool): turn logging on (default: False)
+        """
+
         raise Exception('Not implemented for this solver.')
 
     def write_to_file(self, filename):
+        """ Write problem to file:
+
+        Arguments:
+            filename (str): file path
+        """
+
         raise Exception('Not implemented for this solver.')

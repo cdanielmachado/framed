@@ -49,70 +49,11 @@
 <div class="section" id="framed-reconstruction-gapfill-module">
 <h2>framed.reconstruction.gapFill module<a class="headerlink" href="#framed-reconstruction-gapfill-module" title="Permalink to this headline">¶</a></h2>
 </div>
-<div class="section" id="module-framed.reconstruction.gapFind">
-<span id="framed-reconstruction-gapfind-module"></span><h2>framed.reconstruction.gapFind module<a class="headerlink" href="#module-framed.reconstruction.gapFind" title="Permalink to this headline">¶</a></h2>
-<p>This module implements a method to find gaps in the network.</p>
-<p>&#64;author: Marta Matos</p>
-<dl class="function">
-<dt id="framed.reconstruction.gapFind.GapFind">
-<code class="descclassname">framed.reconstruction.gapFind.</code><code class="descname">GapFind</code><span class="sig-paren">(</span><em>model</em>, <em>solver</em>, <em>root_gaps_only=False</em>, <em>tol=1e-05</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.reconstruction.gapFind.GapFind" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="docutils">
-<dt>Implements the GapFind algorithm (Kumar et al, 2007)</dt>
-<dd><p class="first">with some modifications.
-It finds all the non producing and non consuming metabolites by
-solving the following LP problem:</p>
-<p>max sum(x)
-s.t. S*v = 0                                                    (1)</p>
-<blockquote>
-<div>S[i][j]*v[j] - eps*w[i][j] &gt;= 0     S[i][j] &gt; 0, j in IR    (2)
-S[i][j]*v[j] - M*w[i][j] &lt;= 0     S[i][j] &gt; 0, j in IR      (3)
-S[i][j]*v[j] - M*w[i][j] &gt;= eps-M   S[i][j] != 0, j in R    (4)
-S[i][j]*v[j] - M*w[i][j] &lt;= 0     S[i][j] != 0, j in R      (5)
-sum(w[i][:]) - x[i] &gt;= 0                                    (6)
-lb &lt;= v &lt;= ub
-x and w are binary variables, v are continuous</div></blockquote>
-<ul class="last simple">
-<li>x are the metabolites:
-x=1 for metabolites produced/consumed,
-x=0 for metabolites that are not produced/consumed</li>
-<li>w[i][j] stands for reaction j that produces/consumes metabolite i
-w[i][j] = 1 if the reaction is active
-w[i][j] = 0 if the reaction is inactive</li>
-<li>v[j] is the flux of reaction j</li>
-<li>S[i][j] is the stoichiometric coefficient of metabolite i on reaction j</li>
-<li>e is a small constant, M is the number of reactions in the model</li>
-<li>lb and ub are the lower and upper bounds, respectively,  of
-a given reaction flux</li>
-<li>R is the set of all reversible reactions</li>
-<li>IR is the set of all irreversible reactions</li>
-</ul>
-</dd>
-</dl>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>model</strong> &#8211; a constraint based model</li>
-<li><strong>solver</strong> &#8211; a solver instance</li>
-<li><strong>root_gaps_only</strong> &#8211; a true/false argument</li>
-</ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">the list of metabolites that cannot be produced or consumed
-gap_reactions: the reactions associated with the gap metabolites</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">gap_metabolites</p>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
+<div class="section" id="framed-reconstruction-gapfind-module">
+<h2>framed.reconstruction.gapFind module<a class="headerlink" href="#framed-reconstruction-gapfind-module" title="Permalink to this headline">¶</a></h2>
 </div>
-<div class="section" id="module-framed.reconstruction">
-<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-framed.reconstruction" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="module-contents">
+<h2>Module contents<a class="headerlink" href="#module-contents" title="Permalink to this headline">¶</a></h2>
 </div>
 </div>
 
@@ -127,8 +68,8 @@ gap_reactions: the reactions associated with the gap metabolites</p>
 <li><a class="reference internal" href="#">framed.reconstruction package</a><ul>
 <li><a class="reference internal" href="#submodules">Submodules</a></li>
 <li><a class="reference internal" href="#framed-reconstruction-gapfill-module">framed.reconstruction.gapFill module</a></li>
-<li><a class="reference internal" href="#module-framed.reconstruction.gapFind">framed.reconstruction.gapFind module</a></li>
-<li><a class="reference internal" href="#module-framed.reconstruction">Module contents</a></li>
+<li><a class="reference internal" href="#framed-reconstruction-gapfind-module">framed.reconstruction.gapFind module</a></li>
+<li><a class="reference internal" href="#module-contents">Module contents</a></li>
 </ul>
 </li>
 </ul>

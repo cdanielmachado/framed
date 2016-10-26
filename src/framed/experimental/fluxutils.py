@@ -1,5 +1,5 @@
 from collections import OrderedDict
-from framed.analysis.simulation import MOMA, lMOMA
+from framed.cobra.simulation import MOMA, lMOMA
 from framed.solvers.solver import Status
 from numpy import array, sqrt, sum, abs
 
@@ -48,3 +48,22 @@ def compare_fluxes(original, other, tolerance=1e-6, sort_values=False):
         if val > tolerance:
             print '{: <16} {: < 10.3g} {: < 10.3g}'.format(r_id, original[r_id], other[r_id])
 
+
+def compute_turnover(model, v):
+    m_r_table = model.metabolite_reaction_lookup_table()
+    t = {m_id: 0.5*sum([abs(coeff * v[r_id]) for r_id, coeff in neighbours.items()])
+         for m_id, neighbours in m_r_table.items()}
+    return t
+
+
+def merge_fluxes(model, mapping, v):
+    v_new = OrderedDict()
+
+    for r_id in model.reactions:
+        if r_id in mapping:
+            fwd_id, bwd_id = mapping[r_id]
+            v_new[r_id] = v[fwd_id] - v[bwd_id]
+        else:
+            v_new[r_id] = v[r_id]
+
+    return v_new

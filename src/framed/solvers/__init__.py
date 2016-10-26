@@ -1,29 +1,22 @@
 """
-Package implementing interfaces to common solvers.
+Package implementing interfaces to linear programming solvers.
 
-@author: Daniel Machado
+Author: Daniel Machado, Marta Matos
 
 """
 
 solvers = dict()
 
 try:
-    from .glpk_wrapper import GlpkSolver
+    from .glpk_interface import GlpkSolver
 
     solvers['glpk'] = GlpkSolver
 except:
     pass
 
-try:
-    from .glpk_wrapper_lazy import GlpkSolverLazy
-
-    solvers['glpk_lazy'] = GlpkSolverLazy
-except:
-    pass
-
 
 try:
-    from .gurobi_wrapper import GurobiSolver
+    from .gurobi_interface import GurobiSolver
 
     solvers['gurobi'] = GurobiSolver
 except:
@@ -31,7 +24,7 @@ except:
 
 
 try:
-    from .cplex_wrapper import CplexSolver
+    from .cplex_interface import CplexSolver
 
     solvers['cplex'] = CplexSolver
 except:

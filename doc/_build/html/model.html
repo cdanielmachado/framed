@@ -1,0 +1,152 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Getting started &#8212; framed 0.3.0 documentation</title>
+    
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '0.3.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="top" title="framed 0.3.0 documentation" href="index.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body role="document">
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="getting-started">
+<h1>Getting started<a class="headerlink" href="#getting-started" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="loading-models">
+<h2>Loading models<a class="headerlink" href="#loading-models" title="Permalink to this headline">¶</a></h2>
+<p><em>framed</em> supports different kinds of metabolic models. In any case, loading a model is quite simple.</p>
+<p>For constraint-based (cobra) models:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">framed</span> <span class="k">import</span> <span class="n">load_cbmodel</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">load_cbmodel</span><span class="p">(</span><span class="s1">&#39;my_model.xml&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Note that different people have been using different modeling conventions to store constraint-based models in SBML format.
+<em>framed</em> handles this problem using <em>flavors</em>. We currently support two flavors:</p>
+<ul class="simple">
+<li><strong>cobra</strong>: This is the format adopted by the cobra toolbox.</li>
+<li><strong>fbc2</strong>: This is the new fbc2 extension for SBML.</li>
+</ul>
+<p>If can optionally specify the <em>flavor</em> of the model you are loading and <em>framed</em> will automatically apply a set of rules
+to improve compatibility (for example, removing boundary metabolites):</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">model</span> <span class="o">=</span> <span class="n">load_cbmodel</span><span class="p">(</span><span class="s1">&#39;my_model.xml&#39;</span><span class="p">,</span> <span class="n">flavor</span><span class="o">=</span><span class="s1">&#39;fbc2&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="saving-models">
+<h2>Saving models<a class="headerlink" href="#saving-models" title="Permalink to this headline">¶</a></h2>
+<p>If you apply any kind of changes to a model, you can easily save your model as follows:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">framed</span> <span class="k">import</span> <span class="n">save_sbml_model</span>
+<span class="n">save_sbml_model</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="s1">&#39;my_output_file.xml&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>For constraint-based models you can also specify a specific <em>flavor</em> (this is useful for converting between different <em>flavors</em>):</p>
+<dl class="docutils">
+<dt>::</dt>
+<dd>save_sbml_model(model, &#8216;my_output_file.xml&#8217;, flavor=&#8217;cobra&#8217;)</dd>
+</dl>
+<div class="section" id="human-readable-format">
+<h3>Human readable format:<a class="headerlink" href="#human-readable-format" title="Permalink to this headline">¶</a></h3>
+<p>Additionally, <em>framed</em> introduces a new shorthand notation for import/export of models in an human-readable format.
+(You can see this format by typing <code class="docutils literal"><span class="pre">print</span> <span class="pre">model</span></code>).</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">framed</span> <span class="k">import</span> <span class="n">read_cbmodel_from_file</span><span class="p">,</span> <span class="n">write_model_to_file</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">read_cbmodel_from_file</span><span class="p">(</span><span class="s1">&#39;my_file.txt&#39;</span><span class="p">)</span>
+<span class="n">write_model_to_file</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="s1">&#39;my_new_file.txt&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Getting started</a><ul>
+<li><a class="reference internal" href="#loading-models">Loading models</a></li>
+<li><a class="reference internal" href="#saving-models">Saving models</a><ul>
+<li><a class="reference internal" href="#human-readable-format">Human readable format:</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+</div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/model.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2016, Daniel Machado.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.4.8</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.9</a>
+      
+      |
+      <a href="_sources/model.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

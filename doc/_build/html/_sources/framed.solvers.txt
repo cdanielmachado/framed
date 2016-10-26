@@ -4,34 +4,26 @@ framed.solvers package
 Submodules
 ----------
 
-framed.solvers.cplex_wrapper module
------------------------------------
+framed.solvers.cplex_interface module
+-------------------------------------
 
-.. automodule:: framed.solvers.cplex_wrapper
+.. automodule:: framed.solvers.cplex_interface
     :members:
     :undoc-members:
     :show-inheritance:
 
-framed.solvers.glpk_wrapper module
-----------------------------------
-
-.. automodule:: framed.solvers.glpk_wrapper
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-framed.solvers.glpk_wrapper_lazy module
----------------------------------------
-
-.. automodule:: framed.solvers.glpk_wrapper_lazy
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-framed.solvers.gurobi_wrapper module
+framed.solvers.glpk_interface module
 ------------------------------------
 
-.. automodule:: framed.solvers.gurobi_wrapper
+.. automodule:: framed.solvers.glpk_interface
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+framed.solvers.gurobi_interface module
+--------------------------------------
+
+.. automodule:: framed.solvers.gurobi_interface
     :members:
     :undoc-members:
     :show-inheritance:

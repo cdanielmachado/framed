@@ -1,4 +1,9 @@
-__author__ = 'daniel'
+"""
+This module implements time-course and steady-state simulation for kinetic models.
+
+Author: Daniel Machado
+"""
+
 
 from numpy import linspace, array, dot, isnan
 from numpy.linalg import norm
@@ -7,7 +12,21 @@ from collections import OrderedDict
 from warnings import warn
 
 
-def simulate(model, time=0, steps=100, t_steps=None, parameters=None, compute_rates=False, integrator_args=None):
+def time_course(model, time=0, steps=100, t_steps=None, parameters=None, compute_rates=False, integrator_args=None):
+    """ Perform a time-course simulation using a kinetic model.
+
+    Args:
+        model (ODEModel): kinetic model
+        time (float): final simulation time (optional if t_steps is used instead)
+        steps (int): number of simulations steps (default: 100)
+        t_steps (list): list of exact time steps to evaluate (optional)
+        parameters (dict): override model parameters (optional)
+        integrator_args (dict): additional parameters to pass along to scipy odeint integrator
+
+    Returns:
+        tuple: time steps, metabolite concentrations[, reaction rates (optional)]
+
+    """
     r = OrderedDict()
     f = model.get_ode(r, parameters)
     f2 = lambda x, t: f(t, x)
@@ -54,8 +73,22 @@ def simulate(model, time=0, steps=100, t_steps=None, parameters=None, compute_ra
 
 
 def find_steady_state(model, parameters=None, endtime=1e9, abstol=1e-6):
+    """ Determine steady-state
 
-    _, X, v_ss = simulate(model, t_steps=[0, endtime], parameters=parameters, compute_rates=True)
+    Args:
+        model (ODEModel): kinetic model
+        parameters (dict): override model parameters
+        endtime (float): final integration time (default: 1e9)
+        abstol (float): maximum tolerance for norm(S*v)
+
+    Returns:
+        tuple: steady-state concentrations, steady-state fluxes
+
+    """
+
+    _, X, v_ss = time_course(model, t_steps=[0, endtime], parameters=parameters, compute_rates=True)
+
+    x_ss = OrderedDict(zip(model.metabolites.keys(), X[-1, :]))
 
     S = array(model.stoichiometric_matrix())
     error = norm(dot(S, v_ss.values()))
@@ -64,5 +97,5 @@ def find_steady_state(model, parameters=None, endtime=1e9, abstol=1e-6):
         warn('Simulation did not reach a steady state.')
         v_ss = None
 
-    return v_ss
+    return x_ss, v_ss
 

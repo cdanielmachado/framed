@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>framed.bioreactor package &#8212; framed 0.2.1 documentation</title>
+    <title>framed.bioreactor package &#8212; framed 0.3.0 documentation</title>
     
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '0.2.1',
+        VERSION:     '0.3.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -25,7 +25,7 @@
     <script type="text/javascript" src="_static/doctools.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="top" title="framed 0.2.1 documentation" href="index.html" />
+    <link rel="top" title="framed 0.3.0 documentation" href="index.html" />
    
   <link rel="stylesheet" href="_static/custom.css" type="text/css" />
   
@@ -49,7 +49,7 @@
 <div class="section" id="module-framed.bioreactor.base">
 <span id="framed-bioreactor-base-module"></span><h2>framed.bioreactor.base module<a class="headerlink" href="#module-framed.bioreactor.base" title="Permalink to this headline">¶</a></h2>
 <p>This module defines the base classes used for modeling and analyzing bioreactors</p>
-<p>&#64;author: Kai Zhuang</p>
+<p>Author: Kai Zhuang</p>
 <dl class="class">
 <dt id="framed.bioreactor.base.Bioreactor">
 <em class="property">class </em><code class="descclassname">framed.bioreactor.base.</code><code class="descname">Bioreactor</code><span class="sig-paren">(</span><em>organisms=[]</em>, <em>metabolites=[]</em>, <em>id='Generic Bioreactor'</em>, <em>flow_rate_in=0</em>, <em>flow_rate_out=0</em>, <em>volume_max=None</em>, <em>Xfeed=None</em>, <em>Sfeed=None</em>, <em>deltaX=None</em>, <em>deltaS=None</em>, <em>initial_conditions=[]</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.bioreactor.base.Bioreactor" title="Permalink to this definition">¶</a></dt>
@@ -140,7 +140,7 @@ This is useful for certain analysis methods (eg. DySScO).</p>
 :param t0: initial time
 :param tf: final time
 :param dt: time step
-:param initial_conditions: array-like &#8211; initial conditions of the ODE system
+:param initial_conditions (array-like): initial conditions of the ODE system
 :param solver: the designated solver
 :return:</p>
 </dd></dl>
@@ -293,7 +293,7 @@ If it is not specified, the first element of metabolites is assumed to be the su
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>time</strong> &#8211; float &#8211; the simulation time.  can be used in subclasses to trigger time-specific events</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>(float)</strong> (<em>time</em>) &#8211; the simulation time.  can be used in subclasses to trigger time-specific events</td>
 </tr>
 </tbody>
 </table>
@@ -336,10 +336,8 @@ It is intended to provide legacy support for the name &#8220;dFBA&#8221;</p>
 <dl class="function">
 <dt id="framed.bioreactor.dfba.dFBA_combination">
 <code class="descclassname">framed.bioreactor.dfba.</code><code class="descname">dFBA_combination</code><span class="sig-paren">(</span><em>organisms</em>, <em>bioreactors</em>, <em>t0</em>, <em>tf</em>, <em>dt</em>, <em>initial_conditions=None</em>, <em>solver='dopri5'</em>, <em>verbose=False</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.bioreactor.dfba.dFBA_combination" title="Permalink to this definition">¶</a></dt>
-<dd><p>Run dFBA for all possible combinations of the given organisms and reactors.
-For example,</p>
-<blockquote>
-<div><p>given two organisms &#8220;ecoli&#8221; and &#8220;scerevisiae&#8221;, and two reactors &#8220;batch&#8221; and &#8220;fedbatch&#8221;,
+<dd><p>Run dFBA for all possible combinations of the given organisms and reactors.</p>
+<p>For example, given two organisms &#8220;ecoli&#8221; and &#8220;scerevisiae&#8221;, and two reactors &#8220;batch&#8221; and &#8220;fedbatch&#8221;,
 the call dFBA_combination([ecoli, scerevisiae], [batch, fedbatch], t0, ft, dt] will perform four simulations:</p>
 <blockquote>
 <div><ol class="arabic simple">
@@ -349,7 +347,6 @@ the call dFBA_combination([ecoli, scerevisiae], [batch, fedbatch], t0, ft, dt] w
 <li>scerevisiae in fedbtach</li>
 </ol>
 </div></blockquote>
-</div></blockquote>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -357,19 +354,19 @@ the call dFBA_combination([ecoli, scerevisiae], [batch, fedbatch], t0, ft, dt] w
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
 <li><strong>organisms</strong> &#8211; list of Organism</li>
 <li><strong>bioreactors</strong> &#8211; list of Bioreactor</li>
-<li><strong>t0</strong> &#8211; float &#8211; initial time</li>
-<li><strong>tf</strong> &#8211; float &#8211; final time</li>
-<li><strong>dt</strong> &#8211; float &#8211; time step</li>
-<li><strong>initial_conditions</strong> &#8211; list of float &#8211; the initial conditions in the order of V0, X0, S0 (default: None)</li>
-<li><strong>solver</strong> &#8211; str &#8211; ODE solver.  (default: &#8216;dopri5&#8217;)</li>
-<li><strong>verbose</strong> &#8211; bool &#8211; Verbosity control.  (default: False).</li>
+<li><strong>t0</strong> (<em>float</em>) &#8211; initial time</li>
+<li><strong>tf</strong> (<em>float</em>) &#8211; final time</li>
+<li><strong>dt</strong> (<em>float</em>) &#8211; time step</li>
+<li><strong>initial_conditions</strong> (<em>list of float</em>) &#8211; the initial conditions in the order of V0, X0, S0 (default: None)</li>
+<li><strong>solver</strong> (<em>str</em>) &#8211; ODE solver.  (default: &#8216;dopri5&#8217;)</li>
+<li><strong>verbose</strong> (<em>bool</em>) &#8211; Verbosity control.  (default: False).</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">OrderedDict &#8211; a dictionary of dfba results</p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>result</strong> &#8211; a dictionary of dfba results</p>
 </td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">result</p>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">OrderedDict</p>
 </td>
 </tr>
 </tbody>
@@ -385,20 +382,20 @@ the call dFBA_combination([ecoli, scerevisiae], [batch, fedbatch], t0, ft, dt] w
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>bioreactor</strong> &#8211; Bioreactor &#8211; a bioreactor instance with defined organisms and metabolites</li>
-<li><strong>t0</strong> &#8211; float &#8211; initial time</li>
-<li><strong>tf</strong> &#8211; float &#8211; final time</li>
-<li><strong>dt</strong> &#8211; float &#8211; time step</li>
-<li><strong>initial_conditions</strong> &#8211; list of float &#8211; the initial conditions in the order of V0, X0, S0 (default: None)</li>
-<li><strong>solver</strong> &#8211; str &#8211; ODE solver.  (default: &#8216;dopri5&#8217;)</li>
-<li><strong>verbose</strong> &#8211; bool &#8211; Verbosity control.  (default: False).</li>
+<li><strong>bioreactor</strong> (<a class="reference internal" href="#framed.bioreactor.base.Bioreactor" title="framed.bioreactor.base.Bioreactor"><em>Bioreactor</em></a>) &#8211; a bioreactor instance with defined organisms and metabolites</li>
+<li><strong>t0</strong> (<em>float</em>) &#8211; initial time</li>
+<li><strong>tf</strong> (<em>float</em>) &#8211; final time</li>
+<li><strong>dt</strong> (<em>float</em>) &#8211; time step</li>
+<li><strong>initial_conditions</strong> (<em>list of float</em>) &#8211; the initial conditions in the order of V0, X0, S0 (default: None)</li>
+<li><strong>solver</strong> (<em>str</em>) &#8211; ODE solver.  (default: &#8216;dopri5&#8217;)</li>
+<li><strong>verbose</strong> (<em>bool</em>) &#8211; Verbosity control.  (default: False).</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">OrderedDict &#8211; simulation results</p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>results</strong> &#8211; simulation results</p>
 </td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">results</p>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">OrderedDict</p>
 </td>
 </tr>
 </tbody>
@@ -424,24 +421,24 @@ titer, and productivity.</p>
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
 <li><strong>strain</strong> &#8211; Organism</li>
 <li><strong>bioreactor</strong> &#8211; Bioreactor</li>
-<li><strong>r_substrate</strong> &#8211; str &#8211; reaction id of the substrate uptake reaction</li>
-<li><strong>r_target</strong> &#8211; str &#8211; reaction id of the target metabolite exchange reaction</li>
-<li><strong>t0</strong> &#8211; float &#8211; initial time</li>
-<li><strong>tf</strong> &#8211; float &#8211; final time</li>
-<li><strong>dt</strong> &#8211; float &#8211; time step</li>
-<li><strong>initial_conditions</strong> &#8211; list (of float) &#8211; the initial conditions in the order of V0, X0, S0 (default: None)</li>
-<li><strong>dfba_solver</strong> &#8211; str &#8211; ODE solver.  (default: &#8216;dopri5&#8217;)</li>
-<li><strong>additional_yields</strong> &#8211; list (of str) &#8211; the reaction ids of the additional yields (yields other than target yield)
+<li><strong>r_substrate</strong> (<em>str</em>) &#8211; reaction id of the substrate uptake reaction</li>
+<li><strong>r_target</strong> (<em>str</em>) &#8211; reaction id of the target metabolite exchange reaction</li>
+<li><strong>t0</strong> (<em>float</em>) &#8211; initial time</li>
+<li><strong>tf</strong> (<em>float</em>) &#8211; final time</li>
+<li><strong>dt</strong> (<em>float</em>) &#8211; time step</li>
+<li><strong>initial_conditions</strong> (<em>list (of float</em>) &#8211; the initial conditions in the order of V0, X0, S0 (default: None)</li>
+<li><strong>dfba_solver</strong> (<em>str</em>) &#8211; ODE solver.  (default: &#8216;dopri5&#8217;)</li>
+<li><strong>additional_yields</strong> (<em>list (of str</em>) &#8211; the reaction ids of the additional yields (yields other than target yield)
 to be calculated.</li>
-<li><strong>verbose</strong> &#8211; bool &#8211; Verbosity control.  (default: False).</li>
-<li><strong>save_dfba_solution</strong> &#8211; bool &#8211; controls whether dfba solutions are returned (default: False)</li>
+<li><strong>verbose</strong> (<em>bool</em>) &#8211; Verbosity control.  (default: False).</li>
+<li><strong>save_dfba_solution</strong> (<em>bool</em>) &#8211; controls whether dfba solutions are returned (default: False)</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Dict &#8211; contains the calculated performance metrics of a strain</p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>performance</strong> &#8211; contains the calculated performance metrics of a strain</p>
 </td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">performance</p>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">Dict</p>
 </td>
 </tr>
 </tbody>
@@ -459,27 +456,27 @@ to be calculated.</li>
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
 <li><strong>strains</strong> &#8211; list (of Organism)</li>
 <li><strong>bioreactor</strong> &#8211; Bioreactor</li>
-<li><strong>r_substrate</strong> &#8211; str &#8211; reaction id of the substrate uptake reaction</li>
-<li><strong>r_target</strong> &#8211; str &#8211; reaction id of the target metabolite exchange reaction</li>
-<li><strong>t0</strong> &#8211; float &#8211; initial time</li>
-<li><strong>tf</strong> &#8211; float &#8211; final time</li>
-<li><strong>dt</strong> &#8211; float &#8211; time step</li>
-<li><strong>initial_conditions</strong> &#8211; list (of float) &#8211; the initial conditions in the order of V0, X0, S0 (default: None)</li>
-<li><strong>dfba_solver</strong> &#8211; str &#8211; ODE solver.  (default: &#8216;dopri5&#8217;)</li>
-<li><strong>additional_yields</strong> &#8211; list (of str) &#8211; the reaction ids of the additional yields (yields other than target yield)
+<li><strong>r_substrate</strong> (<em>str</em>) &#8211; reaction id of the substrate uptake reaction</li>
+<li><strong>r_target</strong> (<em>str</em>) &#8211; reaction id of the target metabolite exchange reaction</li>
+<li><strong>t0</strong> (<em>float</em>) &#8211; initial time</li>
+<li><strong>tf</strong> (<em>float</em>) &#8211; final time</li>
+<li><strong>dt</strong> (<em>float</em>) &#8211; time step</li>
+<li><strong>initial_conditions</strong> (<em>list (of float</em>) &#8211; the initial conditions in the order of V0, X0, S0 (default: None)</li>
+<li><strong>dfba_solver</strong> (<em>str</em>) &#8211; ODE solver.  (default: &#8216;dopri5&#8217;)</li>
+<li><strong>additional_yields</strong> (<em>list (of str</em>) &#8211; the reaction ids of the additional yields (yields other than target yield)
 to be calculated.</li>
-<li><strong>verbose</strong> &#8211; bool &#8211; Verbosity control.  (default: False).</li>
-<li><strong>save_dfba_solution</strong> &#8211; bool &#8211; controls whether dfba solutions are returned (default: False)</li>
-<li><strong>func_dfba2yield</strong> &#8211; function &#8211; if None, yield is calculated from FBA solutions.
+<li><strong>verbose</strong> (<em>bool</em>) &#8211; Verbosity control.  (default: False).</li>
+<li><strong>save_dfba_solution</strong> (<em>bool</em>) &#8211; controls whether dfba solutions are returned (default: False)</li>
+<li><strong>func_dfba2yield</strong> (<em>function</em>) &#8211; if None, yield is calculated from FBA solutions.
 if a function is passed in, yield is calculated from dFBA solutions.</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">list (of Dict) &#8211; a list of dictionaries, each entry contains the calculated performance metrics
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>performances</strong> &#8211; a list of dictionaries, each entry contains the calculated performance metrics
 of a strain</p>
 </td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">performances</p>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">list (of Dict</p>
 </td>
 </tr>
 </tbody>
@@ -498,18 +495,18 @@ of a strain</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>base_organism</strong> &#8211; Organism &#8211; the host organism used to product the target product</li>
-<li><strong>r_substrate</strong> &#8211; str &#8211; the rxn id of the substrate</li>
-<li><strong>r_target</strong> &#8211; str &#8211; the rxn id of the target product</li>
-<li><strong>N</strong> &#8211; int &#8211; the number of strains to be generated along the production envelope</li>
-<li><strong>constraints</strong> &#8211; dict &#8211; custom constraints</li>
+<li><strong>base_organism</strong> (<a class="reference internal" href="#framed.bioreactor.base.Organism" title="framed.bioreactor.base.Organism"><em>Organism</em></a>) &#8211; the host organism used to product the target product</li>
+<li><strong>r_substrate</strong> (<em>str</em>) &#8211; the rxn id of the substrate</li>
+<li><strong>r_target</strong> (<em>str</em>) &#8211; the rxn id of the target product</li>
+<li><strong>N</strong> (<em>int</em>) &#8211; the number of strains to be generated along the production envelope</li>
+<li><strong>constraints</strong> (<em>dict</em>) &#8211; custom constraints</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">list of Organism &#8211; N strains that are fixed to the production envelope</p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>strains</strong> &#8211; N strains that are fixed to the production envelope</p>
 </td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">strains</p>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">list of Organism</p>
 </td>
 </tr>
 </tbody>
@@ -569,7 +566,7 @@ of a strain</p>
       <div class="clearer"></div>
     </div>
     <div class="footer">
-      &copy;2016, Daniel.
+      &copy;2016, Daniel Machado.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 1.4.8</a>

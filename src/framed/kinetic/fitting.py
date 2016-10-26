@@ -1,11 +1,31 @@
-from framed.kinetic.simulation import simulate
+"""
+This module implements kinetic model calibration methods.
+
+Author: Daniel Machado
+"""
+
+
+from framed.kinetic.simulation import time_course
 from numpy import array, sum, isfinite
 from scipy.optimize import minimize
 
-__author__ = 'daniel'
-
 
 def fit_from_metabolomics(model, t_steps, data, parameters=None, bounds=None, method=None, update_model=False):
+    """ Fit model parameters using time-course metabolomics data
+
+    Args:
+        model (ODEModel): kinetic model
+        t_steps (list): measured time steps
+        data (dict): metabolomics data in dict format (metabolite id to meausured values)
+        parameters (list): specify list of parameters to be calibrated (optional, default: all)
+        bounds (list): list of bounds for each parameter (optional, default: (0, None))
+        method (str): optimization method (optional, see `scipy.optimize.minimize` for details)
+        update_model (bool): automatically update model with new parameters (default: False)
+
+    Returns:
+        dict: fitted parameters
+
+    """
 
     model_params = model.get_parameters(exclude_compartments=True)
     if parameters:
@@ -22,7 +42,7 @@ def fit_from_metabolomics(model, t_steps, data, parameters=None, bounds=None, me
 
     def fit_distance(p):
         new_params = dict(zip(parameters, p))
-        _, X = simulate(model, t_steps=t_steps, parameters=new_params)
+        _, X = time_course(model, t_steps=t_steps, parameters=new_params)
         error = sum((X[:,mets] - X_exp)**2)
         if not isfinite(error):
             print 'warning: error = ', error

@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>framed.omics package &#8212; framed 0.2.1 documentation</title>
+    <title>framed.omics package &#8212; framed 0.3.0 documentation</title>
     
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '0.2.1',
+        VERSION:     '0.3.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -25,7 +25,7 @@
     <script type="text/javascript" src="_static/doctools.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="top" title="framed 0.2.1 documentation" href="index.html" />
+    <link rel="top" title="framed 0.3.0 documentation" href="index.html" />
    
   <link rel="stylesheet" href="_static/custom.css" type="text/css" />
   
@@ -48,10 +48,33 @@
 </div>
 <div class="section" id="module-framed.omics.dataset">
 <span id="framed-omics-dataset-module"></span><h2>framed.omics.dataset module<a class="headerlink" href="#module-framed.omics.dataset" title="Permalink to this headline">¶</a></h2>
+<p>This module implements methods for handling multi-omics datasets.</p>
+<p>Author: Daniel Machado</p>
 <dl class="class">
 <dt id="framed.omics.dataset.DataSet">
 <em class="property">class </em><code class="descclassname">framed.omics.dataset.</code><code class="descname">DataSet</code><span class="sig-paren">(</span><em>jsonfile</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.omics.dataset.DataSet" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="method">
+<dd><p>Represents a multi-omics dataset for multiple experimental conditions.</p>
+<p>The dataset must be loaded from a json file with an acceptable format (see examples).</p>
+<dl class="docutils">
+<dt>Mandatory fields include:</dt>
+<dd><ul class="first last simple">
+<li>conditions</li>
+<li>carbon source</li>
+<li>mode (aerobic/anaerobic)</li>
+<li>gene deletions (if any)</li>
+<li>measured growth rate</li>
+</ul>
+</dd>
+<dt>Optionally these omics data may be available:</dt>
+<dd><ul class="first last simple">
+<li>transcriptomics</li>
+<li>proteomics</li>
+<li>fluxomics</li>
+<li>metabolomics</li>
+</ul>
+</dd>
+</dl>
+<dl class="method">
 <dt id="framed.omics.dataset.DataSet.get_fluxomics">
 <code class="descname">get_fluxomics</code><span class="sig-paren">(</span><em>reactions=None</em>, <em>conditions=None</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.omics.dataset.DataSet.get_fluxomics" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
@@ -86,15 +109,63 @@
 </div>
 <div class="section" id="module-framed.omics.simulation">
 <span id="framed-omics-simulation-module"></span><h2>framed.omics.simulation module<a class="headerlink" href="#module-framed.omics.simulation" title="Permalink to this headline">¶</a></h2>
+<p>This module implements omics-based simulation methods.</p>
+<p>Author: Daniel Machado</p>
 <dl class="function">
 <dt id="framed.omics.simulation.GIMME">
 <code class="descclassname">framed.omics.simulation.</code><code class="descname">GIMME</code><span class="sig-paren">(</span><em>model</em>, <em>gene_exp</em>, <em>cutoff=25</em>, <em>growth_frac=0.9</em>, <em>constraints=None</em>, <em>parsimonious=False</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.omics.simulation.GIMME" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Run a GIMME simulation (Becker and Palsson, 2008).</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>model</strong> (<a class="reference internal" href="framed.model.html#framed.model.cbmodel.CBModel" title="framed.model.cbmodel.CBModel"><em>CBModel</em></a>) &#8211; model</li>
+<li><strong>gene_exp</strong> (<em>dict</em>) &#8211; transcriptomics data</li>
+<li><strong>cutoff</strong> (<em>int</em>) &#8211; percentile cuttof (default: 25)</li>
+<li><strong>growth_frac</strong> (<em>float</em>) &#8211; minimum growth requirement (default: 0.9)</li>
+<li><strong>constraints</strong> (<em>dict</em>) &#8211; additional constraints</li>
+<li><strong>parsimonious</strong> (<em>bool</em>) &#8211; compute a parsimonious solution (default: False)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">solution</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference internal" href="framed.solvers.html#framed.solvers.solver.Solution" title="framed.solvers.solver.Solution">Solution</a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="function">
-<dt id="framed.omics.simulation.eflux">
-<code class="descclassname">framed.omics.simulation.</code><code class="descname">eflux</code><span class="sig-paren">(</span><em>model</em>, <em>gene_exp</em>, <em>scale_rxn</em>, <em>scale_value</em>, <em>constraints=None</em>, <em>parsimonious=False</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.omics.simulation.eflux" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dt id="framed.omics.simulation.eFlux">
+<code class="descclassname">framed.omics.simulation.</code><code class="descname">eFlux</code><span class="sig-paren">(</span><em>model</em>, <em>gene_exp</em>, <em>scale_rxn=None</em>, <em>scale_value=None</em>, <em>constraints=None</em>, <em>parsimonious=False</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.omics.simulation.eFlux" title="Permalink to this definition">¶</a></dt>
+<dd><p>Run an E-Flux simulation (Colijn et al, 2009).</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>model</strong> (<a class="reference internal" href="framed.model.html#framed.model.cbmodel.CBModel" title="framed.model.cbmodel.CBModel"><em>CBModel</em></a>) &#8211; model</li>
+<li><strong>gene_exp</strong> (<em>dict</em>) &#8211; transcriptomics data</li>
+<li><strong>scale_rxn</strong> (<em>str</em>) &#8211; reaction to scale flux vector (optional)</li>
+<li><strong>scale_value</strong> (<em>float</em>) &#8211; scaling factor (mandatory if scale_rxn is specified)</li>
+<li><strong>constraints</strong> (<em>dict</em>) &#8211; additional constraints (optional)</li>
+<li><strong>parsimonious</strong> (<em>bool</em>) &#8211; compute a parsimonious solution (default: False)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">solution</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference internal" href="framed.solvers.html#framed.solvers.solver.Solution" title="framed.solvers.solver.Solution">Solution</a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="function">
 <dt id="framed.omics.simulation.gene2rxn">
@@ -109,6 +180,8 @@
 </div>
 <div class="section" id="module-framed.omics">
 <span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-framed.omics" title="Permalink to this headline">¶</a></h2>
+<p>Package implementing basic support for handling multi-omics datasets.</p>
+<p>Author: Daniel Machado</p>
 </div>
 </div>
 
@@ -157,7 +230,7 @@
       <div class="clearer"></div>
     </div>
     <div class="footer">
-      &copy;2016, Daniel.
+      &copy;2016, Daniel Machado.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 1.4.8</a>

@@ -1,0 +1,59 @@
+===============
+Getting started
+===============
+
+
+Loading models
+--------------
+
+*framed* supports different kinds of metabolic models. In any case, loading a model is quite simple.
+
+For constraint-based (cobra) models:
+
+::
+
+    from framed import load_cbmodel
+    model = load_cbmodel('my_model.xml')
+
+Note that different people have been using different modeling conventions to store constraint-based models in SBML format.
+*framed* handles this problem using *flavors*. We currently support two flavors:
+
+- **cobra**: This is the format adopted by the cobra toolbox.
+- **fbc2**: This is the new fbc2 extension for SBML.
+
+If can optionally specify the *flavor* of the model you are loading and *framed* will automatically apply a set of rules
+to improve compatibility (for example, removing boundary metabolites):
+
+::
+
+    model = load_cbmodel('my_model.xml', flavor='fbc2')
+
+
+Saving models
+-------------
+
+If you apply any kind of changes to a model, you can easily save your model as follows:
+
+::
+
+    from framed import save_sbml_model
+    save_sbml_model(model, 'my_output_file.xml')
+
+For constraint-based models you can also specify a specific *flavor* (this is useful for converting between different *flavors*):
+
+::
+    save_sbml_model(model, 'my_output_file.xml', flavor='cobra')
+
+
+Human readable format:
+~~~~~~~~~~~~~~~~~~~~~~
+
+Additionally, *framed* introduces a new shorthand notation for import/export of models in an human-readable format.
+(You can see this format by typing ``print model``).
+
+::
+
+    from framed import read_cbmodel_from_file, write_model_to_file
+    model = read_cbmodel_from_file('my_file.txt')
+    write_model_to_file(model, 'my_new_file.txt')
+

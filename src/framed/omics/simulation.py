@@ -1,5 +1,11 @@
+""" This module implements omics-based simulation methods. 
+
+Author: Daniel Machado
+
+"""
+
 from framed.solvers import solver_instance
-from framed.analysis.simulation import FBA, pFBA
+from framed.cobra.simulation import FBA, pFBA
 from numpy import percentile
 
 
@@ -22,15 +28,30 @@ def gene2rxn(gpr, gene_exp, and_func=min, or_func=sum):
 
 def gene_to_reaction_expression(model, gene_exp, and_func=min, or_func=sum):
     rxn_exp = {}
-    for r_id, gpr in model.gpr_associations.items():
-        if gpr is not None:
-            level = gene2rxn(gpr, gene_exp, and_func, or_func)
+    for r_id, reaction in model.reactions.items():
+        if reaction.gpr is not None:
+            level = gene2rxn(reaction.gpr, gene_exp, and_func, or_func)
             if level is not None:
                 rxn_exp[r_id] = level
     return rxn_exp
 
 
 def GIMME(model, gene_exp, cutoff=25, growth_frac=0.9, constraints=None, parsimonious=False):
+    """ Run a GIMME simulation (Becker and Palsson, 2008).
+
+    Arguments:
+        model (CBModel): model
+        gene_exp (dict): transcriptomics data
+        cutoff (int): percentile cuttof (default: 25)
+        growth_frac (float): minimum growth requirement (default: 0.9)
+        constraints (dict): additional constraints
+        parsimonious (bool): compute a parsimonious solution (default: False)
+
+    Returns:
+        Solution: solution
+    """
+
+
     rxn_exp = gene_to_reaction_expression(model, gene_exp, or_func=max)
     threshold = percentile(rxn_exp.values(), cutoff)
     coeffs = {r_id: threshold-val for r_id, val in rxn_exp.items() if val < threshold}
@@ -46,7 +67,7 @@ def GIMME(model, gene_exp, cutoff=25, growth_frac=0.9, constraints=None, parsimo
     constraints[biomass] = (growth_frac * wt_solution.values[biomass], None)
 
     if not parsimonious:
-        solution = solver.solve_lp(coeffs, minimize=True, constraints=constraints)
+        solution = solver.solve(coeffs, minimize=True, constraints=constraints)
 
     else:
         for r_id in model.reactions:
@@ -59,8 +80,8 @@ def GIMME(model, gene_exp, cutoff=25, growth_frac=0.9, constraints=None, parsimo
         for r_id in model.reactions:
             if model.reactions[r_id].reversible:
                 pos, neg = r_id + '+', r_id + '-'
-                solver.add_constraint('c' + pos, [(r_id, -1), (pos, 1)], '>', 0, persistent=False, update_problem=False)
-                solver.add_constraint('c' + neg, [(r_id, 1), (neg, 1)], '>', 0, persistent=False, update_problem=False)
+                solver.add_constraint('c' + pos, {r_id: -1, pos: 1}, '>', 0, persistent=False, update_problem=False)
+                solver.add_constraint('c' + neg, {r_id: 1, neg: 1}, '>', 0, persistent=False, update_problem=False)
         solver.update()
 
         objective = dict()
@@ -72,8 +93,8 @@ def GIMME(model, gene_exp, cutoff=25, growth_frac=0.9, constraints=None, parsimo
             else:
                 objective[r_id] = val
 
-        pre_solution = solver.solve_lp(objective, minimize=True, constraints=constraints)
-        solver.add_constraint('obj', objective.items(), '=', pre_solution.fobj)
+        pre_solution = solver.solve(objective, minimize=True, constraints=constraints)
+        solver.add_constraint('obj', objective, '=', pre_solution.fobj)
         objective = dict()
 
         for r_id in model.reactions:
@@ -84,23 +105,36 @@ def GIMME(model, gene_exp, cutoff=25, growth_frac=0.9, constraints=None, parsimo
             else:
                 objective[r_id] = 1
 
-        solution = solver.solve_lp(objective, minimize=True, constraints=constraints)
+        solution = solver.solve(objective, minimize=True, constraints=constraints)
         solver.remove_constraint('obj')
         solution.pre_solution = pre_solution
 
     return solution
 
 
-def eflux(model, gene_exp, scale_rxn, scale_value, constraints=None, parsimonious=False):
+def eFlux(model, gene_exp, scale_rxn=None, scale_value=None, constraints=None, parsimonious=False):
+    """ Run an E-Flux simulation (Colijn et al, 2009).
+
+    Arguments:
+        model (CBModel): model
+        gene_exp (dict): transcriptomics data
+        scale_rxn (str): reaction to scale flux vector (optional)
+        scale_value (float): scaling factor (mandatory if scale_rxn is specified)
+        constraints (dict): additional constraints (optional)
+        parsimonious (bool): compute a parsimonious solution (default: False)
+
+    Returns:
+        Solution: solution
+    """
 
     rxn_exp = gene_to_reaction_expression(model, gene_exp)
     max_exp = max(rxn_exp.values())
     bounds = {}
 
-    for r_id, (lb, ub) in model.bounds.items():
+    for r_id, reaction in model.reactions.items():
         val = rxn_exp[r_id] / max_exp if r_id in rxn_exp else 1
-        lb2 = -val if lb is None or lb < 0 else 0
-        ub2 = val if ub is None or ub > 0 else 0
+        lb2 = -val if reaction.lb is None or reaction.lb < 0 else 0
+        ub2 = val if reaction.ub is None or reaction.ub > 0 else 0
         bounds[r_id] = (lb2, ub2)
 
     if constraints:
@@ -115,9 +149,10 @@ def eflux(model, gene_exp, scale_rxn, scale_value, constraints=None, parsimoniou
     else:
         sol = FBA(model, constraints=bounds)
 
-    k = abs(scale_value / sol.values[scale_rxn])
-    for r_id, val in sol.values.items():
-        sol.values[r_id] = val * k
+    if scale_rxn is not None:
+        k = abs(scale_value / sol.values[scale_rxn])
+        for r_id, val in sol.values.items():
+            sol.values[r_id] = val * k
 
     return sol
 
