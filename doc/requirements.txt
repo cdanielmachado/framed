@@ -1,5 +1,6 @@
 framed
 numpy
 scipy
+sympy
 seaborn
 python-libsbml
