@@ -5,7 +5,7 @@ Author: Daniel Machado
 """
 
 
-from framed.kinetic.simulation import simulate
+from framed.kinetic.simulation import time_course
 from numpy import array, sum, isfinite
 from scipy.optimize import minimize
 
@@ -16,7 +16,7 @@ def fit_from_metabolomics(model, t_steps, data, parameters=None, bounds=None, me
     Args:
         model (ODEModel): kinetic model
         t_steps (list): measured time steps
-        data (list): metabolomics data in matrix format (nested list or numpy array)
+        data (dict): metabolomics data in dict format (metabolite id to meausured values)
         parameters (list): specify list of parameters to be calibrated (optional, default: all)
         bounds (list): list of bounds for each parameter (optional, default: (0, None))
         method (str): optimization method (optional, see `scipy.optimize.minimize` for details)
@@ -42,7 +42,7 @@ def fit_from_metabolomics(model, t_steps, data, parameters=None, bounds=None, me
 
     def fit_distance(p):
         new_params = dict(zip(parameters, p))
-        _, X = simulate(model, t_steps=t_steps, parameters=new_params)
+        _, X = time_course(model, t_steps=t_steps, parameters=new_params)
         error = sum((X[:,mets] - X_exp)**2)
         if not isfinite(error):
             print 'warning: error = ', error

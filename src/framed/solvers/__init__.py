@@ -8,7 +8,7 @@ Author: Daniel Machado, Marta Matos
 solvers = dict()
 
 try:
-    from .glpk import GlpkSolver
+    from .glpk_interface import GlpkSolver
 
     solvers['glpk'] = GlpkSolver
 except:
@@ -16,7 +16,7 @@ except:
 
 
 try:
-    from .gurobi import GurobiSolver
+    from .gurobi_interface import GurobiSolver
 
     solvers['gurobi'] = GurobiSolver
 except:
@@ -24,7 +24,7 @@ except:
 
 
 try:
-    from .cplex import CplexSolver
+    from .cplex_interface import CplexSolver
 
     solvers['cplex'] = CplexSolver
 except:

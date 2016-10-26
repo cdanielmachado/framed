@@ -112,15 +112,15 @@ def GIMME(model, gene_exp, cutoff=25, growth_frac=0.9, constraints=None, parsimo
     return solution
 
 
-def eflux(model, gene_exp, scale_rxn, scale_value, constraints=None, parsimonious=False):
+def eFlux(model, gene_exp, scale_rxn=None, scale_value=None, constraints=None, parsimonious=False):
     """ Run an E-Flux simulation (Colijn et al, 2009).
 
     Arguments:
         model (CBModel): model
         gene_exp (dict): transcriptomics data
-        scale_rxn (str): reaction to scale flux vector
-        scale_value (float): scaling factor
-        constraints (dict): additional constraints
+        scale_rxn (str): reaction to scale flux vector (optional)
+        scale_value (float): scaling factor (mandatory if scale_rxn is specified)
+        constraints (dict): additional constraints (optional)
         parsimonious (bool): compute a parsimonious solution (default: False)
 
     Returns:
@@ -149,9 +149,10 @@ def eflux(model, gene_exp, scale_rxn, scale_value, constraints=None, parsimoniou
     else:
         sol = FBA(model, constraints=bounds)
 
-    k = abs(scale_value / sol.values[scale_rxn])
-    for r_id, val in sol.values.items():
-        sol.values[r_id] = val * k
+    if scale_rxn is not None:
+        k = abs(scale_value / sol.values[scale_rxn])
+        for r_id, val in sol.values.items():
+            sol.values[r_id] = val * k
 
     return sol
 

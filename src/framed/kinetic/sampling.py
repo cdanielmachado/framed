@@ -8,7 +8,7 @@ from ..kinetic.simulation import find_steady_state
 import numpy as np
 
 
-def sample(model, size, parameters=None, distribution='normal', dist_args=(0, 1), log_scale=True):
+def sample_kinetic_model(model, size, parameters=None, distribution='normal', dist_args=(0, 1), log_scale=True):
     """ Random flux sampling using a kinetic model.
 
     Args:
@@ -35,10 +35,10 @@ def sample(model, size, parameters=None, distribution='normal', dist_args=(0, 1)
 
     p_sample = []
     v_sample = []
-    for i in range(size):
+    for i in range(int(size)):
         p = parameter_perturbation(p0, distribution, dist_args, log_scale)
         new_params = dict(zip(parameters, p))
-        v = find_steady_state(model, parameters=new_params)
+        _, v = find_steady_state(model, parameters=new_params)
         if v:
             p_sample.append(p)
             v_sample.append(v.values())

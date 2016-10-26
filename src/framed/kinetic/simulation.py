@@ -12,7 +12,7 @@ from collections import OrderedDict
 from warnings import warn
 
 
-def simulate(model, time=0, steps=100, t_steps=None, parameters=None, compute_rates=False, integrator_args=None):
+def time_course(model, time=0, steps=100, t_steps=None, parameters=None, compute_rates=False, integrator_args=None):
     """ Perform a time-course simulation using a kinetic model.
 
     Args:
@@ -21,7 +21,6 @@ def simulate(model, time=0, steps=100, t_steps=None, parameters=None, compute_ra
         steps (int): number of simulations steps (default: 100)
         t_steps (list): list of exact time steps to evaluate (optional)
         parameters (dict): override model parameters (optional)
-        compute_rates (bool): also compute time-course profile of reaction rates (default: False)
         integrator_args (dict): additional parameters to pass along to scipy odeint integrator
 
     Returns:
@@ -74,7 +73,7 @@ def simulate(model, time=0, steps=100, t_steps=None, parameters=None, compute_ra
 
 
 def find_steady_state(model, parameters=None, endtime=1e9, abstol=1e-6):
-    """ Finds a steady-state flux distribution for a kinetic model
+    """ Determine steady-state
 
     Args:
         model (ODEModel): kinetic model
@@ -83,11 +82,13 @@ def find_steady_state(model, parameters=None, endtime=1e9, abstol=1e-6):
         abstol (float): maximum tolerance for norm(S*v)
 
     Returns:
-        dict: steady-state flux distribution
+        tuple: steady-state concentrations, steady-state fluxes
 
     """
 
-    _, X, v_ss = simulate(model, t_steps=[0, endtime], parameters=parameters, compute_rates=True)
+    _, X, v_ss = time_course(model, t_steps=[0, endtime], parameters=parameters, compute_rates=True)
+
+    x_ss = OrderedDict(zip(model.metabolites.keys(), X[-1, :]))
 
     S = array(model.stoichiometric_matrix())
     error = norm(dot(S, v_ss.values()))
@@ -96,5 +97,5 @@ def find_steady_state(model, parameters=None, endtime=1e9, abstol=1e-6):
         warn('Simulation did not reach a steady state.')
         v_ss = None
 
-    return v_ss
+    return x_ss, v_ss
 

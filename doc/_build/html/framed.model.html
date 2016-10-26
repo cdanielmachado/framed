@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>framed.model package &#8212; framed 0.2.1 documentation</title>
+    <title>framed.model package &#8212; framed 0.3.0 documentation</title>
     
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '0.2.1',
+        VERSION:     '0.3.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -25,7 +25,7 @@
     <script type="text/javascript" src="_static/doctools.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="top" title="framed 0.2.1 documentation" href="index.html" />
+    <link rel="top" title="framed 0.3.0 documentation" href="index.html" />
    
   <link rel="stylesheet" href="_static/custom.css" type="text/css" />
   
@@ -61,7 +61,7 @@ If a gene with the same id exists, it will be replaced.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>gene</strong> &#8211; Gene</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>gene</strong> (<a class="reference internal" href="#framed.model.cbmodel.Gene" title="framed.model.cbmodel.Gene"><em>Gene</em></a>) &#8211; gene</td>
 </tr>
 </tbody>
 </table>
@@ -76,9 +76,9 @@ If a gene with the same id exists, it will be replaced.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>r_id_num</strong> &#8211; str &#8211; id of the numerator</li>
-<li><strong>r_id_num</strong> &#8211; str &#8211; id of the denominator</li>
-<li><strong>ratio</strong> &#8211; float &#8211; ratio value</li>
+<li><strong>r_id_num</strong> (<em>str</em>) &#8211; id of the numerator</li>
+<li><strong>r_id_num</strong> &#8211; id of the denominator</li>
+<li><strong>ratio</strong> (<em>float</em>) &#8211; ratio value</li>
 </ul>
 </td>
 </tr>
@@ -94,23 +94,39 @@ If a gene with the same id exists, it will be replaced.</p>
 
 <dl class="method">
 <dt id="framed.model.cbmodel.CBModel.add_reaction">
-<code class="descname">add_reaction</code><span class="sig-paren">(</span><em>reaction</em>, <em>lb=None</em>, <em>ub=None</em>, <em>coeff=0</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.model.cbmodel.CBModel.add_reaction" title="Permalink to this definition">¶</a></dt>
+<code class="descname">add_reaction</code><span class="sig-paren">(</span><em>reaction</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.model.cbmodel.CBModel.add_reaction" title="Permalink to this definition">¶</a></dt>
 <dd><p>Add a single reaction to the model.
 If a reaction with the same id exists, it will be replaced.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>reaction</strong> (<a class="reference internal" href="#framed.model.cbmodel.CBReaction" title="framed.model.cbmodel.CBReaction"><em>CBReaction</em></a>) &#8211; reaction</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="framed.model.cbmodel.CBModel.add_reaction_from_str">
+<code class="descname">add_reaction_from_str</code><span class="sig-paren">(</span><em>reaction_str</em>, <em>default_compartment=None</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.model.cbmodel.CBModel.add_reaction_from_str" title="Permalink to this definition">¶</a></dt>
+<dd><p>Parse a reaction from a string and add it to the model.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>reaction</strong> &#8211; Reaction</li>
-<li><strong>lb</strong> &#8211; float &#8211; lower bound (default: None)</li>
-<li><strong>ub</strong> &#8211; float &#8211; upper bound (default: None)</li>
-<li><strong>coeff</strong> &#8211; float &#8211; objective coefficient (default: 0)</li>
+<li><strong>reaction_str</strong> (<em>str</em>) &#8211; string representation a the reaction</li>
+<li><strong>default_compartment</strong> (<em>str</em>) &#8211; default compartment id (optional)</li>
 </ul>
 </td>
 </tr>
 </tbody>
 </table>
+<p class="rubric">Notes</p>
+<p>If the metabolites specified in the reaction are not yet in the model, they will be automatically added.
+You can specify the compartment for new metabolites using the optional argument. However, if you want to
+use multiple compartments you will have to change them manually afterwards.</p>
 </dd></dl>
 
 <dl class="method">
@@ -121,43 +137,36 @@ If a reaction with the same id exists, it will be replaced.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">str &#8211; first reaction that matches (or else None)</td>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">first reaction that matches (or else None)</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">str</td>
 </tr>
 </tbody>
 </table>
 </dd></dl>
 
 <dl class="method">
-<dt id="framed.model.cbmodel.CBModel.eval_GPR">
-<code class="descname">eval_GPR</code><span class="sig-paren">(</span><em>active_genes</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.model.cbmodel.CBModel.eval_GPR" title="Permalink to this definition">¶</a></dt>
-<dd><p>Evaluate the GPR associations.</p>
+<dt id="framed.model.cbmodel.CBModel.evaluate_gprs">
+<code class="descname">evaluate_gprs</code><span class="sig-paren">(</span><em>active_genes</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.model.cbmodel.CBModel.evaluate_gprs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Boolean evaluation of the GPR associations for a given set of active genes.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>active_genes</strong> &#8211; list (of str) &#8211; set of active genes</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>active_genes</strong> (<em>list</em>) &#8211; list of active genes</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">list (of str) &#8211; set of active reactions</td>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">list of active reactions</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">list</td>
 </tr>
 </tbody>
 </table>
 </dd></dl>
 
 <dl class="method">
-<dt id="framed.model.cbmodel.CBModel.print_reaction">
-<code class="descname">print_reaction</code><span class="sig-paren">(</span><em>r_id</em>, <em>reaction_names=False</em>, <em>metabolite_names=False</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.model.cbmodel.CBModel.print_reaction" title="Permalink to this definition">¶</a></dt>
-<dd><p>Print a reaction to a text based representation.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>r_id</strong> &#8211; str &#8211; reaction id</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">str &#8211; reaction string</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
+<dt id="framed.model.cbmodel.CBModel.get_objective">
+<code class="descname">get_objective</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#framed.model.cbmodel.CBModel.get_objective" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
 
 <dl class="method">
 <dt id="framed.model.cbmodel.CBModel.remove_gene">
@@ -176,15 +185,12 @@ If a reaction with the same id exists, it will be replaced.</p>
 <dl class="method">
 <dt id="framed.model.cbmodel.CBModel.remove_genes">
 <code class="descname">remove_genes</code><span class="sig-paren">(</span><em>gene_list</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.model.cbmodel.CBModel.remove_genes" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="docutils">
-<dt>Remove a set of genes from the model.</dt>
-<dd>TODO: When switching to a GPR class representation, make sure to clean up rules as well</dd>
-</dl>
+<dd><p>Remove a set of genes from the model.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>of str</strong> (<em>list</em>) &#8211; Gene ids</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>list</strong> &#8211; Gene ids</td>
 </tr>
 </tbody>
 </table>
@@ -199,25 +205,10 @@ If a reaction with the same id exists, it will be replaced.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>r_id_num</strong> &#8211; str &#8211; id of the numerator</li>
-<li><strong>r_id_num</strong> &#8211; str &#8211; id of the denominator</li>
+<li><strong>r_id_num</strong> (<em>str</em>) &#8211; id of the numerator</li>
+<li><strong>r_id_num</strong> &#8211; id of the denominator</li>
 </ul>
 </td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="framed.model.cbmodel.CBModel.remove_reactions">
-<code class="descname">remove_reactions</code><span class="sig-paren">(</span><em>id_list</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.model.cbmodel.CBModel.remove_reactions" title="Permalink to this definition">¶</a></dt>
-<dd><p>Remove a list of reactions from the model.
-Also removes all the edges connected to the reactions.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>id_list</strong> &#8211; list of str &#8211; reaction ids</td>
 </tr>
 </tbody>
 </table>
@@ -232,9 +223,9 @@ Also removes all the edges connected to the reactions.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>r_id</strong> &#8211; str &#8211; reaction id</li>
-<li><strong>lb</strong> &#8211; float &#8211; lower bound (use None to represent negative infinity)</li>
-<li><strong>ub</strong> &#8211; float &#8211; upper bound (use None to represent positive infinity)</li>
+<li><strong>r_id</strong> (<em>str</em>) &#8211; reaction id</li>
+<li><strong>lb</strong> (<em>float</em>) &#8211; lower bound (use None to represent negative infinity)</li>
+<li><strong>ub</strong> (<em>float</em>) &#8211; upper bound (use None to represent positive infinity)</li>
 </ul>
 </td>
 </tr>
@@ -245,7 +236,20 @@ Also removes all the edges connected to the reactions.</p>
 <dl class="method">
 <dt id="framed.model.cbmodel.CBModel.set_gpr_association">
 <code class="descname">set_gpr_association</code><span class="sig-paren">(</span><em>r_id</em>, <em>gpr</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.model.cbmodel.CBModel.set_gpr_association" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Set GPR association for a given reaction:</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>r_id</strong> (<em>str</em>) &#8211; reaction id</li>
+<li><strong>gpr</strong> (<a class="reference internal" href="#framed.model.cbmodel.GPRAssociation" title="framed.model.cbmodel.GPRAssociation"><em>GPRAssociation</em></a>) &#8211; GPR association</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="method">
 <dt id="framed.model.cbmodel.CBModel.set_lower_bound">
@@ -256,8 +260,8 @@ Also removes all the edges connected to the reactions.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>r_id</strong> &#8211; str &#8211; reaction id</li>
-<li><strong>lb</strong> &#8211; float &#8211; lower bound (use None to represent negative infinity)</li>
+<li><strong>r_id</strong> (<em>str</em>) &#8211; reaction id</li>
+<li><strong>lb</strong> (<em>float</em>) &#8211; lower bound (use None to represent negative infinity)</li>
 </ul>
 </td>
 </tr>
@@ -269,6 +273,14 @@ Also removes all the edges connected to the reactions.</p>
 <dt id="framed.model.cbmodel.CBModel.set_objective">
 <code class="descname">set_objective</code><span class="sig-paren">(</span><em>coefficients</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.model.cbmodel.CBModel.set_objective" title="Permalink to this definition">¶</a></dt>
 <dd><p>Define objective coefficients for a list of reactions</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>coefficients</strong> (<em>dict</em>) &#8211; dictionary of reactions and coefficients</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="method">
@@ -280,8 +292,8 @@ Also removes all the edges connected to the reactions.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>r_id</strong> &#8211; str &#8211; reaction id</li>
-<li><strong>coeff</strong> &#8211; float &#8211; reaction objective (default: 0)</li>
+<li><strong>r_id</strong> (<em>str</em>) &#8211; reaction id</li>
+<li><strong>coeff</strong> (<em>float</em>) &#8211; reaction objective (default: 0)</li>
 </ul>
 </td>
 </tr>
@@ -298,8 +310,8 @@ Also removes all the edges connected to the reactions.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>r_id</strong> &#8211; str &#8211; reaction id</li>
-<li><strong>ub</strong> &#8211; float &#8211; upper bound (use None to represent positive infinity)</li>
+<li><strong>r_id</strong> (<em>str</em>) &#8211; reaction id</li>
+<li><strong>ub</strong> (<em>float</em>) &#8211; upper bound (use None to represent positive infinity)</li>
 </ul>
 </td>
 </tr>
@@ -310,12 +322,88 @@ Also removes all the edges connected to the reactions.</p>
 </dd></dl>
 
 <dl class="class">
+<dt id="framed.model.cbmodel.CBReaction">
+<em class="property">class </em><code class="descclassname">framed.model.cbmodel.</code><code class="descname">CBReaction</code><span class="sig-paren">(</span><em>elem_id</em>, <em>name=None</em>, <em>reversible=True</em>, <em>stoichiometry=None</em>, <em>regulators=None</em>, <em>lb=None</em>, <em>ub=None</em>, <em>objective=0</em>, <em>gpr_association=None</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.model.cbmodel.CBReaction" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#framed.model.model.Reaction" title="framed.model.model.Reaction"><code class="xref py py-class docutils literal"><span class="pre">framed.model.model.Reaction</span></code></a></p>
+<dl class="method">
+<dt id="framed.model.cbmodel.CBReaction.evaluate_gpr">
+<code class="descname">evaluate_gpr</code><span class="sig-paren">(</span><em>active_genes</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.model.cbmodel.CBReaction.evaluate_gpr" title="Permalink to this definition">¶</a></dt>
+<dd><p>Boolean evaluation of the GPR association for a given set of active genes.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>active_genes</strong> (<em>list</em>) &#8211; list of active genes</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">is the reaction active</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">bool</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="framed.model.cbmodel.CBReaction.get_associated_genes">
+<code class="descname">get_associated_genes</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#framed.model.cbmodel.CBReaction.get_associated_genes" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="framed.model.cbmodel.CBReaction.set_flux_bounds">
+<code class="descname">set_flux_bounds</code><span class="sig-paren">(</span><em>lb</em>, <em>ub</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.model.cbmodel.CBReaction.set_flux_bounds" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="framed.model.cbmodel.CBReaction.set_gpr_association">
+<code class="descname">set_gpr_association</code><span class="sig-paren">(</span><em>gpr_association</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.model.cbmodel.CBReaction.set_gpr_association" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="framed.model.cbmodel.CBReaction.set_lower_bound">
+<code class="descname">set_lower_bound</code><span class="sig-paren">(</span><em>value</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.model.cbmodel.CBReaction.set_lower_bound" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="framed.model.cbmodel.CBReaction.set_objective">
+<code class="descname">set_objective</code><span class="sig-paren">(</span><em>value</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.model.cbmodel.CBReaction.set_objective" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="framed.model.cbmodel.CBReaction.set_upper_bound">
+<code class="descname">set_upper_bound</code><span class="sig-paren">(</span><em>value</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.model.cbmodel.CBReaction.set_upper_bound" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="framed.model.cbmodel.CBReaction.to_string">
+<code class="descname">to_string</code><span class="sig-paren">(</span><em>metabolite_names=None</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.model.cbmodel.CBReaction.to_string" title="Permalink to this definition">¶</a></dt>
+<dd><p>Print a reaction to a text based representation.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>metabolite_names</strong> (<em>dict</em>) &#8211; replace metabolite id&#8217;s with names (optional)</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">reaction string</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">str</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
 <dt id="framed.model.cbmodel.GPRAssociation">
 <em class="property">class </em><code class="descclassname">framed.model.cbmodel.</code><code class="descname">GPRAssociation</code><a class="headerlink" href="#framed.model.cbmodel.GPRAssociation" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="method">
+<dd><p>Base class for modeling Gene-Protein-Reaction associations.</p>
+<p>Each GPR association is composed by a list of proteins that can catalyze a reaction.
+Each protein is encoded by one or several genes.</p>
+<dl class="method">
 <dt id="framed.model.cbmodel.GPRAssociation.get_genes">
 <code class="descname">get_genes</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#framed.model.cbmodel.GPRAssociation.get_genes" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Return the set of all genes associated with the respective reaction.</p>
+</dd></dl>
 
 </dd></dl>
 
@@ -328,13 +416,15 @@ Also removes all the edges connected to the reactions.</p>
 <dl class="class">
 <dt id="framed.model.cbmodel.Protein">
 <em class="property">class </em><code class="descclassname">framed.model.cbmodel.</code><code class="descname">Protein</code><a class="headerlink" href="#framed.model.cbmodel.Protein" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Base class for modeling proteins.</p>
+<p>One protein is composed of a list of genes encoding one or more subunits.</p>
+</dd></dl>
 
 </div>
 <div class="section" id="module-framed.model.fixes">
 <span id="framed-model-fixes-module"></span><h2>framed.model.fixes module<a class="headerlink" href="#module-framed.model.fixes" title="Permalink to this headline">¶</a></h2>
 <p>Fixes to clean up common models from different sources/groups.</p>
-<p>&#64;author: Daniel Machado</p>
+<p>Author: Daniel Machado</p>
 <dl class="function">
 <dt id="framed.model.fixes.clean_bigg_ids">
 <code class="descclassname">framed.model.fixes.</code><code class="descname">clean_bigg_ids</code><span class="sig-paren">(</span><em>model</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.model.fixes.clean_bigg_ids" title="Permalink to this definition">¶</a></dt>
@@ -349,12 +439,37 @@ Also removes all the edges connected to the reactions.</p>
 <dl class="function">
 <dt id="framed.model.fixes.default_fixes">
 <code class="descclassname">framed.model.fixes.</code><code class="descname">default_fixes</code><span class="sig-paren">(</span><em>model</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.model.fixes.default_fixes" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Apply default fixes to a constraint-based model</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>model</strong> &#8211; </td>
+</tr>
+</tbody>
+</table>
+<p>Returns:</p>
+</dd></dl>
 
 <dl class="function">
 <dt id="framed.model.fixes.fix_cb_model">
 <code class="descclassname">framed.model.fixes.</code><code class="descname">fix_cb_model</code><span class="sig-paren">(</span><em>model</em>, <em>flavor=None</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.model.fixes.fix_cb_model" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Apply fixes to known issues in a constraint baised model.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>model</strong> (<a class="reference internal" href="#framed.model.cbmodel.CBModel" title="framed.model.cbmodel.CBModel"><em>CBModel</em></a>) &#8211; model</li>
+<li><strong>flavor</strong> (<em>str</em>) &#8211; model <em>flavor</em> (optional)</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Notes</p>
+<p>Currently supported <em>flavors</em>: &#8216;cobra&#8217; (old style format from the Palsson lab)</p>
+</dd></dl>
 
 <dl class="function">
 <dt id="framed.model.fixes.fix_cobra_model">
@@ -377,7 +492,13 @@ Also removes all the edges connected to the reactions.</p>
 <div class="section" id="module-framed.model.model">
 <span id="framed-model-model-module"></span><h2>framed.model.model module<a class="headerlink" href="#module-framed.model.model" title="Permalink to this headline">¶</a></h2>
 <p>This module defines base classes for metabolic modeling.</p>
-<p>&#64;author: Daniel Machado</p>
+<p>Author: Daniel Machado</p>
+<dl class="class">
+<dt id="framed.model.model.AttrOrderedDict">
+<em class="property">class </em><code class="descclassname">framed.model.model.</code><code class="descname">AttrOrderedDict</code><a class="headerlink" href="#framed.model.model.AttrOrderedDict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">collections.OrderedDict</span></code></p>
+</dd></dl>
+
 <dl class="class">
 <dt id="framed.model.model.Compartment">
 <em class="property">class </em><code class="descclassname">framed.model.model.</code><code class="descname">Compartment</code><span class="sig-paren">(</span><em>elem_id</em>, <em>name=None</em>, <em>size=1.0</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.model.model.Compartment" title="Permalink to this definition">¶</a></dt>
@@ -404,7 +525,7 @@ If a compartment with the same id exists, it will be replaced.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>compartment</strong> &#8211; Compartment</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>compartment</strong> (<a class="reference internal" href="#framed.model.model.Compartment" title="framed.model.model.Compartment"><em>Compartment</em></a>) &#8211; compartment to add</td>
 </tr>
 </tbody>
 </table>
@@ -420,7 +541,7 @@ If the metabolite compartment is defined, then it must exist in the model.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>metabolite</strong> &#8211; Metabolite</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>metabolite</strong> (<a class="reference internal" href="#framed.model.model.Metabolite" title="framed.model.model.Metabolite"><em>Metabolite</em></a>) &#8211; metabolite to add</td>
 </tr>
 </tbody>
 </table>
@@ -435,31 +556,49 @@ If a reaction with the same id exists, it will be replaced.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>reaction</strong> &#8211; Reaction</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>reaction</strong> (<a class="reference internal" href="#framed.model.model.Reaction" title="framed.model.model.Reaction"><em>Reaction</em></a>) &#8211; reaction to add</td>
 </tr>
 </tbody>
 </table>
 </dd></dl>
 
 <dl class="method">
-<dt id="framed.model.model.Model.add_reaction_activator">
-<code class="descname">add_reaction_activator</code><span class="sig-paren">(</span><em>r_id</em>, <em>m_id</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.model.model.Model.add_reaction_activator" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="framed.model.model.Model.add_reaction_inhibitor">
-<code class="descname">add_reaction_inhibitor</code><span class="sig-paren">(</span><em>r_id</em>, <em>m_id</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.model.model.Model.add_reaction_inhibitor" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="framed.model.model.Model.add_reaction_regulator">
-<code class="descname">add_reaction_regulator</code><span class="sig-paren">(</span><em>r_id</em>, <em>m_id</em>, <em>kind='?'</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.model.model.Model.add_reaction_regulator" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dt id="framed.model.model.Model.add_reaction_from_str">
+<code class="descname">add_reaction_from_str</code><span class="sig-paren">(</span><em>reaction_str</em>, <em>default_compartment=None</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.model.model.Model.add_reaction_from_str" title="Permalink to this definition">¶</a></dt>
+<dd><p>Parse a reaction from a string and add it to the model.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>reaction_str</strong> (<em>str</em>) &#8211; string representation a the reaction</li>
+<li><strong>default_compartment</strong> (<em>str</em>) &#8211; default compartment id (optional)</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Notes</p>
+<p>If the metabolites specified in the reaction are not yet in the model, they will be automatically added.
+You can specify the compartment for new metabolites using the optional argument. However, if you want to
+use multiple compartments you will have to change them manually afterwards.</p>
+</dd></dl>
 
 <dl class="method">
 <dt id="framed.model.model.Model.copy">
 <code class="descname">copy</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#framed.model.model.Model.copy" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Create an identical copy of the model.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">model copy</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="#framed.model.model.Model" title="framed.model.model.Model">Model</a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="method">
 <dt id="framed.model.model.Model.get_activation_targets">
@@ -472,32 +611,36 @@ If a reaction with the same id exists, it will be replaced.</p>
 <dd></dd></dl>
 
 <dl class="method">
-<dt id="framed.model.model.Model.get_metabolite_sinks">
-<code class="descname">get_metabolite_sinks</code><span class="sig-paren">(</span><em>m_id</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.model.model.Model.get_metabolite_sinks" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return the list of output reactions for one metabolite</p>
+<dt id="framed.model.model.Model.get_metabolite_consumers">
+<code class="descname">get_metabolite_consumers</code><span class="sig-paren">(</span><em>m_id</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.model.model.Model.get_metabolite_consumers" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the list of reactions consuming a given metabolite</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>m_id</strong> &#8211; str &#8211; metabolite id</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>m_id</strong> (<em>str</em>) &#8211; metabolite id</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">list [of str] &#8211; output reactions list</td>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">output reactions</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">list</td>
 </tr>
 </tbody>
 </table>
 </dd></dl>
 
 <dl class="method">
-<dt id="framed.model.model.Model.get_metabolite_sources">
-<code class="descname">get_metabolite_sources</code><span class="sig-paren">(</span><em>m_id</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.model.model.Model.get_metabolite_sources" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return the list of input reactions for one metabolite</p>
+<dt id="framed.model.model.Model.get_metabolite_producers">
+<code class="descname">get_metabolite_producers</code><span class="sig-paren">(</span><em>m_id</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.model.model.Model.get_metabolite_producers" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the list of reactions producing a given metabolite</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>m_id</strong> &#8211; str &#8211; metabolite id</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>m_id</strong> (<em>str</em>) &#8211; metabolite id</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">list [of str] &#8211; input reactions list</td>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">input reactions</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">list</td>
 </tr>
 </tbody>
 </table>
@@ -509,19 +652,16 @@ If a reaction with the same id exists, it will be replaced.</p>
 <dd></dd></dl>
 
 <dl class="method">
-<dt id="framed.model.model.Model.get_stoichiometry">
-<code class="descname">get_stoichiometry</code><span class="sig-paren">(</span><em>m_id</em>, <em>r_id</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.model.model.Model.get_stoichiometry" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="framed.model.model.Model.metabolite_reaction_lookup_table">
-<code class="descname">metabolite_reaction_lookup_table</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#framed.model.model.Model.metabolite_reaction_lookup_table" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return the network topology as a nested map: metabolite id -&gt; reaction id -&gt; coefficient</p>
+<dt id="framed.model.model.Model.metabolite_reaction_lookup">
+<code class="descname">metabolite_reaction_lookup</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#framed.model.model.Model.metabolite_reaction_lookup" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the network topology as a nested map from metabolite to reaction to coefficient</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">OrderedDict (of str to OrderedDict of str to float) &#8211; lookup table</td>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">lookup table</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">dict</td>
 </tr>
 </tbody>
 </table>
@@ -529,20 +669,22 @@ If a reaction with the same id exists, it will be replaced.</p>
 
 <dl class="method">
 <dt id="framed.model.model.Model.print_reaction">
-<code class="descname">print_reaction</code><span class="sig-paren">(</span><em>r_id</em>, <em>reaction_names=False</em>, <em>metabolite_names=False</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.model.model.Model.print_reaction" title="Permalink to this definition">¶</a></dt>
+<code class="descname">print_reaction</code><span class="sig-paren">(</span><em>r_id</em>, <em>use_metabolite_names=False</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.model.model.Model.print_reaction" title="Permalink to this definition">¶</a></dt>
 <dd><p>Print a reaction to a text based representation.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>r_id</strong> &#8211; str &#8211; reaction id</li>
-<li><strong>reaction_names</strong> &#8211; bool &#8211; print reaction names instead of ids (default: False)</li>
-<li><strong>metabolite_names</strong> &#8211; bool &#8211; print metabolite names instead of ids (default: False)</li>
+<li><strong>r_id</strong> (<em>str</em>) &#8211; reaction id</li>
+<li><strong>use_metabolite_names</strong> (<em>bool</em>) &#8211; print metabolite names instead of ids (default: False)</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">str &#8211; reaction string</p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">reaction string</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">str</p>
 </td>
 </tr>
 </tbody>
@@ -550,8 +692,8 @@ If a reaction with the same id exists, it will be replaced.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="framed.model.model.Model.regulatory_lookup_table">
-<code class="descname">regulatory_lookup_table</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#framed.model.model.Model.regulatory_lookup_table" title="Permalink to this definition">¶</a></dt>
+<dt id="framed.model.model.Model.regulatory_lookup">
+<code class="descname">regulatory_lookup</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#framed.model.model.Model.regulatory_lookup" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -563,9 +705,9 @@ If a reaction with the same id exists, it will be replaced.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>c_id</strong> &#8211; str &#8211; compartment id</li>
-<li><strong>delete_metabolites</strong> &#8211; Bool &#8211; True (default)</li>
-<li><strong>delete_reactions</strong> &#8211; Bool &#8211; False (default)</li>
+<li><strong>c_id</strong> (<em>str</em>) &#8211; compartment id</li>
+<li><strong>delete_metabolites</strong> (<em>bool</em>) &#8211; delete metabolites inside this compartment (default: True)</li>
+<li><strong>delete_reactions</strong> (<em>bool</em>) &#8211; delete reactions that occur (totally or partially) in this compartment (default: False)</li>
 </ul>
 </td>
 </tr>
@@ -582,9 +724,9 @@ If a reaction with the same id exists, it will be replaced.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>c_ids</strong> &#8211; list of str &#8211; compartment ids</li>
-<li><strong>delete_metabolites</strong> &#8211; Bool &#8211; True (default)</li>
-<li><strong>delete_reactions</strong> &#8211; Bool &#8211; False (default)</li>
+<li><strong>c_ids</strong> (<em>list</em>) &#8211; compartment ids</li>
+<li><strong>delete_metabolites</strong> (<em>bool</em>) &#8211; delete metabolites inside this compartment (default: True)</li>
+<li><strong>delete_reactions</strong> (<em>bool</em>) &#8211; delete reactions that occur (totally or partially) in this compartment (default: False)</li>
 </ul>
 </td>
 </tr>
@@ -595,13 +737,12 @@ If a reaction with the same id exists, it will be replaced.</p>
 <dl class="method">
 <dt id="framed.model.model.Model.remove_metabolite">
 <code class="descname">remove_metabolite</code><span class="sig-paren">(</span><em>m_id</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.model.model.Model.remove_metabolite" title="Permalink to this definition">¶</a></dt>
-<dd><p>Remove a single metabolite from the model.
-Also removes all the edges connected to the metabolite.</p>
+<dd><p>Remove a single metabolite from the model.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>m_id</strong> &#8211; str &#8211; metabolite id</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>m_id</strong> (<em>str</em>) &#8211; metabolite id</td>
 </tr>
 </tbody>
 </table>
@@ -610,13 +751,12 @@ Also removes all the edges connected to the metabolite.</p>
 <dl class="method">
 <dt id="framed.model.model.Model.remove_metabolites">
 <code class="descname">remove_metabolites</code><span class="sig-paren">(</span><em>id_list</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.model.model.Model.remove_metabolites" title="Permalink to this definition">¶</a></dt>
-<dd><p>Remove a list of metabolites from the model.
-Also removes all the edges connected to the metabolites.</p>
+<dd><p>Remove a list of metabolites from the model.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>id_list</strong> &#8211; list of str &#8211; metabolite ids</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>id_list</strong> (<em>list</em>) &#8211; metabolite ids</td>
 </tr>
 </tbody>
 </table>
@@ -625,13 +765,12 @@ Also removes all the edges connected to the metabolites.</p>
 <dl class="method">
 <dt id="framed.model.model.Model.remove_reaction">
 <code class="descname">remove_reaction</code><span class="sig-paren">(</span><em>r_id</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.model.model.Model.remove_reaction" title="Permalink to this definition">¶</a></dt>
-<dd><p>Remove a single reaction from the model.
-Also removes all the edges connected to the reaction.</p>
+<dd><p>Remove a single reaction from the model.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>r_id</strong> &#8211; str &#8211; reaction id</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>r_id</strong> (<em>str</em>) &#8211; reaction id</td>
 </tr>
 </tbody>
 </table>
@@ -640,32 +779,28 @@ Also removes all the edges connected to the reaction.</p>
 <dl class="method">
 <dt id="framed.model.model.Model.remove_reactions">
 <code class="descname">remove_reactions</code><span class="sig-paren">(</span><em>id_list</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.model.model.Model.remove_reactions" title="Permalink to this definition">¶</a></dt>
-<dd><p>Remove a list of reactions from the model.
-Also removes all the edges connected to the reactions.</p>
+<dd><p>Remove a list of reactions from the model.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>id_list</strong> &#8211; list of str &#8211; reaction ids</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>id_list</strong> (<em>list of str</em>) &#8211; reaction ids</td>
 </tr>
 </tbody>
 </table>
 </dd></dl>
 
 <dl class="method">
-<dt id="framed.model.model.Model.set_stoichiometry">
-<code class="descname">set_stoichiometry</code><span class="sig-paren">(</span><em>m_id</em>, <em>r_id</em>, <em>coeff</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.model.model.Model.set_stoichiometry" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
 <dt id="framed.model.model.Model.stoichiometric_matrix">
 <code class="descname">stoichiometric_matrix</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#framed.model.model.Model.stoichiometric_matrix" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return the full stoichiometric matrix represented by the network topology</p>
+<dd><p>Return a stoichiometric matrix (as a list of lists)</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">list (of list of float) &#8211; stoichiometric matrix</td>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">stoichiometric matrix</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">list</td>
 </tr>
 </tbody>
 </table>
@@ -673,13 +808,17 @@ Also removes all the edges connected to the reactions.</p>
 
 <dl class="method">
 <dt id="framed.model.model.Model.to_string">
-<code class="descname">to_string</code><span class="sig-paren">(</span><em>reaction_names=False</em>, <em>metabolite_names=False</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.model.model.Model.to_string" title="Permalink to this definition">¶</a></dt>
+<code class="descname">to_string</code><span class="sig-paren">(</span><em>use_metabolite_names=False</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.model.model.Model.to_string" title="Permalink to this definition">¶</a></dt>
 <dd><p>Print the model to a text based representation.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">str &#8211; model string</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>use_metabolite_names</strong> (<em>bool</em>) &#8211; print metabolite names instead of ids (default: False)</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">model as a string</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">str</td>
 </tr>
 </tbody>
 </table>
@@ -694,22 +833,84 @@ Also removes all the edges connected to the reactions.</p>
 <dl class="method">
 <dt id="framed.model.model.Reaction.get_activators">
 <code class="descname">get_activators</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#framed.model.model.Reaction.get_activators" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Get list of reaction activators</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">reaction activators</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">list</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="method">
 <dt id="framed.model.model.Reaction.get_inhibitors">
 <code class="descname">get_inhibitors</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#framed.model.model.Reaction.get_inhibitors" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Get list of reaction inhibitors</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">reaction inhibitors</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">list</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="method">
 <dt id="framed.model.model.Reaction.get_products">
 <code class="descname">get_products</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#framed.model.model.Reaction.get_products" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Get list of reaction products</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">reaction products</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">list</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="method">
 <dt id="framed.model.model.Reaction.get_substrates">
 <code class="descname">get_substrates</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#framed.model.model.Reaction.get_substrates" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Get list of reaction substrates</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">reaction substrates</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">list</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="framed.model.model.Reaction.to_string">
+<code class="descname">to_string</code><span class="sig-paren">(</span><em>metabolite_names=None</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.model.model.Reaction.to_string" title="Permalink to this definition">¶</a></dt>
+<dd><p>Print a reaction to a text based representation.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>metabolite_names</strong> (<em>dict</em>) &#8211; replace metabolite id&#8217;s with names (optional)</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">reaction string</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">str</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 </dd></dl>
 
@@ -728,11 +929,6 @@ Also removes all the edges connected to the reactions.</p>
 <dl class="method">
 <dt id="framed.model.odemodel.ODEModel.build_ode">
 <code class="descname">build_ode</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#framed.model.odemodel.ODEModel.build_ode" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="framed.model.odemodel.ODEModel.build_rate_functions">
-<code class="descname">build_rate_functions</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#framed.model.odemodel.ODEModel.build_rate_functions" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -798,10 +994,33 @@ Also removes all the edges connected to the reactions.</p>
 </dd></dl>
 
 </div>
+<div class="section" id="module-framed.model.parser">
+<span id="framed-model-parser-module"></span><h2>framed.model.parser module<a class="headerlink" href="#module-framed.model.parser" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="framed.model.parser.ReactionParser">
+<em class="property">class </em><code class="descclassname">framed.model.parser.</code><code class="descname">ReactionParser</code><a class="headerlink" href="#framed.model.parser.ReactionParser" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="method">
+<dt id="framed.model.parser.ReactionParser.parse_bounds">
+<code class="descname">parse_bounds</code><span class="sig-paren">(</span><em>expression</em>, <em>reversible</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.model.parser.ReactionParser.parse_bounds" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="framed.model.parser.ReactionParser.parse_coefficients">
+<code class="descname">parse_coefficients</code><span class="sig-paren">(</span><em>expression</em>, <em>sense</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.model.parser.ReactionParser.parse_coefficients" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="framed.model.parser.ReactionParser.parse_reaction">
+<code class="descname">parse_reaction</code><span class="sig-paren">(</span><em>reaction_str</em>, <em>kind=None</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.model.parser.ReactionParser.parse_reaction" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
 <div class="section" id="module-framed.model.transformation">
 <span id="framed-model-transformation-module"></span><h2>framed.model.transformation module<a class="headerlink" href="#module-framed.model.transformation" title="Permalink to this headline">¶</a></h2>
 <p>Module for model transformation operations.</p>
-<p>&#64;author: Daniel Machado</p>
+<p>Author: Daniel Machado</p>
 <dl class="function">
 <dt id="framed.model.transformation.disconnected_genes">
 <code class="descclassname">framed.model.transformation.</code><code class="descname">disconnected_genes</code><span class="sig-paren">(</span><em>model</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.model.transformation.disconnected_genes" title="Permalink to this definition">¶</a></dt>
@@ -814,18 +1033,24 @@ Also removes all the edges connected to the reactions.</p>
 
 <dl class="function">
 <dt id="framed.model.transformation.make_irreversible">
-<code class="descclassname">framed.model.transformation.</code><code class="descname">make_irreversible</code><span class="sig-paren">(</span><em>model</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.model.transformation.make_irreversible" title="Permalink to this definition">¶</a></dt>
-<dd><p>Splits all reversible reactions into forward and backward directions.
-For efficiency the given model is converted. To keep a copy use deepcopy first.</p>
+<code class="descclassname">framed.model.transformation.</code><code class="descname">make_irreversible</code><span class="sig-paren">(</span><em>model</em>, <em>inplace=True</em>, <em>reactions=None</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.model.transformation.make_irreversible" title="Permalink to this definition">¶</a></dt>
+<dd><p>Splits all reversible reactions into forward and backward directions.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>model</strong> &#8211; Model (or CBmodel)</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>model</strong> &#8211; Model (or CBmodel)</li>
+<li><strong>inplace</strong> (<em>bool</em>) &#8211; change model inplace (default), otherwise create a copy first</li>
+<li><strong>reactions</strong> (<em>list</em>) &#8211; split only reactions in this list (optional)</li>
+</ul>
+</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>dictionary</strong> &#8211; mapping of old reaction ids to splitted reaction ids</td>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">mapping of old reaction ids to splitted reaction ids</p>
+</td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">str to (str, str</td>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">dict</p>
+</td>
 </tr>
 </tbody>
 </table>
@@ -833,17 +1058,23 @@ For efficiency the given model is converted. To keep a copy use deepcopy first.<
 
 <dl class="function">
 <dt id="framed.model.transformation.simplify">
-<code class="descclassname">framed.model.transformation.</code><code class="descname">simplify</code><span class="sig-paren">(</span><em>model</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.model.transformation.simplify" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">framed.model.transformation.</code><code class="descname">simplify</code><span class="sig-paren">(</span><em>model</em>, <em>inplace=True</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.model.transformation.simplify" title="Permalink to this definition">¶</a></dt>
 <dd><p>Removes all blocked reactions in a constraint based model</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>model</strong> &#8211; CBModel</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>model</strong> (<a class="reference internal" href="#framed.model.cbmodel.CBModel" title="framed.model.cbmodel.CBModel"><em>CBModel</em></a>) &#8211; model</li>
+<li><strong>inplace</strong> (<em>bool</em>) &#8211; change model inplace (default), otherwise create a copy first</li>
+</ul>
+</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>(list</strong> &#8211; lists of removed reactions, metabolites, and genes</td>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">lists of removed reactions, metabolites, and genes</p>
+</td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">of str</td>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">tuple</p>
+</td>
 </tr>
 </tbody>
 </table>
@@ -870,6 +1101,7 @@ For efficiency the given model is converted. To keep a copy use deepcopy first.<
 <li><a class="reference internal" href="#module-framed.model.fixes">framed.model.fixes module</a></li>
 <li><a class="reference internal" href="#module-framed.model.model">framed.model.model module</a></li>
 <li><a class="reference internal" href="#module-framed.model.odemodel">framed.model.odemodel module</a></li>
+<li><a class="reference internal" href="#module-framed.model.parser">framed.model.parser module</a></li>
 <li><a class="reference internal" href="#module-framed.model.transformation">framed.model.transformation module</a></li>
 <li><a class="reference internal" href="#module-framed.model">Module contents</a></li>
 </ul>
@@ -904,7 +1136,7 @@ For efficiency the given model is converted. To keep a copy use deepcopy first.<
       <div class="clearer"></div>
     </div>
     <div class="footer">
-      &copy;2016, Daniel.
+      &copy;2016, Daniel Machado.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 1.4.8</a>

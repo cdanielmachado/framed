@@ -3,7 +3,7 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to framed's documentation!
+Welcome to *framed's* documentation!
 ==================================
 
 Contents:
@@ -11,6 +11,11 @@ Contents:
 .. toctree::
    :maxdepth: 2
 
+   install
+   start
+   cobra
+   kinetic
+   modules
 
 
 Indices and tables

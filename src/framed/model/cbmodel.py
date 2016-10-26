@@ -125,6 +125,26 @@ class CBReaction(Reaction):
                 rule = rule.replace(' ' + gene + ' ', ' x[\'' + gene + '\'] ')
         self._bool_function = eval('lambda x: ' + rule)
 
+    def to_string(self, metabolite_names=None):
+        """ Print a reaction to a text based representation.
+
+        Arguments:
+            metabolite_names (dict): replace metabolite id's with names (optional)
+
+        Returns:
+            str: reaction string
+        """
+
+        res = Reaction.to_string(self, metabolite_names)
+
+        if self.lb is not None and (self.reversible or self.lb != 0.0) or self.ub is not None:
+            res += ' [{}, {}]'.format(self.lb if self.lb is not None else '',
+                                      self.ub if self.ub is not None else '')
+        if self.objective:
+            res += ' @{}'.format(self.objective)
+
+        return res
+
 
 class CBModel(Model):
 
@@ -216,28 +236,6 @@ class CBModel(Model):
             Model.add_reaction(self, cbreaction)
         else:
             Model.add_reaction(self, reaction)
-
-    def print_reaction(self, r_id, reaction_names=False, metabolite_names=False):
-        """ Print a reaction to a text based representation.
-
-        Arguments:
-            r_id (str): reaction id
-            reaction_names (bool): print reaction names instead of ids (default: False)
-            metabolite_names (bool): print metabolite names instead of ids (default: False)
-
-        Returns:
-            str: reaction in string format
-        """
-        res = Model.print_reaction(self, r_id, reaction_names, metabolite_names)
-        reaction = self.reactions[r_id]
-        lb, ub = reaction.lb, reaction.ub
-        if lb is not None and (reaction.reversible or lb != 0.0) or ub is not None:
-            res += ' [{}, {}]'.format(lb if lb is not None else '',
-                                      ub if ub is not None else '')
-        if reaction.objective:
-            res += ' @{}'.format(reaction.objective)
-
-        return res
 
     def detect_biomass_reaction(self):
         """ Detects biomass reaction in the model (searches by objective coefficient)

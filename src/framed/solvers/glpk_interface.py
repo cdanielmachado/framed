@@ -11,7 +11,7 @@ import tempfile
 import os
 from collections import OrderedDict
 from .solver import Solver, Solution, Status, VarType
-from glpk.glpkpi import *
+from glpk_interface.glpkpi import *
 from warnings import warn
 
 status_mapping = {GLP_OPT: Status.OPTIMAL,

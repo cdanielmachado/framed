@@ -1,6 +1,6 @@
 from collections import OrderedDict
 
-from framed.model.model import Model
+from .model import Model
 
 
 class ODEModel(Model):
@@ -8,7 +8,7 @@ class ODEModel(Model):
     def __init__(self, model_id):
         """
         Arguments:
-            model_id : String -- a valid unique identifier
+            model_id (str): a valid unique identifier
         """
         Model.__init__(self, model_id)
         self.concentrations = OrderedDict()

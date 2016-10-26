@@ -1,20 +1,14 @@
-""" This module implements the method to find and fill gaps in the network
+""" This module implements methods to find and fill gaps in the network
 
 Author: Marta Matos
 
 """
 
-from framed.io.plaintext import add_reaction_from_str
-from framed.io.sbml import _load_compartments, _load_metabolites, _load_reactions, _load_cobra_bounds, \
-    _load_cobra_objective
+from framed.io.sbml import _load_compartments, _load_metabolites, _load_reactions, _load_cobra_bounds, _load_cobra_objective
 from libsbml import SBMLReader, SBMLDocument, XMLNode
 from re import match
-from copy import deepcopy
 from framed.solvers.solver import VarType, Status
 from numpy import where, array
-
-from glpk.glpkpi import *
-
 
 
 def GapFind(model, solver, root_gaps_only=False, tol=1e-5):
@@ -213,19 +207,19 @@ def GapFill(model, reactions_db, solver, output_reaction, flux_ouput, DB_type, t
         At the moment the reactions database is just a sbml or plaintext file
         containing a constraint based model
 
-    Arguments:
-        model : a constraint based model
-        reactions_db (str): name of the constraint based model to be used
-                     as a reference database (supposed to be temporary) in
-                     sbml or plain text format
-        solver : a solver instance
-        biomass_output (float): the amount of biomass that should be produced
-        DB_type (str): either 'sbml' or 'txt', depending on the format the
-                  reactions_db file is in
+        Arguments:
+            model : a constraint based model
+            reactions_db (str): name of the constraint based model to be used
+                         as a reference database (supposed to be temporary) in
+                         sbml or plain text format
+            solver : a solver instance
+            biomass_output (float): the amount of biomass that should be produced
+            DB_type (str): either 'sbml' or 'txt', depending on the format the
+                      reactions_db file is in
 
-    Returns:
-        added_reactions : the reactions that from the database that
-                          were added to the model
+        Returns:
+            added_reactions : the reactions that from the database that
+                              were added to the model
     """
     # extend the model, by including reactions/metabolites from the reference
     #  database that are not part of the model
@@ -278,7 +272,7 @@ def GapFill(model, reactions_db, solver, output_reaction, flux_ouput, DB_type, t
 
         added_reactions = {}
         for id in added_reactions_ids:
-            added_reactions[id] = model_extended.print_reaction(id)
+            added_reactions[id] = model_extended.reactions[id].to_string()
 
     else:
         added_reactions = None
@@ -289,17 +283,17 @@ def GapFill(model, reactions_db, solver, output_reaction, flux_ouput, DB_type, t
 
 def extend_model_with_DB_SBML(model, reactionsDB):
     """ Extends the given model with the reactions in reactionsDB.
-      This is done by loading the model in sbml format reactionsDB
-      and adding only the reactions that are not part of "model" to it.
+        This is done by loading the model in sbml format reactionsDB
+        and adding only the reactions that are not part of "model" to it.
 
-    Arguments:
-        model : the constraint based model to be extended
-        reactionsDB (str): SBML file path for the reactionsDB model
+        Arguments:
+            model : the constraint based model to be extended
+            reactionsDB (str): SBML file path for the reactionsDB model
 
-    Returns:
-        model: the given model extended with the database reactions/metabolites
-        db_reactions: the reactions that were added from the database to
-                      the given model
+        Returns:
+            model: the given model extended with the database reactions/metabolites
+            db_reactions: the reactions that were added from the database to
+                          the given model
     """
     reader = SBMLReader()
     document = reader.readSBML(reactionsDB)
@@ -328,21 +322,21 @@ def _load_constraintbased_model(sbml_model, model):
 
 def extend_model_with_DB_plainText(model, reactionsDB):
     """ Extends the given model with the reactions in reactionsDB.
-      This is done by loading the model in plain text format
-       reactionsDB and adding only the reactions that are not part
-       of "model" to it.
+        This is done by loading the model in plain text format
+        reactionsDB and adding only the reactions that are not part
+        of "model" to it.
 
-    Arguments:
-        model : the constraint based model to be extended
-        reactionsDB (str): plain text file path for the reactionsDB model
+        Arguments:
+            model : the constraint based model to be extended
+            reactionsDB (str): plain text file path for the reactionsDB model
 
-    Returns:
-        model: the given model extended with the database reactions/metabolites
-        db_reactions: the reactions that were added from the database to
-                      the given model
+        Returns:
+            model: the given model extended with the database reactions/metabolites
+            db_reactions: the reactions that were added from the database to
+                          the given model
     """
 
-    model_extended = deepcopy(model)
+    model_extended = model.copy()
 
     try:
         with open(reactionsDB, 'r') as stream:
@@ -351,9 +345,8 @@ def extend_model_with_DB_plainText(model, reactionsDB):
                 for line in stream:
                     line = line.strip()
                     if line != '' and line[0] != '#':
-                        r_id = add_reaction_from_str(model_extended, line)
-                        if r_id:
-                            db_reactions.append(r_id)
+                        model_extended.add_reaction_from_str(line)
+                        db_reactions.append(model_extended.reactions.keys()[-1])
 
     except Exception as e:
         print e

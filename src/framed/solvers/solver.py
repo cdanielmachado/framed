@@ -74,7 +74,7 @@ class Solution:
                         Status.INFEASIBLE: 'Infeasible',
                         Status.INF_OR_UNB: 'Infeasible or Unbounded'}
 
-        return 'Objective: {}\nStatus: {}\nMessage: {}\n'.format(self.fobj, status_codes[self.status], self.message)
+        return 'Objective: {}\nStatus: {}\n'.format(self.fobj, status_codes[self.status])
 
     def show_values(self, zeros=False, pattern=None):
         """ Show solution results.

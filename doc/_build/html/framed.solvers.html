@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>framed.solvers package &#8212; framed 0.2.1 documentation</title>
+    <title>framed.solvers package &#8212; framed 0.3.0 documentation</title>
     
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '0.2.1',
+        VERSION:     '0.3.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -25,7 +25,9 @@
     <script type="text/javascript" src="_static/doctools.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="top" title="framed 0.2.1 documentation" href="index.html" />
+    <link rel="top" title="framed 0.3.0 documentation" href="index.html" />
+    <link rel="up" title="framed package" href="framed.html" />
+    <link rel="prev" title="framed.omics package" href="framed.omics.html" />
    
   <link rel="stylesheet" href="_static/custom.css" type="text/css" />
   
@@ -46,24 +48,18 @@
 <div class="section" id="submodules">
 <h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
 </div>
-<div class="section" id="framed-solvers-cplex-module">
-<h2>framed.solvers.cplex module<a class="headerlink" href="#framed-solvers-cplex-module" title="Permalink to this headline">¶</a></h2>
-</div>
-<div class="section" id="framed-solvers-glpk-module">
-<h2>framed.solvers.glpk module<a class="headerlink" href="#framed-solvers-glpk-module" title="Permalink to this headline">¶</a></h2>
-</div>
-<div class="section" id="module-framed.solvers.gurobi">
-<span id="framed-solvers-gurobi-module"></span><h2>framed.solvers.gurobi module<a class="headerlink" href="#module-framed.solvers.gurobi" title="Permalink to this headline">¶</a></h2>
-<p>Implementation of a Gurobi solver interface.</p>
+<div class="section" id="module-framed.solvers.cplex_interface">
+<span id="framed-solvers-cplex-interface-module"></span><h2>framed.solvers.cplex_interface module<a class="headerlink" href="#module-framed.solvers.cplex_interface" title="Permalink to this headline">¶</a></h2>
+<p>This module implements a CPLEX interface.</p>
 <p>Author: Daniel Machado</p>
 <dl class="class">
-<dt id="framed.solvers.gurobi.GurobiSolver">
-<em class="property">class </em><code class="descclassname">framed.solvers.gurobi.</code><code class="descname">GurobiSolver</code><span class="sig-paren">(</span><em>model=None</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.solvers.gurobi.GurobiSolver" title="Permalink to this definition">¶</a></dt>
+<dt id="framed.solvers.cplex_interface.CplexSolver">
+<em class="property">class </em><code class="descclassname">framed.solvers.cplex_interface.</code><code class="descname">CplexSolver</code><span class="sig-paren">(</span><em>model=None</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.solvers.cplex_interface.CplexSolver" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#framed.solvers.solver.Solver" title="framed.solvers.solver.Solver"><code class="xref py py-class docutils literal"><span class="pre">framed.solvers.solver.Solver</span></code></a></p>
-<p>Implements the solver interface using gurobipy.</p>
+<p>Implements the solver interface using CPLEX.</p>
 <dl class="method">
-<dt id="framed.solvers.gurobi.GurobiSolver.add_constraint">
-<code class="descname">add_constraint</code><span class="sig-paren">(</span><em>constr_id</em>, <em>lhs</em>, <em>sense='='</em>, <em>rhs=0</em>, <em>persistent=True</em>, <em>update_problem=True</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.solvers.gurobi.GurobiSolver.add_constraint" title="Permalink to this definition">¶</a></dt>
+<dt id="framed.solvers.cplex_interface.CplexSolver.add_constraint">
+<code class="descname">add_constraint</code><span class="sig-paren">(</span><em>constr_id</em>, <em>lhs</em>, <em>sense='='</em>, <em>rhs=0</em>, <em>persistent=True</em>, <em>update_problem=True</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.solvers.cplex_interface.CplexSolver.add_constraint" title="Permalink to this definition">¶</a></dt>
 <dd><p>Add a constraint to the current problem.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -71,11 +67,11 @@
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>constr_id</strong> (<em>str</em>) &#8211; constraint identifier</li>
-<li><strong>lhs</strong> (<em>list</em>) &#8211; variables and respective coefficients</li>
+<li><strong>lhs</strong> (<em>dict</em>) &#8211; variables and respective coefficients</li>
 <li><strong>sense</strong> (<em>str</em>) &#8211; constraint sense (any of: &#8216;&lt;&#8217;, &#8216;=&#8217;, &#8216;&gt;&#8217;; default &#8216;=&#8217;)</li>
 <li><strong>rhs</strong> (<em>float</em>) &#8211; right-hand side of equation (default: 0)</li>
 <li><strong>persistent</strong> (<em>bool</em>) &#8211; if the variable should be reused for multiple calls (default: True)</li>
-<li><strong>update_problem</strong> (<em>bool</em>) &#8211; update problem immediately (default: True)</li>
+<li><strong>update_problem</strong> (<em>bool</em>) &#8211; update problem immediately (not supported in CPLEX interface)</li>
 </ul>
 </td>
 </tr>
@@ -84,8 +80,28 @@
 </dd></dl>
 
 <dl class="method">
-<dt id="framed.solvers.gurobi.GurobiSolver.add_variable">
-<code class="descname">add_variable</code><span class="sig-paren">(</span><em>var_id</em>, <em>lb=None</em>, <em>ub=None</em>, <em>vartype=3</em>, <em>persistent=True</em>, <em>update_problem=True</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.solvers.gurobi.GurobiSolver.add_variable" title="Permalink to this definition">¶</a></dt>
+<dt id="framed.solvers.cplex_interface.CplexSolver.add_constraints">
+<code class="descname">add_constraints</code><span class="sig-paren">(</span><em>constr_ids</em>, <em>lhs</em>, <em>senses</em>, <em>rhs</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.solvers.cplex_interface.CplexSolver.add_constraints" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add a list of constraints to the current problem.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>constr_ids</strong> (<em>list</em>) &#8211; constraint identifiers</li>
+<li><strong>lhs</strong> (<em>list</em>) &#8211; variables and respective coefficients</li>
+<li><strong>senses</strong> (<em>list</em>) &#8211; constraint senses (default: &#8216;=&#8217;)</li>
+<li><strong>rhs</strong> (<em>list</em>) &#8211; right-hand side of equations (default: 0)</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="framed.solvers.cplex_interface.CplexSolver.add_variable">
+<code class="descname">add_variable</code><span class="sig-paren">(</span><em>var_id</em>, <em>lb=None</em>, <em>ub=None</em>, <em>vartype=3</em>, <em>persistent=True</em>, <em>update_problem=True</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.solvers.cplex_interface.CplexSolver.add_variable" title="Permalink to this definition">¶</a></dt>
 <dd><p>Add a variable to the current problem.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -97,7 +113,7 @@
 <li><strong>ub</strong> (<em>float</em>) &#8211; upper bound</li>
 <li><strong>vartype</strong> (<a class="reference internal" href="#framed.solvers.solver.VarType" title="framed.solvers.solver.VarType"><em>VarType</em></a>) &#8211; variable type (default: CONTINUOUS)</li>
 <li><strong>persistent</strong> (<em>bool</em>) &#8211; if the variable should be reused for multiple calls (default: true)</li>
-<li><strong>update_problem</strong> (<em>bool</em>) &#8211; update problem immediately (default: True)</li>
+<li><strong>update_problem</strong> (<em>bool</em>) &#8211; update problem immediately (ignored in CPLEX interface)</li>
 </ul>
 </td>
 </tr>
@@ -106,8 +122,42 @@
 </dd></dl>
 
 <dl class="method">
-<dt id="framed.solvers.gurobi.GurobiSolver.remove_constraint">
-<code class="descname">remove_constraint</code><span class="sig-paren">(</span><em>constr_id</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.solvers.gurobi.GurobiSolver.remove_constraint" title="Permalink to this definition">¶</a></dt>
+<dt id="framed.solvers.cplex_interface.CplexSolver.add_variables">
+<code class="descname">add_variables</code><span class="sig-paren">(</span><em>var_ids</em>, <em>lbs</em>, <em>ubs</em>, <em>vartypes</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.solvers.cplex_interface.CplexSolver.add_variables" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add multiple variables to the current problem.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>var_ids</strong> (<em>list</em>) &#8211; variable identifier</li>
+<li><strong>lbs</strong> (<em>list</em>) &#8211; lower bounds</li>
+<li><strong>ubs</strong> (<em>list</em>) &#8211; upper bounds</li>
+<li><strong>vartypes</strong> (<em>list</em>) &#8211; variable types (default: CONTINUOUS)</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="framed.solvers.cplex_interface.CplexSolver.build_problem">
+<code class="descname">build_problem</code><span class="sig-paren">(</span><em>model</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.solvers.cplex_interface.CplexSolver.build_problem" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create problem structure for a given model.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>model</strong> &#8211; CBModel</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="framed.solvers.cplex_interface.CplexSolver.remove_constraint">
+<code class="descname">remove_constraint</code><span class="sig-paren">(</span><em>constr_id</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.solvers.cplex_interface.CplexSolver.remove_constraint" title="Permalink to this definition">¶</a></dt>
 <dd><p>Remove a constraint from the current problem.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -120,8 +170,8 @@
 </dd></dl>
 
 <dl class="method">
-<dt id="framed.solvers.gurobi.GurobiSolver.remove_variable">
-<code class="descname">remove_variable</code><span class="sig-paren">(</span><em>var_id</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.solvers.gurobi.GurobiSolver.remove_variable" title="Permalink to this definition">¶</a></dt>
+<dt id="framed.solvers.cplex_interface.CplexSolver.remove_variable">
+<code class="descname">remove_variable</code><span class="sig-paren">(</span><em>var_id</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.solvers.cplex_interface.CplexSolver.remove_variable" title="Permalink to this definition">¶</a></dt>
 <dd><p>Remove a variable from the current problem.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -134,8 +184,8 @@
 </dd></dl>
 
 <dl class="method">
-<dt id="framed.solvers.gurobi.GurobiSolver.set_logging">
-<code class="descname">set_logging</code><span class="sig-paren">(</span><em>enabled=False</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.solvers.gurobi.GurobiSolver.set_logging" title="Permalink to this definition">¶</a></dt>
+<dt id="framed.solvers.cplex_interface.CplexSolver.set_logging">
+<code class="descname">set_logging</code><span class="sig-paren">(</span><em>enabled=False</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.solvers.cplex_interface.CplexSolver.set_logging" title="Permalink to this definition">¶</a></dt>
 <dd><p>Enable or disable log output:</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -148,8 +198,8 @@
 </dd></dl>
 
 <dl class="method">
-<dt id="framed.solvers.gurobi.GurobiSolver.set_parameter">
-<code class="descname">set_parameter</code><span class="sig-paren">(</span><em>parameter</em>, <em>value</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.solvers.gurobi.GurobiSolver.set_parameter" title="Permalink to this definition">¶</a></dt>
+<dt id="framed.solvers.cplex_interface.CplexSolver.set_parameter">
+<code class="descname">set_parameter</code><span class="sig-paren">(</span><em>parameter</em>, <em>value</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.solvers.cplex_interface.CplexSolver.set_parameter" title="Permalink to this definition">¶</a></dt>
 <dd><p>Set a parameter value for this optimization problem</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -166,15 +216,16 @@
 </dd></dl>
 
 <dl class="method">
-<dt id="framed.solvers.gurobi.GurobiSolver.solve_lp">
-<code class="descname">solve_lp</code><span class="sig-paren">(</span><em>objective</em>, <em>minimize=True</em>, <em>model=None</em>, <em>constraints=None</em>, <em>get_values=True</em>, <em>get_shadow_prices=False</em>, <em>get_reduced_costs=False</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.solvers.gurobi.GurobiSolver.solve_lp" title="Permalink to this definition">¶</a></dt>
-<dd><p>Solve an LP optimization problem.</p>
+<dt id="framed.solvers.cplex_interface.CplexSolver.solve">
+<code class="descname">solve</code><span class="sig-paren">(</span><em>objective</em>, <em>quadratic=None</em>, <em>minimize=True</em>, <em>model=None</em>, <em>constraints=None</em>, <em>get_values=True</em>, <em>get_shadow_prices=False</em>, <em>get_reduced_costs=False</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.solvers.cplex_interface.CplexSolver.solve" title="Permalink to this definition">¶</a></dt>
+<dd><p>Solve the optimization problem.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
 <li><strong>objective</strong> (<em>dict</em>) &#8211; linear objective</li>
+<li><strong>quadratic</strong> (<em>dict</em>) &#8211; quadratic objective (optional)</li>
 <li><strong>minimize</strong> (<em>bool</em>) &#8211; minimization problem (default: True)</li>
 <li><strong>model</strong> (<a class="reference internal" href="framed.model.html#framed.model.cbmodel.CBModel" title="framed.model.cbmodel.CBModel"><em>CBModel</em></a>) &#8211; model (optional, leave blank to reuse previous model structure)</li>
 <li><strong>constraints</strong> (<em>dict</em>) &#8211; additional constraints (optional)</li>
@@ -195,17 +246,156 @@
 </dd></dl>
 
 <dl class="method">
-<dt id="framed.solvers.gurobi.GurobiSolver.solve_qp">
-<code class="descname">solve_qp</code><span class="sig-paren">(</span><em>quad_obj</em>, <em>lin_obj</em>, <em>minimize=True</em>, <em>model=None</em>, <em>constraints=None</em>, <em>get_values=True</em>, <em>get_shadow_prices=False</em>, <em>get_reduced_costs=False</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.solvers.gurobi.GurobiSolver.solve_qp" title="Permalink to this definition">¶</a></dt>
-<dd><p>Solve a QP optimization problem.</p>
+<dt id="framed.solvers.cplex_interface.CplexSolver.update">
+<code class="descname">update</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#framed.solvers.cplex_interface.CplexSolver.update" title="Permalink to this definition">¶</a></dt>
+<dd><p>Update internal structure. Used for efficient lazy updating.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="framed.solvers.cplex_interface.CplexSolver.write_to_file">
+<code class="descname">write_to_file</code><span class="sig-paren">(</span><em>filename</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.solvers.cplex_interface.CplexSolver.write_to_file" title="Permalink to this definition">¶</a></dt>
+<dd><p>Write problem to file:</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>filename</strong> (<em>str</em>) &#8211; file path</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="framed-solvers-glpk-interface-module">
+<h2>framed.solvers.glpk_interface module<a class="headerlink" href="#framed-solvers-glpk-interface-module" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-framed.solvers.gurobi_interface">
+<span id="framed-solvers-gurobi-interface-module"></span><h2>framed.solvers.gurobi_interface module<a class="headerlink" href="#module-framed.solvers.gurobi_interface" title="Permalink to this headline">¶</a></h2>
+<p>Implementation of a Gurobi solver interface.</p>
+<p>Author: Daniel Machado</p>
+<dl class="class">
+<dt id="framed.solvers.gurobi_interface.GurobiSolver">
+<em class="property">class </em><code class="descclassname">framed.solvers.gurobi_interface.</code><code class="descname">GurobiSolver</code><span class="sig-paren">(</span><em>model=None</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.solvers.gurobi_interface.GurobiSolver" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#framed.solvers.solver.Solver" title="framed.solvers.solver.Solver"><code class="xref py py-class docutils literal"><span class="pre">framed.solvers.solver.Solver</span></code></a></p>
+<p>Implements the solver interface using gurobipy.</p>
+<dl class="method">
+<dt id="framed.solvers.gurobi_interface.GurobiSolver.add_constraint">
+<code class="descname">add_constraint</code><span class="sig-paren">(</span><em>constr_id</em>, <em>lhs</em>, <em>sense='='</em>, <em>rhs=0</em>, <em>persistent=True</em>, <em>update_problem=True</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.solvers.gurobi_interface.GurobiSolver.add_constraint" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add a constraint to the current problem.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>constr_id</strong> (<em>str</em>) &#8211; constraint identifier</li>
+<li><strong>lhs</strong> (<em>dict</em>) &#8211; variables and respective coefficients</li>
+<li><strong>sense</strong> (<em>str</em>) &#8211; constraint sense (any of: &#8216;&lt;&#8217;, &#8216;=&#8217;, &#8216;&gt;&#8217;; default &#8216;=&#8217;)</li>
+<li><strong>rhs</strong> (<em>float</em>) &#8211; right-hand side of equation (default: 0)</li>
+<li><strong>persistent</strong> (<em>bool</em>) &#8211; if the variable should be reused for multiple calls (default: True)</li>
+<li><strong>update_problem</strong> (<em>bool</em>) &#8211; update problem immediately (default: True)</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="framed.solvers.gurobi_interface.GurobiSolver.add_variable">
+<code class="descname">add_variable</code><span class="sig-paren">(</span><em>var_id</em>, <em>lb=None</em>, <em>ub=None</em>, <em>vartype=3</em>, <em>persistent=True</em>, <em>update_problem=True</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.solvers.gurobi_interface.GurobiSolver.add_variable" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add a variable to the current problem.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>var_id</strong> (<em>str</em>) &#8211; variable identifier</li>
+<li><strong>lb</strong> (<em>float</em>) &#8211; lower bound</li>
+<li><strong>ub</strong> (<em>float</em>) &#8211; upper bound</li>
+<li><strong>vartype</strong> (<a class="reference internal" href="#framed.solvers.solver.VarType" title="framed.solvers.solver.VarType"><em>VarType</em></a>) &#8211; variable type (default: CONTINUOUS)</li>
+<li><strong>persistent</strong> (<em>bool</em>) &#8211; if the variable should be reused for multiple calls (default: true)</li>
+<li><strong>update_problem</strong> (<em>bool</em>) &#8211; update problem immediately (default: True)</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="framed.solvers.gurobi_interface.GurobiSolver.remove_constraint">
+<code class="descname">remove_constraint</code><span class="sig-paren">(</span><em>constr_id</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.solvers.gurobi_interface.GurobiSolver.remove_constraint" title="Permalink to this definition">¶</a></dt>
+<dd><p>Remove a constraint from the current problem.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>constr_id</strong> (<em>str</em>) &#8211; constraint identifier</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="framed.solvers.gurobi_interface.GurobiSolver.remove_variable">
+<code class="descname">remove_variable</code><span class="sig-paren">(</span><em>var_id</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.solvers.gurobi_interface.GurobiSolver.remove_variable" title="Permalink to this definition">¶</a></dt>
+<dd><p>Remove a variable from the current problem.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>var_id</strong> (<em>str</em>) &#8211; variable identifier</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="framed.solvers.gurobi_interface.GurobiSolver.set_logging">
+<code class="descname">set_logging</code><span class="sig-paren">(</span><em>enabled=False</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.solvers.gurobi_interface.GurobiSolver.set_logging" title="Permalink to this definition">¶</a></dt>
+<dd><p>Enable or disable log output:</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>enabled</strong> (<em>bool</em>) &#8211; turn logging on (default: False)</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="framed.solvers.gurobi_interface.GurobiSolver.set_parameter">
+<code class="descname">set_parameter</code><span class="sig-paren">(</span><em>parameter</em>, <em>value</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.solvers.gurobi_interface.GurobiSolver.set_parameter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set a parameter value for this optimization problem</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>parameter</strong> (<a class="reference internal" href="#framed.solvers.solver.Parameter" title="framed.solvers.solver.Parameter"><em>Parameter</em></a>) &#8211; parameter type</li>
+<li><strong>value</strong> (<em>float</em>) &#8211; parameter value</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="framed.solvers.gurobi_interface.GurobiSolver.solve">
+<code class="descname">solve</code><span class="sig-paren">(</span><em>objective</em>, <em>quadratic=None</em>, <em>minimize=True</em>, <em>model=None</em>, <em>constraints=None</em>, <em>get_values=True</em>, <em>get_shadow_prices=False</em>, <em>get_reduced_costs=False</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.solvers.gurobi_interface.GurobiSolver.solve" title="Permalink to this definition">¶</a></dt>
+<dd><p>Solve the optimization problem.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>quad_obj</strong> (<em>dict</em>) &#8211; quadradict objective</li>
-<li><strong>lin_obj</strong> (<em>dict</em>) &#8211; linear objective</li>
-<li><strong>minimize</strong> (<em>bool</em>) &#8211; minimization problem (default: True) set False to maximize</li>
+<li><strong>objective</strong> (<em>dict</em>) &#8211; linear objective</li>
+<li><strong>quadratic</strong> (<em>dict</em>) &#8211; quadratic objective (optional)</li>
+<li><strong>minimize</strong> (<em>bool</em>) &#8211; minimization problem (default: True)</li>
 <li><strong>model</strong> (<a class="reference internal" href="framed.model.html#framed.model.cbmodel.CBModel" title="framed.model.cbmodel.CBModel"><em>CBModel</em></a>) &#8211; model (optional, leave blank to reuse previous model structure)</li>
 <li><strong>constraints</strong> (<em>dict</em>) &#8211; additional constraints (optional)</li>
 <li><strong>get_values</strong> (<em>bool</em>) &#8211; set to false for speedup if you only care about the objective value (default: True)</li>
@@ -225,14 +415,14 @@
 </dd></dl>
 
 <dl class="method">
-<dt id="framed.solvers.gurobi.GurobiSolver.update">
-<code class="descname">update</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#framed.solvers.gurobi.GurobiSolver.update" title="Permalink to this definition">¶</a></dt>
+<dt id="framed.solvers.gurobi_interface.GurobiSolver.update">
+<code class="descname">update</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#framed.solvers.gurobi_interface.GurobiSolver.update" title="Permalink to this definition">¶</a></dt>
 <dd><p>Update internal structure. Used for efficient lazy updating.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="framed.solvers.gurobi.GurobiSolver.write_to_file">
-<code class="descname">write_to_file</code><span class="sig-paren">(</span><em>filename</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.solvers.gurobi.GurobiSolver.write_to_file" title="Permalink to this definition">¶</a></dt>
+<dt id="framed.solvers.gurobi_interface.GurobiSolver.write_to_file">
+<code class="descname">write_to_file</code><span class="sig-paren">(</span><em>filename</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.solvers.gurobi_interface.GurobiSolver.write_to_file" title="Permalink to this definition">¶</a></dt>
 <dd><p>Write problem to file:</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -403,7 +593,7 @@
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>constr_id</strong> (<em>str</em>) &#8211; constraint identifier</li>
-<li><strong>lhs</strong> (<em>list</em>) &#8211; variables and respective coefficients</li>
+<li><strong>lhs</strong> (<em>dict</em>) &#8211; variables and respective coefficients</li>
 <li><strong>sense</strong> (<em>str</em>) &#8211; constraint sense (any of: &#8216;&lt;&#8217;, &#8216;=&#8217;, &#8216;&gt;&#8217;; default &#8216;=&#8217;)</li>
 <li><strong>rhs</strong> (<em>float</em>) &#8211; right-hand side of equation (default: 0)</li>
 <li><strong>persistent</strong> (<em>bool</em>) &#8211; if the variable should be reused for multiple calls (default: True)</li>
@@ -576,46 +766,17 @@
 </dd></dl>
 
 <dl class="method">
-<dt id="framed.solvers.solver.Solver.solve_lp">
-<code class="descname">solve_lp</code><span class="sig-paren">(</span><em>objective</em>, <em>minimize=True</em>, <em>model=None</em>, <em>constraints=None</em>, <em>get_values=True</em>, <em>get_shadow_prices=False</em>, <em>get_reduced_costs=False</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.solvers.solver.Solver.solve_lp" title="Permalink to this definition">¶</a></dt>
-<dd><p>Solve an LP optimization problem.</p>
+<dt id="framed.solvers.solver.Solver.solve">
+<code class="descname">solve</code><span class="sig-paren">(</span><em>objective</em>, <em>quadratic=None</em>, <em>minimize=True</em>, <em>model=None</em>, <em>constraints=None</em>, <em>get_values=True</em>, <em>get_shadow_prices=False</em>, <em>get_reduced_costs=False</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.solvers.solver.Solver.solve" title="Permalink to this definition">¶</a></dt>
+<dd><p>Solve the optimization problem.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
 <li><strong>objective</strong> (<em>dict</em>) &#8211; linear objective</li>
+<li><strong>quadratic</strong> (<em>dict</em>) &#8211; quadratic objective (optional)</li>
 <li><strong>minimize</strong> (<em>bool</em>) &#8211; minimization problem (default: True)</li>
-<li><strong>model</strong> (<a class="reference internal" href="framed.model.html#framed.model.cbmodel.CBModel" title="framed.model.cbmodel.CBModel"><em>CBModel</em></a>) &#8211; model (optional, leave blank to reuse previous model structure)</li>
-<li><strong>constraints</strong> (<em>dict</em>) &#8211; additional constraints (optional)</li>
-<li><strong>get_values</strong> (<em>bool</em>) &#8211; set to false for speedup if you only care about the objective value (default: True)</li>
-<li><strong>get_shadow_prices</strong> (<em>bool</em>) &#8211; return shadow prices if available (default: False)</li>
-<li><strong>get_reduced_costs</strong> (<em>bool</em>) &#8211; return reduced costs if available (default: False)</li>
-</ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">solution</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference internal" href="#framed.solvers.solver.Solution" title="framed.solvers.solver.Solution">Solution</a></p>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="framed.solvers.solver.Solver.solve_qp">
-<code class="descname">solve_qp</code><span class="sig-paren">(</span><em>quad_obj</em>, <em>lin_obj</em>, <em>minimize=True</em>, <em>model=None</em>, <em>constraints=None</em>, <em>get_values=True</em>, <em>get_shadow_prices=False</em>, <em>get_reduced_costs=False</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.solvers.solver.Solver.solve_qp" title="Permalink to this definition">¶</a></dt>
-<dd><p>Solve a QP optimization problem.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>quad_obj</strong> (<em>dict</em>) &#8211; quadradict objective</li>
-<li><strong>lin_obj</strong> (<em>dict</em>) &#8211; linear objective</li>
-<li><strong>minimize</strong> (<em>bool</em>) &#8211; minimization problem (default: True) set False to maximize</li>
 <li><strong>model</strong> (<a class="reference internal" href="framed.model.html#framed.model.cbmodel.CBModel" title="framed.model.cbmodel.CBModel"><em>CBModel</em></a>) &#8211; model (optional, leave blank to reuse previous model structure)</li>
 <li><strong>constraints</strong> (<em>dict</em>) &#8211; additional constraints (optional)</li>
 <li><strong>get_values</strong> (<em>bool</em>) &#8211; set to false for speedup if you only care about the objective value (default: True)</li>
@@ -784,9 +945,9 @@
   <ul>
 <li><a class="reference internal" href="#">framed.solvers package</a><ul>
 <li><a class="reference internal" href="#submodules">Submodules</a></li>
-<li><a class="reference internal" href="#framed-solvers-cplex-module">framed.solvers.cplex module</a></li>
-<li><a class="reference internal" href="#framed-solvers-glpk-module">framed.solvers.glpk module</a></li>
-<li><a class="reference internal" href="#module-framed.solvers.gurobi">framed.solvers.gurobi module</a></li>
+<li><a class="reference internal" href="#module-framed.solvers.cplex_interface">framed.solvers.cplex_interface module</a></li>
+<li><a class="reference internal" href="#framed-solvers-glpk-interface-module">framed.solvers.glpk_interface module</a></li>
+<li><a class="reference internal" href="#module-framed.solvers.gurobi_interface">framed.solvers.gurobi_interface module</a></li>
 <li><a class="reference internal" href="#module-framed.solvers.solver">framed.solvers.solver module</a></li>
 <li><a class="reference internal" href="#module-framed.solvers">Module contents</a></li>
 </ul>
@@ -796,6 +957,11 @@
 <h3>Related Topics</h3>
 <ul>
   <li><a href="index.html">Documentation overview</a><ul>
+  <li><a href="modules.html">API</a><ul>
+  <li><a href="framed.html">framed package</a><ul>
+      <li>Previous: <a href="framed.omics.html" title="previous chapter">framed.omics package</a></li>
+  </ul></li>
+  </ul></li>
   </ul></li>
 </ul>
 </div>
@@ -821,7 +987,7 @@
       <div class="clearer"></div>
     </div>
     <div class="footer">
-      &copy;2016, Daniel.
+      &copy;2016, Daniel Machado.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 1.4.8</a>

@@ -4,13 +4,14 @@ This module implements plotting utilities for kinetic models.
 Author: Daniel Machado
 """
 
-from ..kinetic.simulation import simulate
+from ..kinetic.simulation import time_course
 from matplotlib.pyplot import figure, subplot2grid
 from seaborn import kdeplot
 from numpy import array
 
 
-def plot_simulation(model, time, steps=100, parameters=None, metabolites=None, xlabel=None, ylabel=None):
+def plot_timecourse(model, time, steps=100, parameters=None, metabolites=None, xlabel=None, ylabel=None,
+                    data=None, data_steps=None):
     """ Plot a time-course simulation using a kinetic model.
 
     Args:
@@ -21,12 +22,14 @@ def plot_simulation(model, time, steps=100, parameters=None, metabolites=None, x
         metabolites (list): only plot specific metabolites (optional)
         xlabel (str): specify label for x axis (optional)
         ylabel (str): specify label for y axis (optional)
+        data (dict): metabolomics data (to overlay in the plot)
+        data_steps (list): time_steps of metabolomics data
 
     Returns:
         AxesSubplot: axes handle from matplotlib
 
     """
-    t, X = simulate(model, time, steps=steps, parameters=parameters)
+    t, X = time_course(model, time, steps=steps, parameters=parameters)
     fig = figure()
     ax = fig.add_subplot(111)
     legend = model.metabolites.keys()
@@ -36,6 +39,14 @@ def plot_simulation(model, time, steps=100, parameters=None, metabolites=None, x
         legend = metabolites
     ax.plot(t, X)
     ax.legend(legend)
+
+    if data is not None and data_steps is not None:
+        if not metabolites:
+            metabolites = model.metabolites.keys()
+        values = [data[m_id] for m_id in metabolites]
+        ax.set_color_cycle(None)
+        ax.plot(data_steps, array(values).T, '.')
+
     if xlabel:
         ax.set_xlabel(xlabel)
     if ylabel:
@@ -44,36 +55,11 @@ def plot_simulation(model, time, steps=100, parameters=None, metabolites=None, x
     return ax
 
 
-def plot_simulation_vs_data(model, t_steps, data, parameters=None, metabolites=None, xlabel=None, ylabel=None):
-    """ Plot time course simulaiton vs metabolomics data
-
-    Args:
-        model (ODEModel): kinetic model
-        t_steps (list): measured time steps
-        data (list): metabolomics data in matrix format (nested list or numpy array)
-        parameters (dict): override model parameters (optional)
-        metabolites (list): only plot specific metabolites (optional)
-        xlabel (str): specify label for x axis (optional)
-        ylabel (str): specify label for y axis (optional)
-
-    Returns:
-        AxesSubplot: axes handle from matplotlib
-    """
-    if not metabolites:
-        metabolites = data.keys()
-
-    ax = plot_simulation(model, t_steps[-1], parameters=parameters, metabolites=metabolites, xlabel=xlabel, ylabel=ylabel)
-    data = array(data.values()).T
-    ax.set_color_cycle(None)
-    ax.plot(t_steps, data, '.')
-    return ax
-
-
-def plot_sampling_results(model, sample, reactions=None):
+def plot_flux_sampling(model, sample, reactions=None):
     """ Plot flux sampling results.
 
     Args:
-        model (ODEModel): kinetic model
+        model (Model): your model (can be of any kind)
         sample (list): flux vector samples
         reactions (list): only plot specified reactions (default: all)
 
@@ -100,7 +86,6 @@ def plot_sampling_results(model, sample, reactions=None):
             y_min, y_max = min(y_data), max(y_data)
             y_delta = (y_max - y_min)*margin if y_max > y_min else y_max
             y_lim = (y_min - y_delta, y_max + y_delta)
-
 
             if j > i:
                 ax.scatter(x_data, y_data)

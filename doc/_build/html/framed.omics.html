@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>framed.omics package &#8212; framed 0.2.1 documentation</title>
+    <title>framed.omics package &#8212; framed 0.3.0 documentation</title>
     
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '0.2.1',
+        VERSION:     '0.3.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -25,7 +25,7 @@
     <script type="text/javascript" src="_static/doctools.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="top" title="framed 0.2.1 documentation" href="index.html" />
+    <link rel="top" title="framed 0.3.0 documentation" href="index.html" />
    
   <link rel="stylesheet" href="_static/custom.css" type="text/css" />
   
@@ -140,8 +140,8 @@
 </dd></dl>
 
 <dl class="function">
-<dt id="framed.omics.simulation.eflux">
-<code class="descclassname">framed.omics.simulation.</code><code class="descname">eflux</code><span class="sig-paren">(</span><em>model</em>, <em>gene_exp</em>, <em>scale_rxn</em>, <em>scale_value</em>, <em>constraints=None</em>, <em>parsimonious=False</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.omics.simulation.eflux" title="Permalink to this definition">¶</a></dt>
+<dt id="framed.omics.simulation.eFlux">
+<code class="descclassname">framed.omics.simulation.</code><code class="descname">eFlux</code><span class="sig-paren">(</span><em>model</em>, <em>gene_exp</em>, <em>scale_rxn=None</em>, <em>scale_value=None</em>, <em>constraints=None</em>, <em>parsimonious=False</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.omics.simulation.eFlux" title="Permalink to this definition">¶</a></dt>
 <dd><p>Run an E-Flux simulation (Colijn et al, 2009).</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -150,9 +150,9 @@
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
 <li><strong>model</strong> (<a class="reference internal" href="framed.model.html#framed.model.cbmodel.CBModel" title="framed.model.cbmodel.CBModel"><em>CBModel</em></a>) &#8211; model</li>
 <li><strong>gene_exp</strong> (<em>dict</em>) &#8211; transcriptomics data</li>
-<li><strong>scale_rxn</strong> (<em>str</em>) &#8211; reaction to scale flux vector</li>
-<li><strong>scale_value</strong> (<em>float</em>) &#8211; scaling factor</li>
-<li><strong>constraints</strong> (<em>dict</em>) &#8211; additional constraints</li>
+<li><strong>scale_rxn</strong> (<em>str</em>) &#8211; reaction to scale flux vector (optional)</li>
+<li><strong>scale_value</strong> (<em>float</em>) &#8211; scaling factor (mandatory if scale_rxn is specified)</li>
+<li><strong>constraints</strong> (<em>dict</em>) &#8211; additional constraints (optional)</li>
 <li><strong>parsimonious</strong> (<em>bool</em>) &#8211; compute a parsimonious solution (default: False)</li>
 </ul>
 </td>
@@ -230,7 +230,7 @@
       <div class="clearer"></div>
     </div>
     <div class="footer">
-      &copy;2016, Daniel.
+      &copy;2016, Daniel Machado.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 1.4.8</a>

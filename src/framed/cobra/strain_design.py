@@ -6,20 +6,19 @@ Author: Daniel Machado
 
 from itertools import combinations
 from collections import OrderedDict
-from deletion import deletion
-from simulation import pFBA
-from essentiality import essentiality
+from .deletion import deletion
+from .simulation import pFBA
+from .essentiality import essentiality
 from ..solvers.solver import Status
 from ..solvers import solver_instance
 
 
-def combinatorial_gene_deletion(model, objective, max_dels, targets=None, method='FBA', reference=None, min_growth=0.01,
-                                abstol=1e-3):
+def combinatorial_gene_deletion(model, objective, max_dels, targets=None, method='FBA', min_growth=0.01,abstol=1e-3):
     """ Compute solutions for a set of combinatorial gene deletions.
 
     Arguments:
         model (CBModel): model
-        fobj (function): optimization objective function
+        objective (function): optimization objective function
         max_dels (int) : maximum number of deletions
         method (str): simulation method: FBA (default) or pFBA, MOMA, lMOMA, ROOM, etc.
         targets (list): deletion targets (default: all)
@@ -30,16 +29,15 @@ def combinatorial_gene_deletion(model, objective, max_dels, targets=None, method
         list: solutions
     """
 
-    return combinatorial_deletion(model, objective, max_dels, 'genes', targets, method, reference, min_growth, abstol)
+    return combinatorial_deletion(model, objective, max_dels, 'genes', targets, method, min_growth, abstol)
 
 
-def combinatorial_reaction_deletion(model, objective, max_dels, targets=None, method='FBA', reference=None,
-                                    min_growth=0.01, abstol=1e-3):
+def combinatorial_reaction_deletion(model, objective, max_dels, targets=None, method='FBA', min_growth=0.01, abstol=1e-3):
     """ Compute solutions for a set of combinatorial reaction deletions.
 
     Arguments:
         model (CBModel): model
-        fobj (function): optimization objective function
+        objective (function): optimization objective function
         max_dels (int): maximum number of deletions
         method (str): simulation method: FBA (default) or pFBA, MOMA, lMOMA, ROOM, etc.
         targets (list (of str)): deletion targets (default: all)
@@ -50,17 +48,15 @@ def combinatorial_reaction_deletion(model, objective, max_dels, targets=None, me
         list: solutions
     """
 
-    return combinatorial_deletion(model, objective, max_dels, 'reactions', targets, method, reference, min_growth,
-                                  abstol)
+    return combinatorial_deletion(model, objective, max_dels, 'reactions', targets, method, min_growth, abstol)
 
 
-def combinatorial_deletion(model, fobj, max_dels, kind='reactions', targets=None, method='FBA', reference=None,
-                           min_growth=0.01, abstol=1e-3):
+def combinatorial_deletion(model, objective, max_dels, kind='reactions', targets=None, method='FBA', min_growth=0.01, abstol=1e-3):
     """ Generic interface for computing for a set of combinatorial gene or reaction deletions.
 
     Arguments:
         model (CBModel): model
-        fobj (function): optimization objective function
+        objective (function): optimization objective function
         max_dels (int): maximum number of deletions
         kind (str): genes or reactions (default)
         method (str): simulation method: FBA (default) or pFBA, MOMA, lMOMA, ROOM, etc.
@@ -80,14 +76,13 @@ def combinatorial_deletion(model, fobj, max_dels, kind='reactions', targets=None
 
     solver = solver_instance(model)
 
-    if not reference:
-        # don't reuse solver here, we don't want the temp variables from pFBA to be persistent
-        wt_solution = pFBA(model)
-        reference = wt_solution.values
+    # don't reuse solver here, we don't want the temp variables from pFBA to be persistent
+    wt_solution = pFBA(model)
+    reference = wt_solution.values
 
     biomass = model.detect_biomass_reaction()
     wt_growth = reference[biomass]
-    wt_fval = fobj(reference)
+    wt_fval = objective(reference)
 
     # for single deletions there is no gain in computing all essential genes/reactions
     if max_dels > 1:
@@ -103,7 +98,7 @@ def combinatorial_deletion(model, fobj, max_dels, kind='reactions', targets=None
         solution = deletion(model, del_set, kind, method, reference, solver)
 
         if solution and solution.status == Status.OPTIMAL:
-            fval = fobj(solution.values)
+            fval = objective(solution.values)
             if fval > wt_fval + abstol and solution.values[biomass] >= min_growth * wt_growth and not _redundant(
                     del_set, fval, solutions, abstol):
                 solutions[del_set] = fval
@@ -112,18 +107,56 @@ def combinatorial_deletion(model, fobj, max_dels, kind='reactions', targets=None
     return solutions
 
 
-def greedy_deletion(model, fobj, max_dels, kind='reactions', targets=None, method='FBA', reference=None, min_growth=0.1,
-                    pop_size=10, abstol=1e-3):
+def greedy_gene_deletion(model, objective, max_dels, targets=None, method='FBA', min_growth=0.1, pop_size=10, abstol=1e-3):
+    """ Find an optimal set of gene deletions using a greedy approach.
+
+    Arguments:
+        model (CBModel): model
+        objective (function): optimization objective function
+        max_dels (int): maximum number of deletions
+        method (str): simulation method: FBA (default) or pFBA, MOMA, lMOMA, ROOM, etc.
+        targets (list): deletion targets (default: all)
+        min_growth (float): minimum percentage of growth rate to consider a deletion non-letal (default: 0.01)
+        pop_size (int): population size to keep from one iteration to the next
+        abstol (float): minimum objective function value (default: 1e-4)
+
+    Returns:
+        list: solutions
+    """
+    return greedy_deletion(model, objective, max_dels, 'genes', targets, method, min_growth, pop_size, abstol)
+
+
+def greedy_reaction_deletion(model, objective, max_dels, targets=None, method='FBA', min_growth=0.1, pop_size=10, abstol=1e-3):
+    """ Find an optimal set of reaction deletions using a greedy approach.
+
+    Arguments:
+        model (CBModel): model
+        objective (function): optimization objective function
+        max_dels (int): maximum number of deletions
+        method (str): simulation method: FBA (default) or pFBA, MOMA, lMOMA, ROOM, etc.
+        targets (list): deletion targets (default: all)
+        min_growth (float): minimum percentage of growth rate to consider a deletion non-letal (default: 0.01)
+        pop_size (int): population size to keep from one iteration to the next
+        abstol (float): minimum objective function value (default: 1e-4)
+
+    Returns:
+        list: solutions
+    """
+    return greedy_deletion(model, objective, max_dels, 'reactions', targets, method, min_growth, pop_size, abstol)
+
+
+def greedy_deletion(model, objective, max_dels, kind='reactions', targets=None, method='FBA', min_growth=0.1, pop_size=10, abstol=1e-3):
     """ Generic interface for finding an optimal set of gene or reaction deletions using a greedy approach.
 
     Arguments:
         model (CBModel): model
-        fobj (function): optimization objective function
+        objective (function): optimization objective function
         max_dels (int): maximum number of deletions
         kind (str): genes or reactions (default)
         method (str): simulation method: FBA (default) or pFBA, MOMA, lMOMA, ROOM, etc.
         targets (list): deletion targets (default: all)
         min_growth (float): minimum percentage of growth rate to consider a deletion non-letal (default: 0.01)
+        pop_size (int): population size to keep from one iteration to the next
         abstol (float): minimum objective function value (default: 1e-4)
 
     Returns:
@@ -138,13 +171,12 @@ def greedy_deletion(model, fobj, max_dels, kind='reactions', targets=None, metho
 
     solver = solver_instance(model)
 
-    if not reference:
-        wt_solution = FBA(model, solver=solver)
-        reference = wt_solution.values
+    wt_solution = pFBA(model, solver=solver)
+    reference = wt_solution.values
 
     biomass = model.detect_biomass_reaction()
     wt_growth = reference[biomass]
-    wt_fval = fobj(reference)
+    wt_fval = objective(reference)
 
     essential = essentiality(model, kind, min_growth)
     targets = [target for target in targets if target not in essential]
@@ -158,16 +190,13 @@ def greedy_deletion(model, fobj, max_dels, kind='reactions', targets=None, metho
             visited.append(del_set)
             solution = deletion(model, del_set, kind, method, reference, solver)
             if solution and solution.status == Status.OPTIMAL:
-                fval = fobj(solution.values)
+                fval = objective(solution.values)
                 if fval > wt_fval + abstol and solution.values[biomass] >= min_growth * wt_growth and not _redundant(
                         del_set, fval, solutions, abstol):
                     solutions.append((del_set, fval))
         solutions.sort(key=lambda (_, fval): fval, reverse=True)
         candidates = [del_set | {target} for del_set, _ in solutions[:pop_size] for target in targets
                       if len(del_set | {target}) <= max_dels and (del_set | {target}) not in visited]
-    # print 'solutions: ', len(solutions)
-    #        print 'new candidates: ', len(candidates)
-    #        print 'best so far: ', solutions[0]
 
     return solutions
 

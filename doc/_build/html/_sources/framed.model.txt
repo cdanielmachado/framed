@@ -36,6 +36,14 @@ framed.model.odemodel module
     :undoc-members:
     :show-inheritance:
 
+framed.model.parser module
+--------------------------
+
+.. automodule:: framed.model.parser
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 framed.model.transformation module
 ----------------------------------
 

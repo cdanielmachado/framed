@@ -56,7 +56,7 @@ class Reaction:
             self.regulators.update(regulators)
 
     def __str__(self):
-        return self.name if self.name else self.id
+        return self.to_string()
 
     def get_substrates(self):
         """ Get list of reaction substrates
@@ -93,6 +93,29 @@ class Reaction:
         """
         
         return [m_id for m_id, kind in self.regulators.items() if kind == '-']
+
+    def to_string(self, metabolite_names=None):
+        """ Print a reaction to a text based representation.
+
+        Arguments:
+            metabolite_names (dict): replace metabolite id's with names (optional)
+
+        Returns:
+            str: reaction string
+        """
+
+        if metabolite_names:
+            met_repr = lambda m_id: metabolite_names[m_id]
+        else:
+            met_repr = lambda m_id: m_id
+
+        res = self.id + ': '
+        res += ' + '.join([met_repr(m_id) if coeff == -1.0 else str(-coeff) + ' ' + met_repr(m_id)
+                           for m_id, coeff in self.stoichiometry.items() if coeff < 0])
+        res += ' <-> ' if self.reversible else ' --> '
+        res += ' + '.join([met_repr(m_id) if coeff == 1.0 else str(coeff) + ' ' + met_repr(m_id)
+                           for m_id, coeff in self.stoichiometry.items() if coeff > 0])
+        return res
 
 
 class Compartment:
@@ -355,37 +378,34 @@ class Model:
 
         return self._s_matrix
 
-    def print_reaction(self, r_id, reaction_names=False, metabolite_names=False):
+    def print_reaction(self, r_id, use_metabolite_names=False):
         """ Print a reaction to a text based representation.
 
         Arguments:
             r_id (str): reaction id
-            reaction_names (bool): print reaction names instead of ids (default: False)
-            metabolite_names (bool): print metabolite names instead of ids (default: False)
+            use_metabolite_names (bool): print metabolite names instead of ids (default: False)
 
         Returns:
             str: reaction string
         """
 
-        r_repr = self.reactions[r_id].name if reaction_names else r_id
-        m_repr = lambda m_id: self.metabolites[m_id].name if metabolite_names else m_id
-        stoichiometry = self.reactions[r_id].stoichiometry
+        if use_metabolite_names:
+            metabolite_names = {m_id: met.name for m_id, met in self.metabolites.items()}
+            return self.reactions[r_id].to_string(metabolite_names)
+        else:
+            return self.reactions[r_id].to_string()
 
-        res = r_repr + ': '
-        res += ' + '.join([m_repr(m_id) if coeff == -1.0 else str(-coeff) + ' ' + m_repr(m_id)
-                           for m_id, coeff in stoichiometry.items() if coeff < 0])
-        res += ' <-> ' if self.reactions[r_id].reversible else ' --> '
-        res += ' + '.join([m_repr(m_id) if coeff == 1.0 else str(coeff) + ' ' + m_repr(m_id)
-                           for m_id, coeff in stoichiometry.items() if coeff > 0])
-        return res
-
-    def to_string(self, reaction_names=False, metabolite_names=False):
+    def to_string(self, use_metabolite_names=False):
         """ Print the model to a text based representation.
 
+        Arguments:
+            use_metabolite_names (bool): print metabolite names instead of ids (default: False)
+
         Returns:
-            str: model string
+            str: model as a string
         """
-        return '\n'.join([self.print_reaction(r_id, reaction_names, metabolite_names)
+
+        return '\n'.join([self.print_reaction(r_id, use_metabolite_names)
                           for r_id in self.reactions])
 
     def __str__(self):

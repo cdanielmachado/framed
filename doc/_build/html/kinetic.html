@@ -1,0 +1,223 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Kinetic modeling &#8212; framed 0.3.0 documentation</title>
+    
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '0.3.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="top" title="framed 0.3.0 documentation" href="index.html" />
+    <link rel="next" title="API" href="modules.html" />
+    <link rel="prev" title="Constraint-based analysis" href="cobra.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body role="document">
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="kinetic-modeling">
+<h1>Kinetic modeling<a class="headerlink" href="#kinetic-modeling" title="Permalink to this headline">¶</a></h1>
+<p><em>framed</em> implements some basic (and experimental) support for working with kinetic models.</p>
+<p>It now also supports models that contain assignment rules (see for example the
+<a class="reference external" href="https://www.ebi.ac.uk/biomodels-main/BIOMD0000000051">Chassagnole 2002</a> <em>E. coli</em> model).</p>
+<div class="section" id="simulation">
+<h2>Simulation<a class="headerlink" href="#simulation" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="time-course">
+<h3>Time-course<a class="headerlink" href="#time-course" title="Permalink to this headline">¶</a></h3>
+<p>Running a simple time-course simulation (uses scipy
+<a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.integrate.odeint.html">odeint</a>):</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">framed</span> <span class="k">import</span> <span class="n">time_course</span>
+<span class="n">T</span><span class="p">,</span> <span class="n">X</span> <span class="o">=</span> <span class="n">time_course</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">time</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>You can change the number of integration steps:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">time_course</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">time</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">steps</span><span class="o">=</span><span class="mi">1000</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>You can override model parameters without changing the model:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">time_course</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">time</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">parameters</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;Vmax1&#39;</span><span class="p">:</span> <span class="mf">10.0</span><span class="p">,</span> <span class="s1">&#39;Vmax2&#39;</span><span class="p">:</span> <span class="mf">20.0</span><span class="p">})</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="steady-state">
+<h3>Steady-state<a class="headerlink" href="#steady-state" title="Permalink to this headline">¶</a></h3>
+<p>Find the steady-state metabolite concentrations and reaction rates:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">framed</span> <span class="k">import</span> <span class="n">find_steady_state</span>
+<span class="n">x_ss</span><span class="p">,</span> <span class="n">v_ss</span> <span class="o">=</span> <span class="n">find_steady_state</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Again, you can easily override model parameters for simulation purposes:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">find_steady_state</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">parameters</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;Vmax1&#39;</span><span class="p">:</span> <span class="mf">10.0</span><span class="p">})</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="sampling">
+<h2>Sampling<a class="headerlink" href="#sampling" title="Permalink to this headline">¶</a></h2>
+<p>You can sample the steady-state solution space by manipulating the model parameters:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">framed</span> <span class="k">import</span> <span class="n">sample_kinetic_model</span>
+<span class="n">sample_kinetic_model</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>You can define which parameters to sample:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">sample_kinetic_model</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">parameters</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;Vmax1&#39;</span><span class="p">,</span> <span class="s1">&#39;Vmax2&#39;</span><span class="p">])</span>
+</pre></div>
+</div>
+<p>And you can define properties of the sampling distribution:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">sample_kinetic_model</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="n">distribution</span><span class="o">=</span><span class="s1">&#39;normal&#39;</span><span class="p">,</span> <span class="n">dist_args</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">log_scale</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="calibration">
+<h2>Calibration<a class="headerlink" href="#calibration" title="Permalink to this headline">¶</a></h2>
+<p><em>framed</em> has basic support for calibrating kinetic models using time-course metabolomics data:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">framed</span> <span class="k">import</span> <span class="n">fit_from_metabolomics</span>
+<span class="n">fit_from_metabolomics</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">t_steps</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>where <strong>data</strong> is a dictionary with time-course values for every measured metabolite.</p>
+<p>You can specify which parameters you want to calibrate (by default it attempts to fit all parameters):</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">fit_from_metabolomics</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">t_steps</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">parameters</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;Vmax1&#39;</span><span class="p">,</span> <span class="s1">&#39;Km1&#39;</span><span class="p">])</span>
+</pre></div>
+</div>
+<p>and you can specify admissible bounds for the parameters:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">fit_from_metabolomics</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">t_steps</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">bounds</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;Vmax1&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">10</span><span class="p">),</span> <span class="s1">&#39;Km1&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mf">0.1</span><span class="p">,</span> <span class="mi">100</span><span class="p">)})</span>
+</pre></div>
+</div>
+<p><em>framed</em> uses scipy&#8217;s <a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.optimize.minimize.html">minimize</a>,
+function which implements several optimization methods. You can select the optimization method (see the scipy&#8217;s documentation
+for a list of available methods):</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">fit_from_metabolomics</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">t_steps</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;Nelder-Mead&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="plotting">
+<h2>Plotting<a class="headerlink" href="#plotting" title="Permalink to this headline">¶</a></h2>
+<p><em>framed</em> implements some basic plotting utilities. For instance, you can plot a time-course simulation:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">framed</span> <span class="k">import</span> <span class="n">plot_timecourse</span>
+<span class="n">plot_timecourse</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">time</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>You can define which metabolites you want to plot</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">plot_timecourse</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">time</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">metabolites</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;S&#39;</span><span class="p">,</span> <span class="s1">&#39;P&#39;</span><span class="p">])</span>
+</pre></div>
+</div>
+<p>You can overlay metabolomics data over your plots (for instance, after calibration):</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">plot_timecourse</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">time</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">my_data</span><span class="p">,</span> <span class="n">data_steps</span><span class="o">=</span><span class="n">my_time_points</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>As usual, you can override model parameters for a particular simulation without changing the model:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">plot_timecourse</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">time</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">parameters</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;Vmax&#39;</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span> <span class="s1">&#39;Km&#39;</span><span class="p">:</span> <span class="mf">0.1</span><span class="p">})</span>
+</pre></div>
+</div>
+<p>Here is a pratical example using the <a class="reference external" href="https://www.ebi.ac.uk/biomodels-main/BIOMD0000000051">Chassagnole 2002</a> <em>E. coli</em> model:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">plot_timecourse</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="mi">1</span><span class="n">e3</span><span class="p">,</span> <span class="n">metabolites</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;cglcex&#39;</span><span class="p">,</span> <span class="s1">&#39;cg6p&#39;</span><span class="p">,</span> <span class="s1">&#39;cpep&#39;</span><span class="p">,</span> <span class="s1">&#39;cpyr&#39;</span><span class="p">],</span>
+                <span class="n">xlabel</span><span class="o">=</span><span class="s1">&#39;time&#39;</span><span class="p">,</span> <span class="n">ylabel</span><span class="o">=</span><span class="s1">&#39;concentration&#39;</span><span class="p">,</span> <span class="n">parameters</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;Dil&#39;</span><span class="p">:</span> <span class="mf">0.2</span><span class="o">/</span><span class="mi">3600</span><span class="p">})</span>
+</pre></div>
+</div>
+<img alt="_images/time_course.png" src="_images/time_course.png" />
+<p>Finally, you can plot flux sampling results for a chosen set of reactions.</p>
+<p><em>Note:</em> this can also be applied to flux sampling results obtained with constraint-based models.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">framed</span> <span class="k">import</span> <span class="n">plot_flux_sampling</span>
+<span class="n">plot_flux_sampling</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">sample</span><span class="p">,</span> <span class="n">reactions</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;vPGI&#39;</span><span class="p">,</span> <span class="s1">&#39;vPFK&#39;</span><span class="p">,</span> <span class="s1">&#39;vPK&#39;</span><span class="p">])</span>
+</pre></div>
+</div>
+<img alt="_images/sampling.png" src="_images/sampling.png" />
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Kinetic modeling</a><ul>
+<li><a class="reference internal" href="#simulation">Simulation</a><ul>
+<li><a class="reference internal" href="#time-course">Time-course</a></li>
+<li><a class="reference internal" href="#steady-state">Steady-state</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#sampling">Sampling</a></li>
+<li><a class="reference internal" href="#calibration">Calibration</a></li>
+<li><a class="reference internal" href="#plotting">Plotting</a></li>
+</ul>
+</li>
+</ul>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="cobra.html" title="previous chapter">Constraint-based analysis</a></li>
+      <li>Next: <a href="modules.html" title="next chapter">API</a></li>
+  </ul></li>
+</ul>
+</div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/kinetic.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2016, Daniel Machado.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.4.8</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.9</a>
+      
+      |
+      <a href="_sources/kinetic.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
