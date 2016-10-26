@@ -1,0 +1,5 @@
+framed
+numpy
+scipy
+seaborn
+python-libsbml

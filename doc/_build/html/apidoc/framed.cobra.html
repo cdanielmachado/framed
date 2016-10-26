@@ -1,0 +1,1099 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>framed.cobra package &#8212; framed 0.3.0 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.3.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="top" title="framed 0.3.0 documentation" href="../index.html" />
+    <link rel="up" title="framed package" href="framed.html" />
+    <link rel="next" title="framed.io package" href="framed.io.html" />
+    <link rel="prev" title="framed.bioreactor package" href="framed.bioreactor.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body role="document">
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="framed-cobra-package">
+<h1>framed.cobra package<a class="headerlink" href="#framed-cobra-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-framed.cobra.deletion">
+<span id="framed-cobra-deletion-module"></span><h2>framed.cobra.deletion module<a class="headerlink" href="#module-framed.cobra.deletion" title="Permalink to this headline">¶</a></h2>
+<p>This module implements gene and reaction deletion methods.</p>
+<p>Author: Daniel Machado</p>
+<dl class="function">
+<dt id="framed.cobra.deletion.deleted_genes_to_reactions">
+<code class="descclassname">framed.cobra.deletion.</code><code class="descname">deleted_genes_to_reactions</code><span class="sig-paren">(</span><em>model</em>, <em>genes</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.cobra.deletion.deleted_genes_to_reactions" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert a set of deleted genes to the respective deleted reactions.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>model</strong> (<a class="reference internal" href="framed.model.html#framed.model.cbmodel.CBModel" title="framed.model.cbmodel.CBModel"><em>CBModel</em></a>) &#8211; model</li>
+<li><strong>genes</strong> (<em>list</em>) &#8211; genes to delete</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">list of deleted reactions</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">list</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="framed.cobra.deletion.deletion">
+<code class="descclassname">framed.cobra.deletion.</code><code class="descname">deletion</code><span class="sig-paren">(</span><em>model</em>, <em>elements</em>, <em>kind='reactions'</em>, <em>method='FBA'</em>, <em>reference=None</em>, <em>constraints=None</em>, <em>solver=None</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.cobra.deletion.deletion" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generic interface for gene or reaction deletion.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>model</strong> (<a class="reference internal" href="framed.model.html#framed.model.cbmodel.CBModel" title="framed.model.cbmodel.CBModel"><em>CBModel</em></a>) &#8211; model</li>
+<li><strong>elements</strong> (<em>list</em>) &#8211; elements to delete</li>
+<li><strong>kind</strong> (<em>str</em>) &#8211; genes or reactions (default)</li>
+<li><strong>method</strong> (<em>str</em>) &#8211; simulation method: FBA (default) or MOMA</li>
+<li><strong>reference</strong> (<em>dict</em>) &#8211; reference flux distribution for MOMA (optional)</li>
+<li><strong>constraints</strong> (<em>dict</em>) &#8211; additional constraints</li>
+<li><strong>solver</strong> (<a class="reference internal" href="framed.solvers.html#framed.solvers.solver.Solver" title="framed.solvers.solver.Solver"><em>Solver</em></a>) &#8211; solver instance instantiated with the model, for speed (optional)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">solution</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference internal" href="framed.solvers.html#framed.solvers.solver.Solution" title="framed.solvers.solver.Solution">Solution</a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="framed.cobra.deletion.gene_deletion">
+<code class="descclassname">framed.cobra.deletion.</code><code class="descname">gene_deletion</code><span class="sig-paren">(</span><em>model</em>, <em>genes</em>, <em>method='FBA'</em>, <em>reference=None</em>, <em>constraints=None</em>, <em>solver=None</em>, <em>compute_silent_deletions=False</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.cobra.deletion.gene_deletion" title="Permalink to this definition">¶</a></dt>
+<dd><p>Simulate the deletion of a set of genes.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>model</strong> (<a class="reference internal" href="framed.model.html#framed.model.cbmodel.CBModel" title="framed.model.cbmodel.CBModel"><em>CBModel</em></a>) &#8211; model</li>
+<li><strong>genes</strong> (<em>list</em>) &#8211; genes to delete</li>
+<li><strong>method</strong> (<em>str</em>) &#8211; simulation method: FBA (default) or MOMA</li>
+<li><strong>reference</strong> (<em>dict</em>) &#8211; reference flux distribution for MOMA (optional)</li>
+<li><strong>constraints</strong> (<em>dict</em>) &#8211; additional constraints</li>
+<li><strong>solver</strong> (<a class="reference internal" href="framed.solvers.html#framed.solvers.solver.Solver" title="framed.solvers.solver.Solver"><em>Solver</em></a>) &#8211; solver instance instantiated with the model, for speed (optional)</li>
+<li><strong>compute_silent_deletions</strong> (<em>bool</em>) &#8211; don&#8217;t compute gene deletion if no reactions are affected (optional, default: True)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">solution</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference internal" href="framed.solvers.html#framed.solvers.solver.Solution" title="framed.solvers.solver.Solution">Solution</a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="framed.cobra.deletion.reaction_deletion">
+<code class="descclassname">framed.cobra.deletion.</code><code class="descname">reaction_deletion</code><span class="sig-paren">(</span><em>model</em>, <em>reactions</em>, <em>method='FBA'</em>, <em>reference=None</em>, <em>constraints=None</em>, <em>solver=None</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.cobra.deletion.reaction_deletion" title="Permalink to this definition">¶</a></dt>
+<dd><p>Simulate the deletion of a set of reactions.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>model</strong> (<a class="reference internal" href="framed.model.html#framed.model.cbmodel.CBModel" title="framed.model.cbmodel.CBModel"><em>CBModel</em></a>) &#8211; model</li>
+<li><strong>reactions</strong> (<em>list</em>) &#8211; reactions to delete</li>
+<li><strong>method</strong> (<em>str</em>) &#8211; simulation method: FBA (default) or MOMA</li>
+<li><strong>reference</strong> (<em>dict</em>) &#8211; reference flux distribution for MOMA (optional)</li>
+<li><strong>constraints</strong> (<em>dict</em>) &#8211; additional constraints</li>
+<li><strong>solver</strong> (<a class="reference internal" href="framed.solvers.html#framed.solvers.solver.Solver" title="framed.solvers.solver.Solver"><em>Solver</em></a>) &#8211; solver instance instantiated with the model, for speed (optional)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">solution</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference internal" href="framed.solvers.html#framed.solvers.solver.Solution" title="framed.solvers.solver.Solution">Solution</a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="module-framed.cobra.essentiality">
+<span id="framed-cobra-essentiality-module"></span><h2>framed.cobra.essentiality module<a class="headerlink" href="#module-framed.cobra.essentiality" title="Permalink to this headline">¶</a></h2>
+<p>This module implements methods to compute gene and reaction essentiality.</p>
+<p>&#64;author: Daniel Machado</p>
+<dl class="function">
+<dt id="framed.cobra.essentiality.essential_genes">
+<code class="descclassname">framed.cobra.essentiality.</code><code class="descname">essential_genes</code><span class="sig-paren">(</span><em>model</em>, <em>min_growth=0.01</em>, <em>constraints=None</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.cobra.essentiality.essential_genes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute the set of essential genes.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>model</strong> (<a class="reference internal" href="framed.model.html#framed.model.cbmodel.CBModel" title="framed.model.cbmodel.CBModel"><em>CBModel</em></a>) &#8211; model</li>
+<li><strong>min_growth</strong> (<em>float</em>) &#8211; minimum fraction of growth rate to consider a deletion non-letal (default: 0.01)</li>
+<li><strong>constraints</strong> (<em>dict</em>) &#8211; environmental or additional constraints (optional)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">essential genes</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">list</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="framed.cobra.essentiality.essential_reactions">
+<code class="descclassname">framed.cobra.essentiality.</code><code class="descname">essential_reactions</code><span class="sig-paren">(</span><em>model</em>, <em>min_growth=0.01</em>, <em>constraints=None</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.cobra.essentiality.essential_reactions" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute the set of essential reactions.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>model</strong> (<a class="reference internal" href="framed.model.html#framed.model.cbmodel.CBModel" title="framed.model.cbmodel.CBModel"><em>CBModel</em></a>) &#8211; model</li>
+<li><strong>min_growth</strong> (<em>float</em>) &#8211; minimum fraction of growth rate to consider a deletion non-letal (default: 0.01)</li>
+<li><strong>constraints</strong> (<em>dict</em>) &#8211; environmental or additional constraints (optional)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">essential reactions</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">list</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="framed.cobra.essentiality.essentiality">
+<code class="descclassname">framed.cobra.essentiality.</code><code class="descname">essentiality</code><span class="sig-paren">(</span><em>model</em>, <em>kind='reactions'</em>, <em>min_growth=0.01</em>, <em>constraints=None</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.cobra.essentiality.essentiality" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generic interface for computing gene or reaction essentiality.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>model</strong> (<a class="reference internal" href="framed.model.html#framed.model.cbmodel.CBModel" title="framed.model.cbmodel.CBModel"><em>CBModel</em></a>) &#8211; model</li>
+<li><strong>kind</strong> (<em>str</em>) &#8211; genes or reactions (default: reactions)</li>
+<li><strong>min_growth</strong> (<em>float</em>) &#8211; minimum fraction of growth rate to consider a deletion non-letal (default: 0.01)</li>
+<li><strong>constraints</strong> (<em>dict</em>) &#8211; environmental or additional constraints (optional)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">essential elements</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">list</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="module-framed.cobra.phaseplane">
+<span id="framed-cobra-phaseplane-module"></span><h2>framed.cobra.phaseplane module<a class="headerlink" href="#module-framed.cobra.phaseplane" title="Permalink to this headline">¶</a></h2>
+<p>This module implements the Phenotype Phase Plane Analysis.
+(Edwards et al. 2001, Characterizing the metabolic phenotype: A phenotype phase plane analysis)</p>
+<p>Author: Kai Zhuang</p>
+<dl class="function">
+<dt id="framed.cobra.phaseplane.PhPP">
+<code class="descclassname">framed.cobra.phaseplane.</code><code class="descname">PhPP</code><span class="sig-paren">(</span><em>model</em>, <em>rxn_x</em>, <em>rxn_y</em>, <em>rxn_x_range</em>, <em>rxn_y_range</em>, <em>target=None</em>, <em>maximize=True</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.cobra.phaseplane.PhPP" title="Permalink to this definition">¶</a></dt>
+<dd><p>Phenotype Phase Plane Analysis
+analyze the changes in the objective function and the shadow prices</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>model</strong> (<a class="reference internal" href="framed.model.html#framed.model.cbmodel.CBModel" title="framed.model.cbmodel.CBModel"><em>CBModel</em></a>) &#8211; the metabolic model</li>
+<li><strong>rxn_x</strong> (<em>str</em>) &#8211; reaction to be plotted along x axis.  must be of a type convertable to numpy.array</li>
+<li><strong>rxn_y</strong> (<em>str</em>) &#8211; reaction to be plotted along y axis.  must be of a type convertable to numpy.array</li>
+<li><strong>rxn_x_range</strong> (<em>list or array</em>) &#8211; the range of the reaction x</li>
+<li><strong>rxn_y_range</strong> (<em>list or array</em>) &#8211; the range of the reaction y</li>
+<li><strong>target</strong> (<em>str</em>) &#8211; the  reaction id of the optimization target.
+if None is included, it will attempt to detect the biomass function</li>
+<li><strong>maximize</strong> &#8211; True or False. the sense of the optimization</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">phaseplane</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="class">
+<dt id="framed.cobra.phaseplane.PhenotypePhasePlane">
+<em class="property">class </em><code class="descclassname">framed.cobra.phaseplane.</code><code class="descname">PhenotypePhasePlane</code><span class="sig-paren">(</span><em>rxn_x</em>, <em>rxn_y</em>, <em>rxn_x_range</em>, <em>rxn_y_range</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.cobra.phaseplane.PhenotypePhasePlane" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<dl class="method">
+<dt id="framed.cobra.phaseplane.PhenotypePhasePlane.plot_objective_function">
+<code class="descname">plot_objective_function</code><span class="sig-paren">(</span><em>new_figure=True</em>, <em>show_plot=True</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.cobra.phaseplane.PhenotypePhasePlane.plot_objective_function" title="Permalink to this definition">¶</a></dt>
+<dd><p>new_figure: if set to True, a new matplotlib figure will be created.
+show_plot: if set to True, current figure will be shown</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="framed.cobra.phaseplane.PhenotypePhasePlane.plot_shadow_price_x">
+<code class="descname">plot_shadow_price_x</code><span class="sig-paren">(</span><em>new_figure=True</em>, <em>show_plot=True</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.cobra.phaseplane.PhenotypePhasePlane.plot_shadow_price_x" title="Permalink to this definition">¶</a></dt>
+<dd><p>this method plots the shadow price of metabolites that are associated with reaction x
+new_figure: if set to True, a new matplotlib figure will be created.
+show_plot: if set to True, current figure will be shown</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="framed.cobra.phaseplane.PhenotypePhasePlane.plot_shadow_price_y">
+<code class="descname">plot_shadow_price_y</code><span class="sig-paren">(</span><em>new_figure=True</em>, <em>show_plot=True</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.cobra.phaseplane.PhenotypePhasePlane.plot_shadow_price_y" title="Permalink to this definition">¶</a></dt>
+<dd><p>this method plots the shadow price of metabolites that are associated with reaction x
+new_figure: if set to True, a new matplotlib figure will be created.
+show_plot: if set to True, current figure will be shown</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-framed.cobra.plotting">
+<span id="framed-cobra-plotting-module"></span><h2>framed.cobra.plotting module<a class="headerlink" href="#module-framed.cobra.plotting" title="Permalink to this headline">¶</a></h2>
+<p>This module implements some basic plotting utilities for cobra analysis.</p>
+<p>Author: Daniel Machado</p>
+<dl class="function">
+<dt id="framed.cobra.plotting.plot_flux_envelope">
+<code class="descclassname">framed.cobra.plotting.</code><code class="descname">plot_flux_envelope</code><span class="sig-paren">(</span><em>model</em>, <em>r_x</em>, <em>r_y</em>, <em>substrate=None</em>, <em>constraints=None</em>, <em>reference=None</em>, <em>alternatives=None</em>, <em>label_x=None</em>, <em>label_y=None</em>, <em>filename=None</em>, <em>steps=10</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.cobra.plotting.plot_flux_envelope" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plots the flux envelope for a pair of reactions.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>model</strong> (<a class="reference internal" href="framed.model.html#framed.model.cbmodel.CBModel" title="framed.model.cbmodel.CBModel"><em>CBModel</em></a>) &#8211; the model</li>
+<li><strong>r_x</strong> (<em>str</em>) &#8211; reaction on x-axis</li>
+<li><strong>r_y</strong> (<em>str</em>) &#8211; reaction on y-axis</li>
+<li><strong>substrate</strong> (<em>str</em>) &#8211; compute yields instead of rates (optional)</li>
+<li><strong>constraints</strong> (<em>dict</em>) &#8211; additional constraints</li>
+<li><strong>filename</strong> (<em>str</em>) &#8211; filename to save image (optional), otherwise display on screen (default)</li>
+<li><strong>steps</strong> (<em>int</em>) &#8211; number of steps to compute (default: 10)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">x values, y min values, y max values</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">tuple</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="module-framed.cobra.reconstruction">
+<span id="framed-cobra-reconstruction-module"></span><h2>framed.cobra.reconstruction module<a class="headerlink" href="#module-framed.cobra.reconstruction" title="Permalink to this headline">¶</a></h2>
+<p>This module implements methods to find and fill gaps in the network</p>
+<p>Author: Marta Matos</p>
+<dl class="function">
+<dt id="framed.cobra.reconstruction.GapFill">
+<code class="descclassname">framed.cobra.reconstruction.</code><code class="descname">GapFill</code><span class="sig-paren">(</span><em>model</em>, <em>reactions_db</em>, <em>solver</em>, <em>output_reaction</em>, <em>flux_ouput</em>, <em>DB_type</em>, <em>tol=1e-05</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.cobra.reconstruction.GapFill" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fills gaps in the metabolic network by using a reference database.
+The gaps are filled by solving the following MILP problem:</p>
+<p>min sum(z)
+s.t. S_extended*v = 0                              (1)</p>
+<blockquote>
+<div><p>v[i] + 10e3*z[i] &gt;= 0                         (2)
+v[i] - 10e3*z[i] &lt;= 0                         (3)
+v[biomass] &gt;= biomass_output                  (4)
+lb &lt;= v &lt;= ub
+z are binary variables and v are continuous</p>
+<ul class="simple">
+<li>S_extended is the stoichiometric matrix obtained after
+merging the model of interest with the reference database</li>
+<li>z[i] represents a reaction from the database</li>
+<li>z[i] = 1 the reaction is included in the model</li>
+<li>z[i] = 0 the reaction is not included in the model</li>
+</ul>
+</div></blockquote>
+<p>At the moment the reactions database is just a sbml or plaintext file
+containing a constraint based model</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>model</strong> &#8211; a constraint based model</li>
+<li><strong>reactions_db</strong> (<em>str</em>) &#8211; name of the constraint based model to be used
+as a reference database (supposed to be temporary) in
+sbml or plain text format</li>
+<li><strong>solver</strong> &#8211; a solver instance</li>
+<li><strong>biomass_output</strong> (<em>float</em>) &#8211; the amount of biomass that should be produced</li>
+<li><strong>DB_type</strong> (<em>str</em>) &#8211; either &#8216;sbml&#8217; or &#8216;txt&#8217;, depending on the format the
+reactions_db file is in</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><dl class="docutils">
+<dt>the reactions that from the database that</dt>
+<dd><p class="first last">were added to the model</p>
+</dd>
+</dl>
+</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">added_reactions</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="framed.cobra.reconstruction.GapFind">
+<code class="descclassname">framed.cobra.reconstruction.</code><code class="descname">GapFind</code><span class="sig-paren">(</span><em>model</em>, <em>solver</em>, <em>root_gaps_only=False</em>, <em>tol=1e-05</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.cobra.reconstruction.GapFind" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="docutils">
+<dt>Implements the GapFind algorithm (Kumar et al, 2007)</dt>
+<dd><p class="first">with some modifications.
+It finds all the non producing and non consuming metabolites by
+solving the following LP problem:</p>
+<p>max sum(x)
+s.t. S*v = 0                                                    (1)</p>
+<blockquote>
+<div>S[i][j]*v[j] - eps*w[i][j] &gt;= 0     S[i][j] &gt; 0, j in IR    (2)
+S[i][j]*v[j] - M*w[i][j] &lt;= 0     S[i][j] &gt; 0, j in IR      (3)
+S[i][j]*v[j] - M*w[i][j] &gt;= eps-M   S[i][j] != 0, j in R    (4)
+S[i][j]*v[j] - M*w[i][j] &lt;= 0     S[i][j] != 0, j in R      (5)
+sum(w[i][:]) - x[i] &gt;= 0                                    (6)
+lb &lt;= v &lt;= ub
+x and w are binary variables, v are continuous</div></blockquote>
+<ul class="last simple">
+<li>x are the metabolites:
+x=1 for metabolites produced/consumed,
+x=0 for metabolites that are not produced/consumed</li>
+<li>w[i][j] stands for reaction j that produces/consumes metabolite i
+w[i][j] = 1 if the reaction is active
+w[i][j] = 0 if the reaction is inactive</li>
+<li>v[j] is the flux of reaction j</li>
+<li>S[i][j] is the stoichiometric coefficient of metabolite i on reaction j</li>
+<li>e is a small constant, M is the number of reactions in the model</li>
+<li>lb and ub are the lower and upper bounds, respectively,  of
+a given reaction flux</li>
+<li>R is the set of all reversible reactions</li>
+<li>IR is the set of all irreversible reactions</li>
+</ul>
+</dd>
+</dl>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>model</strong> &#8211; a constraint based model</li>
+<li><strong>solver</strong> &#8211; a solver instance</li>
+<li><strong>root_gaps_only</strong> &#8211; a true/false argument</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">the list of metabolites that cannot be produced or consumed
+gap_reactions: the reactions associated with the gap metabolites</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">gap_metabolites</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="framed.cobra.reconstruction.extend_model_with_DB_SBML">
+<code class="descclassname">framed.cobra.reconstruction.</code><code class="descname">extend_model_with_DB_SBML</code><span class="sig-paren">(</span><em>model</em>, <em>reactionsDB</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.cobra.reconstruction.extend_model_with_DB_SBML" title="Permalink to this definition">¶</a></dt>
+<dd><p>Extends the given model with the reactions in reactionsDB.
+This is done by loading the model in sbml format reactionsDB
+and adding only the reactions that are not part of &#8220;model&#8221; to it.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>model</strong> &#8211; the constraint based model to be extended</li>
+<li><strong>reactionsDB</strong> (<em>str</em>) &#8211; SBML file path for the reactionsDB model</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><p>the given model extended with the database reactions/metabolites
+db_reactions: the reactions that were added from the database to</p>
+<blockquote>
+<div><p>the given model</p>
+</div></blockquote>
+</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference internal" href="framed.model.html#module-framed.model" title="framed.model">model</a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="framed.cobra.reconstruction.extend_model_with_DB_plainText">
+<code class="descclassname">framed.cobra.reconstruction.</code><code class="descname">extend_model_with_DB_plainText</code><span class="sig-paren">(</span><em>model</em>, <em>reactionsDB</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.cobra.reconstruction.extend_model_with_DB_plainText" title="Permalink to this definition">¶</a></dt>
+<dd><p>Extends the given model with the reactions in reactionsDB.
+This is done by loading the model in plain text format
+reactionsDB and adding only the reactions that are not part
+of &#8220;model&#8221; to it.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>model</strong> &#8211; the constraint based model to be extended</li>
+<li><strong>reactionsDB</strong> (<em>str</em>) &#8211; plain text file path for the reactionsDB model</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><p>the given model extended with the database reactions/metabolites
+db_reactions: the reactions that were added from the database to</p>
+<blockquote>
+<div><p>the given model</p>
+</div></blockquote>
+</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference internal" href="framed.model.html#module-framed.model" title="framed.model">model</a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="module-framed.cobra.simulation">
+<span id="framed-cobra-simulation-module"></span><h2>framed.cobra.simulation module<a class="headerlink" href="#module-framed.cobra.simulation" title="Permalink to this headline">¶</a></h2>
+<p>This module implements several constraint-based simulation methods.</p>
+<p>Author: Daniel Machado</p>
+<dl class="function">
+<dt id="framed.cobra.simulation.FBA">
+<code class="descclassname">framed.cobra.simulation.</code><code class="descname">FBA</code><span class="sig-paren">(</span><em>model</em>, <em>objective=None</em>, <em>minimize=False</em>, <em>constraints=None</em>, <em>solver=None</em>, <em>get_values=True</em>, <em>get_shadow_prices=False</em>, <em>get_reduced_costs=False</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.cobra.simulation.FBA" title="Permalink to this definition">¶</a></dt>
+<dd><p>Run a Flux Balance Analysis (FBA) simulation:</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>model</strong> (<a class="reference internal" href="framed.model.html#framed.model.cbmodel.CBModel" title="framed.model.cbmodel.CBModel"><em>CBModel</em></a>) &#8211; a constraint-based model</li>
+<li><strong>(dict</strong> (<em>objective</em>) &#8211; objective coefficients (optional)</li>
+<li><strong>minimize</strong> (<em>bool</em>) &#8211; minimize objective function (False by default)</li>
+<li><strong>constraints</strong> (<em>dict</em>) &#8211; environmental or additional constraints (optional)</li>
+<li><strong>solver</strong> (<a class="reference internal" href="framed.solvers.html#framed.solvers.solver.Solver" title="framed.solvers.solver.Solver"><em>Solver</em></a>) &#8211; solver instance instantiated with the model, for speed (optional)</li>
+<li><strong>get_values</strong> (<em>bool</em>) &#8211; set to false for speedup if you only care about the objective value (optional, default: True)</li>
+<li><strong>get_shadow_prices</strong> (<em>bool</em>) &#8211; retrieve shadow prices (default: False)</li>
+<li><strong>get_reduced_costs</strong> (<em>bool</em>) &#8211; retrieve reduced costs (default: False)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">solution</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference internal" href="framed.solvers.html#framed.solvers.solver.Solution" title="framed.solvers.solver.Solution">Solution</a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="framed.cobra.simulation.MOMA">
+<code class="descclassname">framed.cobra.simulation.</code><code class="descname">MOMA</code><span class="sig-paren">(</span><em>model</em>, <em>reference=None</em>, <em>constraints=None</em>, <em>solver=None</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.cobra.simulation.MOMA" title="Permalink to this definition">¶</a></dt>
+<dd><p>Run a Minimization Of Metabolic Adjustment (MOMA) simulation:</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>model</strong> (<a class="reference internal" href="framed.model.html#framed.model.cbmodel.CBModel" title="framed.model.cbmodel.CBModel"><em>CBModel</em></a>) &#8211; a constraint-based model</li>
+<li><strong>reference</strong> (<em>dict</em>) &#8211; reference flux distribution (optional)</li>
+<li><strong>constraints</strong> (<em>dict</em>) &#8211; environmental or additional constraints (optional)</li>
+<li><strong>solver</strong> (<a class="reference internal" href="framed.solvers.html#framed.solvers.solver.Solver" title="framed.solvers.solver.Solver"><em>Solver</em></a>) &#8211; solver instance instantiated with the model, for speed (optional)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">solution</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference internal" href="framed.solvers.html#framed.solvers.solver.Solution" title="framed.solvers.solver.Solution">Solution</a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="framed.cobra.simulation.ROOM">
+<code class="descclassname">framed.cobra.simulation.</code><code class="descname">ROOM</code><span class="sig-paren">(</span><em>model</em>, <em>reference=None</em>, <em>constraints=None</em>, <em>solver=None</em>, <em>delta=0.03</em>, <em>epsilon=0.001</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.cobra.simulation.ROOM" title="Permalink to this definition">¶</a></dt>
+<dd><p>Run a Regulatory On/Off Minimization (ROOM) simulation:</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>model</strong> (<a class="reference internal" href="framed.model.html#framed.model.cbmodel.CBModel" title="framed.model.cbmodel.CBModel"><em>CBModel</em></a>) &#8211; a constraint-based model</li>
+<li><strong>reference</strong> (<em>dict</em>) &#8211; reference flux distribution (optional)</li>
+<li><strong>constraints</strong> (<em>dict</em>) &#8211; environmental or additional constraints (optional)</li>
+<li><strong>solver</strong> (<a class="reference internal" href="framed.solvers.html#framed.solvers.solver.Solver" title="framed.solvers.solver.Solver"><em>Solver</em></a>) &#8211; solver instance instantiated with the model, for speed (optional)</li>
+<li><strong>delta</strong> (<em>float</em>) &#8211; relative tolerance (default: 0.03)</li>
+<li><strong>epsilon</strong> (<em>float</em>) &#8211; absolute tolerance (default: 0.001)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">solution</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference internal" href="framed.solvers.html#framed.solvers.solver.Solution" title="framed.solvers.solver.Solution">Solution</a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="framed.cobra.simulation.lMOMA">
+<code class="descclassname">framed.cobra.simulation.</code><code class="descname">lMOMA</code><span class="sig-paren">(</span><em>model</em>, <em>reference=None</em>, <em>constraints=None</em>, <em>solver=None</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.cobra.simulation.lMOMA" title="Permalink to this definition">¶</a></dt>
+<dd><p>Run a (linear version of) Minimization Of Metabolic Adjustment (lMOMA) simulation:</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>model</strong> (<a class="reference internal" href="framed.model.html#framed.model.cbmodel.CBModel" title="framed.model.cbmodel.CBModel"><em>CBModel</em></a>) &#8211; a constraint-based model</li>
+<li><strong>reference</strong> (<em>dict</em>) &#8211; reference flux distribution (optional)</li>
+<li><strong>constraints</strong> (<em>dict</em>) &#8211; environmental or additional constraints (optional)</li>
+<li><strong>solver</strong> (<a class="reference internal" href="framed.solvers.html#framed.solvers.solver.Solver" title="framed.solvers.solver.Solver"><em>Solver</em></a>) &#8211; solver instance instantiated with the model, for speed (optional)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">solution</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference internal" href="framed.solvers.html#framed.solvers.solver.Solution" title="framed.solvers.solver.Solution">Solution</a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="framed.cobra.simulation.looplessFBA">
+<code class="descclassname">framed.cobra.simulation.</code><code class="descname">looplessFBA</code><span class="sig-paren">(</span><em>model</em>, <em>objective=None</em>, <em>minimize=False</em>, <em>constraints=None</em>, <em>internal=None</em>, <em>solver=None</em>, <em>get_values=True</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.cobra.simulation.looplessFBA" title="Permalink to this definition">¶</a></dt>
+<dd><p>Run loopless FBA simulation (aka Energy Balance Analysis as defined in Beard et al, 2002):</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>model</strong> (<a class="reference internal" href="framed.model.html#framed.model.cbmodel.CBModel" title="framed.model.cbmodel.CBModel"><em>CBModel</em></a>) &#8211; a constraint-based model</li>
+<li><strong>objective</strong> (<em>dict</em>) &#8211; objective coefficients (optional)</li>
+<li><strong>minimize</strong> (<em>bool</em>) &#8211; sense of optimization (maximize by default)</li>
+<li><strong>(dict</strong> (<em>constraints</em>) &#8211; environmental or additional constraints (optional)</li>
+<li><strong>internal</strong> (<em>list</em>) &#8211; list of internal reactions (optional)</li>
+<li><strong>solver</strong> (<a class="reference internal" href="framed.solvers.html#framed.solvers.solver.Solver" title="framed.solvers.solver.Solver"><em>Solver</em></a>) &#8211; solver instance instantiated with the model, for speed (optional)</li>
+<li><strong>get_values</strong> (<em>bool</em>) &#8211; set to false for speedup if you only care about the objective value (optional, default: True)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">solution</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference internal" href="framed.solvers.html#framed.solvers.solver.Solution" title="framed.solvers.solver.Solution">Solution</a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="framed.cobra.simulation.pFBA">
+<code class="descclassname">framed.cobra.simulation.</code><code class="descname">pFBA</code><span class="sig-paren">(</span><em>model</em>, <em>objective=None</em>, <em>minimize=False</em>, <em>constraints=None</em>, <em>reactions=None</em>, <em>solver=None</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.cobra.simulation.pFBA" title="Permalink to this definition">¶</a></dt>
+<dd><p>Run a parsimonious Flux Balance Analysis (pFBA) simulation:</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>model</strong> (<a class="reference internal" href="framed.model.html#framed.model.cbmodel.CBModel" title="framed.model.cbmodel.CBModel"><em>CBModel</em></a>) &#8211; a constraint-based model</li>
+<li><strong>objective</strong> (<em>dict</em>) &#8211; objective coefficients (optional)</li>
+<li><strong>minimize</strong> (<em>bool</em>) &#8211; sense of optimization (maximize by default)</li>
+<li><strong>(dict</strong> (<em>constraints</em>) &#8211; environmental or additional constraints (optional)</li>
+<li><strong>reactions</strong> (<em>list</em>) &#8211; list of reactions to be minimized (optional, default: all)</li>
+<li><strong>solver</strong> (<a class="reference internal" href="framed.solvers.html#framed.solvers.solver.Solver" title="framed.solvers.solver.Solver"><em>Solver</em></a>) &#8211; solver instance instantiated with the model, for speed (optional)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">solution</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference internal" href="framed.solvers.html#framed.solvers.solver.Solution" title="framed.solvers.solver.Solution">Solution</a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="module-framed.cobra.strain_design">
+<span id="framed-cobra-strain-design-module"></span><h2>framed.cobra.strain_design module<a class="headerlink" href="#module-framed.cobra.strain_design" title="Permalink to this headline">¶</a></h2>
+<p>This module implements some naive strain design methods.</p>
+<p>Author: Daniel Machado</p>
+<dl class="function">
+<dt id="framed.cobra.strain_design.combinatorial_deletion">
+<code class="descclassname">framed.cobra.strain_design.</code><code class="descname">combinatorial_deletion</code><span class="sig-paren">(</span><em>model</em>, <em>objective</em>, <em>max_dels</em>, <em>kind='reactions'</em>, <em>targets=None</em>, <em>method='FBA'</em>, <em>min_growth=0.01</em>, <em>abstol=0.001</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.cobra.strain_design.combinatorial_deletion" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generic interface for computing for a set of combinatorial gene or reaction deletions.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>model</strong> (<a class="reference internal" href="framed.model.html#framed.model.cbmodel.CBModel" title="framed.model.cbmodel.CBModel"><em>CBModel</em></a>) &#8211; model</li>
+<li><strong>objective</strong> (<em>function</em>) &#8211; optimization objective function</li>
+<li><strong>max_dels</strong> (<em>int</em>) &#8211; maximum number of deletions</li>
+<li><strong>kind</strong> (<em>str</em>) &#8211; genes or reactions (default)</li>
+<li><strong>method</strong> (<em>str</em>) &#8211; simulation method: FBA (default) or pFBA, MOMA, lMOMA, ROOM, etc.</li>
+<li><strong>targets</strong> (<em>list (of str</em>) &#8211; deletion targets (default: all)</li>
+<li><strong>min_growth</strong> (<em>float</em>) &#8211; minimum fraction of growth rate to consider a deletion non-letal (default: 0.01)</li>
+<li><strong>abstol</strong> (<em>float</em>) &#8211; minimum objective function value (default: 1e-3)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">solutions</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">list</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="framed.cobra.strain_design.combinatorial_gene_deletion">
+<code class="descclassname">framed.cobra.strain_design.</code><code class="descname">combinatorial_gene_deletion</code><span class="sig-paren">(</span><em>model</em>, <em>objective</em>, <em>max_dels</em>, <em>targets=None</em>, <em>method='FBA'</em>, <em>min_growth=0.01</em>, <em>abstol=0.001</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.cobra.strain_design.combinatorial_gene_deletion" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute solutions for a set of combinatorial gene deletions.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>model</strong> (<a class="reference internal" href="framed.model.html#framed.model.cbmodel.CBModel" title="framed.model.cbmodel.CBModel"><em>CBModel</em></a>) &#8211; model</li>
+<li><strong>objective</strong> (<em>function</em>) &#8211; optimization objective function</li>
+<li><strong>max_dels</strong> (<em>int</em>) &#8211; maximum number of deletions</li>
+<li><strong>method</strong> (<em>str</em>) &#8211; simulation method: FBA (default) or pFBA, MOMA, lMOMA, ROOM, etc.</li>
+<li><strong>targets</strong> (<em>list</em>) &#8211; deletion targets (default: all)</li>
+<li><strong>min_growth</strong> (<em>float</em>) &#8211; minimum fraction of growth rate to consider a deletion non-letal (default: 0.01)</li>
+<li><strong>abstol</strong> (<em>float</em>) &#8211; minimum objective function value (default: 1e-3)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">solutions</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">list</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="framed.cobra.strain_design.combinatorial_reaction_deletion">
+<code class="descclassname">framed.cobra.strain_design.</code><code class="descname">combinatorial_reaction_deletion</code><span class="sig-paren">(</span><em>model</em>, <em>objective</em>, <em>max_dels</em>, <em>targets=None</em>, <em>method='FBA'</em>, <em>min_growth=0.01</em>, <em>abstol=0.001</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.cobra.strain_design.combinatorial_reaction_deletion" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute solutions for a set of combinatorial reaction deletions.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>model</strong> (<a class="reference internal" href="framed.model.html#framed.model.cbmodel.CBModel" title="framed.model.cbmodel.CBModel"><em>CBModel</em></a>) &#8211; model</li>
+<li><strong>objective</strong> (<em>function</em>) &#8211; optimization objective function</li>
+<li><strong>max_dels</strong> (<em>int</em>) &#8211; maximum number of deletions</li>
+<li><strong>method</strong> (<em>str</em>) &#8211; simulation method: FBA (default) or pFBA, MOMA, lMOMA, ROOM, etc.</li>
+<li><strong>targets</strong> (<em>list (of str</em>) &#8211; deletion targets (default: all)</li>
+<li><strong>min_growth</strong> (<em>float</em>) &#8211; minimum fraction of growth rate to consider a deletion non-letal (default: 0.01)</li>
+<li><strong>abstol</strong> (<em>float</em>) &#8211; minimum objective function value (default: 1e-3)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">solutions</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">list</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="framed.cobra.strain_design.greedy_deletion">
+<code class="descclassname">framed.cobra.strain_design.</code><code class="descname">greedy_deletion</code><span class="sig-paren">(</span><em>model</em>, <em>objective</em>, <em>max_dels</em>, <em>kind='reactions'</em>, <em>targets=None</em>, <em>method='FBA'</em>, <em>min_growth=0.1</em>, <em>pop_size=10</em>, <em>abstol=0.001</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.cobra.strain_design.greedy_deletion" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generic interface for finding an optimal set of gene or reaction deletions using a greedy approach.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>model</strong> (<a class="reference internal" href="framed.model.html#framed.model.cbmodel.CBModel" title="framed.model.cbmodel.CBModel"><em>CBModel</em></a>) &#8211; model</li>
+<li><strong>objective</strong> (<em>function</em>) &#8211; optimization objective function</li>
+<li><strong>max_dels</strong> (<em>int</em>) &#8211; maximum number of deletions</li>
+<li><strong>kind</strong> (<em>str</em>) &#8211; genes or reactions (default)</li>
+<li><strong>method</strong> (<em>str</em>) &#8211; simulation method: FBA (default) or pFBA, MOMA, lMOMA, ROOM, etc.</li>
+<li><strong>targets</strong> (<em>list</em>) &#8211; deletion targets (default: all)</li>
+<li><strong>min_growth</strong> (<em>float</em>) &#8211; minimum percentage of growth rate to consider a deletion non-letal (default: 0.01)</li>
+<li><strong>pop_size</strong> (<em>int</em>) &#8211; population size to keep from one iteration to the next</li>
+<li><strong>abstol</strong> (<em>float</em>) &#8211; minimum objective function value (default: 1e-4)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">solutions</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">list</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="framed.cobra.strain_design.greedy_gene_deletion">
+<code class="descclassname">framed.cobra.strain_design.</code><code class="descname">greedy_gene_deletion</code><span class="sig-paren">(</span><em>model</em>, <em>objective</em>, <em>max_dels</em>, <em>targets=None</em>, <em>method='FBA'</em>, <em>min_growth=0.1</em>, <em>pop_size=10</em>, <em>abstol=0.001</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.cobra.strain_design.greedy_gene_deletion" title="Permalink to this definition">¶</a></dt>
+<dd><p>Find an optimal set of gene deletions using a greedy approach.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>model</strong> (<a class="reference internal" href="framed.model.html#framed.model.cbmodel.CBModel" title="framed.model.cbmodel.CBModel"><em>CBModel</em></a>) &#8211; model</li>
+<li><strong>objective</strong> (<em>function</em>) &#8211; optimization objective function</li>
+<li><strong>max_dels</strong> (<em>int</em>) &#8211; maximum number of deletions</li>
+<li><strong>method</strong> (<em>str</em>) &#8211; simulation method: FBA (default) or pFBA, MOMA, lMOMA, ROOM, etc.</li>
+<li><strong>targets</strong> (<em>list</em>) &#8211; deletion targets (default: all)</li>
+<li><strong>min_growth</strong> (<em>float</em>) &#8211; minimum percentage of growth rate to consider a deletion non-letal (default: 0.01)</li>
+<li><strong>pop_size</strong> (<em>int</em>) &#8211; population size to keep from one iteration to the next</li>
+<li><strong>abstol</strong> (<em>float</em>) &#8211; minimum objective function value (default: 1e-4)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">solutions</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">list</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="framed.cobra.strain_design.greedy_reaction_deletion">
+<code class="descclassname">framed.cobra.strain_design.</code><code class="descname">greedy_reaction_deletion</code><span class="sig-paren">(</span><em>model</em>, <em>objective</em>, <em>max_dels</em>, <em>targets=None</em>, <em>method='FBA'</em>, <em>min_growth=0.1</em>, <em>pop_size=10</em>, <em>abstol=0.001</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.cobra.strain_design.greedy_reaction_deletion" title="Permalink to this definition">¶</a></dt>
+<dd><p>Find an optimal set of reaction deletions using a greedy approach.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>model</strong> (<a class="reference internal" href="framed.model.html#framed.model.cbmodel.CBModel" title="framed.model.cbmodel.CBModel"><em>CBModel</em></a>) &#8211; model</li>
+<li><strong>objective</strong> (<em>function</em>) &#8211; optimization objective function</li>
+<li><strong>max_dels</strong> (<em>int</em>) &#8211; maximum number of deletions</li>
+<li><strong>method</strong> (<em>str</em>) &#8211; simulation method: FBA (default) or pFBA, MOMA, lMOMA, ROOM, etc.</li>
+<li><strong>targets</strong> (<em>list</em>) &#8211; deletion targets (default: all)</li>
+<li><strong>min_growth</strong> (<em>float</em>) &#8211; minimum percentage of growth rate to consider a deletion non-letal (default: 0.01)</li>
+<li><strong>pop_size</strong> (<em>int</em>) &#8211; population size to keep from one iteration to the next</li>
+<li><strong>abstol</strong> (<em>float</em>) &#8211; minimum objective function value (default: 1e-4)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">solutions</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">list</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="module-framed.cobra.variability">
+<span id="framed-cobra-variability-module"></span><h2>framed.cobra.variability module<a class="headerlink" href="#module-framed.cobra.variability" title="Permalink to this headline">¶</a></h2>
+<p>This module implements a few flux variability analysis methods.</p>
+<p>Authors: Daniel Machado, Kai Zhuang</p>
+<dl class="function">
+<dt id="framed.cobra.variability.FVA">
+<code class="descclassname">framed.cobra.variability.</code><code class="descname">FVA</code><span class="sig-paren">(</span><em>model</em>, <em>obj_percentage=0</em>, <em>reactions=None</em>, <em>constraints=None</em>, <em>loopless=False</em>, <em>internal=None</em>, <em>solver=None</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.cobra.variability.FVA" title="Permalink to this definition">¶</a></dt>
+<dd><p>Run Flux Variability Analysis (FVA).</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>model</strong> (<a class="reference internal" href="framed.model.html#framed.model.cbmodel.CBModel" title="framed.model.cbmodel.CBModel"><em>CBModel</em></a>) &#8211; a constraint-based model</li>
+<li><strong>obj_percentage</strong> (<em>float</em>) &#8211; minimum percentage of growth rate (default 0.0, max: 1.0)</li>
+<li><strong>reactions</strong> (<em>list</em>) &#8211; list of reactions to analyze (default: all)</li>
+<li><strong>constraints</strong> (<em>dict</em>) &#8211; additional constraints (optional)</li>
+<li><strong>loopless</strong> (<em>bool</em>) &#8211; run looplessFBA internally (very slow) (default: false)</li>
+<li><strong>internal</strong> (<em>list</em>) &#8211; list of internal reactions for looplessFBA (optional)</li>
+<li><strong>solver</strong> (<a class="reference internal" href="framed.solvers.html#framed.solvers.solver.Solver" title="framed.solvers.solver.Solver"><em>Solver</em></a>) &#8211; pre-instantiated solver instance (optional)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">flux variation ranges</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">dict</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="framed.cobra.variability.blocked_reactions">
+<code class="descclassname">framed.cobra.variability.</code><code class="descname">blocked_reactions</code><span class="sig-paren">(</span><em>model</em>, <em>abstol=1e-09</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.cobra.variability.blocked_reactions" title="Permalink to this definition">¶</a></dt>
+<dd><p>Find all blocked reactions in a model</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>model</strong> (<a class="reference internal" href="framed.model.html#framed.model.cbmodel.CBModel" title="framed.model.cbmodel.CBModel"><em>CBModel</em></a>) &#8211; a constraint-based model</li>
+<li><strong>abstol</strong> (<em>float</em>) &#8211; absolute tolerance (default: 1e-9)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">blocked reactions</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">list</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="framed.cobra.variability.flux_envelope">
+<code class="descclassname">framed.cobra.variability.</code><code class="descname">flux_envelope</code><span class="sig-paren">(</span><em>model</em>, <em>r_x</em>, <em>r_y</em>, <em>steps=10</em>, <em>constraints=None</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.cobra.variability.flux_envelope" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate the flux envelope for a pair of reactions.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>model</strong> (<a class="reference internal" href="framed.model.html#framed.model.cbmodel.CBModel" title="framed.model.cbmodel.CBModel"><em>CBModel</em></a>) &#8211; the model</li>
+<li><strong>r_x</strong> (<em>str</em>) &#8211; reaction on x-axis</li>
+<li><strong>r_y</strong> (<em>str</em>) &#8211; reaction on y-axis</li>
+<li><strong>steps</strong> (<em>int</em>) &#8211; number of steps to compute (default: 10)</li>
+<li><strong>constraints</strong> (<em>dict</em>) &#8211; custom constraints to the FBA problem</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">x values, y min values, y max values</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">tuple</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="framed.cobra.variability.flux_envelope_3d">
+<code class="descclassname">framed.cobra.variability.</code><code class="descname">flux_envelope_3d</code><span class="sig-paren">(</span><em>model</em>, <em>r_x</em>, <em>r_y</em>, <em>r_z</em>, <em>steps=10</em>, <em>constraints=None</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.cobra.variability.flux_envelope_3d" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate the flux envelope for a triplet of reactions.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>model</strong> (<a class="reference internal" href="framed.model.html#framed.model.cbmodel.CBModel" title="framed.model.cbmodel.CBModel"><em>CBModel</em></a>) &#8211; the model</li>
+<li><strong>r_x</strong> (<em>str</em>) &#8211; reaction on x-axis</li>
+<li><strong>r_y</strong> (<em>str</em>) &#8211; reaction on y-axis</li>
+<li><strong>r_z</strong> (<em>str</em>) &#8211; reaction on z-axis</li>
+<li><strong>steps</strong> (<em>int</em>) &#8211; number of steps to compute along both x and y axis (default: 10)</li>
+<li><strong>constraints</strong> (<em>dict</em>) &#8211; custom constraints to the FBA problem</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">z min values, z max values, x coordinates, y coordinates</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">tuple</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="framed.cobra.variability.production_envelope">
+<code class="descclassname">framed.cobra.variability.</code><code class="descname">production_envelope</code><span class="sig-paren">(</span><em>model</em>, <em>r_target</em>, <em>r_biomass=None</em>, <em>steps=10</em>, <em>constraints=None</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.cobra.variability.production_envelope" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate the production envelope of the target reaction</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>model</strong> (<a class="reference internal" href="framed.model.html#framed.model.cbmodel.CBModel" title="framed.model.cbmodel.CBModel"><em>CBModel</em></a>) &#8211; the model</li>
+<li><strong>r_target</strong> (<em>str</em>) &#8211; the target reaction id</li>
+<li><strong>steps</strong> (<em>int</em>) &#8211; number of steps along the envelope to be calculated (default: 10)</li>
+<li><strong>r_biomass</strong> (<em>str</em>) &#8211; the biomass reaction id (optional)</li>
+<li><strong>constraints</strong> (<em>dict</em>) &#8211; custom constraints to the FBA problem</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">biomass values, target minimum values, target maximum values</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">tuple</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="module-framed.cobra">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-framed.cobra" title="Permalink to this headline">¶</a></h2>
+<p>Package implementing several constraint-based methods.</p>
+<p>Author: Daniel Machado</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">framed.cobra package</a><ul>
+<li><a class="reference internal" href="#submodules">Submodules</a></li>
+<li><a class="reference internal" href="#module-framed.cobra.deletion">framed.cobra.deletion module</a></li>
+<li><a class="reference internal" href="#module-framed.cobra.essentiality">framed.cobra.essentiality module</a></li>
+<li><a class="reference internal" href="#module-framed.cobra.phaseplane">framed.cobra.phaseplane module</a></li>
+<li><a class="reference internal" href="#module-framed.cobra.plotting">framed.cobra.plotting module</a></li>
+<li><a class="reference internal" href="#module-framed.cobra.reconstruction">framed.cobra.reconstruction module</a></li>
+<li><a class="reference internal" href="#module-framed.cobra.simulation">framed.cobra.simulation module</a></li>
+<li><a class="reference internal" href="#module-framed.cobra.strain_design">framed.cobra.strain_design module</a></li>
+<li><a class="reference internal" href="#module-framed.cobra.variability">framed.cobra.variability module</a></li>
+<li><a class="reference internal" href="#module-framed.cobra">Module contents</a></li>
+</ul>
+</li>
+</ul>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="modules.html">API</a><ul>
+  <li><a href="framed.html">framed package</a><ul>
+      <li>Previous: <a href="framed.bioreactor.html" title="previous chapter">framed.bioreactor package</a></li>
+      <li>Next: <a href="framed.io.html" title="next chapter">framed.io package</a></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/apidoc/framed.cobra.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2016, Daniel Machado.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.4.8</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.9</a>
+      
+      |
+      <a href="../_sources/apidoc/framed.cobra.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

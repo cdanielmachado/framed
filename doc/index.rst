@@ -4,7 +4,7 @@
    contain the root `toctree` directive.
 
 Welcome to *framed's* documentation!
-==================================
+====================================
 
 Contents:
 
@@ -15,7 +15,7 @@ Contents:
    start
    cobra
    kinetic
-   modules
+   apidoc/modules
 
 
 Indices and tables
