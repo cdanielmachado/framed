@@ -18,9 +18,11 @@ class ODEModel(Model):
         self.ratelaws = OrderedDict()
         self.assignment_rules = OrderedDict()
         self.ratelaws = OrderedDict()
+        self._func_str = None
 
     def _clear_temp(self):
         Model._clear_temp(self)
+        self._func_str = None
 
     def add_reaction(self, reaction, ratelaw=''):
         Model.add_reaction(self, reaction)
@@ -150,29 +152,33 @@ class ODEModel(Model):
         return rule
 
     def build_ode(self):
-        parsed_rates = {r_id: self.parse_rate(r_id, ratelaw)
-                        for r_id, ratelaw in self.ratelaws.items()}
 
-        parsed_rules = {p_id: self.parse_rule(rule, parsed_rates)
-                        for p_id, rule in self.assignment_rules.items()}
+        if not self._func_str:
+            parsed_rates = {r_id: self.parse_rate(r_id, ratelaw)
+                            for r_id, ratelaw in self.ratelaws.items()}
 
-        rate_exprs = ["    r['{}'] = {}".format(r_id, parsed_rates[r_id])
-                      for r_id in self.reactions]
+            parsed_rules = {p_id: self.parse_rule(rule, parsed_rates)
+                            for p_id, rule in self.assignment_rules.items()}
 
-        balances = [' '*8 + self.print_balance(m_id) for m_id in self.metabolites]
+            rate_exprs = ["    r['{}'] = {}".format(r_id, parsed_rates[r_id])
+                          for r_id in self.reactions]
 
-        rule_exprs = ["    v['{}'] = {}".format(p_id, parsed_rules[p_id])
-                      for p_id in self.assignment_rules]
+            balances = [' '*8 + self.print_balance(m_id) for m_id in self.metabolites]
 
-        func_str = 'def ode_func(t, x, r, p, v):\n\n' + \
-           '\n'.join(rule_exprs) + '\n\n' + \
-           '\n'.join(rate_exprs) + '\n\n' + \
-           '    dxdt = [\n' + \
-           ',\n'.join(balances) + '\n' + \
-           '    ]\n\n' + \
-           '    return dxdt\n'
+            rule_exprs = ["    v['{}'] = {}".format(p_id, parsed_rules[p_id])
+                          for p_id in self.assignment_rules]
 
-        return func_str
+            func_str = 'def ode_func(t, x, r, p, v):\n\n' + \
+               '\n'.join(rule_exprs) + '\n\n' + \
+               '\n'.join(rate_exprs) + '\n\n' + \
+               '    dxdt = [\n' + \
+               ',\n'.join(balances) + '\n' + \
+               '    ]\n\n' + \
+               '    return dxdt\n'
+
+            self._func_str = func_str
+
+        return self._func_str
 
     def get_ode(self, r_dict=None, params=None):
 
@@ -190,5 +196,4 @@ class ODEModel(Model):
         exec self.build_ode() in globals()
         ode_func = eval('ode_func')
 
-        f = lambda t, x: ode_func(t, x, r, p, v)
-        return f
+        return lambda t, x: ode_func(t, x, r, p, v)
