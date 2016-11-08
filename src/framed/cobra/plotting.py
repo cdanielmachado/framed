@@ -6,7 +6,7 @@ Author: Daniel Machado
 
 from variability import flux_envelope
 from simulation import FBA
-from matplotlib.pyplot import plot, xlabel, ylabel, show, savefig, xlim, ylim
+import matplotlib.pyplot as plt
 
 
 def plot_flux_envelope(model, r_x, r_y, substrate=None, constraints=None, reference=None, alternatives=None,
@@ -42,30 +42,30 @@ def plot_flux_envelope(model, r_x, r_y, substrate=None, constraints=None, refere
             for fluxes in alternatives:
                 _normalize_dict(fluxes, abs(fluxes[substrate]))
 
-    plot(xvals, ymins, 'b', xvals, ymaxs, 'b',
-         [xvals[0], xvals[0]], [ymins[0], ymaxs[0]], 'b',
-         [xvals[-1], xvals[-1]], [ymins[-1], ymaxs[-1]], 'b')
+    plt.plot(xvals, ymins, 'b', xvals, ymaxs, 'b',
+             [xvals[0], xvals[0]], [ymins[0], ymaxs[0]], 'b',
+             [xvals[-1], xvals[-1]], [ymins[-1], ymaxs[-1]], 'b')
 
     if alternatives:
         for fluxes in alternatives:
-            plot(fluxes[r_x], fluxes[r_y], 'ro', markersize=5)
+            plt.plot(fluxes[r_x], fluxes[r_y], 'ro', markersize=5)
 
     if reference:
-        plot(reference[r_x], reference[r_y], 'bo', markersize=5)
+        plt.plot(reference[r_x], reference[r_y], 'bo', markersize=5)
 
-    xlabel(label_x) if label_x else xlabel(model.reactions[r_x].name)
-    ylabel(label_y) if label_y else ylabel(model.reactions[r_y].name)
+    plt.xlabel(label_x) if label_x else plt.xlabel(model.reactions[r_x].name)
+    plt.ylabel(label_y) if label_y else plt.ylabel(model.reactions[r_y].name)
 
     xmin, xmax = min(xvals), max(xvals)
     dx = 0.03 * (xmax - xmin)
-    xlim((xmin - dx, xmax + dx))
+    plt.xlim((xmin - dx, xmax + dx))
 
     ymin, ymax = min(ymins), max(ymaxs)
     dy = 0.03 * (ymax - ymin)
-    ylim((ymin - dy, ymax + dy))
+    plt.ylim((ymin - dy, ymax + dy))
 
     if filename:
-        savefig(filename)
+        plt.savefig(filename)
 
 
 def _normalize_list(values, x):

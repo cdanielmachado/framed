@@ -98,15 +98,12 @@ class Solution:
         if pattern:
             values = filter(lambda (r_id, val): pattern in r_id, values)
 
-        if self.reduced_costs:
-            entries = ['{:<12} {: .6g} ({: .6g})'.format(r_id, val, self.reduced_costs[r_id]) for (r_id, val) in values]
-        else:
-            entries = ['{:<12} {: .6g}'.format(r_id, val) for (r_id, val) in values]
+        entries = ['{:<12} {: .6g}'.format(r_id, val) for (r_id, val) in values]
 
         return '\n'.join(entries)
 
     def show_shadow_prices(self, zeros=False, pattern=None):
-        """ Show shadow prices results.
+        """ Show shadow prices.
 
         Arguments:
             zeros (bool): show zero values (default: False)
@@ -128,6 +125,32 @@ class Solution:
             values = filter(lambda (m_id, val): pattern in m_id, values)
 
         entries = ['{:<12} {: .6g}'.format(m_id, val) for (m_id, val) in values]
+
+        return '\n'.join(entries)
+
+    def show_reduced_costs(self, zeros=False, pattern=None):
+        """ Show reduced costs.
+
+        Arguments:
+            zeros (bool): show zero values (default: False)
+            pattern (str): show only reactions that contain pattern (optional)
+
+        Returns:
+            str: printed table with shadow prices
+        """
+
+        if not self.reduced_costs:
+            return None
+
+        values = self.reduced_costs.items()
+
+        if not zeros:
+            values = filter(lambda (r_id, val): val, values)
+
+        if pattern:
+            values = filter(lambda (r_id, val): pattern in r_id, values)
+
+        entries = ['{:<12} {: .6g}'.format(r_id, val) for (r_id, val) in values]
 
         return '\n'.join(entries)
 

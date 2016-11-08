@@ -22,7 +22,7 @@ def balanced_model_reduction(model, metabolites, fluxes, must_keep=None, max_deg
         remove_balanced_metabolite(model, m_id, fluxes, must_keep, abstol)
 
     if clean_disconnected:
-        model.remove_metabolites(_disconnected_metabolites(model))
+        model.remove_metabolites(_disconnected_metabolites(model), safe_delete=False)
 
 
 def remove_balanced_metabolite(model, m_id, fluxes, must_keep=None, abstol=1e-9):

@@ -10,11 +10,12 @@ from .cbmodel import CBModel, CBReaction
 from ..cobra.variability import blocked_reactions
 
 
-def simplify(model, inplace=True):
+def simplify(model, clean_compartments=True, inplace=True):
     """ Removes all blocked reactions in a constraint based model
     
     Arguments:
         model (CBModel): model
+        clean_compartments (bool): remove empty compartments (default: True)
         inplace (bool): change model inplace (default), otherwise create a copy first
         
     Returns:
@@ -26,10 +27,17 @@ def simplify(model, inplace=True):
 
     del_reactions = blocked_reactions(model)
     model.remove_reactions(del_reactions)
+
     del_metabolites = disconnected_metabolites(model)
-    model.remove_metabolites(del_metabolites)
+    model.remove_metabolites(del_metabolites, safe_delete=False)
+
     del_genes = disconnected_genes(model)
     model.remove_genes(del_genes)
+
+    if clean_compartments:
+        empty = empty_compartments(model)
+        model.remove_compartments(empty, delete_metabolites=False)
+
     return del_reactions, del_metabolites, del_genes
 
 
@@ -94,3 +102,9 @@ def disconnected_genes(model):
     for reaction in model.reactions.values():
         disconnected -= set(reaction.get_associated_genes())
     return disconnected
+
+
+def empty_compartments(model):
+    used = [met.compartment for met in model.metabolites.values()]
+    empty = set(model.compartments) - set(used)
+    return empty

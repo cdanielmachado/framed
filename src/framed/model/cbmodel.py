@@ -1,6 +1,7 @@
 from collections import OrderedDict
 
 from .model import Model, Metabolite, Reaction, AttrOrderedDict
+from .parser import ReactionParser
 
 
 class Gene:
@@ -367,6 +368,9 @@ class CBModel(Model):
             use multiple compartments you will have to change them manually afterwards.
         """
 
+        if not self._parser:
+            self._parser = ReactionParser()
+
         r_id, reversible, stoichiometry, lb, ub, obj_coeff = \
             self._parser.parse_reaction(reaction_str, kind='cb')
 
@@ -376,6 +380,9 @@ class CBModel(Model):
 
         reaction = CBReaction(r_id, r_id, reversible, stoichiometry, None, lb, ub, obj_coeff)
         self.add_reaction(reaction)
+
+        return r_id
+
 
     def get_objective(self):
         return {r_id: rxn.objective for r_id, rxn in self.reactions.items() if rxn.objective}

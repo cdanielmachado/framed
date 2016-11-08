@@ -5,7 +5,7 @@ Author: Daniel Machado
 """
 
 from collections import OrderedDict
-from copy import deepcopy
+from copy import copy, deepcopy
 
 from .parser import ReactionParser
 
@@ -139,8 +139,8 @@ class Compartment:
 
 class AttrOrderedDict(OrderedDict):
 
-    def __init__(self):
-        super(AttrOrderedDict, self).__init__()
+    def __init__(self, *args):
+        super(AttrOrderedDict, self).__init__(*args)
 
     def __getattr__(self, name):
         if not name.startswith('_'):
@@ -155,6 +155,18 @@ class AttrOrderedDict(OrderedDict):
 
     def __dir__(self):
         return dir(OrderedDict) + self.keys()
+
+    def __copy__(self):
+        my_copy = AttrOrderedDict()
+        for key, val in self.items():
+            my_copy[key] = copy(val)
+        return my_copy
+
+    def __deepcopy__(self, memo):
+        my_copy = AttrOrderedDict()
+        for key, val in self.items():
+            my_copy[key] = deepcopy(val)
+        return my_copy
 
 
 class Model:
@@ -173,12 +185,12 @@ class Model:
         self.compartments = AttrOrderedDict()
         self.metadata = OrderedDict()
         self._clear_temp()
-        self._parser = ReactionParser()
 
     def _clear_temp(self):
         self._m_r_lookup = None
         self._reg_lookup = None
         self._s_matrix = None
+        self._parser = None
 
     def copy(self):
         """ Create an identical copy of the model.
@@ -188,6 +200,7 @@ class Model:
 
         """
 
+        self._clear_temp()
         return deepcopy(self)
 
     def add_metabolite(self, metabolite):
@@ -221,20 +234,27 @@ class Model:
         """
         self.compartments[compartment.id] = compartment
 
-    def remove_metabolites(self, id_list):
+    def remove_metabolites(self, id_list, safe_delete=True):
         """ Remove a list of metabolites from the model.
 
         Arguments:
             id_list (list): metabolite ids
+            safe_delete (bool): also remove from reactions (default: True)
         """
+
+        if safe_delete:
+            m_r_lookup = self.metabolite_reaction_lookup()
+
         for m_id in id_list:
             if m_id in self.metabolites:
                 del self.metabolites[m_id]
             else:
                 print 'No such metabolite', m_id
-            for reaction in self.reactions.values():
-                if m_id in reaction.stoichiometry.keys():
-                    del reaction.stoichiometry[m_id]
+
+            if safe_delete:
+                for r_id in m_r_lookup[m_id]:
+                    del self.reactions[r_id].stoichiometry[m_id]
+
         self._clear_temp()
 
     def remove_metabolite(self, m_id):
@@ -300,29 +320,43 @@ class Model:
             target_mets = [m_id for m_id, met in self.metabolites.items() if met.compartment in c_ids]
             self.remove_metabolites(target_mets)
 
-    def get_metabolite_producers(self, m_id):
+    def get_metabolite_producers(self, m_id, reversible=False):
         """ Return the list of reactions producing a given metabolite
 
         Arguments:
             m_id (str): metabolite id
+            reversible (bool): also include reversible consumers
 
         Returns:
-            list: input reactions
+            list: producing reactions
         """
         table = self.metabolite_reaction_lookup()
-        return [r_id for r_id, coeff in table[m_id].items() if coeff > 0]
 
-    def get_metabolite_consumers(self, m_id):
+        producers = []
+        for r_id, coeff in table[m_id].items():
+            if coeff > 0 or reversible and self.reactions[r_id].reversible:
+                producers.append(r_id)
+
+        return producers
+
+    def get_metabolite_consumers(self, m_id, reversible=False):
         """ Return the list of reactions consuming a given metabolite
 
         Arguments:
             m_id (str): metabolite id
+            reversible (bool): also include reversible producers
 
         Returns:
-            list: output reactions 
+            list: consuming reactions
         """
         table = self.metabolite_reaction_lookup()
-        return [r_id for r_id, coeff in table[m_id].items() if coeff < 0]
+
+        consumers = []
+        for r_id, coeff in table[m_id].items():
+            if coeff < 0 or reversible and self.reactions[r_id].reversible:
+                consumers.append(r_id)
+
+        return consumers
 
     def get_activation_targets(self, m_id):
         table = self.regulatory_lookup()
@@ -424,6 +458,9 @@ class Model:
             use multiple compartments you will have to change them manually afterwards.
         """
 
+        if not self._parser:
+            self._parser = ReactionParser()
+
         r_id, reversible, stoichiometry = self._parser.parse_reaction(reaction_str)
 
         for m_id in stoichiometry:
@@ -432,3 +469,14 @@ class Model:
 
         reaction = Reaction(r_id, r_id, reversible, stoichiometry)
         self.add_reaction(reaction)
+
+        return r_id
+
+    def get_boundary_metabolites(self):
+        """ Get list of boundary metabolites in this model
+
+        Returns:
+            list: boundary metabolites
+
+        """
+        return [m_id for m_id, met in self.metabolites.items() if met.boundary]

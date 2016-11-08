@@ -1,7 +1,7 @@
 import unittest
 
-from framed.io.sbml import load_cbmodel, load_odemodel, save_sbml_model
-from framed.io.plaintext import read_model_from_file, write_model_to_file
+from framed import load_cbmodel, load_odemodel, save_sbml_model
+from framed import read_model_from_file, write_model_to_file
 
 
 SMALL_TEST_MODEL = '../../../examples/models/ecoli_core_model.xml'

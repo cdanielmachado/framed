@@ -345,8 +345,8 @@ def extend_model_with_DB_plainText(model, reactionsDB):
                 for line in stream:
                     line = line.strip()
                     if line != '' and line[0] != '#':
-                        model_extended.add_reaction_from_str(line)
-                        db_reactions.append(model_extended.reactions.keys()[-1])
+                        r_id = model_extended.add_reaction_from_str(line)
+                        db_reactions.append(r_id)
 
     except Exception as e:
         print e
