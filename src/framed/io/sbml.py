@@ -229,17 +229,24 @@ def parse_gpr_rule(rule):
 
     rule = rule.replace('(', '( ').replace(')', ' )')
 
+    def replace_all(text, chars, char):
+        for c in chars:
+            text = text.replace(c, char)
+        return text
+
+    troublemakers = ['.', '-', '|', ':']
+
     def replacement(token):
-        if token == 'and':
+        if token.lower() == 'and':
             return '&'
-        elif token == 'or':
+        elif token.lower() == 'or':
             return '|'
         elif token == '(' or token == ')':
             return token
         elif token.startswith('G_'):
-            return token.replace('-', '_')
+            return replace_all(token, troublemakers, '_')
         else:
-            return 'G_' + token.replace('-', '_')
+            return replace_all('G_' + token, troublemakers, '_')
 
     rule = ' '.join(map(replacement, rule.split()))
 
@@ -639,10 +646,14 @@ def _load_metadata(sbml_elem, elem):
     notes = sbml_elem.getNotes()
 
     if notes:
-        html_tag = notes.getChild(0)
-        for i in range(html_tag.getNumChildren()):
-            child = html_tag.getChild(i)
-            note_str = child.getChild(0).getCharacters()
-            if ':' in note_str:
-                key, value = note_str.split(':', 1)
-                elem.metadata[key.strip()] = value.strip()
+        _recursive_node_parser(notes, elem.metadata)
+
+
+def _recursive_node_parser(node, cache):
+    node_data = node.getCharacters()
+    if ':' in node_data:
+        key, value = node_data.split(':', 1)
+        cache[key.strip()] = value.strip()
+
+    for i in range(node.getNumChildren()):
+        _recursive_node_parser(node.getChild(i), cache)

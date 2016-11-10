@@ -2,6 +2,7 @@ from collections import OrderedDict
 from framed.cobra.simulation import MOMA, lMOMA
 from framed.solvers.solver import Status
 from numpy import array, sqrt, sum, abs
+import escher
 
 
 def fit_fluxes_to_model(model, fluxes, constraints=None, quadratic=False):
@@ -67,3 +68,25 @@ def merge_fluxes(model, mapping, v):
             v_new[r_id] = v[r_id]
 
     return v_new
+
+
+def build_escher_map(fluxes, map_name, abstol=1e-6):
+
+    data = {r_id[2:]: abs(val) if abs(val) > abstol else 0.0 for r_id, val in fluxes.items()}
+
+    colors = [{'type': 'min', 'color': '#f0f0f0', 'size': 8},
+              {'type': 'mean', 'color': '#abb7ff', 'size': 20},
+              {'type': 'max', 'color': '#0f16fb', 'size': 40}]
+
+    emap = escher.Builder(map_name=map_name, reaction_data=data,
+                          reaction_scale=colors,
+                          reaction_no_data_size=8,
+                          reaction_no_data_color='#ffddda')
+
+    return emap
+
+
+def list_escher_maps():
+    maps = escher.list_available_maps()
+    return [entry['map_name'] for entry in maps]
+

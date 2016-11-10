@@ -383,6 +383,5 @@ class CBModel(Model):
 
         return r_id
 
-
     def get_objective(self):
         return {r_id: rxn.objective for r_id, rxn in self.reactions.items() if rxn.objective}

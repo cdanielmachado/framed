@@ -76,7 +76,7 @@ class Solution:
 
         return 'Objective: {}\nStatus: {}\n'.format(self.fobj, status_codes[self.status])
 
-    def show_values(self, zeros=False, pattern=None):
+    def show_values(self, zeros=False, pattern=None, abstol=1e-9):
         """ Show solution results.
 
         Arguments:
@@ -93,7 +93,7 @@ class Solution:
         values = self.values.items()
 
         if not zeros:
-            values = filter(lambda (r_id, val): val, values)
+            values = filter(lambda (r_id, val): abs(val) > abstol, values)
 
         if pattern:
             values = filter(lambda (r_id, val): pattern in r_id, values)
@@ -102,7 +102,7 @@ class Solution:
 
         return '\n'.join(entries)
 
-    def show_shadow_prices(self, zeros=False, pattern=None):
+    def show_shadow_prices(self, zeros=False, pattern=None, abstol=1e-9):
         """ Show shadow prices.
 
         Arguments:
@@ -119,7 +119,7 @@ class Solution:
         values = self.shadow_prices.items()
 
         if not zeros:
-            values = filter(lambda (m_id, val): val, values)
+            values = filter(lambda (m_id, val): abs(val) > abstol, values)
 
         if pattern:
             values = filter(lambda (m_id, val): pattern in m_id, values)
@@ -128,7 +128,7 @@ class Solution:
 
         return '\n'.join(entries)
 
-    def show_reduced_costs(self, zeros=False, pattern=None):
+    def show_reduced_costs(self, zeros=False, pattern=None, abstol=1e-9):
         """ Show reduced costs.
 
         Arguments:
@@ -145,7 +145,7 @@ class Solution:
         values = self.reduced_costs.items()
 
         if not zeros:
-            values = filter(lambda (r_id, val): val, values)
+            values = filter(lambda (r_id, val): abs(val) > abstol, values)
 
         if pattern:
             values = filter(lambda (r_id, val): pattern in r_id, values)

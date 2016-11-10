@@ -213,6 +213,7 @@ class Model:
         """
         if metabolite.compartment in self.compartments or not metabolite.compartment:
             self.metabolites[metabolite.id] = metabolite
+            self._clear_temp()
         else:
             print 'Failed to add metabolite', metabolite.id, '(invalid compartment)'
 
@@ -224,6 +225,7 @@ class Model:
             reaction (Reaction): reaction to add
         """
         self.reactions[reaction.id] = reaction
+        self._clear_temp()
 
     def add_compartment(self, compartment):
         """ Add a single compartment to the model.
