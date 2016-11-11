@@ -76,7 +76,7 @@ class Solution:
 
         return 'Objective: {}\nStatus: {}\n'.format(self.fobj, status_codes[self.status])
 
-    def show_values(self, zeros=False, pattern=None, abstol=1e-9):
+    def show_values(self, zeros=False, pattern=None, sort=False, abstol=1e-9):
         """ Show solution results.
 
         Arguments:
@@ -91,6 +91,9 @@ class Solution:
             return None
 
         values = self.values.items()
+
+        if sort:
+            values.sort(key= lambda (_, val): abs(val), reverse=True)
 
         if not zeros:
             values = filter(lambda (r_id, val): abs(val) > abstol, values)
