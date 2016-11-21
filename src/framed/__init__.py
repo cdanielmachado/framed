@@ -4,7 +4,8 @@ from .cobra.phaseplane import PhPP
 from .cobra.plotting import plot_flux_envelope
 from .cobra.strain_design import combinatorial_gene_deletion, combinatorial_reaction_deletion, greedy_gene_deletion, greedy_reaction_deletion
 from .cobra.variability import FVA, blocked_reactions, flux_envelope, production_envelope, flux_envelope_3d
-from .cobra.simulation import FBA, pFBA, looplessFBA, MOMA, lMOMA, ROOM
+from .cobra.simulation import FBA, pFBA, MOMA, lMOMA, ROOM
+from .cobra.thermodynamics import TFA, TVA, looplessFBA, NET
 
 from .io.plaintext import read_model_from_file, read_cbmodel_from_file, write_model_to_file
 from .io.sbml import load_sbml_model, load_cbmodel, load_odemodel, save_cbmodel, save_sbml_model

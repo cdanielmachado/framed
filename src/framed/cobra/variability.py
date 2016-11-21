@@ -7,7 +7,8 @@ Authors: Daniel Machado, Kai Zhuang
 from collections import OrderedDict
 from ..solvers import solver_instance
 from ..solvers.solver import Status
-from simulation import FBA, looplessFBA
+from simulation import FBA
+from thermodynamics import looplessFBA
 from numpy import linspace
 
 
@@ -55,7 +56,7 @@ def FVA(model, obj_percentage=0, reactions=None, constraints=None, loopless=Fals
             variability[r_id][0] = solution.fobj
         elif solution.status == Status.UNBOUNDED:
             variability[r_id][0] = None
-        elif solution.status == Status.INF_OR_UNB: #taking a wild guess here!
+        elif solution.status == Status.INF_OR_UNB:
             variability[r_id][0] = None
         elif solution.status == Status.INFEASIBLE:
             variability[r_id][0] = 0
@@ -74,7 +75,7 @@ def FVA(model, obj_percentage=0, reactions=None, constraints=None, loopless=Fals
             variability[r_id][1] = solution.fobj
         elif solution.status == Status.UNBOUNDED:
             variability[r_id][1] = None
-        elif solution.status == Status.INF_OR_UNB: #taking a wild guess here!
+        elif solution.status == Status.INF_OR_UNB:
             variability[r_id][1] = None
         elif solution.status == Status.INFEASIBLE:
             variability[r_id][1] = 0

@@ -172,7 +172,8 @@ def _load_cbmodel(sbml_model, flavor):
         _load_fbc2_objective(sbml_model, model)
         _load_fbc2_gpr(sbml_model, model)
     else:
-        print 'unsupported SBML flavor', flavor
+        print 'unsupported SBML flavor:', flavor
+        print 'supported flavors:', COBRA_MODEL, FBC2_MODEL
 
     return model
 

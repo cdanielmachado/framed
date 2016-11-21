@@ -4,7 +4,6 @@ Author: Daniel Machado
 
 """
 
-from framed.experimental.mathutils import nullspace
 from ..solvers import solver_instance
 from ..solvers.solver import Status, VarType
 
@@ -69,7 +68,7 @@ def pFBA(model, objective=None, minimize=False, constraints=None, reactions=None
     if not reactions:
         reactions = model.reactions.keys()
        
-    if not hasattr(solver, 'pFBA_flag'): #for speed (about 3x faster)
+    if not hasattr(solver, 'pFBA_flag'):
         solver.pFBA_flag = True
         for r_id in reactions:
             if model.reactions[r_id].reversible:
@@ -106,72 +105,6 @@ def pFBA(model, objective=None, minimize=False, constraints=None, reactions=None
                 pos, neg = r_id + '+', r_id + '-'
                 del solution.values[pos]
                 del solution.values[neg]
-
-    return solution
-
-
-def looplessFBA(model, objective=None, minimize=False, constraints=None, internal=None, solver=None, get_values=True):
-    """ Run loopless FBA simulation (aka Energy Balance Analysis as defined in Beard et al, 2002):
-    
-    Arguments:
-        model (CBModel): a constraint-based model
-        objective (dict): objective coefficients (optional)
-        minimize (bool): sense of optimization (maximize by default)
-        constraints (dict: environmental or additional constraints (optional)
-        internal (list): list of internal reactions (optional)
-        solver (Solver): solver instance instantiated with the model, for speed (optional)
-        get_values (bool): set to false for speedup if you only care about the objective value (optional, default: True)
-       
-    Returns:
-        Solution: solution
-    """
-
-    M = 1e4
-
-    if not solver:
-        solver = solver_instance(model)
-
-    if not objective:
-        objective = model.get_objective()
-
-    if not hasattr(solver, 'll_FBA_flag'):
-        solver.ll_FBA_flag = True
-
-        if not internal:
-            internal = [r_id for r_id, reaction in model.reactions.items()
-                        if len(reaction.stoichiometry) > 1]
-
-        Sint = [[model.reactions[r_id].stoichiometry[m_id]
-                 if m_id in model.reactions[r_id].stoichiometry else 0
-                 for r_id in internal]
-                for m_id in model.metabolites]
-
-        Nint = nullspace(Sint)
-
-        for r_id in internal:
-            a, g = 'a' + r_id, 'g' + r_id
-            solver.add_variable(g, persistent=False, update_problem=False)
-            solver.add_variable(a, 0, 1, vartype=VarType.BINARY, persistent=False, update_problem=False)
-        solver.update()
-
-        for r_id in internal:
-            a, g = 'a' + r_id, 'g' + r_id
-            solver.add_constraint('c1_' + r_id, {a: M, r_id: -1}, '<', M, persistent=False, update_problem=False)
-            solver.add_constraint('c2_' + r_id, {a: -M, r_id: 1}, '<', 0, persistent=False, update_problem=False)
-            solver.add_constraint('c3_' + r_id, {a: M+1, g: 1}, '>', 1, persistent=False, update_problem=False)
-            solver.add_constraint('c4_' + r_id, {a: M+1, g: 1}, '<', M, persistent=False, update_problem=False)
-        solver.update()
-
-        for i, row in enumerate(Nint):
-            expr = {'g' + r_id: coeff for r_id, coeff in zip(internal, row) if abs(coeff) > 1e-12}
-            solver.add_constraint('n{}'.format(i), expr, '=', 0, persistent=False, update_problem=False)
-
-        solver.update()
-
-    if not constraints:
-        constraints = dict()
-
-    solution = solver.solve(objective, minimize=minimize, constraints=constraints, get_values=get_values)
 
     return solution
 
@@ -224,7 +157,7 @@ def lMOMA(model, reference=None, constraints=None, solver=None):
     if not solver:
         solver = solver_instance(model)
 
-    if not hasattr(solver, 'lMOMA_flag'): #for speed (about 3x faster)
+    if not hasattr(solver, 'lMOMA_flag'):
         solver.lMOMA_flag = True
         for r_id in reference.keys():
             d_pos, d_neg = r_id + '_d+', r_id + '_d-'
@@ -270,8 +203,8 @@ def ROOM(model, reference=None, constraints=None, solver=None, delta=0.03, epsil
         Solution: solution
     """
 
-    U = 1e6;
-    L = -1e6;
+    U = 1e6
+    L = -1e6
     
     if not reference:
         wt_solution = pFBA(model)
@@ -281,7 +214,7 @@ def ROOM(model, reference=None, constraints=None, solver=None, delta=0.03, epsil
         solver = solver_instance(model)
 
     objective = dict()
-    if not hasattr(solver, 'ROOM_flag'): #for speed (a LOT faster)
+    if not hasattr(solver, 'ROOM_flag'):
         solver.ROOM_flag = True
 
         for r_id in model.reactions.keys():
@@ -308,4 +241,3 @@ def ROOM(model, reference=None, constraints=None, solver=None, delta=0.03, epsil
             del solution.values[y_i]
 
     return solution
-                

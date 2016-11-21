@@ -38,6 +38,9 @@ def get_default_solver():
 
     global default_solver
 
+    if default_solver:
+        return default_solver
+
     solver_order = ['gurobi', 'cplex', 'glpk', 'glpk_lazy']
 
     for solver in solver_order:

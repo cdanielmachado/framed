@@ -158,6 +158,20 @@ class CBModel(Model):
         self.genes = AttrOrderedDict()
         self.biomass_reaction = None
 
+    def get_flux_bounds(self, r_id):
+        """ Get flux bounds for reaction
+
+        Arguments:
+            r_id (str): reaction id
+
+        Returns:
+            float: lower bound
+            float: upper bound
+        """
+
+        reaction = self.reactions[r_id]
+        return reaction.lb, reaction.ub
+
     def set_flux_bounds(self, r_id, lb, ub):
         """ Define flux bounds for one reaction
 

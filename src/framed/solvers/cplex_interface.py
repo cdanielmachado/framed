@@ -149,8 +149,7 @@ class CplexSolver(Solver):
             self.constr_ids.remove(constr_id)
 
     def update(self):
-        """ Update internal structure. Used for efficient lazy updating. """
-        print 'Cplex solver does not allow lazy updating.'
+        pass
 
     def build_problem(self, model):
         """ Create problem structure for a given model.
