@@ -178,13 +178,6 @@ def lMOMA(model, reference=None, constraints=None, solver=None):
 
     solution = solver.solve(objective, minimize=True, constraints=constraints)
 
-    #post process
-    if solution.status == Status.OPTIMAL:
-        for r_id in reference.keys():
-            d_pos, d_neg = r_id + '_d+', r_id + '_d-'
-            del solution.values[d_pos]
-            del solution.values[d_neg]
-
     return solution
 
 
@@ -233,11 +226,5 @@ def ROOM(model, reference=None, constraints=None, solver=None, delta=0.03, epsil
         solver.update()
 
     solution = solver.solve(objective, minimize=True, constraints=constraints)
-    
-    #post process
-    if solution.status == Status.OPTIMAL:
-        for r_id in model.reactions.keys():
-            y_i = 'y_' + r_id
-            del solution.values[y_i]
 
     return solution

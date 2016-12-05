@@ -16,10 +16,10 @@ def simplify(model, clean_compartments=True, inplace=True):
     Arguments:
         model (CBModel): model
         clean_compartments (bool): remove empty compartments (default: True)
-        inplace (bool): change model inplace (default), otherwise create a copy first
+        inplace (bool): change model in place (default), otherwise create a copy first
         
     Returns:
-        tuple: lists of removed reactions, metabolites, and genes
+        CBModel: simplified model (if not in place)
     """
 
     if not inplace:
@@ -38,7 +38,8 @@ def simplify(model, clean_compartments=True, inplace=True):
         empty = empty_compartments(model)
         model.remove_compartments(empty, delete_metabolites=False)
 
-    return del_reactions, del_metabolites, del_genes
+    if not inplace:
+        return model
 
 
 def make_irreversible(model, inplace=True, reactions=None):

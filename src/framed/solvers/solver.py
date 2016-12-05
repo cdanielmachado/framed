@@ -82,9 +82,10 @@ class Solution:
         Arguments:
             zeros (bool): show zero values (default: False)
             pattern (str): show only reactions that contain pattern (optional)
+            sort (bool): sort values by magnitude (default: False)
             
         Returns:
-            str: printed table with variable values (and reduced costs if calculated) 
+            str: printed table with variable values
         """
 
         if not self.values:
@@ -220,10 +221,44 @@ class Solution:
             dict: metabolite turnover rates
         """
 
+        if not self.values:
+            return None
+
         m_r_table = model.metabolite_reaction_lookup()
         t = {m_id: 0.5*sum([abs(coeff * self.values[r_id]) for r_id, coeff in neighbours.items()])
              for m_id, neighbours in m_r_table.items()}
         return t
+
+    def show_metabolite_turnover(self, model, zeros=False, pattern=None, sort=False, abstol=1e-9):
+        """ Show solution results.
+
+        Arguments:
+            model (CBModel): model that generated the solution
+            zeros (bool): show zero values (default: False)
+            pattern (str): show only reactions that contain pattern (optional)
+            sort (bool): sort values by magnitude (default: False)
+
+        Returns:
+            str: printed table
+        """
+
+        if not self.values:
+            return None
+
+        values = self.get_metabolites_turnover(model).items()
+
+        if sort:
+            values.sort(key=lambda (_, val): abs(val), reverse=True)
+
+        if not zeros:
+            values = filter(lambda (_, val): abs(val) > abstol, values)
+
+        if pattern:
+            values = filter(lambda (key, val): pattern in key, values)
+
+        entries = ['{:<12} {: .6g}'.format(key, val) for (key, val) in values]
+
+        return '\n'.join(entries)
 
 
 class Solver:

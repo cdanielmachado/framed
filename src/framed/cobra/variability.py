@@ -10,6 +10,7 @@ from ..solvers.solver import Status
 from simulation import FBA
 from thermodynamics import looplessFBA
 from numpy import linspace
+from warnings import warn
 
 
 def FVA(model, obj_percentage=0, reactions=None, constraints=None, loopless=False, internal=None, solver=None):
@@ -55,14 +56,13 @@ def FVA(model, obj_percentage=0, reactions=None, constraints=None, loopless=Fals
         if solution.status == Status.OPTIMAL:
             variability[r_id][0] = solution.fobj
         elif solution.status == Status.UNBOUNDED:
-            variability[r_id][0] = None
+            pass
         elif solution.status == Status.INF_OR_UNB:
-            variability[r_id][0] = None
+            pass
         elif solution.status == Status.INFEASIBLE:
-            variability[r_id][0] = 0
+            warn('Infeasible solution status')
         else:
-            print 'Warning: unknown solver status'
-            variability[r_id][0] = None
+            warn('Unknown solution status')
 
     for r_id in reactions:
         if loopless:
@@ -74,14 +74,13 @@ def FVA(model, obj_percentage=0, reactions=None, constraints=None, loopless=Fals
         if solution.status == Status.OPTIMAL:
             variability[r_id][1] = solution.fobj
         elif solution.status == Status.UNBOUNDED:
-            variability[r_id][1] = None
+            pass
         elif solution.status == Status.INF_OR_UNB:
-            variability[r_id][1] = None
+            pass
         elif solution.status == Status.INFEASIBLE:
-            variability[r_id][1] = 0
+            warn('Infeasible solution status')
         else:
-            print 'Warning: unknown solver status'
-            variability[r_id][1] = None
+            warn('Unknown solution status')
 
     return variability
 

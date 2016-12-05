@@ -231,6 +231,7 @@ def TVA(model, deltaG0, sdeltaG0=None, measured_concentrations=None, concentrati
     bounds = OrderedDict()
 
     for r_id in reactions:
+
         objective = {r_id: 1}
         sol = TFA(model, deltaG0,
                   sdeltaG0=sdeltaG0,
@@ -245,6 +246,10 @@ def TVA(model, deltaG0, sdeltaG0=None, measured_concentrations=None, concentrati
                   constraints=constraints,
                   solver=solver,
                   get_values=False)
+
+        if sol.status == Status.INFEASIBLE:
+            print 'Error: problem is infeasible'
+            return
 
         lb = sol.fobj if sol.status == Status.OPTIMAL else None
 
@@ -354,8 +359,15 @@ def NET(model, deltaG0, sdeltaG0=None, measured_concentrations=None, concentrati
         dG_range = OrderedDict()
 
         for r_id in model.reactions:
+
+            if model.reactions.index(r_id) % 10 == 0:
+                print model.reactions.index(r_id)
+
             if r_id in deltaG0:
                 sol_min = solver.solve({'dG_' + r_id: 1}, minimize=True)
+                if sol_min.status == Status.INFEASIBLE:
+                    print 'Error: problem is infeasible'
+                    return
                 sol_max = solver.solve({'dG_' + r_id: 1}, minimize=False)
                 dG_min = sol_min.fobj if sol_min.status == Status.OPTIMAL else None
                 dG_max = sol_max.fobj if sol_max.status == Status.OPTIMAL else None
@@ -367,6 +379,9 @@ def NET(model, deltaG0, sdeltaG0=None, measured_concentrations=None, concentrati
         for m_id in model.metabolites:
             if m_id in included:
                 sol_min = solver.solve({'ln_' + m_id: 1}, minimize=True)
+                if sol_min.status == Status.INFEASIBLE:
+                    print 'Error: problem is infeasible'
+                    return
                 sol_max = solver.solve({'ln_' + m_id: 1}, minimize=False)
                 x_min = np.exp(sol_min.fobj) if sol_min.status == Status.OPTIMAL else None
                 x_max = np.exp(sol_max.fobj) if sol_max.status == Status.OPTIMAL else None

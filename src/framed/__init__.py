@@ -1,7 +1,7 @@
 from .cobra.deletion import reaction_deletion, gene_deletion
 from .cobra.essentiality import essential_genes, essential_reactions
 from .cobra.phaseplane import PhPP
-from .cobra.plotting import plot_flux_envelope
+from .cobra.plotting import plot_flux_envelope, plot_flux_bounds
 from .cobra.strain_design import combinatorial_gene_deletion, combinatorial_reaction_deletion, greedy_gene_deletion, greedy_reaction_deletion
 from .cobra.variability import FVA, blocked_reactions, flux_envelope, production_envelope, flux_envelope_3d
 from .cobra.simulation import FBA, pFBA, MOMA, lMOMA, ROOM

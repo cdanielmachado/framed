@@ -104,13 +104,24 @@ def _load_compartment(compartment):
     return comp
 
 
-def _load_metabolites(sbml_model, model):
+def _load_metabolites(sbml_model, model, flavor=None):
     for species in sbml_model.getListOfSpecies():
-        model.add_metabolite(_load_metabolite(species))
+        model.add_metabolite(_load_metabolite(species, flavor))
 
 
-def _load_metabolite(species):
+def _load_metabolite(species, flavor=None):
     metabolite = Metabolite(species.getId(), species.getName(), species.getCompartment(), species.getBoundaryCondition())
+
+    if flavor == FBC2_MODEL:
+        fbc_species = species.getPlugin('fbc')
+        if fbc_species.isSetChemicalFormula():
+            formula = fbc_species.getChemicalFormula()
+            metabolite.metadata['FORMULA'] = formula
+
+        if fbc_species.isSetCharge():
+            charge = fbc_species.getCharge()
+            metabolite.metadata['CHARGE'] = str(charge)
+
     _load_metadata(species, metabolite)
     return metabolite
 
@@ -161,7 +172,7 @@ def _load_reaction(reaction):
 def _load_cbmodel(sbml_model, flavor):
     model = CBModel(sbml_model.getId())
     _load_compartments(sbml_model, model)
-    _load_metabolites(sbml_model, model)
+    _load_metabolites(sbml_model, model, flavor)
     _load_reactions(sbml_model, model)
     if not flavor or flavor == COBRA_MODEL:
         _load_cobra_bounds(sbml_model, model)
@@ -411,7 +422,7 @@ def save_sbml_model(model, filename, flavor=None):
         document.enablePackage(FbcExtension.getXmlnsL3V1V2(), 'fbc', True)
     sbml_model = document.createModel(model.id)
     _save_compartments(model, sbml_model)
-    _save_metabolites(model, sbml_model)
+    _save_metabolites(model, sbml_model, flavor)
     _save_reactions(model, sbml_model)
     if isinstance(model, CBModel):
         _save_cb_parameters(model, sbml_model, flavor)
@@ -439,13 +450,21 @@ def _save_compartments(model, sbml_model):
         _save_metadata(compartment, sbml_compartment)
 
 
-def _save_metabolites(model, sbml_model):
+def _save_metabolites(model, sbml_model, flavor):
     for metabolite in model.metabolites.values():
         species = sbml_model.createSpecies()
         species.setId(metabolite.id)
         species.setName(metabolite.name)
         species.setCompartment(metabolite.compartment)
         species.setBoundaryCondition(metabolite.boundary)
+
+        if flavor == FBC2_MODEL:
+            fbc_species = species.getPlugin('fbc')
+            if 'FORMULA' in metabolite.metadata:
+                fbc_species.setChemicalFormula(metabolite.metadata['FORMULA'])
+            if 'CHARGE' in metabolite.metadata:
+                fbc_species.setCharge(int(metabolite.metadata['CHARGE']))
+
         _save_metadata(metabolite, species)
 
 

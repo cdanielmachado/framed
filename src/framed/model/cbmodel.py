@@ -158,6 +158,10 @@ class CBModel(Model):
         self.genes = AttrOrderedDict()
         self.biomass_reaction = None
 
+    def _clear_temp(self):
+        Model._clear_temp(self)
+        self._g_r_lookup = None
+
     def get_flux_bounds(self, r_id):
         """ Get flux bounds for reaction
 
@@ -399,3 +403,32 @@ class CBModel(Model):
 
     def get_objective(self):
         return {r_id: rxn.objective for r_id, rxn in self.reactions.items() if rxn.objective}
+
+    def gene_to_reaction_lookup(self):
+        """ Build a dictionary from genes to associated reactions.
+
+        Returns:
+            dict: gene to reaction mapping
+
+        """
+        if not self._g_r_lookup:
+            self._g_r_lookup = OrderedDict([(g_id, []) for g_id in self.genes])
+
+            for r_id, rxn in self.reactions.items():
+                genes = rxn.get_associated_genes()
+                for g_id in genes:
+                    self._g_r_lookup[g_id].append(r_id)
+
+        return self._g_r_lookup
+
+    def get_reactions_by_gene(self, g_id):
+        """ Get a list of reactions associated with a given gene.
+
+        Args:
+            g_id (str): gene id
+
+        Returns:
+            list: reactions catalyzed by any proteins (or subunits) encoded by this gene
+        """
+        g_r_lookup = self.gene_to_reaction_lookup()
+        return g_r_lookup[g_id]

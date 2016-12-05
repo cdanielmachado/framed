@@ -7,6 +7,7 @@ Author: Daniel Machado
 from variability import flux_envelope
 from simulation import FBA
 import matplotlib.pyplot as plt
+import numpy as np
 
 
 def plot_flux_envelope(model, r_x, r_y, substrate=None, constraints=None, reference=None, alternatives=None,
@@ -75,5 +76,54 @@ def _normalize_list(values, x):
 
 def _normalize_dict(fluxes, x):
     for r_id, flux in fluxes.items():
-        fluxes[r_id] = flux / x if flux is not None else None 
-    
+        fluxes[r_id] = flux / x if flux is not None else None
+
+
+def plot_flux_bounds(range1, range2=None, keys=None, log=False, unbounded=1000):
+    """ Plot and compare flux ranges (although other types of ranges also supported).
+
+    Args:
+        range1 (dict): flux ranges
+        range2 (dict): alternative flux ranges (optional)
+        keys (list): only display reactions in this list (optional)
+        log (bool): log scale (default: False)
+        unbounded (float): threshold to display unbounded values (default: 1000)
+
+    """
+
+    if not keys:
+        keys = range1.keys()
+
+    def bounded_left(x):
+        return -unbounded if x is None else x
+
+    def bounded_right(x):
+        return unbounded if x is None else x
+
+    lb1 = np.array([bounded_left(range1[key][0]) for key in keys])
+    ub1 = np.array([bounded_right(range1[key][1]) for key in keys])
+
+    if log:
+        lb1 = np.log10(lb1)
+        ub1 = np.log10(ub1)
+
+    if not range2:
+        idx = np.arange(len(keys))
+        plt.barh(idx, left=lb1, width=(ub1 - lb1))
+        plt.yticks(idx + 0.5, keys)
+        plt.ylim(0, len(keys))
+
+    else:
+        lb2 = np.array([bounded_left(range2[key][0]) for key in keys])
+        ub2 = np.array([bounded_right(range2[key][1]) for key in keys])
+        idx1 = np.arange(1, 2 * len(keys), 2)
+        idx2 = np.arange(0, 2 * len(keys), 2)
+
+        if log:
+            lb2 = np.log10(lb2)
+            ub2 = np.log10(ub2)
+
+        plt.barh(idx1, left=lb1, width=(ub1 - lb1), color='#7ba6ed')
+        plt.barh(idx2, left=lb2, width=(ub2 - lb2), color='#43c6c2')
+        plt.yticks(idx1, keys)
+        plt.ylim(0, 2 * len(keys))
