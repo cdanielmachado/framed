@@ -5,7 +5,7 @@ from framed.experimental.elements import molecular_weight
 
 
 def minimal_medium(model, exchange_reactions, direction=-1, min_mass_weight=False, min_growth=1,
-                   max_uptake=100, max_compounds=None):
+                   max_uptake=100, max_compounds=None, n_solutions=1):
     """ Minimal medium calculator. Determines the minimum number of medium components for the organism to grow.
 
     Notes:
@@ -21,6 +21,7 @@ def minimal_medium(model, exchange_reactions, direction=-1, min_mass_weight=Fals
         min_growth (float): minimum growth rate (default: 1)
         max_uptake (float): maximum uptake rate (default: 100)
         max_compounds (int): limit maximum number of compounds (optional)
+        n_solutions (int): enumerate multiple solutions (default: 1)
 
     Returns:
         list: minimal set of exchange reactions
@@ -96,14 +97,32 @@ def minimal_medium(model, exchange_reactions, direction=-1, min_mass_weight=Fals
 
     solution = solver.solve(objective, minimize=True)
 
-    if solution.status == Status.OPTIMAL:
-        medium = []
-        for y_i in objective:
-            if solution.values[y_i] > 0.5:
-                medium.append(y_i[2:])
-
-        return medium, solution
-    else:
+    if solution.status != Status.OPTIMAL:
         warn('No solution found')
         return None, solution
+
+    medium = [y_i[2:] for y_i in objective if solution.values[y_i] > 0.5]
+
+    if n_solutions == 1:
+        return medium, solution
+    else:
+        medium_list = [medium]
+        solutions = [solution]
+
+        for i in range(1, n_solutions):
+            constr_id = 'iteration_{}'.format(i)
+            previous_sol = {'y_' + r_id: 1 for r_id in medium}
+            solver.add_constraint(constr_id, previous_sol, '<', len(previous_sol) - 1)
+            solution = solver.solve(objective, minimize=True)
+
+            if solution.status != Status.OPTIMAL:
+                warn('Unable to enumerate more solutions')
+                break
+            else:
+                medium = [y_i[2:] for y_i in objective if solution.values[y_i] > 0.5]
+                medium_list.append(medium)
+                solutions.append(solution)
+
+        return medium_list, solutions
+
 
