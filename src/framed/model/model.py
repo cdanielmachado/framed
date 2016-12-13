@@ -4,10 +4,213 @@ Author: Daniel Machado
 
 """
 
-from collections import OrderedDict
+from collections import OrderedDict, MutableMapping
 from copy import copy, deepcopy
 
 from .parser import ReactionParser
+import os, re, errno
+
+
+class Medium(MutableMapping):
+    """
+    This class represents list of provided uptakes for the model. It inherits dictionary
+    and all the operations available in dict class
+    """
+    def __init__(self, *args, **kwargs):
+        self.store = dict()
+        self.update(dict(*args, **kwargs))
+
+    @staticmethod
+    def from_csv(path, reaction_col='reaction', lower_bound_col="lower_bound", upper_bound_col="upper_bound", sep="\t"):
+        """
+        Load medium from tab separated file
+
+        Args:
+            path: Path to medium file
+            reaction_col: Column name with reaction names
+            lower_bound_col: Column name with upper bounds
+            upper_bound_col: Column name with upper bounds
+            sep: Separator for columns
+
+        Returns: Medium
+
+        """
+        if not os.path.exists(path):
+            raise IOError(errno.ENOENT, "Media file '{}' not found".format(path), path)
+
+        medium = Medium()
+        with open(path, "r") as f:
+            header = next(f)
+            header = header.strip()
+            header = header.split("#", 1)[0]
+            header = [h.strip() for h in header.split(sep)]
+
+            for col in [reaction_col, lower_bound_col, upper_bound_col]:
+                if col not in header:
+                    raise IOError(errno.EIO, "Media file '{}' has no column '{}'".format(path, col), path)
+
+            for row in f:
+                if row.startswith("#"):
+                    continue
+
+                row = row.strip()
+                if not row:
+                    continue
+
+                row = row.split("#", 1)[0]
+                row = [c.strip() for c in row.split(sep)]
+                row = dict(zip(header, row))
+
+                medium[row[reaction_col]] = (float(row[lower_bound_col]), float(row[upper_bound_col]))
+
+        return medium
+
+
+    @staticmethod
+    def complete(model, exchange_reaction_pattern="^R_EX_"):
+        """
+        Initialize complete medium for a particular model
+
+        Arguments:
+            model (CBModel): model from which the uptake reactions are guessed
+            exchange_reaction_pattern (str): regex patter for guessing exchange reactions
+
+        Returns:
+            Medium: Complete medium for provided model
+
+        """
+        re_pattern = re.compile(exchange_reaction_pattern)
+        medium = Medium()
+        for r in model.reactions.itervalues():
+            if not re_pattern.search(r.id):
+                continue
+
+            medium[r.id] = True
+
+        return medium
+
+    @staticmethod
+    def effective(model, exchange_reaction_pattern="^R_EX_"):
+        """
+        Initialize effective medium from a provided model
+
+        Arguments:
+            model (CBModel): model from which the uptake reactions are guessed
+            exchange_reaction_pattern (str): regex patter for guessing exchange reactions
+
+        Returns:
+            Medium: Medium from provided model
+
+        """
+        re_pattern = re.compile(exchange_reaction_pattern)
+        medium = Medium()
+        for r in model.reactions.itervalues():
+            if not re_pattern.search(r.id):
+                continue
+
+            medium[r.id] = r.lb, r.ub
+
+        return medium
+
+    @staticmethod
+    def from_compounds(compounds, exchange_reaction_format="R_EX_{}_e"):
+        """
+        Initialize medium from list of compounds and a pattern for exchange reaction
+
+        Arguments:
+            compounds (list): List of compounds present in the medium
+            exchange_reaction_format (str): python format string. Use first placeholder to insert compound id
+
+        Returns:
+            Medium: Complete medium for provided model
+
+        """
+        if not iter(compounds):
+            raise TypeError("Compounds are not iterable")
+
+        medium = Medium()
+        for met in compounds:
+            r_id = exchange_reaction_format.format(met)
+            medium[r_id] = True
+
+        return medium
+
+    def __effective_bounds(self, reaction, bounds):
+        """
+        Finds effective bounds from reaction reversibility and provided bounds tuple
+
+        Arguments:
+            model (CBModel): model from which the uptake reactions are guessed
+            reaction (Reaction): Reaction for which effective bounds are to be found
+            bounds (tuple): tuple with lower and upper bounds for reaction
+
+        Returns:
+            tuple: Tuple with effective bounds for reaction
+
+        """
+        if reaction.reversible:
+            return bounds
+        else:
+            return 0.0 if bounds[0] < 0 else bounds[0], bounds[1]
+
+    def filter_model_reactions(self, model, allow_unknown_reactions=True):
+        """
+        This function removes all reactions not found in the model or raises an exception
+
+        Args:
+            model (CBModel): model which is used to filter the reactions
+            allow_unknown_reactions: If true removes all of the reactions not found in the model. Otherwise if any
+            reaction is not found in the model raises an exception
+        """
+        r_ids = self.keys()
+        if allow_unknown_reactions:
+            for r_id in r_ids:
+                if r_id not in model.reactions:
+                    del self[r_id]
+                else:
+                    self[r_id] = self.__effective_bounds(model.reactions[r_id], self[r_id])
+        else:
+            unknown_reactions = "', '".join(r_id for r_id in self.iteritems() if r_id not in model.reactions)
+            if unknown_reactions:
+                raise KeyError("Exchange reactions '{}' where not found in the model".format(unknown_reactions))
+
+            for r_id in r_ids:
+                self[r_id] = self.__effective_bounds(model.reactions[r_id], self[r_id])
+
+    def copy(self):
+        """ Create an identical copy of the medium.
+
+        Returns:
+            Medium: medium copy
+
+        """
+
+        return deepcopy(self)
+
+    def __getitem__(self, key):
+        return self.store[self.__keytransform__(key)]
+
+    def __setitem__(self, key, value):
+        if isinstance(value, tuple) and len(value) == 2:
+            if not isinstance(value[0], float) or not isinstance(value[1], float):
+                raise TypeError("Media value of reaction '{}' value is not a float".format(key))
+            self.store[self.__keytransform__(key)] = (value[0], value[1])
+        elif isinstance(value, bool):
+            self.store[self.__keytransform__(key)] = (-1000.0 if value else 0.0, 1000.0)
+        else:
+            raise RuntimeError("Media value '{}' is of unknown type <{}> (only <tuple> and <bool>)".format(key, type(value)))
+
+    def __delitem__(self, key):
+        del self.store[self.__keytransform__(key)]
+
+    def __iter__(self):
+        return iter(self.store)
+
+    def __len__(self):
+        return len(self.store)
+
+    def __keytransform__(self, key):
+        return key
 
 
 class Metabolite:
@@ -94,8 +297,8 @@ class Reaction:
         
         return [m_id for m_id, kind in self.regulators.items() if kind == '-']
 
-    def to_string(self, metabolite_names=None):
-        """ Print a reaction to a text based representation.
+    def to_equation_string(self, metabolite_names=None):
+        """ Returns reaction equation string
 
         Arguments:
             metabolite_names (dict): replace metabolite id's with names (optional)
@@ -105,16 +308,30 @@ class Reaction:
         """
 
         if metabolite_names:
-            met_repr = lambda m_id: metabolite_names[m_id]
+            def met_repr(m_id):
+                return metabolite_names[m_id]
         else:
-            met_repr = lambda m_id: m_id
+            def met_repr(m_id):
+                return m_id
 
-        res = self.id + ': '
+        res = ""
         res += ' + '.join([met_repr(m_id) if coeff == -1.0 else str(-coeff) + ' ' + met_repr(m_id)
                            for m_id, coeff in self.stoichiometry.items() if coeff < 0])
         res += ' <-> ' if self.reversible else ' --> '
         res += ' + '.join([met_repr(m_id) if coeff == 1.0 else str(coeff) + ' ' + met_repr(m_id)
                            for m_id, coeff in self.stoichiometry.items() if coeff > 0])
+        return res
+
+    def to_string(self, metabolite_names=None):
+        """ Returns reaction as a string
+
+        Arguments:
+            metabolite_names (dict): replace metabolite id's with names (optional)
+
+        Returns:
+            str: reaction string
+        """
+        res = self.id + ': ' + self.to_equation_string(metabolite_names=metabolite_names)
         return res
 
 
@@ -430,6 +647,38 @@ class Model:
             return self.reactions[r_id].to_string(metabolite_names)
         else:
             return self.reactions[r_id].to_string()
+
+    def set_medium(self, medium, allow_unknown_reactions=True):
+        """
+        Set medium for model
+        Args:
+            medium (Medium): Medium for this model
+            allow_unknown_reactions: Whether to ignore exchange reactions not found in this model
+            or raise an exception (false)
+        """
+
+        if type(medium).__name__ != "Medium":  # This is a hack for jupyter autoreloading
+            raise TypeError("Medium is not instance of <framed.model.model.Medium>")
+
+        medium_copy = medium.copy()
+        medium_copy.filter_model_reactions(self, allow_unknown_reactions=allow_unknown_reactions)
+
+        for r_id, bounds in medium_copy.iteritems():
+            reaction = self.reactions[r_id]
+            reaction.lb = bounds[0]
+            reaction.ub = bounds[1]
+
+    def get_medium(self, exchange_reaction_pattern="^R_EX_"):
+        """
+        Returns effective medium
+
+        Args:
+            exchange_reaction_pattern: Regular expression patter to search for exchange reactions
+
+        Returns:
+            Medium
+        """
+        return Medium.effective(self, exchange_reaction_pattern=exchange_reaction_pattern)
 
     def to_string(self, use_metabolite_names=False):
         """ Print the model to a text based representation.
