@@ -85,18 +85,19 @@ def FVA(model, obj_percentage=0, reactions=None, constraints=None, loopless=Fals
     return variability
 
 
-def blocked_reactions(model, abstol=1e-9):
+def blocked_reactions(model, reactions=None, abstol=1e-9):
     """ Find all blocked reactions in a model
     
     Arguments:
         model (CBModel): a constraint-based model
+        reactions (list): List of reactions which will be checked for blocked (default: None - check all reactions)
         abstol (float): absolute tolerance (default: 1e-9)
         
     Returns:
         list: blocked reactions
     """
 
-    variability = FVA(model)
+    variability = FVA(model, reactions=reactions)
 
     return [r_id for r_id, (lb, ub) in variability.items()
             if lb is not None and ub is not None and abs(lb) < abstol and abs(ub) < abstol]
