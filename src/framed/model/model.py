@@ -153,29 +153,25 @@ class Medium(MutableMapping):
         else:
             return 0.0 if bounds[0] < 0 else bounds[0], bounds[1]
 
-    def filter_model_reactions(self, model, allow_unknown_reactions=True):
+    def apply_model(self, model, exchange_reaction_pattern="^R_EX_"):
         """
         This function removes all reactions not found in the model or raises an exception
 
         Args:
             model (CBModel): model which is used to filter the reactions
-            allow_unknown_reactions: If true removes all of the reactions not found in the model. Otherwise if any
             reaction is not found in the model raises an exception
         """
-        r_ids = self.keys()
-        if allow_unknown_reactions:
-            for r_id in r_ids:
-                if r_id not in model.reactions:
-                    del self[r_id]
-                else:
-                    self[r_id] = self.__effective_bounds(model.reactions[r_id], self[r_id])
-        else:
-            unknown_reactions = "', '".join(r_id for r_id in self.iteritems() if r_id not in model.reactions)
-            if unknown_reactions:
-                raise KeyError("Exchange reactions '{}' where not found in the model".format(unknown_reactions))
-
-            for r_id in r_ids:
+        r_ids = (r_id for r_id in model.reactions if re.match(exchange_reaction_pattern, r_id))
+        for r_id in r_ids:
+            if r_id not in self:
+                self[r_id] = self.__effective_bounds(model.reactions[r_id], (0.0, 1000.0))
+            else:
                 self[r_id] = self.__effective_bounds(model.reactions[r_id], self[r_id])
+
+        r_ids = self.keys()
+        for r_id in r_ids:
+            if r_id not in model.reactions:
+                del self[r_id]
 
     def copy(self):
         """ Create an identical copy of the medium.
@@ -192,9 +188,10 @@ class Medium(MutableMapping):
 
     def __setitem__(self, key, value):
         if isinstance(value, tuple) and len(value) == 2:
-            if not isinstance(value[0], float) or not isinstance(value[1], float):
-                raise TypeError("Media value of reaction '{}' value is not a float".format(key))
-            self.store[self.__keytransform__(key)] = (value[0], value[1])
+            value = list(value)
+            if value[0]: value[0] = float(value[0])
+            if value[1]: value[1] = float(value[1])
+            self.store[self.__keytransform__(key)] = tuple(value)
         elif isinstance(value, bool):
             self.store[self.__keytransform__(key)] = (-1000.0 if value else 0.0, 1000.0)
         else:
@@ -648,12 +645,11 @@ class Model:
         else:
             return self.reactions[r_id].to_string()
 
-    def set_medium(self, medium, allow_unknown_reactions=True):
+    def set_medium(self, medium):
         """
         Set medium for model
         Args:
             medium (Medium): Medium for this model
-            allow_unknown_reactions: Whether to ignore exchange reactions not found in this model
             or raise an exception (false)
         """
 
@@ -661,7 +657,7 @@ class Model:
             raise TypeError("Medium is not instance of <framed.model.model.Medium>")
 
         medium_copy = medium.copy()
-        medium_copy.filter_model_reactions(self, allow_unknown_reactions=allow_unknown_reactions)
+        medium_copy.apply_model(self)
 
         for r_id, bounds in medium_copy.iteritems():
             reaction = self.reactions[r_id]
