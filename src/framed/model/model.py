@@ -94,8 +94,8 @@ class Reaction:
         
         return [m_id for m_id, kind in self.regulators.items() if kind == '-']
 
-    def to_string(self, metabolite_names=None):
-        """ Print a reaction to a text based representation.
+    def to_equation_string(self, metabolite_names=None):
+        """ Returns reaction equation string
 
         Arguments:
             metabolite_names (dict): replace metabolite id's with names (optional)
@@ -105,16 +105,30 @@ class Reaction:
         """
 
         if metabolite_names:
-            met_repr = lambda m_id: metabolite_names[m_id]
+            def met_repr(m_id):
+                return metabolite_names[m_id]
         else:
-            met_repr = lambda m_id: m_id
+            def met_repr(m_id):
+                return m_id
 
-        res = self.id + ': '
+        res = ""
         res += ' + '.join([met_repr(m_id) if coeff == -1.0 else str(-coeff) + ' ' + met_repr(m_id)
                            for m_id, coeff in self.stoichiometry.items() if coeff < 0])
         res += ' <-> ' if self.reversible else ' --> '
         res += ' + '.join([met_repr(m_id) if coeff == 1.0 else str(coeff) + ' ' + met_repr(m_id)
                            for m_id, coeff in self.stoichiometry.items() if coeff > 0])
+        return res
+
+    def to_string(self, metabolite_names=None):
+        """ Returns reaction as a string
+
+        Arguments:
+            metabolite_names (dict): replace metabolite id's with names (optional)
+
+        Returns:
+            str: reaction string
+        """
+        res = self.id + ': ' + self.to_equation_string(metabolite_names=metabolite_names)
         return res
 
 
