@@ -104,7 +104,7 @@ def _verify_balance(model, metabolites, fluxes, abstol=1e-9):
         balance = sum([coeff * fluxes[r_id] for r_id, coeff in neighbours.items()])
         if abs(balance) > abstol:
             success = False
-            warnings.warn(UserWarning, '{} balance {}'.format(m_id, balance))
+            warnings.warn('{} balance {}'.format(m_id, balance), UserWarning)
     return success
 
 
