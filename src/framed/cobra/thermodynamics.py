@@ -11,6 +11,9 @@ import scipy as sp
 from collections import OrderedDict
 from math import sqrt
 
+from ..core import warnings as framed_warnings
+import warnings
+
 
 def nullspace(M, eps=1e-12):
     M = np.array(M)
@@ -248,7 +251,7 @@ def TVA(model, deltaG0, sdeltaG0=None, measured_concentrations=None, concentrati
                   get_values=False)
 
         if sol.status == Status.INFEASIBLE:
-            print 'Error: problem is infeasible'
+            warnings.warn("Problem is infeasible", framed_warnings.OptimizationWarning)
             return
 
         lb = sol.fobj if sol.status == Status.OPTIMAL else None
@@ -276,7 +279,7 @@ def TVA(model, deltaG0, sdeltaG0=None, measured_concentrations=None, concentrati
 
 def NET(model, deltaG0, sdeltaG0=None, measured_concentrations=None, concentration_max=1e-2, concentration_min=1e-5,
         measured_fold_change=10, excluded=None, temperature=298.15, reaction_directions=None,
-        get_dG_range=True, get_concentration_range=False):
+        get_dG_range=True, get_concentration_range=False, verbose=False):
     """ Implementation of Network-embedded thermodynamic (NET) analysis (Kummel et al 2006).
 
         Differs from the original implementation by (optionally) integrating standard deviation for deltaG0.
@@ -294,7 +297,7 @@ def NET(model, deltaG0, sdeltaG0=None, measured_concentrations=None, concentrati
         reaction_directions (dict): pre-defined reaction directions: +1 forward, -1 negative (optional)
         get_dG_range (bool): calculate dG ranges (default: True)
         get_concentration_range (bool): calculate metabolite concentration ranges (default: False)
-
+        verbose (bool): Print progress information if true
     Returns:
 
     """
@@ -358,15 +361,15 @@ def NET(model, deltaG0, sdeltaG0=None, measured_concentrations=None, concentrati
     if get_dG_range:
         dG_range = OrderedDict()
 
-        for r_id in model.reactions:
+        for r_i, r_id in enumerate(model.reactions):
 
-            if model.reactions.index(r_id) % 10 == 0:
-                print model.reactions.index(r_id)
+            if r_i % 10 == 0 and verbose:
+                print "{}/{}".format(r_i, len(model.reactions))
 
             if r_id in deltaG0:
                 sol_min = solver.solve({'dG_' + r_id: 1}, minimize=True)
                 if sol_min.status == Status.INFEASIBLE:
-                    print 'Error: problem is infeasible'
+                    warnings.warn("Problem is infeasible", framed_warnings.OptimizationWarning)
                     return
                 sol_max = solver.solve({'dG_' + r_id: 1}, minimize=False)
                 dG_min = sol_min.fobj if sol_min.status == Status.OPTIMAL else None
@@ -380,7 +383,7 @@ def NET(model, deltaG0, sdeltaG0=None, measured_concentrations=None, concentrati
             if m_id in included:
                 sol_min = solver.solve({'ln_' + m_id: 1}, minimize=True)
                 if sol_min.status == Status.INFEASIBLE:
-                    print 'Error: problem is infeasible'
+                    warnings.warn("Problem is infeasible", framed_warnings.OptimizationWarning)
                     return
                 sol_max = solver.solve({'ln_' + m_id: 1}, minimize=False)
                 x_min = np.exp(sol_min.fobj) if sol_min.status == Status.OPTIMAL else None

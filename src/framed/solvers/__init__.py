@@ -49,7 +49,7 @@ def get_default_solver():
             break
 
     if not default_solver:
-        print 'Error: No solver available.'
+        raise EnvironmentError("No solver available")
 
     return default_solver
 
@@ -66,7 +66,7 @@ def set_default_solver(solvername):
     if solvername.lower() in solvers.keys():
         default_solver = solvername.lower()
     else:
-        print 'Error: solver ' + solvername + ' not available.'
+        raise EnvironmentError("Error: solver '{}' not available.".format(solvername))
 
 
 def solver_instance(model=None):

@@ -7,6 +7,7 @@ International Workshop on Biological Processes & Petri Nets (BioPPN).
 from framed.model.model import Reaction
 from framed.model.cbmodel import CBModel
 from uuid import uuid4
+import warnings
 
 
 def balanced_model_reduction(model, metabolites, fluxes, must_keep=None, max_degree=None, clean_null_fluxes=True,
@@ -103,7 +104,7 @@ def _verify_balance(model, metabolites, fluxes, abstol=1e-9):
         balance = sum([coeff * fluxes[r_id] for r_id, coeff in neighbours.items()])
         if abs(balance) > abstol:
             success = False
-            print 'warning: {}\t balance {}'.format(m_id, balance)
+            warnings.warn(UserWarning, '{} balance {}'.format(m_id, balance))
     return success
 
 

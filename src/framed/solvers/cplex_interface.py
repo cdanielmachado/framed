@@ -9,6 +9,8 @@ from .solver import Solver, Solution, Status, VarType, Parameter, default_parame
 from cplex import Cplex, infinity, SparsePair
 import sys
 
+import warnings
+
 
 class CplexSolver(Solver):
     """ Implements the solver interface using CPLEX. """
@@ -208,7 +210,7 @@ class CplexSolver(Solver):
                     problem.variables.set_lower_bounds(r_id, lb)
                     problem.variables.set_upper_bounds(r_id, ub)
                 else:
-                    print 'Error: constrained variable not previously declared', r_id
+                    warnings.warn("Constrained variable '{}' not previously declared".format(r_id), RuntimeWarning)
 
         #create objective function
         if quadratic:
