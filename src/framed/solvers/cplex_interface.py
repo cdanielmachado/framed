@@ -151,6 +151,31 @@ class CplexSolver(Solver):
     def update(self):
         pass
 
+    def set_objective(self, linear=None, quadratic=None, minimize=True):
+        """ Set a predefined objective for this problem.
+
+        Args:
+            linear (dict): linear coefficients (optional)
+            quadratic (dict): quadratic coefficients (optional)
+            minimize (bool): solve a minimization problem (default: True)
+
+        Notes:
+            Setting the objective is optional. It can also be passed directly when calling **solve**.
+
+        """
+        if linear:
+            self.problem.objective.set_linear(linear.items())
+
+        if quadratic:
+            self.problem.objective.set_quadratic([0.0] * len(self.var_ids)) #TODO: is this really necessary ?
+            quad_coeffs = [(r_id1, r_id2, coeff) for (r_id1, r_id2), coeff in quadratic.items()]
+            self.problem.objective.set_quadratic_coefficients(quad_coeffs)
+
+        if minimize:
+            self.problem.objective.set_sense(self.problem.objective.sense.minimize)
+        else:
+            self.problem.objective.set_sense(self.problem.objective.sense.maximize)
+
     def build_problem(self, model):
         """ Create problem structure for a given model.
 
@@ -171,14 +196,14 @@ class CplexSolver(Solver):
         rhs = [0] * len(constr_ids)
         self.add_constraints(constr_ids, lhs, senses, rhs)
 
-    def solve(self, objective, quadratic=None, minimize=True, model=None, constraints=None, get_values=True,
+    def solve(self, linear=None, quadratic=None, minimize=None, model=None, constraints=None, get_values=True,
               get_shadow_prices=False, get_reduced_costs=False):
         """ Solve the optimization problem.
 
         Arguments:
-            objective (dict): linear objective
+            linear (dict): linear objective (optional)
             quadratic (dict): quadratic objective (optional)
-            minimize (bool): minimization problem (default: True)
+            minimize (bool): solve a minimization problem (default: True)
             model (CBModel): model (optional, leave blank to reuse previous model structure)
             constraints (dict): additional constraints (optional)
             get_values (bool): set to false for speedup if you only care about the objective value (default: True)
@@ -210,19 +235,7 @@ class CplexSolver(Solver):
                 else:
                     print 'Error: constrained variable not previously declared', r_id
 
-        #create objective function
-        if quadratic:
-            problem.objective.set_quadratic([0.0] * len(self.var_ids)) #resets previous objectives
-            quad_coeffs = [(r_id1, r_id2, coeff) for (r_id1, r_id2), coeff in quadratic.items()]
-            problem.objective.set_quadratic_coefficients(quad_coeffs)
-
-        if objective:
-            problem.objective.set_linear(objective.items())
-
-        if minimize:
-            problem.objective.set_sense(problem.objective.sense.minimize)
-        else:
-            problem.objective.set_sense(problem.objective.sense.maximize)
+        self.set_objective(linear, quadratic, minimize)
 
         #run the optimization
 
@@ -251,9 +264,10 @@ class CplexSolver(Solver):
         else:
             solution = Solution(status, message)
 
-        if objective:
-            reset_coeffs = [(r_id, 0.0) for r_id in objective]
-            problem.objective.set_linear(reset_coeffs)
+        reset_linear = {key: 0.0 for key in linear} if linear else None
+        reset_quadratic = {key: 0.0 for key in quadratic} if quadratic else None
+
+        self.set_objective(reset_linear, reset_quadratic)
 
         #TODO: update all simultaneously
         if constraints:

@@ -334,6 +334,8 @@ def _parse_fbc_association(gpr_assoc):
 
     gpr = GPRAssociation()
 
+    parsing_error = False
+
     if gpr_assoc.isFbcOr():
         for item in gpr_assoc.getListOfAssociations():
             protein = Protein()
@@ -342,11 +344,15 @@ def _parse_fbc_association(gpr_assoc):
                     if subitem.isGeneProductRef():
                         protein.genes.append(subitem.getGeneProduct())
                     else:
-                        print 'Gene association is not DNF'
+                        parsing_error = True
+                        break
+                if parsing_error:
+                    break
             elif item.isGeneProductRef:
                 protein.genes.append(item.getGeneProduct())
             else:
-                print 'Gene association is not DNF'
+                parsing_error = True
+                break
             gpr.proteins.append(protein)
 
     elif gpr_assoc.isFbcAnd():
@@ -355,16 +361,21 @@ def _parse_fbc_association(gpr_assoc):
             if item.isGeneProductRef():
                 protein.genes.append(item.getGeneProduct())
             else:
-                print 'Gene association is not DNF'
+                parsing_error = True
+                break
         gpr.proteins = [protein]
     elif gpr_assoc.isGeneProductRef():
         protein = Protein()
         protein.genes = [gpr_assoc.getGeneProduct()]
         gpr.proteins = [protein]
     else:
-        print 'Gene association is not DNF'
+        parsing_error = True
 
-    return gpr
+    if not parsing_error:
+        return gpr
+    else:
+        print 'GPR association is not in DNF format and will be ignored. SBML line:', gpr_assoc.getLine()
+        return
 
 
 def _load_odemodel(sbml_model):

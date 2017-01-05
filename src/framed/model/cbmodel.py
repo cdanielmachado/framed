@@ -34,8 +34,15 @@ class Protein:
         self.metadata = OrderedDict()
 
     def __str__(self):
+        return self.to_string()
+
+    def to_string(self, sort=False):
+
         if len(self.genes) > 1:
-            return '(' + ' and '.join(self.genes) + ')'
+            if sort:
+                return '(' + ' and '.join(sorted(self.genes)) + ')'
+            else:
+                return '(' + ' and '.join(self.genes) + ')'
         else:
             return str(self.genes[0])
 
@@ -52,7 +59,16 @@ class GPRAssociation:
         self.metadata = OrderedDict()
 
     def __str__(self):
-        gpr_str = ' or '.join(map(str, self.proteins))
+        return self.to_string()
+
+    def to_string(self, sort=False):
+        proteins_str = [protein.to_string(sort) for protein in self.proteins]
+
+        if sort:
+            proteins_str.sort()
+
+        gpr_str = ' or '.join(proteins_str)
+
         if len(self.proteins) > 1:
             return '(' + gpr_str + ')'
         else:
@@ -434,6 +450,10 @@ class CBModel(Model):
         """
         g_r_lookup = self.gene_to_reaction_lookup()
         return g_r_lookup[g_id]
+
+    def print_objective(self):
+        coeffs = ['{:+g} {}'.format(rxn.objective, r_id) for r_id, rxn in self.reactions.items() if rxn.objective]
+        return ' '.join(coeffs)
 
     def set_medium(self, medium):
         """

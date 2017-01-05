@@ -209,11 +209,11 @@ class GlpkSolver(Solver):
         """
         self.presolve = active
 
-    def solve(self, objective, quadratic=None, minimize=True, model=None, constraints=None, get_shadow_prices=False, get_reduced_costs=False):
+    def solve(self, linear, quadratic=None, minimize=True, model=None, constraints=None, get_shadow_prices=False, get_reduced_costs=False):
         """ Solve the optimization problem.
 
         Arguments:
-            objective (dict): linear objective
+            linear (dict): linear objective
             quadratic (dict): quadratic objective (optional)
             minimize (bool): minimization problem (default: True)
             model (CBModel): model (optional, leave blank to reuse previous model structure)
@@ -242,8 +242,8 @@ class GlpkSolver(Solver):
                 old_constraints[r_id] = (glp_get_col_lb(self.problem, ind_col), glp_get_col_ub(self.problem, ind_col))
                 self.set_var_bounds(ind_col, lb, ub)
 
-        if objective:
-            for r_id, f in objective.items():
+        if linear:
+            for r_id, f in linear.items():
                 if f:
                     ind_col = glp_find_col(self.problem, r_id)
                     glp_set_obj_coef(self.problem, ind_col, f)
