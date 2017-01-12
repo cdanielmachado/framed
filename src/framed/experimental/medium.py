@@ -101,7 +101,7 @@ def minimal_medium(model, exchange_reactions, direction=-1, min_mass_weight=Fals
         warn('No solution found')
         return None, solution
 
-    medium = [y_i[2:] for y_i in objective if solution.values[y_i] > 0.5]
+    medium = [y_i[2:] for y_i in objective if solution.values[y_i] > 1e-5]
 
     if n_solutions == 1:
         return medium, solution
@@ -119,7 +119,7 @@ def minimal_medium(model, exchange_reactions, direction=-1, min_mass_weight=Fals
                 warn('Unable to enumerate more solutions')
                 break
             else:
-                medium = [y_i[2:] for y_i in objective if solution.values[y_i] > 0.5]
+                medium = [y_i[2:] for y_i in objective if solution.values[y_i] > 1e-5]
                 medium_list.append(medium)
                 solutions.append(solution)
 
