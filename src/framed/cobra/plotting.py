@@ -11,7 +11,7 @@ import numpy as np
 
 
 def plot_flux_envelope(model, r_x, r_y, substrate=None, constraints=None, reference=None, alternatives=None,
-                       label_x=None, label_y=None, filename=None, steps=10):
+                       label_x=None, label_y=None, filename=None, steps=10, plot_kwargs=None, fill_kwargs=None):
     """ Plots the flux envelope for a pair of reactions.
     
     Arguments:
@@ -20,12 +20,26 @@ def plot_flux_envelope(model, r_x, r_y, substrate=None, constraints=None, refere
         r_y (str): reaction on y-axis
         substrate (str): compute yields instead of rates (optional)
         constraints (dict): additional constraints
+        reference (dict): display location of reference flux distribution (eg: wild-type strain) (optional)
+        alternatives (list): display location of alternative flux distributions (eg: mutant strains) (optional)
+        label_x (str): change x label (optional, uses reaction name by default)
+        label_y (str): change y label (optional, uses reaction name by default)
         filename (str): filename to save image (optional), otherwise display on screen (default)
         steps (int): number of steps to compute (default: 10)
-        
+        plot_kwargs (dict): keyword parameters to pass along to *pyplot.plot* (optional)
+        fill_kwargs (dict): keyword parameters to pass along to *pyplot.fill_between* (optional)
+
     Returns:
-        tuple: x values, y min values, y max values
+        matplotlib.Axes: axes object
     """
+
+    _, ax = plt.subplots()
+
+    if not plot_kwargs:
+        plot_kwargs = {'color': 'b'}
+
+    if not fill_kwargs:
+        fill_kwargs = {'color': 'b', 'alpha': 0.2}
 
     xvals, ymins, ymaxs = flux_envelope(model, r_x, r_y, steps, constraints)
 
@@ -43,30 +57,35 @@ def plot_flux_envelope(model, r_x, r_y, substrate=None, constraints=None, refere
             for fluxes in alternatives:
                 _normalize_dict(fluxes, abs(fluxes[substrate]))
 
-    plt.plot(xvals, ymins, 'b', xvals, ymaxs, 'b',
-             [xvals[0], xvals[0]], [ymins[0], ymaxs[0]], 'b',
-             [xvals[-1], xvals[-1]], [ymins[-1], ymaxs[-1]], 'b')
+    ax.plot(xvals, ymins, **plot_kwargs)
+    ax.plot(xvals, ymaxs, **plot_kwargs)
+    ax.plot([xvals[0], xvals[0]], [ymins[0], ymaxs[0]], **plot_kwargs)
+    ax.plot([xvals[-1], xvals[-1]], [ymins[-1], ymaxs[-1]], **plot_kwargs)
+
+    ax.fill_between(xvals, ymins, ymaxs, **fill_kwargs)
 
     if alternatives:
         for fluxes in alternatives:
-            plt.plot(fluxes[r_x], fluxes[r_y], 'ro', markersize=5)
+            ax.plot(fluxes[r_x], fluxes[r_y], 'ro', markersize=5)
 
     if reference:
-        plt.plot(reference[r_x], reference[r_y], 'bo', markersize=5)
+        ax.plot(reference[r_x], reference[r_y], 'bo', markersize=5)
 
-    plt.xlabel(label_x) if label_x else plt.xlabel(model.reactions[r_x].name)
-    plt.ylabel(label_y) if label_y else plt.ylabel(model.reactions[r_y].name)
+    ax.set_xlabel(label_x) if label_x else ax.set_xlabel(model.reactions[r_x].name)
+    ax.set_ylabel(label_y) if label_y else ax.set_ylabel(model.reactions[r_y].name)
 
     xmin, xmax = min(xvals), max(xvals)
     dx = 0.03 * (xmax - xmin)
-    plt.xlim((xmin - dx, xmax + dx))
+    ax.set_xlim((xmin - dx, xmax + dx))
 
     ymin, ymax = min(ymins), max(ymaxs)
     dy = 0.03 * (ymax - ymin)
-    plt.ylim((ymin - dy, ymax + dy))
+    ax.set_ylim((ymin - dy, ymax + dy))
 
     if filename:
         plt.savefig(filename)
+    else:
+        return ax
 
 
 def _normalize_list(values, x):

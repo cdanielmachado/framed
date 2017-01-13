@@ -47,6 +47,10 @@ class CplexSolver(Solver):
         self.set_logging()
         self.set_parameters(default_parameters)
 
+        self._cached_lin_obj = None
+        self._cached_quad_obj = None
+        self._cached_sense = None
+
         if model:
             self.build_problem(model)
 
@@ -163,18 +167,24 @@ class CplexSolver(Solver):
             Setting the objective is optional. It can also be passed directly when calling **solve**.
 
         """
-        if linear:
-            self.problem.objective.set_linear(linear.items())
 
-        if quadratic:
+        if linear is not None and linear != self._cached_lin_obj:
+                self.problem.objective.set_linear(linear.items())
+                self._cached_lin_obj = linear.copy()
+
+        if quadratic is not None and quadratic != self._cached_sense:
             self.problem.objective.set_quadratic([0.0] * len(self.var_ids)) #TODO: is this really necessary ?
             quad_coeffs = [(r_id1, r_id2, coeff) for (r_id1, r_id2), coeff in quadratic.items()]
             self.problem.objective.set_quadratic_coefficients(quad_coeffs)
+            self._cached_quad_obj = quadratic.copy()
 
-        if minimize:
-            self.problem.objective.set_sense(self.problem.objective.sense.minimize)
-        else:
-            self.problem.objective.set_sense(self.problem.objective.sense.maximize)
+        if minimize != self._cached_sense:
+            if minimize:
+                sense = self.problem.objective.sense.minimize
+            else:
+                sense = self.problem.objective.sense.maximize
+            self.problem.objective.set_sense(sense)
+            self._cached_sense = sense
 
     def build_problem(self, model):
         """ Create problem structure for a given model.
