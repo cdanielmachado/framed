@@ -3,6 +3,7 @@ from collections import OrderedDict
 from framed import solver_instance
 from framed.solvers.solver import Status
 from framed import FBA, pFBA, MOMA, lMOMA
+from framed import load_cbmodel, save_cbmodel
 
 
 class EnsembleModel():
@@ -46,3 +47,31 @@ def simulate_ensemble(ensemble, method='FBA', constraints=None):
 
     return flux_sample
 
+
+def save_ensemble(ensemble, outputfile, **kwargs):
+
+    for r_id, states in ensemble.reaction_states.items():
+        state_as_str = ' '.join(map(str, map(int, states)))
+        ensemble.model.reactions[r_id].metadata['ENSEMBLE_STATE'] = state_as_str
+
+    save_cbmodel(ensemble.model, outputfile, **kwargs)
+
+
+def load_ensemble(inputfile, **kwargs):
+
+    model = load_cbmodel(inputfile, **kwargs)
+    reaction_states = {}
+
+    for r_id, rxn in model.reactions.items():
+        if 'ENSEMBLE_STATE' in rxn.metadata:
+            state_as_str = rxn.metadata['ENSEMBLE_STATE']
+            states = map(bool, map(int, (state_as_str.split())))
+            reaction_states[r_id] = states
+
+    sizes = map(len, reaction_states.values())
+
+    if len(set(sizes)) > 1:
+        print 'Error: reactions have different ensemble size'
+        return
+
+    return EnsembleModel(model, sizes[0], reaction_states)

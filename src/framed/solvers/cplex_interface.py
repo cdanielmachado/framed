@@ -50,6 +50,8 @@ class CplexSolver(Solver):
         self._cached_lin_obj = None
         self._cached_quad_obj = None
         self._cached_sense = None
+        self._cached_lower_bounds = {}
+        self._cached_upper_bounds = {}
 
         if model:
             self.build_problem(model)
@@ -91,6 +93,8 @@ class CplexSolver(Solver):
             self.problem.variables.add(names=var_ids, lb=lbs, ub=ubs, types=vartypes)
 
         self.var_ids.extend(var_ids)
+        self._cached_lower_bounds.update(dict(zip(var_ids, lbs)))
+        self._cached_upper_bounds.update(dict(zip(var_ids, ubs)))
 
     def add_constraint(self, constr_id, lhs, sense='=', rhs=0, persistent=True, update_problem=True):
         """ Add a constraint to the current problem.
@@ -169,8 +173,8 @@ class CplexSolver(Solver):
         """
 
         if linear is not None and linear != self._cached_lin_obj:
-                self.problem.objective.set_linear(linear.items())
-                self._cached_lin_obj = linear.copy()
+            self.problem.objective.set_linear(linear.items())
+            self._cached_lin_obj = linear.copy()
 
         if quadratic is not None and quadratic != self._cached_sense:
             self.problem.objective.set_quadratic([0.0] * len(self.var_ids)) #TODO: is this really necessary ?
@@ -184,7 +188,7 @@ class CplexSolver(Solver):
             else:
                 sense = self.problem.objective.sense.maximize
             self.problem.objective.set_sense(sense)
-            self._cached_sense = sense
+            self._cached_sense = minimize
 
     def build_problem(self, model):
         """ Create problem structure for a given model.
@@ -229,21 +233,18 @@ class CplexSolver(Solver):
 
         problem = self.problem
 
-        #TODO: update all simultaneously
         if constraints:
-            old_constraints = {}
+            lower_bounds = {}
+            upper_bounds = {}
             for r_id, x in constraints.items():
-                lb, ub = x if isinstance(x, tuple) else (x, x)
                 if r_id in self.var_ids:
-                    old_lb = problem.variables.get_lower_bounds(r_id)
-                    old_ub = problem.variables.get_upper_bounds(r_id)
-                    old_constraints[r_id] = (old_lb, old_ub)
-                    lb = lb if lb is not None else -infinity
-                    ub = ub if ub is not None else infinity
-                    problem.variables.set_lower_bounds(r_id, lb)
-                    problem.variables.set_upper_bounds(r_id, ub)
+                    lb, ub = x if isinstance(x, tuple) else (x, x)
+                    lower_bounds[r_id] = lb if lb is not None else -infinity
+                    upper_bounds[r_id] = ub if ub is not None else infinity
                 else:
                     print 'Error: constrained variable not previously declared', r_id
+            self.problem.variables.set_lower_bounds(lower_bounds.items())
+            self.problem.variables.set_upper_bounds(upper_bounds.items())
 
         self.set_objective(linear, quadratic, minimize)
 
@@ -274,16 +275,9 @@ class CplexSolver(Solver):
         else:
             solution = Solution(status, message)
 
-        reset_linear = {key: 0.0 for key in linear} if linear else None
-        reset_quadratic = {key: 0.0 for key in quadratic} if quadratic else None
-
-        self.set_objective(reset_linear, reset_quadratic)
-
-        #TODO: update all simultaneously
         if constraints:
-            for r_id, (lb, ub) in old_constraints.items():
-                problem.variables.set_lower_bounds(r_id, lb)
-                problem.variables.set_upper_bounds(r_id, ub)
+            problem.variables.set_lower_bounds(self._cached_lower_bounds.items())
+            problem.variables.set_upper_bounds(self._cached_upper_bounds.items())
 
         return solution
 
