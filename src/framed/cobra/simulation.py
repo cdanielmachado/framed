@@ -6,6 +6,7 @@ Author: Daniel Machado
 
 from ..solvers import solver_instance
 from ..solvers.solver import Status, VarType
+from warnings import warn
 
 
 def FBA(model, objective=None, minimize=False, constraints=None, solver=None, get_values=True,
@@ -28,6 +29,9 @@ def FBA(model, objective=None, minimize=False, constraints=None, solver=None, ge
 
     if not objective:
         objective = model.get_objective()
+
+        if len(objective) == 0:
+            warn('Model objective undefined.')
 
     if not solver:
         solver = solver_instance(model)

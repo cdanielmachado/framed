@@ -47,8 +47,7 @@ class CplexSolver(Solver):
         self.set_logging()
         self.set_parameters(default_parameters)
 
-        self._cached_lin_obj = None
-        self._cached_quad_obj = None
+        self._cached_lin_obj = {}
         self._cached_sense = None
         self._cached_lower_bounds = {}
         self._cached_upper_bounds = {}
@@ -95,6 +94,7 @@ class CplexSolver(Solver):
         self.var_ids.extend(var_ids)
         self._cached_lower_bounds.update(dict(zip(var_ids, lbs)))
         self._cached_upper_bounds.update(dict(zip(var_ids, ubs)))
+        self._cached_lin_obj.update({var_id: 0.0 for var_id in var_ids})
 
     def add_constraint(self, constr_id, lhs, sense='=', rhs=0, persistent=True, update_problem=True):
         """ Add a constraint to the current problem.
@@ -172,15 +172,23 @@ class CplexSolver(Solver):
 
         """
 
-        if linear is not None and linear != self._cached_lin_obj:
-            self.problem.objective.set_linear(linear.items())
-            self._cached_lin_obj = linear.copy()
+        if linear:
+            updated_coeffs = {}
 
-        if quadratic is not None and quadratic != self._cached_sense:
+            for var_id in self.var_ids:
+                if var_id in linear and linear[var_id] != self._cached_lin_obj[var_id]:
+                    updated_coeffs[var_id] = linear[var_id]
+                if var_id not in linear and self._cached_lin_obj[var_id] != 0.0:
+                    updated_coeffs[var_id] = 0.0
+
+            if updated_coeffs:
+                self.problem.objective.set_linear(updated_coeffs.items())
+                self._cached_lin_obj.update(updated_coeffs)
+
+        if quadratic:
             self.problem.objective.set_quadratic([0.0] * len(self.var_ids)) #TODO: is this really necessary ?
             quad_coeffs = [(r_id1, r_id2, coeff) for (r_id1, r_id2), coeff in quadratic.items()]
             self.problem.objective.set_quadratic_coefficients(quad_coeffs)
-            self._cached_quad_obj = quadratic.copy()
 
         if minimize != self._cached_sense:
             if minimize:
@@ -234,17 +242,7 @@ class CplexSolver(Solver):
         problem = self.problem
 
         if constraints:
-            lower_bounds = {}
-            upper_bounds = {}
-            for r_id, x in constraints.items():
-                if r_id in self.var_ids:
-                    lb, ub = x if isinstance(x, tuple) else (x, x)
-                    lower_bounds[r_id] = lb if lb is not None else -infinity
-                    upper_bounds[r_id] = ub if ub is not None else infinity
-                else:
-                    print 'Error: constrained variable not previously declared', r_id
-            self.problem.variables.set_lower_bounds(lower_bounds.items())
-            self.problem.variables.set_upper_bounds(upper_bounds.items())
+            changed_lb, changed_ub = self.temporary_bounds(constraints)
 
         self.set_objective(linear, quadratic, minimize)
 
@@ -276,10 +274,43 @@ class CplexSolver(Solver):
             solution = Solution(status, message)
 
         if constraints:
-            problem.variables.set_lower_bounds(self._cached_lower_bounds.items())
-            problem.variables.set_upper_bounds(self._cached_upper_bounds.items())
+            self.reset_bounds(changed_lb, changed_ub)
 
         return solution
+
+    def temporary_bounds(self, constraints):
+
+        lower_bounds, upper_bounds = {}, {}
+        lb_new, ub_new = {}, {}
+
+        def _dict_diff(dict1, dict2):
+            return set(dict1.items()) - set(dict2.items())
+
+        for r_id, x in constraints.items():
+            if r_id in self.var_ids:
+                lb, ub = x if isinstance(x, tuple) else (x, x)
+                lower_bounds[r_id] = lb if lb is not None else -infinity
+                upper_bounds[r_id] = ub if ub is not None else infinity
+            else:
+                print 'Error: constrained variable not previously declared', r_id
+
+        if lower_bounds != self._cached_lower_bounds:
+            lb_new = _dict_diff(lower_bounds, self._cached_lower_bounds)
+            self.problem.variables.set_lower_bounds(lb_new)
+
+        if upper_bounds != self._cached_upper_bounds:
+            ub_new = _dict_diff(upper_bounds, self._cached_upper_bounds)
+            self.problem.variables.set_upper_bounds(ub_new)
+
+        return lb_new, ub_new
+
+    def reset_bounds(self, updated_lb, updated_ub):
+        if updated_lb:
+            lb_old = [(r_id, self._cached_lower_bounds[r_id]) for r_id, _ in updated_lb]
+            self.problem.variables.set_lower_bounds(lb_old)
+        if updated_ub:
+            ub_old = [(r_id, self._cached_upper_bounds[r_id]) for r_id, _ in updated_ub]
+            self.problem.variables.set_upper_bounds(ub_old)
 
     def set_parameter(self, parameter, value):
         """ Set a parameter value for this optimization problem

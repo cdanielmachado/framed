@@ -2,8 +2,8 @@ from collections import OrderedDict
 
 from framed import solver_instance
 from framed.solvers.solver import Status
-from framed import FBA, pFBA, MOMA, lMOMA
 from framed import load_cbmodel, save_cbmodel
+from framed import FBA, pFBA
 
 
 class EnsembleModel():
@@ -30,22 +30,43 @@ class EnsembleModel():
                 not self.reaction_states[r_id][i]}
 
 
-def simulate_ensemble(ensemble, method='FBA', constraints=None):
-    solver = solver_instance(ensemble.model)
-    flux_sample = OrderedDict([(r_id, [None]*ensemble.size) for r_id in ensemble.model.reactions])
+def simulate_ensemble(ensemble, method='FBA', constraints=None, solver=None, get_fluxes=True):
 
-    func = eval(method)
+    if method not in ['FBA', 'pFBA']:
+        print 'Method not available:', method
+        return
+
+    if not solver:
+        solver = solver_instance(ensemble.model)
+
+    if get_fluxes:
+        flux_sample = OrderedDict([(r_id, [None] * ensemble.size) for r_id in ensemble.model.reactions])
+    else:
+        objective = [None] * ensemble.size
 
     for i in range(ensemble.size):
         current = ensemble.get_constraints(i)
-        current.update(constraints)
-        sol = func(ensemble.model, constraints=current, solver=solver)
+
+        if constraints:
+            current.update(constraints)
+
+        if method == 'FBA':
+            sol = FBA(ensemble.model, constraints=current, solver=solver, get_values=get_fluxes)
+
+        if method == 'pFBA':
+            sol = pFBA(ensemble.model, constraints=current, solver=solver)
 
         if sol.status == Status.OPTIMAL:
-            for r_id in ensemble.model.reactions:
-                flux_sample[r_id][i] = sol.values[r_id]
+            if get_fluxes:
+                for r_id in ensemble.model.reactions:
+                    flux_sample[r_id][i] = sol.values[r_id]
+            else:
+                objective[i] = sol.fobj
 
-    return flux_sample
+    if get_fluxes:
+        return flux_sample
+    else:
+        return objective
 
 
 def save_ensemble(ensemble, outputfile, **kwargs):
