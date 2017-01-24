@@ -90,7 +90,7 @@ def minimal_medium(model, exchange_reactions, direction=-1, min_mass_weight=Fals
 
             weigth = molecular_weight(formulas[0])
 
-            objective['y_' + r_id] =  weigth
+            objective['y_' + r_id] = weigth
 
     else:
         objective = {'y_' + r_id: 1 for r_id in exchange_reactions}
