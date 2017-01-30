@@ -1,6 +1,7 @@
 from collections import OrderedDict
 
 from framed import solver_instance
+from framed.model.transformation import disconnected_metabolites
 from framed.solvers.solver import Status
 from framed import load_cbmodel, save_cbmodel
 from framed import FBA, pFBA
@@ -28,6 +29,15 @@ class EnsembleModel():
     def get_constraints(self, i):
         return {r_id: (0, 0) for r_id in self.model.reactions if r_id in self.reaction_states and
                 not self.reaction_states[r_id][i]}
+
+    def simplify(self):
+        inactive = [r_id for r_id, states in self.reaction_states.items() if not any(states)]
+        self.model.remove_reactions(inactive)
+        del_metabolites = disconnected_metabolites(self.model)
+        self.model.remove_metabolites(del_metabolites)
+
+        for r_id in inactive:
+            del self.reaction_states[r_id]
 
 
 def simulate_ensemble(ensemble, method='FBA', constraints=None, solver=None, get_fluxes=True):

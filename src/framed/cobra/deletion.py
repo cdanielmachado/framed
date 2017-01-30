@@ -65,22 +65,24 @@ def reaction_deletion(model, reactions, method='FBA', reference=None, constraint
         Solution: solution
     """
 
-    if not constraints:
-        constraints = {}
+    _constraints = {}
+
+    if constraints:
+        _constraints.update(constraints)
 
     for r_id in reactions:
-        constraints[r_id] = 0
+        _constraints[r_id] = 0
 
     if method == 'FBA':
-        solution = FBA(model, constraints=constraints, solver=solver)
+        solution = FBA(model, constraints=_constraints, solver=solver)
     elif method == 'pFBA':
-        solution = pFBA(model, constraints=constraints, solver=solver)
+        solution = pFBA(model, constraints=_constraints, solver=solver)
     elif method == 'MOMA':
-        solution = MOMA(model, reference, constraints=constraints, solver=solver)
+        solution = MOMA(model, reference, constraints=_constraints, solver=solver)
     elif method == 'lMOMA':
-        solution = lMOMA(model, reference, constraints=constraints, solver=solver)
+        solution = lMOMA(model, reference, constraints=_constraints, solver=solver)
     elif method == 'ROOM':
-        solution = ROOM(model, reference, constraints=constraints, solver=solver)
+        solution = ROOM(model, reference, constraints=_constraints, solver=solver)
 
     return solution
 

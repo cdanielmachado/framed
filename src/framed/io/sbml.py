@@ -474,7 +474,11 @@ def _save_metabolites(model, sbml_model, flavor):
             if 'FORMULA' in metabolite.metadata:
                 fbc_species.setChemicalFormula(metabolite.metadata['FORMULA'])
             if 'CHARGE' in metabolite.metadata:
-                fbc_species.setCharge(int(metabolite.metadata['CHARGE']))
+                try:
+                    charge = int(metabolite.metadata['CHARGE'])
+                    fbc_species.setCharge(charge)
+                except ValueError:
+                    pass
 
         _save_metadata(metabolite, species)
 
@@ -528,9 +532,10 @@ def _save_cobra_parameters(model, sbml_model, set_default_bounds=False):
         sbml_reaction = sbml_model.getReaction(r_id)
         kineticLaw = sbml_reaction.createKineticLaw()
         kineticLaw.setFormula('0')
+        lb, ub = reaction.lb, reaction.ub
         if set_default_bounds:
-            lb = DEFAULT_LOWER_BOUND if reaction.lb is None else reaction.lb
-            ub = DEFAULT_UPPER_BOUND if reaction.ub is None else reaction.ub
+            lb = DEFAULT_LOWER_BOUND if lb is None else lb
+            ub = DEFAULT_UPPER_BOUND if ub is None else ub
         if lb is not None:
             lbParameter = kineticLaw.createParameter()
             lbParameter.setId(LB_TAG)

@@ -296,11 +296,13 @@ class CplexSolver(Solver):
 
         if lower_bounds != self._cached_lower_bounds:
             lb_new = _dict_diff(lower_bounds, self._cached_lower_bounds)
-            self.problem.variables.set_lower_bounds(lb_new)
+            if len(lb_new) > 0:
+                self.problem.variables.set_lower_bounds(lb_new)
 
         if upper_bounds != self._cached_upper_bounds:
             ub_new = _dict_diff(upper_bounds, self._cached_upper_bounds)
-            self.problem.variables.set_upper_bounds(ub_new)
+            if len(ub_new) > 0:
+                self.problem.variables.set_upper_bounds(ub_new)
 
         return lb_new, ub_new
 
