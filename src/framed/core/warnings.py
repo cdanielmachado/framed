@@ -1,2 +1,0 @@
-class OptimizationWarning(UserWarning):
-    pass

@@ -3,7 +3,7 @@ This module implements flux space sampling for kinetic models.
 
 Author: Daniel Machado
 """
-
+import framed.solvers.solver
 from ..kinetic.simulation import find_steady_state
 import numpy as np
 
@@ -49,7 +49,8 @@ def sample_kinetic_model(model, size, parameters=None, distribution='normal', di
     fail_rate = 100 * (size - len(v_sample))/float(size)
 
     if fail_rate > 10:
-        warnings.warn('Warning: {}% of simulations failed.'.format(int(fail_rate)), framed_warnings.OptimizationWarning)
+        warnings.warn('Warning: {}% of simulations failed.'.format(int(fail_rate)),
+                      framed.solvers.solver.OptimizationWarning)
 
     return p_sample, v_sample
 

@@ -441,3 +441,7 @@ class Solver:
         """
 
         raise Exception('Not implemented for this solver.')
+
+
+class OptimizationWarning(UserWarning):
+    pass
