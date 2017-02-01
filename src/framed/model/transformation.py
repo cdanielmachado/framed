@@ -10,11 +10,12 @@ from .cbmodel import CBModel, CBReaction
 from ..cobra.variability import blocked_reactions
 
 
-def simplify(model, clean_compartments=True, inplace=True):
+def simplify(model, reactions=None, clean_compartments=True, inplace=True):
     """ Removes all blocked reactions in a constraint based model
     
     Arguments:
         model (CBModel): model
+        reactions (list): List of reactions which will be checked for being blocked (default: None - check all reactions)
         clean_compartments (bool): remove empty compartments (default: True)
         inplace (bool): change model in place (default), otherwise create a copy first
         
@@ -25,7 +26,7 @@ def simplify(model, clean_compartments=True, inplace=True):
     if not inplace:
         model = model.copy()
 
-    del_reactions = blocked_reactions(model)
+    del_reactions = blocked_reactions(model, reactions=reactions)
     model.remove_reactions(del_reactions)
 
     del_metabolites = disconnected_metabolites(model)
