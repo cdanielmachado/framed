@@ -364,7 +364,7 @@ def _parse_fbc_association(gpr_assoc, reaction_id):
             else:
                 w = "Gene association for reaction '{}' is not DNF".format(reaction_id)
                 warnings.warn(w, SyntaxWarning)
-            parsing_error = True
+                parsing_error = True
         gpr.proteins = [protein]
     elif gpr_assoc.isGeneProductRef():
         protein = Protein()

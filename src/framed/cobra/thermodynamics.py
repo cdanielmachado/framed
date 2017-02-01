@@ -3,7 +3,7 @@
 Author: Daniel Machado
 
 """
-import framed.solvers.solver
+from framed.solvers.solver import OptimizationWarning
 from ..solvers import solver_instance
 from ..solvers.solver import Status, VarType
 import numpy as np
@@ -11,7 +11,6 @@ import scipy as sp
 from collections import OrderedDict
 from math import sqrt
 
-from ..core import warnings as framed_warnings
 import warnings
 
 
@@ -251,7 +250,7 @@ def TVA(model, deltaG0, sdeltaG0=None, measured_concentrations=None, concentrati
                   get_values=False)
 
         if sol.status == Status.INFEASIBLE:
-            warnings.warn("Problem is infeasible", framed.solvers.solver.OptimizationWarning)
+            warnings.warn("Problem is infeasible", OptimizationWarning)
             return
 
         lb = sol.fobj if sol.status == Status.OPTIMAL else None
@@ -369,7 +368,7 @@ def NET(model, deltaG0, sdeltaG0=None, measured_concentrations=None, concentrati
             if r_id in deltaG0:
                 sol_min = solver.solve({'dG_' + r_id: 1}, minimize=True)
                 if sol_min.status == Status.INFEASIBLE:
-                    warnings.warn("Problem is infeasible", framed.solvers.solver.OptimizationWarning)
+                    warnings.warn("Problem is infeasible", OptimizationWarning)
                     return
                 sol_max = solver.solve({'dG_' + r_id: 1}, minimize=False)
                 dG_min = sol_min.fobj if sol_min.status == Status.OPTIMAL else None
@@ -383,7 +382,7 @@ def NET(model, deltaG0, sdeltaG0=None, measured_concentrations=None, concentrati
             if m_id in included:
                 sol_min = solver.solve({'ln_' + m_id: 1}, minimize=True)
                 if sol_min.status == Status.INFEASIBLE:
-                    warnings.warn("Problem is infeasible", framed.solvers.solver.OptimizationWarning)
+                    warnings.warn("Problem is infeasible", OptimizationWarning)
                     return
                 sol_max = solver.solve({'ln_' + m_id: 1}, minimize=False)
                 x_min = np.exp(sol_min.fobj) if sol_min.status == Status.OPTIMAL else None
