@@ -13,8 +13,8 @@ def gene_deletion(model, genes, method='FBA', reference=None, constraints=None, 
     Arguments:
         model (CBModel): model
         genes (list): genes to delete
-        method (str): simulation method: FBA (default) or MOMA
-        reference (dict): reference flux distribution for MOMA (optional)
+        method (str): simulation method: FBA (default), pFMA, MOMA, lMOMA, ROOM
+        reference (dict): reference flux distribution for MOMA, lMOMA or ROOM (optional)
         constraints (dict): additional constraints
         solver (Solver): solver instance instantiated with the model, for speed (optional)
         compute_silent_deletions (bool): don't compute gene deletion if no reactions are affected (optional, default: True)
@@ -56,8 +56,8 @@ def reaction_deletion(model, reactions, method='FBA', reference=None, constraint
     Arguments:
         model (CBModel): model
         reactions (list): reactions to delete
-        method (str): simulation method: FBA (default) or MOMA
-        reference (dict): reference flux distribution for MOMA (optional)
+        method (str): simulation method: FBA (default), pFMA, MOMA, lMOMA, ROOM
+        reference (dict): reference flux distribution for MOMA, lMOMA or ROOM (optional)
         constraints (dict): additional constraints
         solver (Solver): solver instance instantiated with the model, for speed (optional)
 
@@ -65,22 +65,24 @@ def reaction_deletion(model, reactions, method='FBA', reference=None, constraint
         Solution: solution
     """
 
-    if not constraints:
-        constraints = {}
+    _constraints = {}
+
+    if constraints:
+        _constraints.update(constraints)
 
     for r_id in reactions:
-        constraints[r_id] = 0
+        _constraints[r_id] = 0
 
     if method == 'FBA':
-        solution = FBA(model, constraints=constraints, solver=solver)
+        solution = FBA(model, constraints=_constraints, solver=solver)
     elif method == 'pFBA':
-        solution = pFBA(model, constraints=constraints, solver=solver)
+        solution = pFBA(model, constraints=_constraints, solver=solver)
     elif method == 'MOMA':
-        solution = MOMA(model, reference, constraints=constraints, solver=solver)
+        solution = MOMA(model, reference, constraints=_constraints, solver=solver)
     elif method == 'lMOMA':
-        solution = lMOMA(model, reference, constraints=constraints, solver=solver)
+        solution = lMOMA(model, reference, constraints=_constraints, solver=solver)
     elif method == 'ROOM':
-        solution = ROOM(model, reference, constraints=constraints, solver=solver)
+        solution = ROOM(model, reference, constraints=_constraints, solver=solver)
 
     return solution
 
@@ -92,8 +94,8 @@ def deletion(model, elements, kind='reactions', method='FBA', reference=None, co
         model (CBModel): model
         elements (list): elements to delete
         kind (str): genes or reactions (default)
-        method (str): simulation method: FBA (default) or MOMA
-        reference (dict): reference flux distribution for MOMA (optional)
+        method (str): simulation method: FBA (default), pFMA, MOMA, lMOMA, ROOM
+        reference (dict): reference flux distribution for MOMA, lMOMA or ROOM (optional)
         constraints (dict): additional constraints
         solver (Solver): solver instance instantiated with the model, for speed (optional)
 

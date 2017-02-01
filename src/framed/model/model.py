@@ -4,7 +4,7 @@ Author: Daniel Machado
 
 """
 
-from collections import OrderedDict, MutableMapping
+from collections import OrderedDict
 from copy import copy, deepcopy
 
 from .parser import ReactionParser
@@ -445,7 +445,6 @@ class Model:
             return self.reactions[r_id].to_string(metabolite_names)
         else:
             return self.reactions[r_id].to_string()
-
 
     def to_string(self, use_metabolite_names=False):
         """ Print the model to a text based representation.

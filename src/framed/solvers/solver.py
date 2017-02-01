@@ -351,7 +351,21 @@ class Solver:
     def update(self):
         """ Update internal structure. Used for efficient lazy updating. """
         pass
-        
+
+    def set_objective(self, linear=None, quadratic=None, minimize=True):
+        """ Set a predefined objective for this problem.
+
+        Args:
+            linear (dict): linear coefficients (optional)
+            quadratic (dict): quadratic coefficients (optional)
+            minimize (bool): solve a minimization problem (default: True)
+
+        Notes:
+            Setting the objective is optional. It can also be passed directly when calling **solve**.
+
+        """
+        pass
+
     def build_problem(self, model):
         """ Create problem structure for a given model.
 
@@ -368,14 +382,14 @@ class Solver:
             self.add_constraint(m_id, table[m_id], update_problem=False)
         self.update()
             
-    def solve(self, objective, quadratic=None, minimize=True, model=None, constraints=None, get_values=True,
+    def solve(self, linear=None, quadratic=None, minimize=None, model=None, constraints=None, get_values=True,
               get_shadow_prices=False, get_reduced_costs=False):
         """ Solve the optimization problem.
 
         Arguments:
-            objective (dict): linear objective
+            linear (dict): linear objective (optional)
             quadratic (dict): quadratic objective (optional)
-            minimize (bool): minimization problem (default: True)
+            minimize (bool): solve a minimization problem (default: True)
             model (CBModel): model (optional, leave blank to reuse previous model structure)
             constraints (dict): additional constraints (optional)
             get_values (bool): set to false for speedup if you only care about the objective value (default: True)

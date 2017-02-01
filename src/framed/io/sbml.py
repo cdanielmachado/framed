@@ -192,7 +192,8 @@ def _load_cbmodel(sbml_model, flavor):
 
 def _load_cobra_bounds(sbml_model, model):
     for reaction in sbml_model.getListOfReactions():
-        lb = _get_cb_parameter(reaction, LB_TAG)
+        default_lb = None if reaction.getReversible() else 0
+        lb = _get_cb_parameter(reaction, LB_TAG, default_lb)
         ub = _get_cb_parameter(reaction, UB_TAG)
         model.set_flux_bounds(reaction.getId(), lb, ub)
 
@@ -335,6 +336,7 @@ def _parse_fbc_association(gpr_assoc, reaction_id):
 
     gpr = GPRAssociation()
 
+    parsing_error = False
     if gpr_assoc.isFbcOr():
         for item in gpr_assoc.getListOfAssociations():
             protein = Protein()
@@ -345,11 +347,13 @@ def _parse_fbc_association(gpr_assoc, reaction_id):
                     else:
                         w = "Gene association for reaction '{}' is not DNF".format(reaction_id)
                         warnings.warn(w, SyntaxWarning)
+                        parsing_error = True
             elif item.isGeneProductRef:
                 protein.genes.append(item.getGeneProduct())
             else:
                 w = "Gene association for reaction '{}' is not DNF".format(reaction_id)
                 warnings.warn(w, SyntaxWarning)
+                parsing_error = True
             gpr.proteins.append(protein)
 
     elif gpr_assoc.isFbcAnd():
@@ -360,7 +364,7 @@ def _parse_fbc_association(gpr_assoc, reaction_id):
             else:
                 w = "Gene association for reaction '{}' is not DNF".format(reaction_id)
                 warnings.warn(w, SyntaxWarning)
-
+            parsing_error = True
         gpr.proteins = [protein]
     elif gpr_assoc.isGeneProductRef():
         protein = Protein()
@@ -369,8 +373,10 @@ def _parse_fbc_association(gpr_assoc, reaction_id):
     else:
         w = "Gene association for reaction '{}' is not DNF".format(reaction_id)
         warnings.warn(w, SyntaxWarning)
+        parsing_error = True
 
-    return gpr
+    if not parsing_error:
+        return gpr
 
 
 def _load_odemodel(sbml_model):
@@ -469,7 +475,11 @@ def _save_metabolites(model, sbml_model, flavor):
             if 'FORMULA' in metabolite.metadata:
                 fbc_species.setChemicalFormula(metabolite.metadata['FORMULA'])
             if 'CHARGE' in metabolite.metadata:
-                fbc_species.setCharge(int(metabolite.metadata['CHARGE']))
+                try:
+                    charge = int(metabolite.metadata['CHARGE'])
+                    fbc_species.setCharge(charge)
+                except ValueError:
+                    pass
 
         _save_metadata(metabolite, species)
 
@@ -523,9 +533,10 @@ def _save_cobra_parameters(model, sbml_model, set_default_bounds=False):
         sbml_reaction = sbml_model.getReaction(r_id)
         kineticLaw = sbml_reaction.createKineticLaw()
         kineticLaw.setFormula('0')
+        lb, ub = reaction.lb, reaction.ub
         if set_default_bounds:
-            lb = DEFAULT_LOWER_BOUND if reaction.lb is None else reaction.lb
-            ub = DEFAULT_UPPER_BOUND if reaction.ub is None else reaction.ub
+            lb = DEFAULT_LOWER_BOUND if lb is None else lb
+            ub = DEFAULT_UPPER_BOUND if ub is None else ub
         if lb is not None:
             lbParameter = kineticLaw.createParameter()
             lbParameter.setId(LB_TAG)

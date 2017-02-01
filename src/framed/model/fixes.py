@@ -77,7 +77,7 @@ def clean_bounds(model, threshold=1000):
 
 
 def clean_bigg_ids(model):
-    model._clean_temp()
+    model._clear_temp()
 
     clean = lambda x: x.replace('_LPAREN_', '_').replace('_RPAREN_', '_').replace('_DASH_', '__').rstrip('_')
 
