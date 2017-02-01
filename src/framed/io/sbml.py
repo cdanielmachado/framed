@@ -191,7 +191,8 @@ def _load_cbmodel(sbml_model, flavor):
 
 def _load_cobra_bounds(sbml_model, model):
     for reaction in sbml_model.getListOfReactions():
-        lb = _get_cb_parameter(reaction, LB_TAG)
+        default_lb = None if reaction.getReversible() else 0
+        lb = _get_cb_parameter(reaction, LB_TAG, default_lb)
         ub = _get_cb_parameter(reaction, UB_TAG)
         model.set_flux_bounds(reaction.getId(), lb, ub)
 
