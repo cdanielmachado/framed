@@ -20,8 +20,8 @@ from .omics.simulation import GIMME, eFlux
 from .solvers import set_default_solver, solver_instance
 from .solvers.solver import set_default_parameter
 
-from .model.model import Model, Metabolite, Compartment, Reaction, Medium
-from .model.cbmodel import CBReaction, Gene, Protein, GPRAssociation, CBModel
+from .model.model import Model, Metabolite, Compartment, Reaction
+from .model.cbmodel import CBReaction, Gene, Protein, GPRAssociation, CBModel, Medium
 from .model.odemodel import ODEModel
 from .model.transformation import simplify, make_irreversible
 
