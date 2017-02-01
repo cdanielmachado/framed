@@ -9,6 +9,8 @@ from .solver import Solver, Solution, Status, VarType, Parameter, default_parame
 from cplex import Cplex, infinity, SparsePair
 import sys
 
+import warnings
+
 
 class CplexSolver(Solver):
     """ Implements the solver interface using CPLEX. """
@@ -292,7 +294,7 @@ class CplexSolver(Solver):
                 lower_bounds[r_id] = lb if lb is not None else -infinity
                 upper_bounds[r_id] = ub if ub is not None else infinity
             else:
-                print 'Error: constrained variable not previously declared', r_id
+                warnings.warn("Constrained variable '{}' not previously declared".format(r_id), RuntimeWarning)
 
         if lower_bounds != self._cached_lower_bounds:
             lb_new = _dict_diff(lower_bounds, self._cached_lower_bounds)

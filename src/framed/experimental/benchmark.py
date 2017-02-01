@@ -65,7 +65,7 @@ def run_method(method, model, constraints, dataset, condition, **kwargs):
             _, _, sol = evaluate(run_pFBA, model, dataset, ref_condition, **kwargs)
             reference = sol.values
         else:
-            print 'Warning: Must specify reference condition for MOMA/lMOMA/ROOM simulations.'
+            raise NameError("Must specify reference condition (named argument: 'reference_condition') for MOMA/lMOMA/ROOM simulations.")
 
     sol = gene_deletion(model, genes, method=method, reference=reference, constraints=constraints, compute_silent_deletions=True)
 

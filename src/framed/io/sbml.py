@@ -15,6 +15,8 @@ from sympy import to_dnf, Or, And
 from sympy.logic.boolalg import is_dnf
 from libsbml import SBMLReader, SBMLWriter, SBMLDocument, XMLNode, AssignmentRule, parseL3FormulaWithModel, FbcExtension
 
+import warnings
+
 DEFAULT_SBML_LEVEL = 3
 DEFAULT_SBML_VERSION = 1
 
@@ -183,8 +185,7 @@ def _load_cbmodel(sbml_model, flavor):
         _load_fbc2_objective(sbml_model, model)
         _load_fbc2_gpr(sbml_model, model)
     else:
-        print 'unsupported SBML flavor:', flavor
-        print 'supported flavors:', COBRA_MODEL, FBC2_MODEL
+        raise TypeError("Unsupported SBML flavor '{}' (supported: {}".format(flavor, ",".join([COBRA_MODEL, FBC2_MODEL])))
 
     return model
 
@@ -325,18 +326,17 @@ def _load_fbc2_gpr(sbml_model, model):
         fbcrxn = reaction.getPlugin('fbc')
         gpr_assoc = fbcrxn.getGeneProductAssociation()
         if gpr_assoc:
-            gpr = _parse_fbc_association(gpr_assoc.getAssociation())
+            gpr = _parse_fbc_association(gpr_assoc.getAssociation(), reaction.id)
             model.set_gpr_association(reaction.getId(), gpr)
         else:
             model.set_gpr_association(reaction.getId(), None)
 
 
-def _parse_fbc_association(gpr_assoc):
+def _parse_fbc_association(gpr_assoc, reaction_id):
 
     gpr = GPRAssociation()
 
     parsing_error = False
-
     if gpr_assoc.isFbcOr():
         for item in gpr_assoc.getListOfAssociations():
             protein = Protein()
@@ -345,15 +345,15 @@ def _parse_fbc_association(gpr_assoc):
                     if subitem.isGeneProductRef():
                         protein.genes.append(subitem.getGeneProduct())
                     else:
+                        w = "Gene association for reaction '{}' is not DNF".format(reaction_id)
+                        warnings.warn(w, SyntaxWarning)
                         parsing_error = True
-                        break
-                if parsing_error:
-                    break
             elif item.isGeneProductRef:
                 protein.genes.append(item.getGeneProduct())
             else:
+                w = "Gene association for reaction '{}' is not DNF".format(reaction_id)
+                warnings.warn(w, SyntaxWarning)
                 parsing_error = True
-                break
             gpr.proteins.append(protein)
 
     elif gpr_assoc.isFbcAnd():
@@ -362,21 +362,21 @@ def _parse_fbc_association(gpr_assoc):
             if item.isGeneProductRef():
                 protein.genes.append(item.getGeneProduct())
             else:
+                w = "Gene association for reaction '{}' is not DNF".format(reaction_id)
+                warnings.warn(w, SyntaxWarning)
                 parsing_error = True
-                break
         gpr.proteins = [protein]
     elif gpr_assoc.isGeneProductRef():
         protein = Protein()
         protein.genes = [gpr_assoc.getGeneProduct()]
         gpr.proteins = [protein]
     else:
+        w = "Gene association for reaction '{}' is not DNF".format(reaction_id)
+        warnings.warn(w, SyntaxWarning)
         parsing_error = True
 
     if not parsing_error:
         return gpr
-    else:
-        print 'GPR association is not in DNF format and will be ignored. SBML line:', gpr_assoc.getLine()
-        return
 
 
 def _load_odemodel(sbml_model):

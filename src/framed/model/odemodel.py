@@ -2,6 +2,8 @@ from collections import OrderedDict
 
 from .model import Model
 
+import warnings
+
 
 class ODEModel(Model):
 
@@ -33,19 +35,19 @@ class ODEModel(Model):
         if m_id in self.metabolites:
             self.concentrations[m_id] = concentration
         else:
-            print 'No such metabolite', m_id
+            warnings.warn("No such metabolite '{}'".format(m_id), RuntimeWarning)
 
     def set_ratelaw(self, r_id, ratelaw):
         if r_id in self.reactions:
             self.ratelaws[r_id] = ratelaw
         else:
-            print 'No such reaction', r_id
+            warnings.warn("No such reaction '{}'".format(r_id), RuntimeWarning)
 
     def set_assignment_rule(self, p_id, rule):
         if p_id in self.variable_params:
             self.assignment_rules[p_id] = rule
         else:
-            print 'No such variable parameter', p_id
+            warnings.warn("No such variable parameter '{}'".format(p_id), RuntimeWarning)
 
     def set_global_parameter(self, key, value, constant=True):
         if constant:
@@ -57,7 +59,7 @@ class ODEModel(Model):
         if r_id in self.reactions:
             self.local_params[r_id][p_id] = value
         else:
-            print 'No such reaction', r_id
+            warnings.warn("No such reaction '{}'".format(r_id), RuntimeWarning)
 
     def remove_reactions(self, id_list):
         Model.remove_reactions(self, id_list)

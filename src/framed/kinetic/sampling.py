@@ -3,9 +3,10 @@ This module implements flux space sampling for kinetic models.
 
 Author: Daniel Machado
 """
-
 from ..kinetic.simulation import find_steady_state
 import numpy as np
+
+import warnings
 
 
 def sample_kinetic_model(model, size, parameters=None, distribution='normal', dist_args=(0, 1), log_scale=True):
@@ -46,7 +47,7 @@ def sample_kinetic_model(model, size, parameters=None, distribution='normal', di
     fail_rate = 100 * (size - len(v_sample))/float(size)
 
     if fail_rate > 10:
-        print 'Warning: {}% of simulations failed.'.format(int(fail_rate))
+        warnings.warn('Warning: {}% of simulations failed.'.format(int(fail_rate)), RuntimeWarning)
 
     return p_sample, v_sample
 
@@ -58,7 +59,7 @@ def parameter_perturbation(p0, distribution, dist_args, log_scale=True):
     elif distribution == 'uniform':
         d = dist_args[0] + (dist_args[1] - dist_args[0]) * np.random.rand(len(p0))
     else:
-        print 'Invalid sampling distribution', distribution
+        warnings.warn("Invalid sampling distribution '{}'".format(distribution))
         return
 
     if log_scale:

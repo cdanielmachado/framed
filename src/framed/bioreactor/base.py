@@ -12,6 +12,8 @@ from scipy.integrate import ode
 import numpy
 import collections
 
+import warnings
+
 
 class Organism(object):
     """
@@ -133,7 +135,7 @@ class DynamicSystem(object):
             try:
                 t, y = self.analytical_integrator(t0, tf, dt, initial_conditions, solver, verbose)
             except NotImplementedError:
-                print 'analytical solver have no been implemented yet. will use numerical solver dopri5.'
+                warnings.warn('analytical solver have no been implemented yet. will use numerical solver dopri5'. FutureWarning)
                 t, y = self.numerical_integrator(t0, tf, dt, initial_conditions, solver='dopri5')
         else:
             t, y = self.numerical_integrator(t0, tf, dt, initial_conditions, solver, verbose)
@@ -318,7 +320,6 @@ class Bioreactor(Environment, DynamicSystem):
                         vs[i, j] = organism.fba_solution.values[metabolite]
             else:
                 mu[i] = 0
-                #print 'no growth'
                 for j, metabolite in enumerate(self.metabolites):
                     if metabolite in organism.model.reactions.keys():
                         vs[i, j] = 0

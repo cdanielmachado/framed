@@ -8,6 +8,7 @@ from collections import OrderedDict
 from copy import copy, deepcopy
 
 from .parser import ReactionParser
+import warnings
 
 
 class Metabolite:
@@ -229,7 +230,7 @@ class Model:
             self.metabolites[metabolite.id] = metabolite
             self._clear_temp()
         else:
-            print 'Failed to add metabolite', metabolite.id, '(invalid compartment)'
+            raise KeyError("Failed to add metabolite '{}' (invalid compartment)".format(metabolite.id))
 
     def add_reaction(self, reaction):
         """ Add a single reaction to the model.
@@ -265,7 +266,7 @@ class Model:
             if m_id in self.metabolites:
                 del self.metabolites[m_id]
             else:
-                print 'No such metabolite', m_id
+                warnings.warn("No such metabolite '{}'".format(m_id),  RuntimeWarning)
 
             if safe_delete:
                 for r_id in m_r_lookup[m_id]:
@@ -291,7 +292,7 @@ class Model:
             if r_id in self.reactions:
                 del self.reactions[r_id]
             else:
-                print 'No such reaction', r_id
+                warnings.warn("No such reaction '{}'".format(r_id), RuntimeWarning)
         self._clear_temp()
 
     def remove_reaction(self, r_id):
@@ -325,7 +326,7 @@ class Model:
             if c_id in self.compartments:
                 del self.compartments[c_id]
             else:
-                print 'No such compartment', c_id
+                warnings.warn("No such compartment '{}'".format(c_id), RuntimeWarning)
 
         if delete_reactions:
             target_rxns = [r_id for r_id in self.reactions

@@ -9,6 +9,8 @@ from collections import OrderedDict
 from .solver import Solver, Solution, Status, VarType, Parameter, default_parameters
 from gurobipy import Model as GurobiModel, GRB, quicksum
 
+import warnings
+
 
 status_mapping = {
     GRB.OPTIMAL: Status.OPTIMAL,
@@ -189,7 +191,7 @@ class GurobiSolver(Solver):
                     lpvar.lb = lb if lb is not None else -GRB.INFINITY
                     lpvar.ub = ub if ub is not None else GRB.INFINITY
                 else:
-                    print 'Error: constrained variable not previously declared', r_id
+                    warnings.warn("Constrained variable '{}' not previously declared".format(r_id), RuntimeWarning)
             problem.update()
 
         self.set_objective(linear, quadratic, minimize)

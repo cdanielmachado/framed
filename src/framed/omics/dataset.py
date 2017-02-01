@@ -8,6 +8,8 @@ import json
 import pandas as pd
 import os
 
+import errno
+
 __author__ = 'daniel'
 
 MANDATORY_FIELDS = ['conditions',
@@ -42,22 +44,29 @@ class DataSet:
             with open(jsonfile, 'r') as f:
                 self._data = json.load(f)
                 self.path = os.path.dirname(jsonfile) + '/'
+        except Exception:
+            raise IOError(errno.ENOENT, "Could not '{}' read json file".format(jsonfile), jsonfile)
 
-            for field in MANDATORY_FIELDS:
-                setattr(self, field, pd.Series(self._data[field],
-                                               index=self._data['conditions']))
-        except Exception as e:
-            print 'Failed to load dataset:', e
+        missing_fields = set(MANDATORY_FIELDS) - set(self._data)
+        if len(missing_fields):
+            raise IOError(errno.EIO, "Could not find mandratory fields '{}' in '{}' json file".format("', '".join(missing_fields), jsonfile), jsonfile)
+
+        for field in MANDATORY_FIELDS:
+            setattr(self, field, pd.Series(self._data[field], index=self._data['conditions']))
 
     def get_omics_data(self, kind, elements=None, conditions=None):
         if not hasattr(self, kind):
+            if kind not in self._data or 'datafile' not in self._data[kind]:
+                raise KeyError("Kind '{}['datafile'] was not found in the data")
+
+            datafile = self._data[kind]['datafile']
+
             try:
-                datafile = self._data[kind]['datafile']
                 data = pd.read_csv(self.path + datafile, index_col=0, header=0)
-                setattr(self, kind, data)
             except:
-                print 'Failed to load', kind, 'data'
-                return
+                raise IOError(errno.ENOENT, "Failed to load '{}' data from file '{}'".format(kind, self.path + datafile), self.path + datafile)
+
+            setattr(self, kind, data)
 
         data = getattr(self, kind)
 

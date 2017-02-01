@@ -8,7 +8,7 @@ from framed.solvers.solver import Status
 
 
 def lp_sampler(model, n_samples=1000, weights=None, constraints=None, select_probability=0.01,
-               futile_cycle_threshold=1e2, variation_threshold=1e-4, merge_keys=False):
+               futile_cycle_threshold=1e2, variation_threshold=1e-4, merge_keys=False, verbose=True):
 
     if not weights:
         variability = FVA(model, constraints=constraints)
@@ -28,7 +28,8 @@ def lp_sampler(model, n_samples=1000, weights=None, constraints=None, select_pro
         if sol.status == Status.OPTIMAL:
             samples.append(sol.values)
 
-    print 'Sampling success rate: {} (of {})'.format(len(samples), n_samples)
+    if verbose:
+        print 'Sampling success rate: {} (of {})'.format(len(samples), n_samples)
 
     if merge_keys:
         merged = OrderedDict()

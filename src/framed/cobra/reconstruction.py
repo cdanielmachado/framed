@@ -338,20 +338,22 @@ def extend_model_with_DB_plainText(model, reactionsDB):
 
     model_extended = model.copy()
 
-    try:
-        with open(reactionsDB, 'r') as stream:
-            db_reactions = []
-            if model_extended:
-                for line in stream:
-                    line = line.strip()
-                    if line != '' and line[0] != '#':
-                        r_id = model_extended.add_reaction_from_str(line)
-                        db_reactions.append(r_id)
+    with open(reactionsDB, 'r') as stream:
+        db_reactions = []
+        if model_extended:
+            for line in stream:
+                line = line.strip()
+                if not line:
+                    continue
 
-    except Exception as e:
-        print e
-        model_extended = None
-        db_reactions = None
+                # If line ends with comment ignore it as well
+                line = line.split("#", 1)[0]
+                line = line.strip()
+                if not line:
+                    continue
+
+                r_id = model_extended.add_reaction_from_str(line)
+                db_reactions.append(r_id)
 
     return (model_extended, db_reactions)
 

@@ -28,7 +28,7 @@ class ReactionParser:
         match = self.regex_reaction.match(reaction_str)
 
         if not match:
-            raise Exception('Unable to parse: ' + reaction_str)
+            raise SyntaxError('Unable to parse: ' + reaction_str)
 
         r_id = match.group('reaction_id')
         reversible = match.group('direction') == '<->'
