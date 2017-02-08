@@ -11,7 +11,7 @@ try:
     from .glpk_interface import GlpkSolver
 
     solvers['glpk'] = GlpkSolver
-except:
+except ImportError:
     pass
 
 
@@ -19,7 +19,7 @@ try:
     from .gurobi_interface import GurobiSolver
 
     solvers['gurobi'] = GurobiSolver
-except:
+except ImportError:
     pass
 
 
@@ -27,7 +27,7 @@ try:
     from .cplex_interface import CplexSolver
 
     solvers['cplex'] = CplexSolver
-except:
+except ImportError:
     pass
 
 

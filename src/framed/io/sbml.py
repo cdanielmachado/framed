@@ -15,6 +15,7 @@ from sympy import to_dnf, Or, And
 from sympy.logic.boolalg import is_dnf
 from libsbml import SBMLReader, SBMLWriter, SBMLDocument, XMLNode, AssignmentRule, parseL3FormulaWithModel, FbcExtension
 
+import cgi
 import warnings
 
 DEFAULT_SBML_LEVEL = 3
@@ -675,11 +676,15 @@ def _save_assignment_rules(model, sbml_model):
 
 def _save_metadata(elem, sbml_elem):
     if elem.metadata:
-        notes = ['<p>{}: {}</p>'.format(key, value) for key, value in elem.metadata.items()]
-        note_string = '<html>' + ''.join(notes) + '</html>'
-        note_xml = XMLNode.convertStringToXMLNode(note_string)
-        note_xml.getNamespaces().add('http://www.w3.org/1999/xhtml')
-        sbml_elem.setNotes(note_xml)
+        try:
+            notes = ['<p>{}: {}</p>'.format(key, cgi.escape(value))
+                     for key, value in elem.metadata.items()]
+            note_string = '<html>' + ''.join(notes) + '</html>'
+            note_xml = XMLNode.convertStringToXMLNode(note_string)
+            note_xml.getNamespaces().add('http://www.w3.org/1999/xhtml')
+            sbml_elem.setNotes(note_xml)
+        except AttributeError:
+            warnings.warn("Unable to save metadata for object {}:".format(sbml_elem.getId()), RuntimeWarning)
 
 
 def _load_metadata(sbml_elem, elem):

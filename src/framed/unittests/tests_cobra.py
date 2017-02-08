@@ -40,8 +40,8 @@ LMOMA_GROWTH_RATE = 0.5066
 LMOMA_SUCC_EX = 5.311
 
 ROOM_GENE_KO = ['G_b0721']
-ROOM_GROWTH_RATE = 0.3801
-ROOM_SUCC_EX = 6.2885
+ROOM_GROWTH_RATE = 0.373
+ROOM_SUCC_EX = 5.799
 
 ESSENTIAL_GENES = ['G_b0720', 'G_b1136', 'G_b1779', 'G_b2415', 'G_b2416', 'G_b2779', 'G_b2926']
 
@@ -162,8 +162,8 @@ class GeneDeletionpFBATest(unittest.TestCase):
         model = load_cbmodel(SMALL_TEST_MODEL, flavor='cobra')
         solution = gene_deletion(model, DOUBLE_GENE_KO, 'pFBA')
         self.assertEqual(solution.status, Status.OPTIMAL)
-        self.assertAlmostEqual(solution.values[model.detect_biomass_reaction()], DOUBLE_KO_GROWTH_RATE, 3)
-        self.assertAlmostEqual(solution.values['R_EX_succ_e'], DOUBLE_KO_SUCC_EX, 3)
+        self.assertAlmostEqual(solution.values[model.detect_biomass_reaction()], DOUBLE_KO_GROWTH_RATE, 2)
+        self.assertAlmostEqual(solution.values['R_EX_succ_e'], DOUBLE_KO_SUCC_EX, 2)
 
 
 class GeneDeletionMOMATest(unittest.TestCase):
@@ -173,8 +173,8 @@ class GeneDeletionMOMATest(unittest.TestCase):
         model = load_cbmodel(SMALL_TEST_MODEL, flavor='cobra')
         solution = gene_deletion(model, MOMA_GENE_KO, 'MOMA')
         self.assertEqual(solution.status, Status.OPTIMAL)
-        self.assertAlmostEqual(solution.values[model.detect_biomass_reaction()], MOMA_GROWTH_RATE, 3)
-        self.assertAlmostEqual(solution.values['R_EX_succ_e'], MOMA_SUCC_EX, 3)
+        self.assertAlmostEqual(solution.values[model.detect_biomass_reaction()], MOMA_GROWTH_RATE, 2)
+        self.assertAlmostEqual(solution.values['R_EX_succ_e'], MOMA_SUCC_EX, 2)
 
 
 class GeneDeletionLMOMATest(unittest.TestCase):
@@ -184,8 +184,8 @@ class GeneDeletionLMOMATest(unittest.TestCase):
         model = load_cbmodel(SMALL_TEST_MODEL, flavor='cobra')
         solution = gene_deletion(model, LMOMA_GENE_KO, 'lMOMA')
         self.assertEqual(solution.status, Status.OPTIMAL)
-        self.assertAlmostEqual(solution.values[model.detect_biomass_reaction()], LMOMA_GROWTH_RATE, 3)
-        self.assertAlmostEqual(solution.values['R_EX_succ_e'], LMOMA_SUCC_EX, 3)
+        self.assertAlmostEqual(solution.values[model.detect_biomass_reaction()], LMOMA_GROWTH_RATE, 2)
+        self.assertAlmostEqual(solution.values['R_EX_succ_e'], LMOMA_SUCC_EX, 2)
 
 class GeneDeletionROOMTest(unittest.TestCase):
     """ Test gene deletion with ROOM. """
@@ -194,8 +194,8 @@ class GeneDeletionROOMTest(unittest.TestCase):
         model = load_cbmodel(SMALL_TEST_MODEL, flavor='cobra')
         solution = gene_deletion(model, ROOM_GENE_KO, 'ROOM')
         self.assertEqual(solution.status, Status.OPTIMAL)
-        self.assertAlmostEqual(solution.values[model.detect_biomass_reaction()], ROOM_GROWTH_RATE, 3)
-        self.assertAlmostEqual(solution.values['R_EX_succ_e'], ROOM_SUCC_EX, 3)
+        self.assertAlmostEqual(solution.values[model.detect_biomass_reaction()], ROOM_GROWTH_RATE, 2)
+        self.assertAlmostEqual(solution.values['R_EX_succ_e'], ROOM_SUCC_EX, 2)
 
 
 class GeneEssentialityTest(unittest.TestCase):

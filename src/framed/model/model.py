@@ -486,6 +486,7 @@ class Model:
 
         reaction = Reaction(r_id, r_id, reversible, stoichiometry)
         self.add_reaction(reaction)
+        self._clear_temp()
 
         return r_id
 
