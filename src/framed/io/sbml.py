@@ -17,6 +17,7 @@ from libsbml import SBMLReader, SBMLWriter, SBMLDocument, XMLNode, AssignmentRul
 
 import cgi
 import warnings
+import re
 
 DEFAULT_SBML_LEVEL = 3
 DEFAULT_SBML_VERSION = 1
@@ -246,12 +247,7 @@ def parse_gpr_rule(rule):
 
     rule = rule.replace('(', '( ').replace(')', ' )')
 
-    def replace_all(text, chars, char):
-        for c in chars:
-            text = text.replace(c, char)
-        return text
-
-    troublemakers = ['.', '-', '|', ':']
+    non_alphanum = re.compile('\W')
 
     def replacement(token):
         if token.lower() == 'and':
@@ -261,9 +257,9 @@ def parse_gpr_rule(rule):
         elif token == '(' or token == ')':
             return token
         elif token.startswith('G_'):
-            return replace_all(token, troublemakers, '_')
+            return non_alphanum.sub('_', token)
         else:
-            return replace_all('G_' + token, troublemakers, '_')
+            return 'G_' + non_alphanum.sub('_', token)
 
     rule = ' '.join(map(replacement, rule.split()))
 
