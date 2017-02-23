@@ -48,7 +48,7 @@ class Reaction:
         self.name = name
         self.reversible = reversible
         self.stoichiometry = OrderedDict()
-        self.regulators =  OrderedDict()
+        self.regulators = OrderedDict()
         self.metadata = OrderedDict()
 
         if stoichiometry:
