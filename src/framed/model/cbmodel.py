@@ -680,7 +680,7 @@ class Environment(MutableMapping):
             exchange_pattern (str): regex patter for guessing exchange reactions
 
         Returns:
-            Environment: complete medium for provided model
+            Environment: empty medium for provided model
 
         """
 

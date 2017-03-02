@@ -7,7 +7,7 @@ from framed import load_cbmodel, save_cbmodel
 from framed import FBA, pFBA
 
 
-class EnsembleModel():
+class EnsembleModel:
 
     def __init__(self, model, size, reaction_states=None):
         self.model = model.copy()
@@ -16,8 +16,8 @@ class EnsembleModel():
 
         if reaction_states:
             for r_id, states in reaction_states.items():
-                assert r_id in model.reactions
-                assert len(states) == size
+                assert r_id in model.reactions, 'Reaction ids in reaction states must match model ids'
+                assert len(states) == size, 'Size of state vector must match ensemble size'
                 self.reaction_states[r_id] = states[:]
         else:
             self.reaction_states = {r_id: [True]*size for r_id in model.reactions}
