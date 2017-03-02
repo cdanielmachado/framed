@@ -13,7 +13,7 @@ class Community:
     into a single multi-species model (CBModel) which is compatible with most types of constraint-based methods.
     """
 
-    def __init__(self, community_id):
+    def __init__(self, community_id, models=None, abundances=None, copy=True):
         """
 
         Args:
@@ -22,6 +22,15 @@ class Community:
         self.id = community_id
         self.organisms = AttrOrderedDict()
         self.abundances = {}
+
+        if models is not None:
+            if abundances is not None:
+                assert set(models.keys()) == set(abundances.keys()), 'Abundance organism ids must match model ids'
+            else:
+                abundances = {model.id: 1.0 for model in models}
+
+            for model in models:
+                self.add_organism(model, abundances[model.id], copy)
 
     def add_organism(self, model, abundance=1.0, copy=True):
         """ Add an organism to this community.
