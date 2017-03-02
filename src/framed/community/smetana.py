@@ -102,7 +102,7 @@ def mro_score(community, exchange_pattern="^R_EX_", direction=-1, min_mass_weigh
 
 def apply_metric_to_subsamples(models, n, k, metric, **kwargs):
 
-    scores = []
+    scores = {}
 
     metric_map = {
         'MRO': mro_score,
@@ -115,9 +115,10 @@ def apply_metric_to_subsamples(models, n, k, metric, **kwargs):
     subsamples = sample(list(combinations(models, k)), n)
 
     for subsample in subsamples:
-        comm = Community(subsample, copy=False)
+        comm_id = ','.join(model.id for model in subsample)
+        comm = Community('', subsample, copy=False)
         function = metric_map[metric]
         result = function(comm, **kwargs)
-        scores.append(result[0])
+        scores[comm_id] = result[0]
 
     return scores
