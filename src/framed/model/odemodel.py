@@ -100,7 +100,7 @@ class ODEModel(Model):
         c_id = self.metabolites[m_id].compartment
         table = self.metabolite_reaction_lookup()
         terms = ["{:+g} * r['{}']".format(coeff, r_id) for r_id, coeff in table[m_id].items()]
-        expr = "1/p['{}'] * ({})".format(c_id, ' '.join(terms))
+        expr = "1/p['{}'] * ({})".format(c_id, ' '.join(terms)) if terms else "0"
         return expr
 
     def parse_rate(self, r_id, rate):
@@ -195,6 +195,7 @@ class ODEModel(Model):
         if params:
             p.update(params)
 
+        exec 'from math import log' in globals()
         exec self.build_ode() in globals()
         ode_func = eval('ode_func')
 
