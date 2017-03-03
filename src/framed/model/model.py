@@ -207,6 +207,18 @@ class Model:
         self._s_matrix = None
         self._parser = None
 
+    def __getstate__(self):
+        state = self.__dict__.copy()
+        del state['_m_r_lookup']
+        del state['_reg_lookup']
+        del state['_s_matrix']
+        del state['_parser']
+        return state
+
+    def __setstate__(self, state):
+        self.__dict__.update(state)
+        self._clear_temp()
+
     def copy(self):
         """ Create an identical copy of the model.
 

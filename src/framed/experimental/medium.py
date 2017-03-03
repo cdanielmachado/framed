@@ -1,3 +1,4 @@
+from framed import FBA
 from framed.solvers import solver_instance
 from framed.solvers.solver import VarType, Status
 from warnings import warn
@@ -5,7 +6,7 @@ from framed.experimental.elements import molecular_weight
 
 
 def minimal_medium(model, exchange_reactions, direction=-1, min_mass_weight=False, min_growth=1,
-                   max_uptake=100, max_compounds=None, n_solutions=1):
+                   max_uptake=100, max_compounds=None, n_solutions=1, validate=False):
     """ Minimal medium calculator. Determines the minimum number of medium components for the organism to grow.
 
     Notes:
@@ -103,6 +104,9 @@ def minimal_medium(model, exchange_reactions, direction=-1, min_mass_weight=Fals
 
     medium = [y_i[2:] for y_i in objective if solution.values[y_i] > 1e-5]
 
+    if validate:
+        validate_solution(model, medium, exchange_reactions, direction, min_growth, max_uptake)
+
     if n_solutions == 1:
         return medium, solution
     else:
@@ -125,3 +129,16 @@ def minimal_medium(model, exchange_reactions, direction=-1, min_mass_weight=Fals
 
         return medium_list, solutions
 
+
+def validate_solution(model, medium, exchange_reactions, direction, min_growth, max_uptake):
+    if direction == -1:
+        constraints = {r_id: (-max_uptake, None) if r_id in medium else (0, None) for r_id in exchange_reactions}
+    else:
+        constraints = {r_id: (None, max_uptake) if r_id in medium else (None, 0) for r_id in exchange_reactions}
+
+    sol = FBA(model, constraints=constraints)
+
+    if sol.fobj >= min_growth:
+        print 'Solution appears to be valid.'
+    else:
+        print 'Solution appears to be invalid.'

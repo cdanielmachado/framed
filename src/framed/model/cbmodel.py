@@ -100,6 +100,15 @@ class CBReaction(Reaction):
         self.gpr = gpr_association
         self._bool_function = None
 
+    def __getstate__(self):
+        state = self.__dict__.copy()
+        del state['_bool_function']
+        return state
+
+    def __setstate__(self, state):
+        self.__dict__.update(state)
+        self._bool_function = None
+
     def set_lower_bound(self, value):
         self.lb = value
 

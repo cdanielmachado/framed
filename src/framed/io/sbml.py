@@ -240,6 +240,11 @@ def _load_cobra_gpr(sbml_model, model):
         model.set_gpr_association(r_id, gpr)
 
 
+def sanitize_id(identifier):
+    non_alphanum = re.compile('\W+')
+    return non_alphanum.sub('_', identifier)
+
+
 def parse_gpr_rule(rule):
 
     if not rule:
@@ -257,9 +262,9 @@ def parse_gpr_rule(rule):
         elif token == '(' or token == ')':
             return token
         elif token.startswith('G_'):
-            return non_alphanum.sub('_', token)
+            return sanitize_id(token)
         else:
-            return 'G_' + non_alphanum.sub('_', token)
+            return 'G_' + sanitize_id(token)
 
     rule = ' '.join(map(replacement, rule.split()))
 

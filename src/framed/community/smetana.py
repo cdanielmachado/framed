@@ -4,10 +4,10 @@ from framed.model.cbmodel import Environment
 
 from itertools import combinations
 from random import sample
-
+from warnings import warn
 
 def mip_score(community, exchange_pattern="^R_EX_", direction=-1, extracellular_id="C_e", min_mass_weight=False,
-              min_growth=1, max_uptake=100):
+              min_growth=1, max_uptake=10):
     """
     Implements the metabolic interaction potential (MIP) score as defined in (Zelezniak et al, 2015).
 
@@ -102,7 +102,7 @@ def mro_score(community, exchange_pattern="^R_EX_", direction=-1, min_mass_weigh
 
 def apply_metric_to_subsamples(models, n, k, metric, **kwargs):
 
-    scores = {}
+    scores = []
 
     metric_map = {
         'MRO': mro_score,
@@ -118,7 +118,11 @@ def apply_metric_to_subsamples(models, n, k, metric, **kwargs):
         comm_id = ','.join(model.id for model in subsample)
         comm = Community('', subsample, copy=False)
         function = metric_map[metric]
-        result = function(comm, **kwargs)
-        scores[comm_id] = result[0]
+        try:
+            result = function(comm, **kwargs)
+            scores[comm_id] = result[0]
+        except Exception:
+            warn('{} calculation failed for {}'.format(metric, comm_id))
+            continue
 
     return scores
