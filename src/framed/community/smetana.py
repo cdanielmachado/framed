@@ -102,7 +102,7 @@ def mro_score(community, exchange_pattern="^R_EX_", direction=-1, min_mass_weigh
 
 def apply_metric_to_subsamples(models, n, k, metric, **kwargs):
 
-    scores = []
+    scores = {}
 
     metric_map = {
         'MRO': mro_score,
@@ -116,12 +116,12 @@ def apply_metric_to_subsamples(models, n, k, metric, **kwargs):
 
     for subsample in subsamples:
         comm_id = ','.join(model.id for model in subsample)
-        comm = Community('', subsample, copy=False)
+        comm = Community(comm_id, subsample, copy=False)
         function = metric_map[metric]
         try:
             result = function(comm, **kwargs)
             scores[comm_id] = result[0]
-        except Exception:
+        except:
             warn('{} calculation failed for {}'.format(metric, comm_id))
             continue
 
