@@ -111,12 +111,14 @@ class CBReaction(Reaction):
 
     def set_lower_bound(self, value):
         self.lb = value
+        self.reversible = (value is None or value < 0)
 
     def set_upper_bound(self, value):
         self.ub = value
 
     def set_flux_bounds(self, lb, ub):
         self.lb, self.ub = lb, ub
+        self.reversible = (lb is None or lb < 0)
 
     def set_gpr_association(self, gpr_association):
         self.gpr = gpr_association
@@ -185,8 +187,7 @@ class CBModel(Model):
         """
         Model.__init__(self, model_id)
         self.genes = AttrOrderedDict()
-        self.__biomass_reaction = None
-        self.__biomass_reaction_detected = False
+        self._biomass_reaction = None
 
     def _clear_temp(self):
         Model._clear_temp(self)
@@ -194,15 +195,15 @@ class CBModel(Model):
 
     @property
     def biomass_reaction(self):
-        if not self.__biomass_reaction_detected:
+        if self._biomass_reaction is None:
             self.detect_biomass_reaction()
 
-        return self.__biomass_reaction
+        return self._biomass_reaction
 
     @biomass_reaction.setter
-    def biomass_reaction(self, reaction_name):
-        self.__biomass_reaction_detected = True
-        self.__biomass_reaction = reaction_name
+    def biomass_reaction(self, r_id):
+        assert r_id in self.reactions, "{} is not a valid reaction id in this model".format(r_id)
+        self._biomass_reaction = r_id
 
     def get_flux_bounds(self, r_id):
         """ Get flux bounds for reaction
@@ -298,31 +299,30 @@ class CBModel(Model):
         else:
             Model.add_reaction(self, reaction)
 
-    def detect_biomass_reaction(self):
+    def detect_biomass_reaction(self, update=False):
         """ Detects biomass reaction in the model (searches by objective coefficient)
 
         Returns:
             str: first reaction that matches (or else None)
         """
 
-        if not self.__biomass_reaction:
+        if self._biomass_reaction is None or update:
             matches = [r_id for r_id, rxn in self.reactions.items() if rxn.objective]
 
             if matches:
-                self.__biomass_reaction = matches[0]
+                self._biomass_reaction = matches[0]
                 if len(matches) > 1:
-                    w ='Multiple biomass reactions detected (first selected): {}'.format(" ".join(matches))
+                    w = 'Multiple biomass reactions detected (first selected): {}'.format(" ".join(matches))
                     warnings.warn(w, UserWarning)
 
-                if not re.search("biomas|growth", self.__biomass_reaction, re.IGNORECASE):
-                    w = "Suspicious biomass reaction '{}' name".format(self.__biomass_reaction)
+                if not re.search("biomass|growth", self._biomass_reaction, re.IGNORECASE):
+                    w = "Suspicious biomass reaction '{}' name".format(self._biomass_reaction)
                     warnings.warn(w, UserWarning)
             else:
                 w = 'No biomass reaction detected'
                 warnings.warn(w, UserWarning)
 
-        self.__biomass_reaction_detected = True
-        return self.__biomass_reaction
+        return self._biomass_reaction
 
     def add_gene(self, gene):
         """ Add a gene metabolite to the model.

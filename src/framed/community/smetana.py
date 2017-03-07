@@ -1,6 +1,6 @@
 from framed.community.model import Community
 from framed.experimental.medium import minimal_medium
-from framed.model.cbmodel import Environment
+from framed.model.cbmodel import Environment, CBReaction
 
 from itertools import combinations
 from random import sample
@@ -26,100 +26,6 @@ def mip_score(community, exchange_pattern="^R_EX_", direction=-1, extracellular_
         float: MIP score
     """
 
-    individual_media = {}
-
-    for org_id, organism in community.organisms.items():
-
-        complete = Environment.complete(organism, exchange_pattern, max_uptake)
-        complete.apply(organism)
-        exchange_rxns = complete.keys()
-
-        medium, _ = minimal_medium(organism, exchange_rxns,
-                                   direction=direction,
-                                   min_mass_weight=min_mass_weight,
-                                   min_growth=min_growth,
-                                   max_uptake=max_uptake)
-        individual_media[org_id] = set(medium)
-
-    media_union = reduce(set.__or__, individual_media.values())
-
-    merged_model = community.merge_models(extracellular_id, common_biomass=True)
-    complete = Environment.complete(merged_model, exchange_pattern, max_uptake)
-    exchange_rxns = complete.keys()
-
-    community_medium, _ = minimal_medium(merged_model, exchange_rxns,
-                                         direction=direction,
-                                         min_mass_weight=min_mass_weight,
-                                         min_growth=min_growth,
-                                         max_uptake=max_uptake)
-
-    score = len(media_union) - len(community_medium)
-
-    return score, individual_media, media_union, community_medium
-
-
-def mro_score(community, exchange_pattern="^R_EX_", direction=-1, min_mass_weight=False,
-              min_growth=1, max_uptake=100):
-    """
-    Implements the metabolic resource overlap (MRO) score as defined in (Zelezniak et al, 2015).
-
-    Args:
-        community (Community): microbial community model
-        exchange_pattern (str): regex patter for guessing exchange reactions
-        direction (int): direction of uptake reactions (negative or positive, default: -1)
-        min_mass_weight (bool): minimize by molecular weight of nutrients (default: False)
-        min_growth (float): minimum growth rate (default: 1)
-        max_uptake (float): maximum uptake rate (default: 100)
-
-    Returns:
-        float: MRO score
-    """
-
-    individual_media = {}
-
-    for org_id, organism in community.organisms.items():
-
-        complete = Environment.complete(organism, exchange_pattern, max_uptake)
-        complete.apply(organism)
-        exchange_rxns = complete.keys()
-
-        medium, _ = minimal_medium(organism, exchange_rxns,
-                                   direction=direction,
-                                   min_mass_weight=min_mass_weight,
-                                   min_growth=min_growth,
-                                   max_uptake=max_uptake)
-        individual_media[org_id] = set(medium)
-
-    combinations = {(org1, org2): individual_media[org1] & individual_media[org2]
-                    for i, org1 in enumerate(community.organisms)
-                    for j, org2 in enumerate(community.organisms) if i < j}
-
-    numerator = sum(map(len, combinations.values())) / float(len(combinations))
-    denominator = sum(map(len, individual_media.values())) / float(len(individual_media))
-
-    score = numerator / denominator
-
-    return score, individual_media, combinations
-
-
-def mip_score_new(community, exchange_pattern="^R_EX_", direction=-1, extracellular_id="C_e", min_mass_weight=False,
-              min_growth=1, max_uptake=10):
-    """
-    Implements the metabolic interaction potential (MIP) score as defined in (Zelezniak et al, 2015).
-
-    Args:
-        community (Community): microbial community model
-        exchange_pattern (str): regex patter for guessing exchange reactions
-        direction (int): direction of uptake reactions (negative or positive, default: -1)
-        extracellular_id (str): extracellular compartment id
-        min_mass_weight (bool): minimize by molecular weight of nutrients (default: False)
-        min_growth (float): minimum growth rate (default: 1)
-        max_uptake (float): maximum uptake rate (default: 100)
-
-    Returns:
-        float: MIP score
-    """
-
     for model in community.organisms.values():
         Environment.complete(model, exchange_pattern=exchange_pattern, inplace=True)
 
@@ -127,79 +33,83 @@ def mip_score_new(community, exchange_pattern="^R_EX_", direction=-1, extracellu
     complete = Environment.complete(merged_model, exchange_pattern='^EX')
     exchange_rxns = complete.keys()
 
-    community_medium, _ = minimal_medium(merged_model, exchange_rxns,
-                                         direction=direction,
-                                         min_mass_weight=min_mass_weight,
-                                         min_growth=min_growth,
-                                         max_uptake=max_uptake)
-
-    block_interactions(merged_model, exchange_pattern, direction, inplace=True)
-
-    noninteracting_medium, _ = minimal_medium(merged_model, exchange_rxns,
-                                         direction=direction,
-                                         min_mass_weight=min_mass_weight,
-                                         min_growth=min_growth,
-                                         max_uptake=max_uptake)
-
-    score = len(noninteracting_medium) - len(community_medium)
-
-    return score, noninteracting_medium, community_medium
-
-
-def mro_score_new(community, exchange_pattern="^R_EX_", direction=-1, extracellular_id="C_e", min_mass_weight=False,
-              min_growth=1, max_uptake=100):
-    """
-    Implements the metabolic resource overlap (MRO) score as defined in (Zelezniak et al, 2015).
-
-    Args:
-        community (Community): microbial community model
-        exchange_pattern (str): regex patter for guessing exchange reactions
-        direction (int): direction of uptake reactions (negative or positive, default: -1)
-        extracellular_id (str): extracellular compartment id
-        min_mass_weight (bool): minimize by molecular weight of nutrients (default: False)
-        min_growth (float): minimum growth rate (default: 1)
-        max_uptake (float): maximum uptake rate (default: 100)
-
-    Returns:
-        float: MRO score
-    """
-
-    ABSTOL = 1e-9
-
-    for model in community.organisms.values():
-        Environment.complete(model, exchange_pattern=exchange_pattern, inplace=True)
-
-    merged_model = community.merge_models(extracellular_id, merge_extracellular=False, common_biomass=True)
-    complete = Environment.complete(merged_model, exchange_pattern='^EX')
-    exchange_rxns = complete.keys()
-
-    non_interacting = block_interactions(merged_model, exchange_pattern, direction, inplace=False)
-
-    noninteracting_medium, _ = minimal_medium(non_interacting, exchange_rxns,
-                                                    direction=direction,
-                                                    min_mass_weight=min_mass_weight,
-                                                    min_growth=min_growth,
-                                                    max_uptake=max_uptake)
-
-    _, sol = minimal_medium(merged_model, noninteracting_medium,
+    community_medium, sol1 = minimal_medium(merged_model, exchange_rxns,
                                              direction=direction,
                                              min_mass_weight=min_mass_weight,
                                              min_growth=min_growth,
-                                             max_uptake=max_uptake)
+                                             max_uptake=max_uptake, validate=True)
 
-    comm_fluxes = community.split_fluxes(sol.values)
+    block_interactions(merged_model, exchange_pattern, direction, inplace=True)
 
-    individual_media = {org_id: set() for org_id in community.organisms}
+    noninteracting_medium, sol2 = minimal_medium(merged_model, exchange_rxns,
+                                                 direction=direction,
+                                                 min_mass_weight=min_mass_weight,
+                                                 min_growth=min_growth,
+                                                 max_uptake=max_uptake, validate=True)
 
+    score = len(noninteracting_medium) - len(community_medium)
+    extras = (noninteracting_medium, community_medium, sol1, sol2)
+
+    return score, extras
+
+
+def mro_score(community, exchange_pattern="^R_EX_", direction=-1, extracellular_id="C_e", min_mass_weight=False,
+              min_growth=1, max_uptake=100):
+    """
+    Implements the metabolic resource overlap (MRO) score as defined in (Zelezniak et al, 2015).
+
+    Args:
+        community (Community): microbial community model
+        exchange_pattern (str): regex patter for guessing exchange reactions
+        direction (int): direction of uptake reactions (negative or positive, default: -1)
+        extracellular_id (str): extracellular compartment id
+        min_mass_weight (bool): minimize by molecular weight of nutrients (default: False)
+        min_growth (float): minimum growth rate (default: 1)
+        max_uptake (float): maximum uptake rate (default: 100)
+
+    Returns:
+        float: MRO score
+    """
+
+    for model in community.organisms.values():
+        Environment.complete(model, exchange_pattern=exchange_pattern, inplace=True)
+
+    non_interacting = community.merge_models(extracellular_id, merge_extracellular=False, common_biomass=True)
+
+    block_interactions(non_interacting, exchange_pattern, direction)
+    complete = Environment.complete(non_interacting, exchange_pattern='^EX')
+    exchange_rxns = complete.keys()
+
+    noninteracting_medium, sol = minimal_medium(non_interacting, exchange_rxns,
+                                                    direction=direction,
+                                                    min_mass_weight=min_mass_weight,
+                                                    min_growth=min_growth,
+                                                    max_uptake=max_uptake, validate=True)
+
+    interacting = community.merge_models(extracellular_id, merge_extracellular=False, common_biomass=False)
+    Environment.empty(interacting, exchange_pattern='^EX', inplace=True)
+
+    for r_id in noninteracting_medium:
+        interacting.set_lower_bound(r_id, -max_uptake)
+
+    individual_media = {}
     re_pattern = re.compile(exchange_pattern)
 
-    for org_id, fluxes in comm_fluxes.items():
-        for r_id, val in fluxes.items():
-            if re_pattern.search(r_id):
-                if direction < 0 and val < -ABSTOL:
-                    individual_media[org_id].add(r_id)
-                elif direction > 0 and val > ABSTOL:
-                    individual_media[org_id].add(r_id)
+    for org_id, organism in community.organisms.items():
+
+        exchange_rxns = [r_id for r_id in interacting.reactions
+                         if r_id.rsplit('_', 1)[1] == org_id and re_pattern.search(r_id)]
+
+        biomass = organism.biomass_reaction
+        interacting.biomass_reaction = '{}_{}'.format(biomass, org_id)
+
+        medium, _ = minimal_medium(interacting, exchange_rxns,
+                                   direction=direction,
+                                   min_mass_weight=min_mass_weight,
+                                   min_growth=min_growth,
+                                   max_uptake=max_uptake, validate=True)
+
+        individual_media[org_id] = {r_id.rsplit('_', 1)[0] for r_id in medium}
 
     pairwise = {(org1, org2): individual_media[org1] & individual_media[org2]
                 for i, org1 in enumerate(community.organisms)
@@ -209,8 +119,9 @@ def mro_score_new(community, exchange_pattern="^R_EX_", direction=-1, extracellu
     denominator = sum(map(len, individual_media.values())) / float(len(individual_media))
 
     score = numerator / denominator
+    extras = (noninteracting_medium, individual_media, pairwise)
 
-    return score, individual_media, pairwise, comm_fluxes
+    return score, extras
 
 
 def block_interactions(model, exchange_pattern="^R_EX_", direction=-1, inplace=True):
@@ -237,8 +148,10 @@ def block_interactions(model, exchange_pattern="^R_EX_", direction=-1, inplace=T
                     mets = model.reactions[r_id].get_products()
 
                 for met in mets:
-                    rxn_str = 'Sink_{}: {} --> '.format(met, met)
-                    model.add_reaction_from_str(rxn_str)
+                    sink = CBReaction('Sink_{}'.format(met), reversible=False, stoichiometry={met: -1})
+                    model.add_reaction(sink)
+
+    model._clear_temp()
 
     if not inplace:
         return model

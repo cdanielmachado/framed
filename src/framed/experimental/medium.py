@@ -6,7 +6,7 @@ from framed.experimental.elements import molecular_weight
 
 
 def minimal_medium(model, exchange_reactions, direction=-1, min_mass_weight=False, min_growth=1,
-                   max_uptake=100, max_compounds=None, n_solutions=1, validate=False):
+                   max_uptake=100, max_compounds=None, n_solutions=1, validate=True, abstol=1e-6):
     """ Minimal medium calculator. Determines the minimum number of medium components for the organism to grow.
 
     Notes:
@@ -23,6 +23,8 @@ def minimal_medium(model, exchange_reactions, direction=-1, min_mass_weight=Fals
         max_uptake (float): maximum uptake rate (default: 100)
         max_compounds (int): limit maximum number of compounds (optional)
         n_solutions (int): enumerate multiple solutions (default: 1)
+        validate (bool): validate solution using FBA (for debugging purposes, default: False)
+        abstol (float): tolerance for detecting a non-zero exchange flux (default: 1e-6)
 
     Returns:
         list: minimal set of exchange reactions
@@ -37,7 +39,7 @@ def minimal_medium(model, exchange_reactions, direction=-1, min_mass_weight=Fals
         else:
             model.reactions[r_id].ub = max_uptake
 
-    biomass = model.detect_biomass_reaction()
+    biomass = model.biomass_reaction
 
     model.reactions[biomass].lb = min_growth
 
@@ -102,7 +104,9 @@ def minimal_medium(model, exchange_reactions, direction=-1, min_mass_weight=Fals
         warn('No solution found')
         return None, solution
 
-    medium = [y_i[2:] for y_i in objective if solution.values[y_i] > 1e-5]
+    medium = [r_id for r_id in exchange_reactions
+              if (direction < 0 and solution.values[r_id] < -abstol
+                  or direction > 0 and solution.values[r_id] > abstol)]
 
     if validate:
         validate_solution(model, medium, exchange_reactions, direction, min_growth, max_uptake)
@@ -123,7 +127,9 @@ def minimal_medium(model, exchange_reactions, direction=-1, min_mass_weight=Fals
                 warn('Unable to enumerate more solutions')
                 break
             else:
-                medium = [y_i[2:] for y_i in objective if solution.values[y_i] > 1e-5]
+                medium = [r_id for r_id in exchange_reactions
+                          if (direction < 0 and solution.values[r_id] < -abstol
+                              or direction > 0 and solution.values[r_id] > abstol)]
                 medium_list.append(medium)
                 solutions.append(solution)
 

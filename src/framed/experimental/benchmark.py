@@ -14,7 +14,7 @@ def evaluate(method, model, dataset, condition, **kwargs):
 
     if fit_growth:
         growth = dataset.growth_rate[condition]
-        biomass = model.detect_biomass_reaction()
+        biomass = model.biomass_reaction
 
     if measured_fluxes and isinstance(measured_fluxes, dict):
         measured_fluxes = measured_fluxes[condition] # allows condition-specific measurements

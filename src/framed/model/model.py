@@ -199,25 +199,23 @@ class Model:
         self.reactions = AttrOrderedDict()
         self.compartments = AttrOrderedDict()
         self.metadata = OrderedDict()
-        self._clear_temp()
-
-    def _clear_temp(self):
         self._m_r_lookup = None
         self._reg_lookup = None
         self._s_matrix = None
         self._parser = None
 
+    def _clear_temp(self):
+        self._m_r_lookup = None
+        self._reg_lookup = None
+        self._s_matrix = None
+
     def __getstate__(self):
         state = self.__dict__.copy()
-        del state['_m_r_lookup']
-        del state['_reg_lookup']
-        del state['_s_matrix']
-        del state['_parser']
+        state['_parser'] = None
         return state
 
     def __setstate__(self, state):
         self.__dict__.update(state)
-        self._clear_temp()
 
     def copy(self):
         """ Create an identical copy of the model.
@@ -227,7 +225,7 @@ class Model:
 
         """
 
-        self._clear_temp()
+        self._updated = False
         return deepcopy(self)
 
     def add_metabolite(self, metabolite):
@@ -240,7 +238,7 @@ class Model:
         """
         if metabolite.compartment in self.compartments or not metabolite.compartment:
             self.metabolites[metabolite.id] = metabolite
-            self._clear_temp()
+#        self._clear_temp()
         else:
             raise KeyError("Failed to add metabolite '{}' (invalid compartment)".format(metabolite.id))
 
@@ -252,7 +250,7 @@ class Model:
             reaction (Reaction): reaction to add
         """
         self.reactions[reaction.id] = reaction
-        self._clear_temp()
+#        self._clear_temp()
 
     def add_compartment(self, compartment):
         """ Add a single compartment to the model.
@@ -498,7 +496,7 @@ class Model:
 
         reaction = Reaction(r_id, r_id, reversible, stoichiometry)
         self.add_reaction(reaction)
-        self._clear_temp()
+#        self._clear_temp()
 
         return r_id
 

@@ -42,7 +42,7 @@ class Organism(object):
         if fba_objective:
             self.fba_objective = fba_objective
         else:
-            self.fba_objective = {model.detect_biomass_reaction(): 1}
+            self.fba_objective = {model.biomass_reaction: 1}
 
         self.fba_constraints = fba_constraints
         self.fba_solution = []

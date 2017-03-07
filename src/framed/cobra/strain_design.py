@@ -80,7 +80,7 @@ def combinatorial_deletion(model, objective, max_dels, kind='reactions', targets
     wt_solution = pFBA(model)
     reference = wt_solution.values
 
-    biomass = model.detect_biomass_reaction()
+    biomass = model.biomass_reaction
     wt_growth = reference[biomass]
     wt_fval = objective(reference)
 
@@ -174,7 +174,7 @@ def greedy_deletion(model, objective, max_dels, kind='reactions', targets=None, 
     wt_solution = pFBA(model, solver=solver)
     reference = wt_solution.values
 
-    biomass = model.detect_biomass_reaction()
+    biomass = model.biomass_reaction
     wt_growth = reference[biomass]
     wt_fval = objective(reference)
 

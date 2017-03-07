@@ -62,7 +62,7 @@ def GIMME(model, gene_exp, cutoff=25, growth_frac=0.9, constraints=None, parsimo
     if not constraints:
         constraints = {}
 
-    biomass = model.detect_biomass_reaction()
+    biomass = model.biomass_reaction
     constraints[biomass] = (growth_frac * wt_solution.values[biomass], None)
 
     for r_id in model.reactions:
