@@ -528,14 +528,14 @@ class Environment(MutableMapping):
         return deepcopy(self)
 
     @staticmethod
-    def from_compounds(compounds, exchange_format="'R_EX_{}_e'", default_uptake=1.0):
+    def from_compounds(compounds, exchange_format="'R_EX_{}_e'", max_uptake=1.0):
         """
         Initialize environment from list of medium compounds
 
         Arguments:
             compounds (list): List of compounds present in the medium
             exchange_format (str): python format string (see Notes)
-            default_uptake (float): maximum uptake rate for given compounds (default: 1.0)
+            max_uptake (float): maximum uptake rate for given compounds (default: 1.0)
 
         Returns:
             Environment: Complete medium for provided model
@@ -558,7 +558,7 @@ class Environment(MutableMapping):
         env = Environment()
         for met in compounds:
             r_id = eval(exchange_format.format(met))
-            env[r_id] = (-default_uptake, None)
+            env[r_id] = (-max_uptake, None)
 
         return env
 
@@ -615,7 +615,7 @@ class Environment(MutableMapping):
 
         return env
 
-    def apply(self, model, exclusive=True, exchange_pattern="^R_EX_", warning=True):
+    def apply(self, model, exclusive=True, exchange_pattern="^R_EX_", inplace=True, warning=True):
         """
         Apply environmental conditions to a given model
 
@@ -624,6 +624,7 @@ class Environment(MutableMapping):
             exclusive (bool): block uptake of any model compounds not specified in this environment (default: True)
             exchange_pattern (str): regex patter for guessing exchange reactions
             warning (bool): print warning for exchange reactions not found in the model (default: True)
+            inplace (bool): apply to model, otherwise return a constraints dict (default: True)
         """
 
         if exclusive:
@@ -632,22 +633,32 @@ class Environment(MutableMapping):
         else:
             env = self
 
+        if not inplace:
+            constraints = {}
+
         for r_id, (lb, ub) in env.items():
             if r_id in model.reactions:
-                model.set_flux_bounds(r_id, lb, ub)
+                if inplace:
+                    model.set_flux_bounds(r_id, lb, ub)
+                else:
+                    constraints[r_id] = (lb, ub)
             elif warning:
                 warnings.warn('Exchange reaction not in model:' + r_id)
 
+        if not inplace:
+            return constraints
+
     @staticmethod
-    def from_defaults(model, exchange_pattern="^R_EX_", default_uptake=1000.0, default_secretion=1000.0):
+    def from_defaults(model, exchange_pattern="^R_EX_", max_uptake=1000.0, max_secretion=1000.0, inplace=False):
         """
         Generate default environmental conditions for a given model
 
         Arguments:
             model (CBModel): model from which the exchange reactions are determined
             exchange_pattern (str): regex patter for guessing exchange reactions
-            default_uptake (float): maximum uptake rate (default: 1000.0)
-            default_secretion (float): maximum secretion rate (default: 1000.0)
+            max_uptake (float): maximum uptake rate (default: 1000.0)
+            max_secretion (float): maximum secretion rate (default: 1000.0)
+            inplace (bool): apply to model (default: False)
 
         Returns:
             Environment: Default environment for provided model
@@ -658,87 +669,90 @@ class Environment(MutableMapping):
 
         for r_id, rxn in model.reactions.items():
             if re_pattern.search(r_id):
-                env[r_id] = (-default_uptake, default_secretion)
+                env[r_id] = (-max_uptake, max_secretion)
 
-        return env
+        if inplace:
+            env.apply(model, exclusive=False, inplace=True)
+        else:
+            return env
 
     @staticmethod
-    def complete(model, exchange_pattern="^R_EX_", default_uptake=1000.0):
+    def complete(model, exchange_pattern="^R_EX_", max_uptake=1000.0, inplace=False):
         """
         Generate a complete growth medium for a given model
 
         Arguments:
             model (CBModel): model from which the exchange reactions are determined
             exchange_pattern (str): regex patter for guessing exchange reactions
-            default_uptake (float): maximum uptake rate (default: 1000.0)
+            max_uptake (float): maximum uptake rate (default: 1000.0)
+            inplace (bool): apply to model (default: False)
 
         Returns:
             Environment: complete medium for provided model
 
         """
 
-        return Environment.from_defaults(model, exchange_pattern, default_uptake, None)
+        return Environment.from_defaults(model, exchange_pattern, max_uptake, None, inplace)
 
     @staticmethod
-    def empty(model, exchange_pattern="^R_EX_"):
+    def empty(model, exchange_pattern="^R_EX_", inplace=False):
         """
         Generate an empty growth medium for a given model
 
         Arguments:
             model (CBModel): model from which the exchange reactions are determined
             exchange_pattern (str): regex patter for guessing exchange reactions
+            inplace (bool): apply to model (default: False)
 
         Returns:
             Environment: empty medium for provided model
 
         """
 
-        return Environment.from_defaults(model, exchange_pattern, 0, None)
+        return Environment.from_defaults(model, exchange_pattern, 0, None, inplace)
 
+    @staticmethod
+    def from_csv(path, reaction_col='reaction', lower_bound_col="lower_bound", upper_bound_col="upper_bound", sep="\t"):
+        """
+        Load environment from tab separated file
 
-    #TODO: let's decide on the file format later
+        Args:
+            path (str): Path to medium file
+            reaction_col (str): Column name with reaction names
+            lower_bound_col (str): Column name with upper bounds
+            upper_bound_col (str): Column name with upper bounds
+            sep (str): Separator for columns
 
-    # @staticmethod
-    # def from_csv(path, reaction_col='reaction', lower_bound_col="lower_bound", upper_bound_col="upper_bound", sep="\t"):
-    #     """
-    #     Load medium from tab separated file
-    #
-    #     Args:
-    #         path: Path to medium file
-    #         reaction_col: Column name with reaction names
-    #         lower_bound_col: Column name with upper bounds
-    #         upper_bound_col: Column name with upper bounds
-    #         sep: Separator for columns
-    #
-    #     Returns: Medium
-    #
-    #     """
-    #     if not os.path.exists(path):
-    #         raise IOError(errno.ENOENT, "Media file '{}' not found".format(path), path)
-    #
-    #     medium = Environment()
-    #     with open(path, "r") as f:
-    #         header = next(f)
-    #         header = header.strip()
-    #         header = header.split("#", 1)[0]
-    #         header = [h.strip() for h in header.split(sep)]
-    #
-    #         for col in [reaction_col, lower_bound_col, upper_bound_col]:
-    #             if col not in header:
-    #                 raise IOError(errno.EIO, "Media file '{}' has no column '{}'".format(path, col), path)
-    #
-    #         for row in f:
-    #             if row.startswith("#"):
-    #                 continue
-    #
-    #             row = row.strip()
-    #             if not row:
-    #                 continue
-    #
-    #             row = row.split("#", 1)[0]
-    #             row = [c.strip() for c in row.split(sep)]
-    #             row = dict(zip(header, row))
-    #
-    #             medium[row[reaction_col]] = (float(row[lower_bound_col]), float(row[upper_bound_col]))
-    #
-    #     return medium
+        Returns: Environment
+
+        """
+
+        if not os.path.exists(path):
+            raise IOError(errno.ENOENT, "File not found", path)
+
+        env = Environment()
+        with open(path, "r") as f:
+            header = next(f)
+            header = header.strip()
+            header = header.split("#", 1)[0]
+            header = [h.strip() for h in header.split(sep)]
+
+            for col in [reaction_col, lower_bound_col, upper_bound_col]:
+                if col not in header:
+                    raise IOError(errno.EIO, "File '{}' has no column '{}'".format(path, col), path)
+
+            for row in f:
+                if row.startswith("#"):
+                    continue
+
+                row = row.strip()
+                if not row:
+                    continue
+
+                row = row.split("#", 1)[0]
+                row = [c.strip() for c in row.split(sep)]
+                row = dict(zip(header, row))
+
+                env[row[reaction_col]] = (float(row[lower_bound_col]), float(row[upper_bound_col]))
+
+        return env

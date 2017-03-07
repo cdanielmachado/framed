@@ -1,3 +1,5 @@
+from collections import OrderedDict
+
 from framed.model.cbmodel import CBModel, CBReaction
 from framed.model.model import Compartment, Metabolite
 from ..model.model import AttrOrderedDict
@@ -31,6 +33,13 @@ class Community:
 
             for model in models:
                 self.add_organism(model, abundances[model.id], copy)
+
+    def __str__(self):
+        if set(self.abundances.values()) != {1.0}:
+            lines = ['{} ({})'.format(org_id, self.abundances[org_id]) for org_id in self.organisms]
+        else:
+            lines = self.organisms.keys()
+        return '\n'.join(lines)
 
     def add_organism(self, model, abundance=1.0, copy=True):
         """ Add an organism to this community.
@@ -171,6 +180,21 @@ class Community:
 
         return merged_model
 
+    def split_fluxes(self, fluxes):
+        """ Decompose a flux balance solution of the merged community into organism-specific flux vectors.
 
+        Args:
+            fluxes (dict): flux distribution as a single dict
 
+        Returns:
+            dict: community flux distribution as a nested dict
+        """
+
+        comm_fluxes = OrderedDict()
+
+        for org_id in self.organisms:
+            org_fluxes = [(r_id[:-(1+len(org_id))], val) for r_id, val in fluxes.items() if r_id.endswith(org_id)]
+            comm_fluxes[org_id] = OrderedDict(org_fluxes)
+
+        return comm_fluxes
 

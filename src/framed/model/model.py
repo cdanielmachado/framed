@@ -510,3 +510,19 @@ class Model:
 
         """
         return [m_id for m_id, met in self.metabolites.items() if met.boundary]
+
+    def get_metabolites_by_compartment(self, c_id):
+        """ Get list of metabolites in a given compartment.
+
+        Args:
+            c_id (str): compartment id
+
+        Returns:
+            list: metabolites in given compartment
+
+
+        """
+
+        assert c_id in self.compartments.keys(), 'No such compartment: ' + c_id
+
+        return [m_id for m_id, met in self.metabolites.items() if met.compartment == c_id]
