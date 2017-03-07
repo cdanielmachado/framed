@@ -54,7 +54,7 @@ def mip_score(community, exchange_pattern="^R_EX_", direction=-1, extracellular_
 
 
 def mro_score(community, exchange_pattern="^R_EX_", direction=-1, extracellular_id="C_e", min_mass_weight=False,
-              min_growth=1, max_uptake=100):
+              min_growth=1, max_uptake=10):
     """
     Implements the metabolic resource overlap (MRO) score as defined in (Zelezniak et al, 2015).
 
@@ -118,7 +118,7 @@ def mro_score(community, exchange_pattern="^R_EX_", direction=-1, extracellular_
     numerator = sum(map(len, pairwise.values())) / float(len(pairwise))
     denominator = sum(map(len, individual_media.values())) / float(len(individual_media))
 
-    score = numerator / denominator
+    score = numerator / denominator if denominator != 0 else None
     extras = (noninteracting_medium, individual_media, pairwise)
 
     return score, extras
