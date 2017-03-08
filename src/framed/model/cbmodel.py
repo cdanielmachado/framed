@@ -111,14 +111,14 @@ class CBReaction(Reaction):
 
     def set_lower_bound(self, value):
         self.lb = value
-        self.reversible = (value is None or value < 0)
+        self.reversible = bool(value is None or value < 0)
 
     def set_upper_bound(self, value):
         self.ub = value
 
     def set_flux_bounds(self, lb, ub):
         self.lb, self.ub = lb, ub
-        self.reversible = (lb is None or lb < 0)
+        self.reversible = bool(lb is None or lb < 0)
 
     def set_gpr_association(self, gpr_association):
         self.gpr = gpr_association

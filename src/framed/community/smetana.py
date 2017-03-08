@@ -7,9 +7,11 @@ from random import sample
 from warnings import warn
 import re
 
+from framed.solvers.solver import Status
+
 
 def mip_score(community, exchange_pattern="^R_EX_", direction=-1, extracellular_id="C_e", min_mass_weight=False,
-              min_growth=1, max_uptake=10):
+              min_growth=1, max_uptake=100):
     """
     Implements the metabolic interaction potential (MIP) score as defined in (Zelezniak et al, 2015).
 
@@ -54,7 +56,7 @@ def mip_score(community, exchange_pattern="^R_EX_", direction=-1, extracellular_
 
 
 def mro_score(community, exchange_pattern="^R_EX_", direction=-1, extracellular_id="C_e", min_mass_weight=False,
-              min_growth=1, max_uptake=10):
+              min_growth=1, max_uptake=100):
     """
     Implements the metabolic resource overlap (MRO) score as defined in (Zelezniak et al, 2015).
 
@@ -86,6 +88,11 @@ def mro_score(community, exchange_pattern="^R_EX_", direction=-1, extracellular_
                                                     min_growth=min_growth,
                                                     max_uptake=max_uptake, validate=True)
 
+    solutions = [sol]
+
+    if sol.status != Status.OPTIMAL:
+        raise RuntimeError('Failed to find a valid solution')
+
     interacting = community.merge_models(extracellular_id, merge_extracellular=False, common_biomass=False)
     Environment.empty(interacting, exchange_pattern='^EX', inplace=True)
 
@@ -98,18 +105,22 @@ def mro_score(community, exchange_pattern="^R_EX_", direction=-1, extracellular_
     for org_id, organism in community.organisms.items():
 
         exchange_rxns = [r_id for r_id in interacting.reactions
-                         if r_id.rsplit('_', 1)[1] == org_id and re_pattern.search(r_id)]
+                         if r_id.endswith('_' + org_id) and re_pattern.search(r_id)]
 
         biomass = organism.biomass_reaction
         interacting.biomass_reaction = '{}_{}'.format(biomass, org_id)
 
-        medium, _ = minimal_medium(interacting, exchange_rxns,
+        medium, sol = minimal_medium(interacting, exchange_rxns,
                                    direction=direction,
                                    min_mass_weight=min_mass_weight,
                                    min_growth=min_growth,
                                    max_uptake=max_uptake, validate=True)
+        solutions.append(sol)
 
-        individual_media[org_id] = {r_id.rsplit('_', 1)[0] for r_id in medium}
+        if sol.status != Status.OPTIMAL:
+            raise RuntimeError('Failed to find a valid solution')
+
+        individual_media[org_id] = {r_id[:-(1+len(org_id))] for r_id in medium}
 
     pairwise = {(org1, org2): individual_media[org1] & individual_media[org2]
                 for i, org1 in enumerate(community.organisms)
@@ -119,7 +130,7 @@ def mro_score(community, exchange_pattern="^R_EX_", direction=-1, extracellular_
     denominator = sum(map(len, individual_media.values())) / float(len(individual_media))
 
     score = numerator / denominator if denominator != 0 else None
-    extras = (noninteracting_medium, individual_media, pairwise)
+    extras = (noninteracting_medium, individual_media, pairwise, solutions)
 
     return score, extras
 
@@ -157,7 +168,19 @@ def block_interactions(model, exchange_pattern="^R_EX_", direction=-1, inplace=T
         return model
 
 
-def apply_metric_to_subsamples(models, n, k, metric, **kwargs):
+def score_subcommunities(models, metric, n=None, k=2,  **kwargs):
+    """ Apply a given score to subcommunities generated from a list of organisms.
+
+    Args:
+        models (list): list of models (CBModel)
+        metric (str): metric to apply (currently available: 'MRO', 'MIP')
+        n (int): number of samples to generate (optional, all combinations by default)
+        k (int): subcommunity size (default: 2)
+
+    Returns:
+        dict: score results indexed by subcommunity id
+
+    """
 
     scores = {}
 
@@ -169,15 +192,17 @@ def apply_metric_to_subsamples(models, n, k, metric, **kwargs):
     if metric not in metric_map:
         raise RuntimeError('Unsupported metric: {}. Currently supported {}'.format(metric, ','.join(metric_map.keys())))
 
-    subsamples = sample(list(combinations(models, k)), n)
+    subsamples = list(combinations(models, k))
+
+    if n is not None:
+        subsamples = sample(subsamples, n)
 
     for subsample in subsamples:
         comm_id = ','.join(model.id for model in subsample)
         comm = Community(comm_id, subsample, copy=False)
         function = metric_map[metric]
         try:
-            result = function(comm, **kwargs)
-            scores[comm_id] = result[0]
+            scores[comm_id], _ = function(comm, **kwargs)
         except:
             warn('{} calculation failed for {}'.format(metric, comm_id))
             continue
