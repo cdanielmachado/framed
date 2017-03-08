@@ -13,7 +13,7 @@ from .parser import ReactionParser
 class Metabolite:
     """ Base class for modeling metabolites. """
 
-    def __init__(self, elem_id, name=None, compartment=None, boundary=False):
+    def __init__(self, elem_id, name=None, compartment=None, boundary=False, constant=False):
         """
         Arguments:
             elem_id (str): a valid unique identifier
@@ -25,10 +25,18 @@ class Metabolite:
         self.name = name
         self.compartment = compartment
         self.boundary = boundary
+        self.constant = constant
         self.metadata = OrderedDict()
 
     def __str__(self):
         return self.name if self.name else self.id
+
+    def __getstate__(self):
+        state = self.__dict__.copy()
+        return state
+
+    def __setstate__(self, state):
+        self.__dict__.update(state)
 
 
 class Reaction:
@@ -117,6 +125,12 @@ class Reaction:
                            for m_id, coeff in self.stoichiometry.items() if coeff > 0])
         return res
 
+    def __getstate__(self):
+        state = self.__dict__.copy()
+        return state
+
+    def __setstate__(self, state):
+        self.__dict__.update(state)
 
 class Compartment:
     """ Base class for modeling compartments. """
@@ -135,6 +149,13 @@ class Compartment:
 
     def __str__(self):
         return self.name if self.name else self.id
+
+    def __getstate__(self):
+        state = self.__dict__.copy()
+        return state
+
+    def __setstate__(self, state):
+        self.__dict__.update(state)
 
 
 class AttrOrderedDict(OrderedDict):
@@ -167,6 +188,13 @@ class AttrOrderedDict(OrderedDict):
         for key, val in self.items():
             my_copy[key] = deepcopy(val)
         return my_copy
+
+    def __getstate__(self):
+        state = self.__dict__.copy()
+        return state
+
+    def __setstate__(self, state):
+        self.__dict__.update(state)
 
 
 class Model:
@@ -480,3 +508,12 @@ class Model:
 
         """
         return [m_id for m_id, met in self.metabolites.items() if met.boundary]
+
+
+
+    def __getstate__(self):
+        state = self.__dict__.copy()
+        return state
+
+    def __setstate__(self, state):
+        self.__dict__.update(state)

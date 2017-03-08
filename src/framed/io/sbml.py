@@ -108,7 +108,7 @@ def _load_metabolites(sbml_model, model):
 
 
 def _load_metabolite(species):
-    metabolite = Metabolite(species.getId(), species.getName(), species.getCompartment(), species.getBoundaryCondition())
+    metabolite = Metabolite(species.getId(), species.getName(), species.getCompartment(), species.getBoundaryCondition(), species.getConstant())
     _load_metadata(species, metabolite)
     return metabolite
 
@@ -435,6 +435,7 @@ def _save_metabolites(model, sbml_model):
         species.setName(metabolite.name)
         species.setCompartment(metabolite.compartment)
         species.setBoundaryCondition(metabolite.boundary)
+        species.setConstant(metabolite.constant) #SGC
         _save_metadata(metabolite, species)
 
 

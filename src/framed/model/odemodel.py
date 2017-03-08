@@ -1,5 +1,5 @@
 from collections import OrderedDict
-
+from math import log
 from .model import Model
 
 
@@ -17,7 +17,6 @@ class ODEModel(Model):
         self.local_params = OrderedDict()
         self.ratelaws = OrderedDict()
         self.assignment_rules = OrderedDict()
-        self.ratelaws = OrderedDict()
         self._func_str = None
 
     def _clear_temp(self):
@@ -42,7 +41,7 @@ class ODEModel(Model):
             print 'No such reaction', r_id
 
     def set_assignment_rule(self, p_id, rule):
-        if p_id in self.variable_params:
+        if p_id in self.variable_params or p_id in self.metabolites:
             self.assignment_rules[p_id] = rule
         else:
             print 'No such variable parameter', p_id
@@ -98,7 +97,10 @@ class ODEModel(Model):
         c_id = self.metabolites[m_id].compartment
         table = self.metabolite_reaction_lookup()
         terms = ["{:+g} * r['{}']".format(coeff, r_id) for r_id, coeff in table[m_id].items()]
-        expr = "1/p['{}'] * ({})".format(c_id, ' '.join(terms))
+        if len(terms)==0 or (self.metabolites[m_id].constant and self.metabolites[m_id].boundary):
+            expr= "1/p['{}'] * 0".format(c_id)
+        else:
+            expr = "1/p['{}'] * ({})".format(c_id, ' '.join(terms))
         return expr
 
     def parse_rate(self, r_id, rate):
@@ -197,3 +199,12 @@ class ODEModel(Model):
         ode_func = eval('ode_func')
 
         return lambda t, x: ode_func(t, x, r, p, v)
+
+
+
+    def __getstate__(self):
+        state = self.__dict__.copy()
+        return state
+
+    def __setstate__(self, state):
+        self.__dict__.update(state)
