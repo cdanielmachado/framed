@@ -43,6 +43,8 @@ DEFAULT_UPPER_BOUND = 1000
 ACTIVATOR_TAG = 'SBO:0000459'
 INHIBITOR_TAG = 'SBO:0000020'
 
+non_alphanum = re.compile('\W+')
+
 
 def load_sbml_model(filename, kind=None, flavor=None):
     """ Loads a metabolic model from a file.
@@ -110,7 +112,7 @@ def _load_compartment(compartment):
 
 def _load_metabolites(sbml_model, model, flavor=None):
     for species in sbml_model.getListOfSpecies():
-        model.add_metabolite(_load_metabolite(species, flavor))
+        model.add_metabolite(_load_metabolite(species, flavor), clear_tmp=False)
 
 
 def _load_metabolite(species, flavor=None):
@@ -132,7 +134,7 @@ def _load_metabolite(species, flavor=None):
 
 def _load_reactions(sbml_model, model):
     for reaction in sbml_model.getListOfReactions():
-        model.add_reaction(_load_reaction(reaction))
+        model.add_reaction(_load_reaction(reaction), clear_tmp=False)
 
 
 def _load_reaction(reaction):
@@ -241,7 +243,6 @@ def _load_cobra_gpr(sbml_model, model):
 
 
 def sanitize_id(identifier):
-    non_alphanum = re.compile('\W+')
     return non_alphanum.sub('_', identifier)
 
 

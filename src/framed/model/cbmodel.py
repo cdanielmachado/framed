@@ -278,7 +278,7 @@ class CBModel(Model):
         else:
             raise KeyError("Reaction '{}' not found".format(r_id))
 
-    def add_reaction(self, reaction):
+    def add_reaction(self, reaction, clear_tmp=True):
         """ Add a single reaction to the model.
         If a reaction with the same id exists, it will be replaced.
 
@@ -295,9 +295,9 @@ class CBModel(Model):
                 reaction.regulators)
 
             cbreaction.metadata = reaction.metadata
-            Model.add_reaction(self, cbreaction)
+            Model.add_reaction(self, cbreaction, clear_tmp=clear_tmp)
         else:
-            Model.add_reaction(self, reaction)
+            Model.add_reaction(self, reaction, clear_tmp=clear_tmp)
 
     def detect_biomass_reaction(self, update=False):
         """ Detects biomass reaction in the model (searches by objective coefficient)
@@ -420,7 +420,7 @@ class CBModel(Model):
         else:
             raise KeyError('Invalid reactions in ratio {}/{}'.format(r_id_num, r_id_den))
 
-    def add_reaction_from_str(self, reaction_str, default_compartment=None):
+    def add_reaction_from_str(self, reaction_str, default_compartment=None, clear_tmp=True):
         """ Parse a reaction from a string and add it to the model.
 
         Arguments:
@@ -441,10 +441,10 @@ class CBModel(Model):
 
         for m_id in stoichiometry:
             if m_id not in self.metabolites:
-                self.add_metabolite(Metabolite(m_id, m_id, compartment=default_compartment))
+                self.add_metabolite(Metabolite(m_id, m_id, compartment=default_compartment), clear_tmp=clear_tmp)
 
         reaction = CBReaction(r_id, r_id, reversible, stoichiometry, None, lb, ub, obj_coeff)
-        self.add_reaction(reaction)
+        self.add_reaction(reaction, clear_tmp=clear_tmp)
 
         return r_id
 

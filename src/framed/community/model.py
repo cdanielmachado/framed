@@ -108,9 +108,9 @@ class Community:
                     new_met.id = '{}_{}'.format(m_id, org_id)
                     new_met.name = '{} ({})'.format(met.name, org_id)
                     new_met.compartment = '{}_{}'.format(met.compartment, org_id)
-                    merged_model.add_metabolite(new_met)
+                    merged_model.add_metabolite(new_met, clear_tmp=False)
                 elif m_id not in merged_model.metabolites:
-                    merged_model.add_metabolite(deepcopy(met))
+                    merged_model.add_metabolite(deepcopy(met), clear_tmp=False)
 
                 if met.compartment == extracellular_id and not merge_extracellular:
                     pool_id = '{}_pool'.format(m_id)
@@ -119,7 +119,7 @@ class Community:
                         new_met.id = pool_id
                         new_met.name = '{} (pool)'.format(met.name)
                         new_met.compartment = 'pool'
-                        merged_model.add_metabolite(new_met)
+                        merged_model.add_metabolite(new_met, clear_tmp=False)
 
                         exch_id = 'EX_{}_pool'.format(m_id)
                         exch_name = '{} (pool exchange)'.format(met.name)
@@ -161,7 +161,7 @@ class Community:
                 name = 'Biomass ({})'.format(org_id)
                 comp = extracellular_id if merge_extracellular else 'pool'
                 biomass_met = Metabolite(m_id, name, comp)
-                merged_model.add_metabolite(biomass_met)
+                merged_model.add_metabolite(biomass_met, clear_tmp=False)
 
                 biomass_rxn = model.biomass_reaction
                 new_id = '{}_{}'.format(biomass_rxn, org_id)

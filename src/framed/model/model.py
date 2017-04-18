@@ -228,7 +228,7 @@ class Model:
         self._updated = False
         return deepcopy(self)
 
-    def add_metabolite(self, metabolite):
+    def add_metabolite(self, metabolite, clear_tmp=True):
         """ Add a single metabolite to the model.
         If a metabolite with the same id exists, it will be replaced.
         If the metabolite compartment is defined, then it must exist in the model.
@@ -238,11 +238,12 @@ class Model:
         """
         if metabolite.compartment in self.compartments or not metabolite.compartment:
             self.metabolites[metabolite.id] = metabolite
-#        self._clear_temp()
+            if clear_tmp:
+                self._clear_temp()
         else:
             raise KeyError("Failed to add metabolite '{}' (invalid compartment)".format(metabolite.id))
 
-    def add_reaction(self, reaction):
+    def add_reaction(self, reaction, clear_tmp=True):
         """ Add a single reaction to the model.
         If a reaction with the same id exists, it will be replaced.
 
@@ -250,7 +251,8 @@ class Model:
             reaction (Reaction): reaction to add
         """
         self.reactions[reaction.id] = reaction
-#        self._clear_temp()
+        if clear_tmp:
+            self._clear_temp()
 
     def add_compartment(self, compartment):
         """ Add a single compartment to the model.
@@ -472,7 +474,7 @@ class Model:
     def __str__(self):
         return self.to_string()
 
-    def add_reaction_from_str(self, reaction_str, default_compartment=None):
+    def add_reaction_from_str(self, reaction_str, default_compartment=None, clear_tmp=True):
         """ Parse a reaction from a string and add it to the model.
 
         Arguments:
@@ -492,11 +494,10 @@ class Model:
 
         for m_id in stoichiometry:
             if m_id not in self.metabolites:
-                self.add_metabolite(Metabolite(m_id, m_id, compartment=default_compartment))
+                self.add_metabolite(Metabolite(m_id, m_id, compartment=default_compartment), clear_tmp=clear_tmp)
 
         reaction = Reaction(r_id, r_id, reversible, stoichiometry)
-        self.add_reaction(reaction)
-#        self._clear_temp()
+        self.add_reaction(reaction, clear_tmp=clear_tmp)
 
         return r_id
 
