@@ -35,7 +35,7 @@ class Metabolite:
 class Reaction:
     """ Base class for modeling reactions. """
 
-    def __init__(self, elem_id, name=None, reversible=True, stoichiometry=None, regulators=None):
+    def __init__(self, elem_id, name=None, reversible=True, stoichiometry=None, regulators=None, is_exchange=None):
         """
         Arguments:
             elem_id (str): a valid unique identifier
@@ -47,6 +47,7 @@ class Reaction:
         self.id = elem_id
         self.name = name
         self.reversible = reversible
+        self.is_exchange = is_exchange
         self.stoichiometry = OrderedDict()
         self.regulators = OrderedDict()
         self.metadata = OrderedDict()
@@ -154,7 +155,8 @@ class Compartment:
 
 class AttrOrderedDict(OrderedDict):
 
-    def __init__(self, *args):
+    def __init__(self, *args, **nargs):
+        self._immutable = "immutable" in nargs and nargs["immutable"]
         super(AttrOrderedDict, self).__init__(*args)
 
     def __getattr__(self, name):
@@ -183,8 +185,18 @@ class AttrOrderedDict(OrderedDict):
             my_copy[key] = deepcopy(val)
         return my_copy
 
+    def __setitem__(self, key, value, force=False):
+        if self._immutable and not force:
+            raise KeyError("This dictionary is immutable")
+        super(AttrOrderedDict, self).__setitem__(key, value)
 
-class Model:
+    def __delitem__(self, key, force=False):
+        if self._immutable and not force:
+            raise KeyError("This dictionary is immutable")
+        super(AttrOrderedDict, self).__delitem__(key)
+
+
+class Model(object):
     """ Base class for all metabolic models implemented as a bipartite network.
     Contains the list of metabolites, reactions, compartments, and stoichiometry.
     """
