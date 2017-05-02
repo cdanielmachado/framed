@@ -44,9 +44,9 @@ ACTIVATOR_TAG = 'SBO:0000459'
 INHIBITOR_TAG = 'SBO:0000020'
 
 non_alphanum = re.compile('\W+')
+re_type = type(non_alphanum)
 
-
-def load_sbml_model(filename, kind=None, flavor=None):
+def load_sbml_model(filename, kind=None, flavor=None, exchange_detection_mode=None):
     """ Loads a metabolic model from a file.
     
     Arguments:
@@ -67,7 +67,7 @@ def load_sbml_model(filename, kind=None, flavor=None):
         raise IOError('Failed to load model.')
 
     if kind and kind.lower() == CB_MODEL:
-        model = _load_cbmodel(sbml_model, flavor)
+        model = _load_cbmodel(sbml_model, flavor, exchange_detection_mode=exchange_detection_mode)
     elif kind and kind.lower() == ODE_MODEL:
         model = _load_odemodel(sbml_model)
     else:
@@ -78,8 +78,22 @@ def load_sbml_model(filename, kind=None, flavor=None):
     return model
 
 
-def load_cbmodel(filename, flavor=None, apply_fixes=True):
-    model = load_sbml_model(filename, kind=CB_MODEL, flavor=flavor)
+def load_cbmodel(filename, flavor=None, apply_fixes=True, exchange_detection_mode=None):
+    """
+    Args:
+        filename (str): SBML file patht 
+        flavor (str): adapt to different modeling conventions (optional, currently available: 'cobra', 'fbc2')
+        apply_fixes (str): TODO: what does it do?
+        exchange_detection_mode: Argument describing how to detect exchange reaction (possible values
+            'unbalanced' - Exchange reactions is the one that have either only reactants or products
+            'boundary' - Exchange reaction is the one that have single boundary metabolite on one side
+            <compiled Regex object> - Regular expression which is executed against reaction ID
+            None - All reactions are NOT exchange reactions
+            
+    Returns:
+        Model: Simple model or respective subclass
+    """
+    model = load_sbml_model(filename, kind=CB_MODEL, flavor=flavor, exchange_detection_mode=exchange_detection_mode)
 
     if apply_fixes:
         fix_cb_model(model, flavor=flavor)
@@ -132,15 +146,29 @@ def _load_metabolite(species, flavor=None):
     return metabolite
 
 
-def _load_reactions(sbml_model, model):
+def _load_reactions(sbml_model, model, exchange_detection_mode=None):
     for reaction in sbml_model.getListOfReactions():
-        model.add_reaction(_load_reaction(reaction), clear_tmp=False)
+        model.add_reaction(_load_reaction(reaction, sbml_model=sbml_model,
+                                          exchange_detection_mode=exchange_detection_mode), clear_tmp=False)
 
 
-def _load_reaction(reaction):
+def _load_reaction(reaction, sbml_model, exchange_detection_mode=None):
+    """
+    Args:
+        reaction: <SBMLReaction> object 
+        exchange_detection_mode: Argument describing how to detect exchange reaction (possible values
+            'unbalanced' - Exchange reactions is the one that have either only reactants or products
+            'boundary' - Exchange reaction is the one that have single boundary metabolite on one side
+            Regex object - Regular expression which is executed against reaction ID
+            None - All reactions are NOT exchange reactions
+
+    Returns:
+
+    """
 
     stoichiometry = OrderedDict()
     modifiers = OrderedDict()
+    sbmlSpecies = {s.getId(): s for s in sbml_model.getListOfSpecies()}
 
     for reactant in reaction.getListOfReactants():
         m_id = reactant.getSpecies()
@@ -170,16 +198,47 @@ def _load_reaction(reaction):
             kind = '-'
         modifiers[m_id] = kind
 
-    rxn = Reaction(reaction.getId(), reaction.getName(), reaction.getReversible(), stoichiometry, modifiers)
+    is_exchange = False
+    if exchange_detection_mode == "unbalanced":
+        sign = None
+        is_exchange = True
+        for m_id, c in stoichiometry.iteritems():
+            if sign is None:
+                sign = c > 0
+            else:
+                if sign != c > 0:
+                    is_exchange = False
+    elif exchange_detection_mode == "boundary":
+        boundary_reactants, boundary_products = None, None
+        is_exchange = True
+        for m_id, c in stoichiometry.iteritems():
+            if c > 0 and boundary_products is None and sbmlSpecies[m_id].getBoundaryCondition():
+                boundary_products = m_id
+            elif c < 0 and boundary_reactants is None and sbmlSpecies[m_id].getBoundaryCondition():
+                boundary_reactants = m_id
+            elif c != 0:
+                is_exchange = False
+    elif exchange_detection_mode is None:
+        
+        pass
+    elif isinstance(exchange_detection_mode, re_type):
+        is_exchange = exchange_detection_mode.match(reaction.getId())
+    else:
+        raise ValueError("Unknow exchange_detection_mode value. Allowed values include 'unbalanced', 'boundary' or" +
+                         "<compiled regular expression>")
+
+
+    rxn = Reaction(reaction.getId(), name=reaction.getName(), reversible=reaction.getReversible(),
+                   stoichiometry=stoichiometry, regulators=modifiers, is_exchange=is_exchange)
     _load_metadata(reaction, rxn)
     return rxn
 
 
-def _load_cbmodel(sbml_model, flavor):
+def _load_cbmodel(sbml_model, flavor, exchange_detection_mode=None):
     model = CBModel(sbml_model.getId())
     _load_compartments(sbml_model, model)
     _load_metabolites(sbml_model, model, flavor)
-    _load_reactions(sbml_model, model)
+    _load_reactions(sbml_model, model, exchange_detection_mode=exchange_detection_mode)
     if not flavor or flavor == COBRA_MODEL:
         _load_cobra_bounds(sbml_model, model)
         _load_cobra_objective(sbml_model, model)
