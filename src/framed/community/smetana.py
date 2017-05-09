@@ -2,16 +2,54 @@ from framed.community.model import Community
 from framed.experimental.medium import minimal_medium
 from framed.model.cbmodel import Environment, CBReaction
 
-from itertools import combinations
+from collections import Counter
+from itertools import combinations, chain
 from random import sample
 from warnings import warn
-import re
+from scipy.misc import comb
+
 
 from framed.solvers.solver import Status
 
 
-def mip_score(community, exchange_pattern="^R_EX_", direction=-1, extracellular_id="C_e", min_mass_weight=False,
-              min_growth=1, max_uptake=100):
+def species_coupling_score(community, environment, min_growth=1, max_uptake=100):
+    if community.merge_extracellular_compartments:
+        raise KeyError("For MIP calculation <Community.merge_extracellular_compartments> should be disabled")
+
+    if not community.create_biomass_reaction:
+        raise KeyError("For MIP calculation <Community.create_biomass_reaction> should be enabled")
+
+    if not community.interacting:
+        raise KeyError("For MIP calculation <Community.interacting> should be enabled")
+
+    interacting_community = community.copy(copy_models=True, interacting=True)
+    for model in interacting_community.organisms.values():
+        Environment.complete(model, exchange_reactions=model.get_exchange_reactions(), inplace=True)
+    environment.apply(interacting_community.merged)
+
+    print interacting_community.merged
+    exit()
+
+    biomass2model = {v: k for k, v in interacting_community.organisms_biomass_reactions.iteritems()}
+    n_solutions = int(comb(len(biomass2model), len(biomass2model)-1, exact=False))
+
+    scores = {}
+    extras = {'dependencies': {}}
+    for biomass_id, org_id in biomass2model.iteritems():
+        other_biomass_reactions = set(biomass2model) - set([biomass_id])
+        interacting_community.merged.biomass_reaction = biomass_id
+
+        medium_list, solutions = minimal_medium(interacting_community.merged, exchange_reactions=other_biomass_reactions,
+                                     direction=1, min_growth=min_growth, n_solutions=n_solutions,
+                                     max_uptake=max_uptake, validate=True)
+        medium_list_n = float(len(medium_list))
+
+        scores[org_id] = {biomass2model[b_id]: count/medium_list_n for b_id, count in Counter(chain(*medium_list)).iteritems()}
+        extras['dependencies'][org_id] = medium_list
+
+    return scores, extras
+
+def mip_score(community, min_mass_weight=False, min_growth=1, direction=-1, max_uptake=100):
     """
     Implements the metabolic interaction potential (MIP) score as defined in (Zelezniak et al, 2015).
 
@@ -27,36 +65,38 @@ def mip_score(community, exchange_pattern="^R_EX_", direction=-1, extracellular_
     Returns:
         float: MIP score
     """
+    if community.merge_extracellular_compartments:
+        raise KeyError("For MIP calculation <Community.merge_extracellular_compartments> should be disabled")
 
-    for model in community.organisms.values():
-        Environment.complete(model, exchange_pattern=exchange_pattern, inplace=True)
+    if not community.create_biomass_reaction:
+        raise KeyError("For MIP calculation <Community.create_biomass_reaction> should be enabled")
 
-    merged_model = community.merge_models(extracellular_id, merge_extracellular=False, common_biomass=True)
-    complete = Environment.complete(merged_model, exchange_pattern='^EX')
-    exchange_rxns = complete.keys()
+    if not community.interacting:
+        raise KeyError("For MIP calculation <Community.interacting> should be enabled")
 
-    community_medium, sol1 = minimal_medium(merged_model, exchange_rxns,
-                                             direction=direction,
+    community_medium, sol1 = minimal_medium(community.merged, direction=direction,
                                              min_mass_weight=min_mass_weight,
                                              min_growth=min_growth,
                                              max_uptake=max_uptake, validate=True)
 
-    block_interactions(merged_model, exchange_pattern, direction, inplace=True)
-
-    noninteracting_medium, sol2 = minimal_medium(merged_model, exchange_rxns,
+    #
+    # Calculate minimal media for non-interacting community
+    #
+    noninteracting_community = community.copy(copy_models=False, interacting=False)
+    noninteracting_medium, sol2 = minimal_medium(noninteracting_community.merged,
                                                  direction=direction,
                                                  min_mass_weight=min_mass_weight,
                                                  min_growth=min_growth,
                                                  max_uptake=max_uptake, validate=True)
 
     score = len(noninteracting_medium) - len(community_medium)
-    extras = (noninteracting_medium, community_medium, sol1, sol2)
+    extras = {'noninteracting_medium': noninteracting_medium, 'interacting_medium': community_medium,
+              'noninteracting_solution': sol2, 'interacting_solution': sol1}
 
     return score, extras
 
 
-def mro_score(community, exchange_pattern="^R_EX_", direction=-1, extracellular_id="C_e", min_mass_weight=False,
-              min_growth=1, max_uptake=100):
+def mro_score(community, direction=-1, min_mass_weight=False, min_growth=1, max_uptake=100):
     """
     Implements the metabolic resource overlap (MRO) score as defined in (Zelezniak et al, 2015).
 
@@ -72,17 +112,15 @@ def mro_score(community, exchange_pattern="^R_EX_", direction=-1, extracellular_
     Returns:
         float: MRO score
     """
+    if community.merge_extracellular_compartments:
+        raise KeyError("For MRO calculation <Community.merge_extracellular_compartments> should be disabled")
 
+    interacting_community = community.copy(copy_models=True, interacting=True, create_biomass=True)
     for model in community.organisms.values():
-        Environment.complete(model, exchange_pattern=exchange_pattern, inplace=True)
+        Environment.complete(model, exchange_reactions=model.get_exchange_reactions(), inplace=True)
 
-    non_interacting = community.merge_models(extracellular_id, merge_extracellular=False, common_biomass=True)
-
-    block_interactions(non_interacting, exchange_pattern, direction)
-    complete = Environment.complete(non_interacting, exchange_pattern='^EX')
-    exchange_rxns = complete.keys()
-
-    noninteracting_medium, sol = minimal_medium(non_interacting, exchange_rxns,
+    noninteracting_community = community.copy(copy_models=False, interacting=False, create_biomass=True)
+    noninteracting_medium, sol = minimal_medium(noninteracting_community.merged,
                                                     direction=direction,
                                                     min_mass_weight=min_mass_weight,
                                                     min_growth=min_growth,
@@ -93,24 +131,17 @@ def mro_score(community, exchange_pattern="^R_EX_", direction=-1, extracellular_
     if sol.status != Status.OPTIMAL:
         raise RuntimeError('Failed to find a valid solution')
 
-    interacting = community.merge_models(extracellular_id, merge_extracellular=False, common_biomass=False)
-    Environment.empty(interacting, exchange_pattern='^EX', inplace=True)
-
+    # Allow uptake of only metabolites that both of species need to reduce number of binary variables
+    Environment.empty(interacting_community.merged, exchange_reactions=interacting_community.merged.get_exchange_reactions(), inplace=True)
     for r_id in noninteracting_medium:
-        interacting.set_lower_bound(r_id, -max_uptake)
+        interacting_community.merged.set_lower_bound(r_id, -max_uptake)
 
     individual_media = {}
-    re_pattern = re.compile(exchange_pattern)
+    for org_id, exchange_rxns in interacting_community.organisms_exchange_reactions.iteritems():
+        biomass_reaction = interacting_community.organisms_biomass_reactions[org_id]
+        interacting_community.merged.biomass_reaction = biomass_reaction
 
-    for org_id, organism in community.organisms.items():
-
-        exchange_rxns = [r_id for r_id in interacting.reactions
-                         if r_id.endswith('_' + org_id) and re_pattern.search(r_id)]
-
-        biomass = organism.biomass_reaction
-        interacting.biomass_reaction = '{}_{}'.format(biomass, org_id)
-
-        medium, sol = minimal_medium(interacting, exchange_rxns,
+        medium, sol = minimal_medium(interacting_community.merged,
                                    direction=direction,
                                    min_mass_weight=min_mass_weight,
                                    min_growth=min_growth,
@@ -130,43 +161,10 @@ def mro_score(community, exchange_pattern="^R_EX_", direction=-1, extracellular_
     denominator = sum(map(len, individual_media.values())) / float(len(individual_media))
 
     score = numerator / denominator if denominator != 0 else None
-    extras = (noninteracting_medium, individual_media, pairwise, solutions)
+    extras = {'noninteracting_medium': noninteracting_medium, 'individual_media': individual_media, 'pairwise': pairwise,
+              'solutions': solutions}
 
     return score, extras
-
-
-def block_interactions(model, exchange_pattern="^R_EX_", direction=-1, inplace=True):
-
-    if not inplace:
-        model = model.copy()
-
-    pool_mets = model.get_metabolites_by_compartment('pool')
-    re_pattern = re.compile(exchange_pattern)
-
-    for m_id in pool_mets:
-        if direction < 0:
-            rxns = model.get_metabolite_producers(m_id)
-        else:
-            rxns = model.get_metabolite_consumers(m_id)
-
-        for r_id in rxns:
-            if re_pattern.search(r_id):
-                if direction < 0:
-                    model.set_upper_bound(r_id, 0)
-                    mets = model.reactions[r_id].get_substrates()
-                else:
-                    model.set_lower_bound(r_id, 0)
-                    mets = model.reactions[r_id].get_products()
-
-                for met in mets:
-                    sink = CBReaction('Sink_{}'.format(met), reversible=False, stoichiometry={met: -1})
-                    model.add_reaction(sink)
-
-    model._clear_temp()
-
-    if not inplace:
-        return model
-
 
 def score_subcommunities(models, metric, n=None, k=2,  **kwargs):
     """ Apply a given score to subcommunities generated from a list of organisms.
@@ -199,7 +197,7 @@ def score_subcommunities(models, metric, n=None, k=2,  **kwargs):
 
     for subsample in subsamples:
         comm_id = ','.join(model.id for model in subsample)
-        comm = Community(comm_id, subsample, copy=False)
+        comm = Community(comm_id, subsample, copy_models=False)
         function = metric_map[metric]
         try:
             scores[comm_id], _ = function(comm, **kwargs)
