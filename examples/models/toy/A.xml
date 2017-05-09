@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sbml xmlns="http://www.sbml.org/sbml/level3/version1/core" xmlns:fbc="http://www.sbml.org/sbml/level3/version1/fbc/version2" level="3" version="1" fbc:required="false">
+  <model metaid="Model1" id="Model1" name="Model1" fbc:strict="true">
+  <listOfUnitDefinitions>
+    <unitDefinition id="mmol_per_gDW_per_hr">
+      <listOfUnits>
+        <unit kind="mole" exponent="1" scale="-3" multiplier="1"/>
+        <unit kind="gram" exponent="-1" scale="0" multiplier="1"/>
+        <unit kind="second" exponent="-1" scale="0" multiplier="3600"/>
+      </listOfUnits>
+    </unitDefinition>
+  </listOfUnitDefinitions>
+  <listOfCompartments>
+    <compartment id="c" name="Cytosol" spatialDimensions="3" size="1" constant="false"/>
+    <compartment id="e" name="Extracellular" spatialDimensions="3" size="1" constant="false"/>
+  </listOfCompartments>
+  <listOfSpecies>
+    <species metaid="MetaboliteA_c" id="MetaboliteA_c" name="MetaboliteA_c" compartment="c" initialAmount="1" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false" fbc:charge="-1" />
+    <species metaid="MetaboliteA_e" id="MetaboliteA_e" name="MetaboliteA_e" compartment="e" initialAmount="1" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false" fbc:charge="-1" />
+    <species metaid="MetaboliteB_c" id="MetaboliteB_c" name="MetaboliteB_c" compartment="c" initialAmount="1" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false" fbc:charge="-1" />
+    <species metaid="MetaboliteB_e" id="MetaboliteB_e" name="MetaboliteB_e" compartment="e" initialAmount="1" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false" fbc:charge="-1" />
+    <species metaid="MetaboliteC_c" id="MetaboliteC_c" name="MetaboliteC_c" compartment="c" initialAmount="1" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false" fbc:charge="-1" />
+    <species metaid="MetaboliteC_e" id="MetaboliteC_e" name="MetaboliteC_e" compartment="e" initialAmount="1" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false" fbc:charge="-1" />
+    <species metaid="Biomass_c" id="Biomass_c" name="Biomass_c" compartment="c" initialAmount="1" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false" fbc:charge="-1" />
+    <species metaid="Biomass_e" id="Biomass_e" name="Biomass_e" compartment="e" initialAmount="1" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false" fbc:charge="-1" />
+  </listOfSpecies>
+  <listOfParameters>
+    <parameter id="LB" value="-15" constant="true"/>
+    <parameter id="UB" value="15" constant="true"/>
+    <parameter id="ZERO" value="0" constant="true"/>
+  </listOfParameters>
+  <listOfReactions>
+    <reaction metaid="R_1" id="R_1" name="R_1" reversible="false" fast="false" fbc:lowerFluxBound="ZERO" fbc:upperFluxBound="UB">
+      <listOfReactants>
+        <speciesReference species="MetaboliteB_c" stoichiometry="1" constant="true"/>
+      </listOfReactants>
+      <listOfProducts>
+        <speciesReference species="MetaboliteC_c" stoichiometry="1" constant="true"/>
+      </listOfProducts>
+    </reaction>
+    <reaction metaid="R_Biomass" id="R_Biomass" name="R_Biomass" reversible="true" fast="false" fbc:lowerFluxBound="LB" fbc:upperFluxBound="UB">
+      <listOfReactants>
+        <speciesReference species="MetaboliteA_c" stoichiometry="1" constant="true"/>
+        <speciesReference species="MetaboliteB_c" stoichiometry="1" constant="true"/>
+        <speciesReference species="MetaboliteC_c" stoichiometry="1" constant="true"/>
+      </listOfReactants>
+      <listOfProducts>
+        <speciesReference species="Biomass_c" stoichiometry="1" constant="true"/>
+      </listOfProducts>
+    </reaction>
+    <reaction metaid="R_exA" id="R_exA" name="R_exA" reversible="true" fast="false" fbc:lowerFluxBound="LB" fbc:upperFluxBound="UB">
+      <listOfReactants>
+        <speciesReference species="MetaboliteA_c" stoichiometry="1" constant="true"/>
+      </listOfReactants>
+      <listOfProducts>
+        <speciesReference species="MetaboliteA_e" stoichiometry="1" constant="true"/>
+      </listOfProducts>
+    </reaction>
+    <reaction metaid="R_exB" id="R_exB" name="R_exB" reversible="true" fast="false" fbc:lowerFluxBound="LB" fbc:upperFluxBound="UB">
+      <listOfReactants>
+        <speciesReference species="MetaboliteB_c" stoichiometry="1" constant="true"/>
+      </listOfReactants>
+      <listOfProducts>
+        <speciesReference species="MetaboliteB_e" stoichiometry="1" constant="true"/>
+      </listOfProducts>
+    </reaction>
+    <reaction metaid="R_exC" id="R_exC" name="R_exC" reversible="true" fast="false" fbc:lowerFluxBound="LB" fbc:upperFluxBound="UB">
+      <listOfReactants>
+        <speciesReference species="MetaboliteC_c" stoichiometry="1" constant="true"/>
+      </listOfReactants>
+      <listOfProducts>
+        <speciesReference species="MetaboliteC_e" stoichiometry="1" constant="true"/>
+      </listOfProducts>
+    </reaction>
+    <reaction metaid="R_exBiomass" id="R_exBiomass" name="R_exBiomass" reversible="true" fast="false" fbc:lowerFluxBound="LB" fbc:upperFluxBound="UB">
+      <listOfReactants>
+        <speciesReference species="Biomass_c" stoichiometry="1" constant="true"/>
+      </listOfReactants>
+      <listOfProducts>
+        <speciesReference species="Biomass_e" stoichiometry="1" constant="true"/>
+      </listOfProducts>
+    </reaction>
+    <reaction metaid="R_EX_MetaboliteA" id="R_EX_MetaboliteA" name="R_EX_MetaboliteA" reversible="true" fast="false" fbc:lowerFluxBound="LB" fbc:upperFluxBound="ZERO">
+      <listOfReactants>
+        <speciesReference species="MetaboliteA_e" stoichiometry="1" constant="true"/>
+      </listOfReactants>
+    </reaction>
+    <reaction metaid="R_EX_MetaboliteB" id="R_EX_MetaboliteB" name="R_EX_MetaboliteB" reversible="false" fast="false" fbc:lowerFluxBound="ZERO" fbc:upperFluxBound="UB">
+      <listOfReactants>
+        <speciesReference species="MetaboliteB_e" stoichiometry="1" constant="true"/>
+      </listOfReactants>
+    </reaction>
+    <reaction metaid="R_EX_MetaboliteC" id="R_EX_MetaboliteC" name="R_EX_MetaboliteC" reversible="false" fast="false" fbc:lowerFluxBound="LB" fbc:upperFluxBound="UB">
+      <listOfReactants>
+        <speciesReference species="MetaboliteC_e" stoichiometry="1" constant="true"/>
+      </listOfReactants>
+    </reaction>
+    <reaction metaid="R_EX_Biomass" id="R_EX_Biomass" name="R_EX_Biomass" reversible="true" fast="false" fbc:lowerFluxBound="ZERO" fbc:upperFluxBound="UB">
+      <listOfReactants>
+        <speciesReference species="Biomass_e" stoichiometry="1" constant="true"/>
+      </listOfReactants>
+    </reaction>
+  </listOfReactions>
+  <fbc:listOfObjectives fbc:activeObjective="obj">
+    <fbc:objective fbc:id="obj" fbc:type="maximize">
+      <fbc:listOfFluxObjectives>
+        <fbc:fluxObjective fbc:reaction="R_Biomass" fbc:coefficient="1"/>
+      </fbc:listOfFluxObjectives>
+    </fbc:objective>
+  </fbc:listOfObjectives>
+</model>
+</sbml>

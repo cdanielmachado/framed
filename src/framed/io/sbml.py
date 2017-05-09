@@ -81,7 +81,7 @@ def load_sbml_model(filename, kind=None, flavor=None, exchange_detection_mode=No
 def load_cbmodel(filename, flavor=None, apply_fixes=True, exchange_detection_mode=None):
     """
     Args:
-        filename (str): SBML file patht 
+        filename (str): SBML file path
         flavor (str): adapt to different modeling conventions (optional, currently available: 'cobra', 'fbc2')
         apply_fixes (str): TODO: what does it do?
         exchange_detection_mode: Argument describing how to detect exchange reaction (possible values

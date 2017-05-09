@@ -211,12 +211,14 @@ class Model(object):
         self.reactions = AttrOrderedDict()
         self.compartments = AttrOrderedDict()
         self.metadata = OrderedDict()
+        self._exchange_reactions = None
         self._m_r_lookup = None
         self._reg_lookup = None
         self._s_matrix = None
         self._parser = None
 
     def _clear_temp(self):
+        self._exchange_reactions = None
         self._m_r_lookup = None
         self._reg_lookup = None
         self._s_matrix = None
@@ -239,6 +241,21 @@ class Model(object):
 
         self._updated = False
         return deepcopy(self)
+
+    def get_exchange_reactions(self):
+
+
+        if not self._exchange_reactions:
+            self._exchange_reactions = OrderedDict()
+
+            for r in self.reactions.itervalues():
+                if not r.is_exchange:
+                    continue
+
+                self._exchange_reactions[r.id] = [k for k, v in r.stoichiometry.iteritems() if v < 0]
+
+        return self._exchange_reactions
+
 
     def add_metabolite(self, metabolite, clear_tmp=True):
         """ Add a single metabolite to the model.

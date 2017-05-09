@@ -189,6 +189,7 @@ class CBModel(Model):
         Model.__init__(self, model_id)
         self.genes = AttrOrderedDict()
         self._biomass_reaction = None
+        self._biomass_reaction_set = False
 
     def _clear_temp(self):
         Model._clear_temp(self)
@@ -196,15 +197,18 @@ class CBModel(Model):
 
     @property
     def biomass_reaction(self):
-        if self._biomass_reaction is None:
+        if not self._biomass_reaction_set:
             self.detect_biomass_reaction()
 
         return self._biomass_reaction
 
     @biomass_reaction.setter
     def biomass_reaction(self, r_id):
-        assert r_id in self.reactions, "{} is not a valid reaction id in this model".format(r_id)
+        if r_id:
+            assert r_id in self.reactions, "{} is not a valid reaction id in this model".format(r_id)
+
         self._biomass_reaction = r_id
+        self._biomass_reaction_set = True
 
     def get_flux_bounds(self, r_id):
         """ Get flux bounds for reaction
@@ -383,6 +387,7 @@ class CBModel(Model):
         """
         genes_state = {gene: gene in active_genes for gene in self.genes}
         return [r_id for r_id, rxn in self.reactions.items() if rxn.evaluate_gpr(genes_state)]
+
 
     def add_ratio_constraint(self, r_id_num, r_id_den, ratio):
         """ Add a flux ratio constraint to the model.
@@ -597,6 +602,10 @@ class Environment(MutableMapping):
         return compounds
 
     @staticmethod
+    def from_models(models, exchange_pattern="^R_EX_"):
+        return Environment.from_environments(Environment.from_model(m, exchange_pattern) for m in models)
+
+    @staticmethod
     def from_model(model, exchange_pattern="^R_EX_"):
         """
         Extract environmental conditions from a given model
@@ -617,6 +626,14 @@ class Environment(MutableMapping):
                 env[r_id] = rxn.lb, rxn.ub
 
         return env
+
+    @staticmethod
+    def from_environments(environments):
+        environment = Environment()
+        for env in environments:
+            environment.join(env)
+
+        return environment
 
     def apply(self, model, exclusive=True, exchange_pattern="^R_EX_", inplace=True, warning=True):
         """
@@ -777,3 +794,28 @@ class Environment(MutableMapping):
                 env[row[reaction_col]] = (float(row[lower_bound_col]), float(row[upper_bound_col]))
 
         return env
+
+    @staticmethod
+    def from_community_models(community):
+        community_mets = {m: r_id for r_id, metabolites in community.merged.get_exchange_reactions().iteritems() for m
+                          in metabolites}
+
+        community_exch_rxns = {map.original_reaction: community_mets[map.extracellular_metabolite]
+                               for model in community.organisms_exchange_reactions.itervalues()
+                               for map in model.itervalues()}
+
+        environment = Environment()
+        for k, v in Environment.from_models(community.organisms.itervalues()).iteritems():
+            environment[community_exch_rxns[k]] = v
+
+        return environment
+
+    def join(self, other):
+        if not isinstance(other, Environment):
+            raise EnvironmentError("Only Environments objects can be combined together")
+
+        for k, v in other.iteritems():
+            if k in self:
+                self[k] = (self[k][0] + v[0], self[k][1] + v[1])
+            else:
+                self[k] = v

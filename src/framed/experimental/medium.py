@@ -5,7 +5,7 @@ from warnings import warn
 from framed.experimental.elements import molecular_weight
 
 
-def minimal_medium(model, exchange_reactions, direction=-1, min_mass_weight=False, min_growth=1,
+def minimal_medium(model, exchange_reactions=None, direction=-1, min_mass_weight=False, min_growth=1,
                    max_uptake=100, max_compounds=None, n_solutions=1, validate=True, abstol=1e-6):
     """ Minimal medium calculator. Determines the minimum number of medium components for the organism to grow.
 
@@ -16,7 +16,7 @@ def minimal_medium(model, exchange_reactions, direction=-1, min_mass_weight=Fals
 
     Args:
         model (CBModel): model
-        exchange_reactions: list of exchange reactions
+        exchange_reactions: list of exchange reactions (if not provided all model exchange reactions are used)
         direction (int): direction of uptake reactions (negative or positive, default: -1)
         min_mass_weight (bool): minimize by molecular weight of nutrients (default: False)
         min_growth (float): minimum growth rate (default: 1)
@@ -32,6 +32,8 @@ def minimal_medium(model, exchange_reactions, direction=-1, min_mass_weight=Fals
     """
 
     model = model.copy()
+    if exchange_reactions is None:
+        exchange_reactions = list(model.get_exchange_reactions())
 
     for r_id in exchange_reactions:
         if direction < 0:
