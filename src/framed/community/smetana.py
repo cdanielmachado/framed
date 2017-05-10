@@ -12,6 +12,7 @@ from scipy.misc import comb
 from framed.solvers.solver import Status
 
 
+
 def species_coupling_score(community, environment, min_growth=1, max_uptake=100):
     if community.merge_extracellular_compartments:
         raise KeyError("For MIP calculation <Community.merge_extracellular_compartments> should be disabled")
@@ -23,12 +24,7 @@ def species_coupling_score(community, environment, min_growth=1, max_uptake=100)
         raise KeyError("For MIP calculation <Community.interacting> should be enabled")
 
     interacting_community = community.copy(copy_models=True, interacting=True)
-    for model in interacting_community.organisms.values():
-        Environment.complete(model, exchange_reactions=model.get_exchange_reactions(), inplace=True)
     environment.apply(interacting_community.merged)
-
-    print interacting_community.merged
-    exit()
 
     biomass2model = {v: k for k, v in interacting_community.organisms_biomass_reactions.iteritems()}
     n_solutions = int(comb(len(biomass2model), len(biomass2model)-1, exact=False))
@@ -48,6 +44,39 @@ def species_coupling_score(community, environment, min_growth=1, max_uptake=100)
         extras['dependencies'][org_id] = medium_list
 
     return scores, extras
+
+def species_uptake_score(community, environment, min_mass_weight=True, min_growth=1.0, max_uptake=100.0):
+    solutions = []
+    interacting_community = community.copy(copy_models=True, interacting=True, create_biomass=True)
+    environment.apply(interacting_community.merged, inplace=True)
+    n_solutions = int(comb(len(environment), len(environment)-1, exact=False))
+    rxn2met = {ex.organism_reaction: ex.original_metabolite
+               for org_exchanges in interacting_community.organisms_exchange_reactions.itervalues()
+               for ex in org_exchanges.itervalues()}
+
+    scores = {}
+    extras = {'dependencies': {}}
+    for org_id, exchange_rxns in community.organisms_exchange_reactions.iteritems():
+        biomass_reaction = interacting_community.organisms_biomass_reactions[org_id]
+        interacting_community.merged.biomass_reaction = biomass_reaction
+
+        medium_list, sol = minimal_medium(interacting_community.merged,
+                                   exchange_reactions=exchange_rxns,
+                                   direction=-1,
+                                   min_mass_weight=min_mass_weight,
+                                   min_growth=min_growth,
+                                   n_solutions=n_solutions,
+                                   max_uptake=max_uptake, validate=True)
+        solutions.append(sol)
+
+        medium_list_n = float(len(medium_list))
+        scores[org_id] = {rxn2met[rxn_id]: count / medium_list_n
+                          for rxn_id, count in Counter(chain(*medium_list)).iteritems()}
+        extras['dependencies'][org_id] = medium_list
+
+
+    return scores, extras
+
 
 def mip_score(community, min_mass_weight=False, min_growth=1, direction=-1, max_uptake=100):
     """
@@ -102,7 +131,6 @@ def mro_score(community, direction=-1, min_mass_weight=False, min_growth=1, max_
 
     Args:
         community (Community): microbial community model
-        exchange_pattern (str): regex patter for guessing exchange reactions
         direction (int): direction of uptake reactions (negative or positive, default: -1)
         extracellular_id (str): extracellular compartment id
         min_mass_weight (bool): minimize by molecular weight of nutrients (default: False)
@@ -116,8 +144,10 @@ def mro_score(community, direction=-1, min_mass_weight=False, min_growth=1, max_
         raise KeyError("For MRO calculation <Community.merge_extracellular_compartments> should be disabled")
 
     interacting_community = community.copy(copy_models=True, interacting=True, create_biomass=True)
+    # TODO: currently this is not needed. Should we change the algorithm not to touch the initial bounds
+    # on exchange reactions?
     for model in community.organisms.values():
-        Environment.complete(model, exchange_reactions=model.get_exchange_reactions(), inplace=True)
+        Environment.complete(model, inplace=True)
 
     noninteracting_community = community.copy(copy_models=False, interacting=False, create_biomass=True)
     noninteracting_medium, sol = minimal_medium(noninteracting_community.merged,
@@ -132,7 +162,7 @@ def mro_score(community, direction=-1, min_mass_weight=False, min_growth=1, max_
         raise RuntimeError('Failed to find a valid solution')
 
     # Allow uptake of only metabolites that both of species need to reduce number of binary variables
-    Environment.empty(interacting_community.merged, exchange_reactions=interacting_community.merged.get_exchange_reactions(), inplace=True)
+    Environment.empty(interacting_community.merged, inplace=True)
     for r_id in noninteracting_medium:
         interacting_community.merged.set_lower_bound(r_id, -max_uptake)
 
