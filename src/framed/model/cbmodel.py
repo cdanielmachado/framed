@@ -602,28 +602,26 @@ class Environment(MutableMapping):
         return compounds
 
     @staticmethod
-    def from_models(models, exchange_pattern="^R_EX_"):
-        return Environment.from_environments(Environment.from_model(m, exchange_pattern) for m in models)
+    def from_models(models):
+        return Environment.from_environments(Environment.from_model(m) for m in models)
 
     @staticmethod
-    def from_model(model, exchange_pattern="^R_EX_"):
+    def from_model(model):
         """
         Extract environmental conditions from a given model
 
         Arguments:
             model (CBModel): model from which the exchange reactions are determined
-            exchange_pattern (str): regex pattern for finding exchange reactions
 
         Returns:
             Environment: environment from provided model
         """
 
-        re_pattern = re.compile(exchange_pattern)
         env = Environment()
 
-        for r_id, rxn in model.reactions.items():
-            if re_pattern.search(r_id):
-                env[r_id] = rxn.lb, rxn.ub
+        for r_id, mets in model.get_exchange_reactions().iteritems():
+            rxn = model.reactions[r_id]
+            env[r_id] = rxn.lb, rxn.ub
 
         return env
 
@@ -635,20 +633,19 @@ class Environment(MutableMapping):
 
         return environment
 
-    def apply(self, model, exclusive=True, exchange_pattern="^R_EX_", inplace=True, warning=True):
+    def apply(self, model, exclusive=True, inplace=True, warning=True):
         """
         Apply environmental conditions to a given model
 
         Args:
             model (CBModel): model
             exclusive (bool): block uptake of any model compounds not specified in this environment (default: True)
-            exchange_pattern (str): regex patter for guessing exchange reactions
             warning (bool): print warning for exchange reactions not found in the model (default: True)
             inplace (bool): apply to model, otherwise return a constraints dict (default: True)
         """
 
         if exclusive:
-            env = Environment.empty(model, exchange_pattern)
+            env = Environment.empty(model)
             env.update(self)
         else:
             env = self
@@ -669,15 +666,12 @@ class Environment(MutableMapping):
             return constraints
 
     @staticmethod
-    def from_defaults(model, exchange_pattern="^R_EX_", exchange_reactions=None, max_uptake=1000.0,
-                      max_secretion=1000.0, inplace=False):
+    def from_defaults(model, max_uptake=1000.0, max_secretion=1000.0, inplace=False):
         """
         Generate default environmental conditions for a given model
 
         Arguments:
             model (CBModel): model from which the exchange reactions are determined
-            exchange_pattern (str): regex patter for guessing exchange reactions (ignored if exchange_reactions provided)
-            exchange_reactions (list): list of exchange reactions (overrides exchange_pattern)
             max_uptake (float): maximum uptake rate (default: 1000.0)
             max_secretion (float): maximum secretion rate (default: 1000.0)
             inplace (bool): apply to model (default: False)
@@ -686,22 +680,10 @@ class Environment(MutableMapping):
             Environment: Default environment for provided model
 
         """
-        re_pattern = re.compile(exchange_pattern)
         env = Environment()
 
-        if exchange_reactions:
-            for r_id in exchange_reactions:
-                if r_id not in model.reactions:
-                    raise KeyError("Reaction '{}' not found in the model")
-
-                env[r_id] = (-max_uptake, max_secretion)
-        else:
-            for r_id, rxn in model.reactions.items():
-                if not re_pattern.search(r_id):
-                    continue
-
-                env[r_id] = (-max_uptake, max_secretion)
-
+        for r_id in model.get_exchange_reactions():
+            env[r_id] = (-max_uptake, max_secretion)
 
         if inplace:
             env.apply(model, exclusive=False, inplace=True)
@@ -709,14 +691,12 @@ class Environment(MutableMapping):
             return env
 
     @staticmethod
-    def complete(model, exchange_pattern="^R_EX_", exchange_reactions=None, max_uptake=1000.0, inplace=False):
+    def complete(model, max_uptake=1000.0, inplace=False):
         """
         Generate a complete growth medium for a given model
 
         Arguments:
             model (CBModel): model from which the exchange reactions are determined
-            exchange_pattern (str): regex patter for guessing exchange reactions (ignored if exchange_reactions provided)
-            exchange_reactions (list): list of exchange reactions (overrides exchange_pattern)
             max_uptake (float): maximum uptake rate (default: 1000.0)
             inplace (bool): apply to model (default: False)
 
@@ -725,19 +705,15 @@ class Environment(MutableMapping):
 
         """
 
-        return Environment.from_defaults(model, exchange_pattern=exchange_pattern,
-                                         exchange_reactions=exchange_reactions, max_uptake=max_uptake,
-                                         max_secretion=None, inplace=inplace)
+        return Environment.from_defaults(model, max_uptake=max_uptake, max_secretion=None, inplace=inplace)
 
     @staticmethod
-    def empty(model, exchange_pattern="^R_EX_", exchange_reactions=None, inplace=False):
+    def empty(model, inplace=False):
         """
         Generate an empty growth medium for a given model
 
         Arguments:
             model (CBModel): model from which the exchange reactions are determined
-            exchange_pattern (str): regex patter for guessing exchange reactions (ignored if exchange_reactions provided)
-            exchange_reactions (list): list of exchange reactions (overrides exchange_pattern)
             inplace (bool): apply to model (default: False)
 
         Returns:
@@ -745,9 +721,7 @@ class Environment(MutableMapping):
 
         """
 
-        return Environment.from_defaults(model, exchange_pattern=exchange_pattern,
-                                         exchange_reactions=exchange_reactions, max_uptake=0, max_secretion=None,
-                                         inplace=inplace)
+        return Environment.from_defaults(model, max_uptake=0, max_secretion=None, inplace=inplace)
 
     @staticmethod
     def from_csv(path, reaction_col='reaction', lower_bound_col="lower_bound", upper_bound_col="upper_bound", sep="\t"):

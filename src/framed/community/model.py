@@ -151,7 +151,7 @@ class Community(object):
         Returns: dict
         """
         if not self._merged_model:
-            self._merged_model = self._generate_merged_model()
+            self._merged_model = self.generate_merged_model()
 
         return self._organisms_exchange_reactions
 
@@ -164,7 +164,7 @@ class Community(object):
         Returns: dict
         """
         if not self._merged_model:
-            self._merged_model = self._generate_merged_model()
+            self._merged_model = self.generate_merged_model()
 
         return self._organisms_biomass_reactions
 
@@ -196,7 +196,7 @@ class Community(object):
         Returns: CBModel
         """
         if not self._merged_model:
-            self._merged_model = self._generate_merged_model()
+            self._merged_model = self.generate_merged_model()
 
         return self._merged_model
 
@@ -262,7 +262,7 @@ class Community(object):
             self._organisms.__delitem__(organism, force=True)
             self._abundances.__delitem__(organism, force=True)
 
-    def _generate_merged_model(self):
+    def generate_merged_model(self):
         def _id_pattern(object_id, organism_id):
             return "{}_{}".format(object_id, organism_id)
     
@@ -293,8 +293,6 @@ class Community(object):
             self._organisms_exchange_reactions[org_id] = {}
             self._organisms_biomass_reactions[org_id] = {}
 
-
-            metabolite_lookup = model.metabolite_reaction_lookup()
             #
             # Create additional extracellular compartment
             #
@@ -322,7 +320,7 @@ class Community(object):
                         new_met = _copy_object(met, "pool", "pool")
                         merged_model.add_metabolite(new_met, clear_tmp=False)
 
-                        exch_id = _id_pattern("EX_"+m_id, "pool")
+                        exch_id = _id_pattern("R_EX_"+m_id, "pool")
                         exch_name = _name_pattern(met.name, "pool exchange")
                         new_rxn = CBReaction(exch_id, name=exch_name, reversible=True, is_exchange=True)
                         new_rxn.stoichiometry[pool_id] = -1.0
@@ -362,7 +360,7 @@ class Community(object):
                     if is_exchange and not self._merge_extracellular_compartments:
                         new_rxn.reversible = True
                         new_rxn.lb = None
-                        new_rxn.ub = None if self.interacting else 0.0
+                        new_rxn.ub = None if self.interacting else 0.0 # TODO this removes the uptake bound. Should we somehow allow control over it
 
                     if rxn.id == model.biomass_reaction:
                         new_rxn.reversible = False

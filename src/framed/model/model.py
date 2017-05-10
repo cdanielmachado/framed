@@ -238,16 +238,18 @@ class Model(object):
             Model: model copy
 
         """
-
         self._updated = False
         return deepcopy(self)
 
     def get_exchange_reactions(self):
-
-
+        """
+        Get dict of exchange reactions where keys are reaction ids and values are list of exchanged
+        metabolites
+        
+        Returns: dict
+        """
         if not self._exchange_reactions:
             self._exchange_reactions = OrderedDict()
-
             for r in self.reactions.itervalues():
                 if not r.is_exchange:
                     continue
@@ -255,7 +257,6 @@ class Model(object):
                 self._exchange_reactions[r.id] = [k for k, v in r.stoichiometry.iteritems() if v < 0]
 
         return self._exchange_reactions
-
 
     def add_metabolite(self, metabolite, clear_tmp=True):
         """ Add a single metabolite to the model.
