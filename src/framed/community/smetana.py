@@ -1,5 +1,7 @@
 from framed.community.model import Community
 from framed.experimental.medium import minimal_medium
+from framed.solvers import solver_instance
+from framed.solvers.solver import VarType, Status
 from framed.model.cbmodel import Environment, CBReaction
 
 from collections import Counter
@@ -74,6 +76,33 @@ def species_uptake_score(community, environment, min_mass_weight=True, min_growt
                           for rxn_id, count in Counter(chain(*medium_list)).iteritems()}
         extras['dependencies'][org_id] = medium_list
 
+
+    return scores, extras
+
+
+def metabolite_production_score(community, environment, max_uptake=100, abstol=1e-6):
+    interacting_community = community.copy(copy_models=True, interacting=True, create_biomass=True)
+    environment.apply(interacting_community.merged, inplace=True)
+
+    scores = {}
+    extras = {'solutions': {}}
+
+    solver = solver_instance(interacting_community.merged)
+    for org_id, exchange_rxns in community.organisms_exchange_reactions.iteritems():
+        objective = {}
+        for r_id in exchange_rxns:
+            objective['y_' + r_id] = 1
+            solver.add_variable('y_' + r_id, 0, 1, vartype=VarType.BINARY, update_problem=False)
+            solver.add_constraint('c_' + r_id, {r_id: 1, 'y_' + r_id: -max_uptake}, '<', 0, update_problem=False)
+
+        solver.update()
+        solution = solver.solve(objective, minimize=False)
+
+        if solution.status != Status.OPTIMAL:
+            warn('No solution found')
+
+        scores[org_id] = {r_id: float(solution.values[r_id] < -abstol) for r_id in exchange_rxns}
+        extras['solutions'][org_id] = solution
 
     return scores, extras
 
