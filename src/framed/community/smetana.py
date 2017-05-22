@@ -13,6 +13,12 @@ from scipy.misc import comb
 
 from framed.solvers.solver import Status
 
+class GrowthStatus:
+    NOGROWTH = "no growth"
+    DEPENDENT = "dependant"
+    INDEPENDENT = "independant"
+
+
 class SmetanaScore(object):
     def __init__(self, donor_organism, receiver_organism, metabolite, metabolite_production_score, metabolite_uptake_score, species_coupling_score):
         self.donor_organism = donor_organism
@@ -52,7 +58,20 @@ def smetana_score(community, environment, report_zero_scores=False, min_mass_wei
 
                 scores.append(s)
 
-    return scores
+    extras = {'status': {},
+              "metabolite_production": {'scores': mpscores, 'extras': mpextras},
+              "metabolite_uptake": {'scores': muscores, 'extras': muextras},
+              "species_coupling": {'scores': scscores, 'extras': scextras}
+}
+    for org_receiver in community.organisms:
+        if scscores[org_receiver] is None:
+            extras['status'][org_receiver] = GrowthStatus.NOGROWTH
+        elif len(scscores[org_receiver]) == 0:
+            extras['status'][org_receiver] = GrowthStatus.INDEPENDENT
+        else:
+            extras['status'][org_receiver] = GrowthStatus.DEPENDENT
+
+    return scores, extras
 
 
 def species_coupling_score(community, environment, min_growth=1, max_uptake=100, abstol=1e-6):
@@ -123,7 +142,7 @@ def species_coupling_score(community, environment, min_growth=1, max_uptake=100,
             extras['dependencies'][org_id] = donors_list
         else:
             scores[org_id] = None
-            extras['dependencies'][org_id] = []
+            extras['dependencies'][org_id] = donors_list
 
     return scores, extras
 
@@ -161,9 +180,9 @@ def metabolite_uptake_score(community, environment, min_mass_weight=True, min_gr
         solutions.append(sol)
 
         if medium_list:
+            medium_list = map(lambda medium: [rxn2met[rxn_id] for rxn_id in medium], medium_list)
             medium_list_n = float(len(medium_list))
-            scores[org_id] = {rxn2met[rxn_id]: count / medium_list_n
-                              for rxn_id, count in Counter(chain(*medium_list)).iteritems()}
+            scores[org_id] = {m: count / medium_list_n for m, count in Counter(chain(*medium_list)).iteritems()}
         else:
             scores[org_id] = {} if sol.status == Status.OPTIMAL else None
         extras['dependencies'][org_id] = medium_list

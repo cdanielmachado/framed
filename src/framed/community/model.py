@@ -122,6 +122,10 @@ class Community(object):
         self._create_biomass = value
 
     @property
+    def size(self):
+        return float(len(self._organisms))
+
+    @property
     def interacting(self):
         """
         If true models will be able to exchange metabolites. Otherwise all produced metabolites will go to sink
@@ -154,6 +158,20 @@ class Community(object):
             self._merged_model = self.generate_merged_model()
 
         return self._organisms_exchange_reactions
+
+    @property
+    def organisms_reactions(self):
+        """
+        Returns dictionary containing list of community organisms specific reactions
+
+        Returns: dict
+        """
+        if not self._merged_model:
+            self._merged_model = self.generate_merged_model()
+
+        return self._organisms_reactions
+
+
 
     @property
     def organisms_biomass_reactions(self):
@@ -226,6 +244,7 @@ class Community(object):
     def _clear_merged_model(self):
         self._merged_model = None
         self._organisms_exchange_reactions = {}
+        self._organisms_reactions = {}
 
     def add_organism(self, model, abundance=1.0, copy=True):
         """ Add an organism to this community.
@@ -239,7 +258,7 @@ class Community(object):
         self._clear_merged_model()
 
         if model.id in self._organisms:
-            warn('Organism {} is already in this community'.format(model.id))
+            warn("Organism '{}' is already in this community".format(model.id))
         else:
             if copy:
                 model = model.copy()
@@ -290,6 +309,7 @@ class Community(object):
         organisms_biomass_metabolites = {}
         
         for org_id, model in self._organisms.items():
+            self._organisms_reactions[org_id] = set()
             self._organisms_exchange_reactions[org_id] = {}
             self._organisms_biomass_reactions[org_id] = {}
 
@@ -344,12 +364,14 @@ class Community(object):
                                 and not self._merge_extracellular_compartments:
                             pool_id = _id_pattern(m_id, "pool")
                             new_rxn.stoichiometry[pool_id] = -coeff
-                            self._organisms_exchange_reactions[org_id][new_rxn.id] = CommunityNameMapping(
+                            cnm = CommunityNameMapping(
                                 organism_reaction=new_rxn.id,
                                 original_reaction=r_id,
                                 organism_metabolite=new_id,
                                 extracellular_metabolite=pool_id,
                                 original_metabolite=m_id)
+                            self._organisms_exchange_reactions[org_id][new_rxn.id] = cnm
+
 
                             if not self.interacting:
                                 sink_rxn = CBReaction('Sink_{}'.format(new_id), is_exchange=True, reversible=False)
@@ -377,6 +399,7 @@ class Community(object):
                         new_rxn.stoichiometry[m_id] = 1
                         organisms_biomass_metabolites[org_id] = m_id
 
+                    self._organisms_reactions[org_id].add(new_rxn.id)
                     merged_model.add_reaction(new_rxn)
 
                 else:
@@ -387,6 +410,7 @@ class Community(object):
                             extracellular_metabolite=rxn.stoichiometry.keys()[0],
                             original_metabolite=rxn.stoichiometry.keys()[0],
                             organism_metabolite=None)
+                        self._organisms_reactions[org_id].add(rxn.id)
 
                     if r_id in merged_model.reactions:
                         continue
@@ -411,7 +435,7 @@ class Community(object):
                     self._organisms_biomass_reactions[org_id] = new_rxn.id
 
         if self._create_biomass:
-            biomass_rxn = CBReaction('M_framed_biomass', name="Framed biomass", 
+            biomass_rxn = CBReaction('R_EX_framed_biomass', name="Framed biomass",
                                      reversible=False, is_exchange=True, objective=1.0)
             for org_biomass in organisms_biomass_metabolites.itervalues():
                 biomass_rxn.stoichiometry[org_biomass] = -1
