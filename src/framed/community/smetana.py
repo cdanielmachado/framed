@@ -76,8 +76,9 @@ def species_coupling_score(community, environment, min_growth=1, max_uptake=100,
         org_var = 'y_{}'.format(org_id)
         solver.add_variable(org_var, 0, 1, vartype=VarType.BINARY, update_problem=False)
         for r_id in rxns:
-            solver.add_constraint('c_{}_lb'.format(r_id), {r_id: 1, org_var: 999}, '>', -1e-6, update_problem=False)
-            solver.add_constraint('c_{}_ub'.format(r_id), {r_id: 1, org_var: -999}, '<', 1e-6, update_problem=False)
+            lb = min_growth if r_id == interacting_community.organisms_biomass_reactions[org_id] else -max_uptake
+            solver.add_constraint('c_{}_lb'.format(r_id), {r_id: 1, org_var: -lb}, '>', 0, update_problem=False)
+            solver.add_constraint('c_{}_ub'.format(r_id), {r_id: 1, org_var: -max_uptake}, '<', 0, update_problem=False)
 
     solver.update()
 
@@ -88,14 +89,16 @@ def species_coupling_score(community, environment, min_growth=1, max_uptake=100,
 
     for org_id, biomass_id in interacting_community.organisms_biomass_reactions.iteritems():
         other_biomasses = {o: b for o, v in interacting_community.organisms.iteritems() if o != org_id}
-        solver.add_constraint('SMETANA_Biomass', {interacting_community.organisms_biomass_reactions[org_id]: 1}, '>', 1)
+        solver.add_constraint('SMETANA_Biomass', {interacting_community.organisms_biomass_reactions[org_id]: 1}, '>', min_growth)
         objective = {"y_{}".format(o): 1.0 for o in other_biomasses}
 
         previous_constraints = []
         donors_list = []
         for i in xrange(n_solutions):
             sol = solver.solve(objective, minimize=True, get_values=True)
-            #solver.problem.write("_{}.lp".format(org_id))
+
+            solver.problem.write("{}_mpscore_{}a.lp".format(org_id, i))
+
             if sol.status != Status.OPTIMAL:
                 if i == 0: donors_list = None # species can not grow
                 break
@@ -168,7 +171,7 @@ def metabolite_uptake_score(community, environment, min_mass_weight=True, min_gr
     return scores, extras
 
 
-def metabolite_production_score(community, environment, max_uptake=100, abstol=1e-6):
+def metabolite_production_score(community, environment, max_uptake=100, min_growth=1.0, abstol=1e-6):
     interacting_community = community.copy(copy_models=True, interacting=True, create_biomass=False)
     environment.apply(interacting_community.merged, inplace=True)
 
@@ -188,8 +191,12 @@ def metabolite_production_score(community, environment, max_uptake=100, abstol=1
         org_var = 'y_{}'.format(org_id)
         solver.add_variable(org_var, 0, 1, vartype=VarType.BINARY, update_problem=False)
         for r_id in exchanges:
-            lb = -1000 if reactions[r_id].lb is None else reactions[r_id].lb
-            ub = 1000 if reactions[r_id].ub is None else reactions[r_id].ub
+            if r_id == interacting_community.organisms_biomass_reactions[org_id]:
+                lb = min_growth
+            else:
+                lb = -max_uptake if reactions[r_id].lb is None else reactions[r_id].lb
+
+            ub = max_uptake if reactions[r_id].ub is None else reactions[r_id].ub
             solver.add_constraint('c_{}_lb'.format(r_id), {r_id: 1, org_var: -lb}, '>', 0, update_problem=False)
             solver.add_constraint('c_{}_ub'.format(r_id), {r_id: 1, org_var: -ub}, '<', 0, update_problem=False)
 
@@ -200,7 +207,7 @@ def metabolite_production_score(community, environment, max_uptake=100, abstol=1
                          if cnm.extracellular_metabolite not in media_metabolites}
 
         org_biomass = community.organisms_biomass_reactions[org_id]
-        solver.add_constraint('SMETANA_Biomass', {org_biomass: 1}, '>', 1, update_problem=False)
+        solver.add_constraint('SMETANA_Biomass', {org_biomass: 1}, '>', min_growth, update_problem=False)
         solver.update()
 
         org_products = set()
@@ -210,9 +217,6 @@ def metabolite_production_score(community, environment, max_uptake=100, abstol=1
 
             objective = {r_id: 1.0 for r_id in exchange_rxns}
             solution = solver.solve(objective, minimize=False)
-
-            if i == 0:
-                solver.problem.write("{}_mpscore.lp".format(org_id))
 
             if solution.status != Status.OPTIMAL:
                 if i == 0: org_products = None
