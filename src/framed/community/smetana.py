@@ -294,7 +294,12 @@ def mip_score(community, min_mass_weight=False, min_growth=1, direction=-1, max_
                                                  min_growth=min_growth,
                                                  max_uptake=max_uptake, validate=True)
 
-    score = len(noninteracting_medium) - len(community_medium)
+
+    if noninteracting_medium is None:
+        score = None
+    else:
+        score = len(noninteracting_medium) - len(community_medium)
+
     extras = {'noninteracting_medium': noninteracting_medium, 'interacting_medium': community_medium,
               'noninteracting_solution': sol2, 'interacting_solution': sol1}
 
