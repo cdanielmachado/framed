@@ -148,8 +148,8 @@ def _load_metabolite(species, flavor=None):
 
 def _load_reactions(sbml_model, model, exchange_detection_mode=None):
     for reaction in sbml_model.getListOfReactions():
-        model.add_reaction(_load_reaction(reaction, sbml_model=sbml_model,
-                                          exchange_detection_mode=exchange_detection_mode), clear_tmp=False)
+        r = _load_reaction(reaction, sbml_model=sbml_model, exchange_detection_mode=exchange_detection_mode)
+        model.add_reaction(r, clear_tmp = False)
 
 
 def _load_reaction(reaction, sbml_model, exchange_detection_mode=None):
@@ -209,17 +209,14 @@ def _load_reaction(reaction, sbml_model, exchange_detection_mode=None):
                 if sign != c > 0:
                     is_exchange = False
     elif exchange_detection_mode == "boundary":
-        boundary_reactants, boundary_products = None, None
-        is_exchange = True
-        for m_id, c in stoichiometry.iteritems():
-            if c > 0 and boundary_products is None and sbmlSpecies[m_id].getBoundaryCondition():
-                boundary_products = m_id
-            elif c < 0 and boundary_reactants is None and sbmlSpecies[m_id].getBoundaryCondition():
-                boundary_reactants = m_id
-            elif c != 0:
-                is_exchange = False
+        products = {m_id for m_id, c in stoichiometry.iteritems() if c > 0}
+        reactants = {m_id for m_id, c in stoichiometry.iteritems() if c < 0}
+        boundary_products = {m_id for m_id in products if sbmlSpecies[m_id].getBoundaryCondition()}
+        is_exchange = (boundary_products and not (products - boundary_products))
+        if not is_exchange:
+            boundary_reactants = {m_id for m_id in products if sbmlSpecies[m_id].getBoundaryCondition()}
+            is_exchange = (boundary_reactants and not (reactants - boundary_reactants))
     elif exchange_detection_mode is None:
-        
         pass
     elif isinstance(exchange_detection_mode, re_type):
         is_exchange = exchange_detection_mode.match(reaction.getId())

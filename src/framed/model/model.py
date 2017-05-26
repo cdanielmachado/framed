@@ -6,6 +6,7 @@ Author: Daniel Machado
 
 from collections import OrderedDict
 from copy import copy, deepcopy
+import itertools
 
 from .parser import ReactionParser
 import warnings
@@ -35,7 +36,8 @@ class Metabolite:
 class Reaction:
     """ Base class for modeling reactions. """
 
-    def __init__(self, elem_id, name=None, reversible=True, stoichiometry=None, regulators=None, is_exchange=None):
+    def __init__(self, elem_id, name=None, reversible=True, stoichiometry=None, regulators=None, is_exchange=None,
+                 is_sink=None):
         """
         Arguments:
             elem_id (str): a valid unique identifier
@@ -48,6 +50,7 @@ class Reaction:
         self.name = name
         self.reversible = reversible
         self.is_exchange = is_exchange
+        self.is_sink = is_sink
         self.stoichiometry = OrderedDict()
         self.regulators = OrderedDict()
         self.metadata = OrderedDict()
@@ -212,6 +215,7 @@ class Model(object):
         self.compartments = AttrOrderedDict()
         self.metadata = OrderedDict()
         self._exchange_reactions = None
+        self._sink_reactions = None
         self._m_r_lookup = None
         self._reg_lookup = None
         self._s_matrix = None
@@ -219,6 +223,7 @@ class Model(object):
 
     def _clear_temp(self):
         self._exchange_reactions = None
+        self._sink_reactions = None
         self._m_r_lookup = None
         self._reg_lookup = None
         self._s_matrix = None
@@ -241,10 +246,13 @@ class Model(object):
         self._updated = False
         return deepcopy(self)
 
-    def get_exchange_reactions(self):
+    def get_exchange_reactions(self, include_sink=False):
         """
         Get dict of exchange reactions where keys are reaction ids and values are list of exchanged
         metabolites
+        
+        Args:
+            include_sink: Include sink reactions in the list
         
         Returns: dict
         """
@@ -256,7 +264,27 @@ class Model(object):
 
                 self._exchange_reactions[r.id] = [k for k, v in r.stoichiometry.iteritems() if v < 0]
 
-        return self._exchange_reactions
+        if include_sink:
+            return itertools.chain(self._exchange_reactions, self.get_sink_reactions())
+        else:
+            return self._exchange_reactions
+
+    def get_sink_reactions(self):
+        """
+        Get dict of sink reactions where keys are reaction ids and values are list of exchanged
+        metabolites
+
+        Returns: dict
+        """
+        if not self._sink_reactions:
+            self._sink_reactions = OrderedDict()
+            for r in self.reactions.itervalues():
+                if not r.is_sink:
+                    continue
+
+                self._sink_reactions[r.id] = [k for k, v in r.stoichiometry.iteritems() if v < 0]
+
+        return self._sink_reactions
 
     def add_metabolite(self, metabolite, clear_tmp=True):
         """ Add a single metabolite to the model.
