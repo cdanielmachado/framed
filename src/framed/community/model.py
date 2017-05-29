@@ -374,7 +374,7 @@ class Community(object):
 
 
                             if not self.interacting:
-                                sink_rxn = CBReaction('Sink_{}'.format(new_id), is_exchange=True, reversible=False)
+                                sink_rxn = CBReaction('Sink_{}'.format(new_id), is_exchange=False, is_sink=True, reversible=False)
                                 sink_rxn.stoichiometry = {new_id: -1}
                                 sink_rxn.lb = 0.0
                                 merged_model.add_reaction(sink_rxn)
@@ -382,7 +382,7 @@ class Community(object):
                     if is_exchange and not self._merge_extracellular_compartments:
                         new_rxn.reversible = True
                         new_rxn.lb = None
-                        new_rxn.ub = None if self.interacting else 0.0 # TODO this removes the uptake bound. Should we somehow allow control over it
+                        new_rxn.ub = None if self.interacting else 0.0
 
                     if rxn.id == model.biomass_reaction:
                         new_rxn.reversible = False
@@ -445,7 +445,7 @@ class Community(object):
 
         return merged_model
 
-    def copy(self, copy_models=None, interacting=None, create_biomass=None):
+    def copy(self, merge_extracellular_compartments=None, copy_models=None, interacting=None, create_biomass=None):
         """
         Copy model object
         Args:
@@ -464,10 +464,13 @@ class Community(object):
         if create_biomass is None:
             create_biomass = self._create_biomass
 
+        if merge_extracellular_compartments is None:
+            merge_extracellular_compartments = self._merge_extracellular_compartments
+
         copy_community = Community(self.id, models=self._organisms.values(), abundances=self._abundances,
                                    copy_models=copy_models, create_biomass=create_biomass,
                                    extracellular_compartment_id=self._extracellular_compartment,
-                                   merge_extracellular_compartments=self._merge_extracellular_compartments,
+                                   merge_extracellular_compartments=merge_extracellular_compartments,
                                    interacting=interacting)
 
         return copy_community

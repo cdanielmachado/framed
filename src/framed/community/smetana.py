@@ -3,12 +3,13 @@ from framed.experimental.medium import minimal_medium
 from framed.solvers import solver_instance
 from framed.solvers.solver import VarType, Status
 from framed.model.cbmodel import Environment, CBReaction
+from framed import FBA, write_model_to_file
 
 from collections import Counter
 from itertools import combinations, chain
 from random import sample
 from warnings import warn
-from scipy.misc import comb
+import itertools
 
 
 from framed.solvers.solver import Status
@@ -32,10 +33,29 @@ class SmetanaScore(object):
     def __repr__(self):
         return "<{}/{}/{}:{}>".format(self.donor_organism, self.metabolite, self.receiver_organism, self.score)
 
-def smetana_score(community, environment, report_zero_scores=False, min_mass_weight=True, min_growth=1, max_uptake=100, abstol=1e-6):
-    mpscores, mpextras = metabolite_production_score(community, environment)
-    muscores, muextras = metabolite_uptake_score(community, environment, min_mass_weight=min_mass_weight, min_growth=min_growth, max_uptake=max_uptake, abstol=abstol)
+def smetana_score(community, environment, report_zero_scores=False, min_mass_weight=True, min_growth=1, max_uptake=100, abstol=1e-6, validate=False):
+    """
+    SMETANA value scores likelyhood of metabolite exchange from species A to species B
+    
+    Zelezniak A. et al, Metabolic dependencies drive species co-occurrence in diverse microbial communities (PNAS 2015)
+
+    Args:
+        community (Community): community object
+        environment (Environment): Metabolic environment in which the SMETANA score is colulated
+        report_zero_scores (bool): Report zero SMETANA scores, where there is no metabolite exchange predicted (default false)
+        min_mass_weight (bool): minimize by molecular weight of nutrients (default: False)
+        min_growth (float): minimum growth rate (default: 1)
+        max_uptake (float): maximum uptake rate (default: 100)
+        validate (bool): validate solution using FBA (for debugging purposes, default: False)
+        abstol (float): tolerance for detecting a non-zero exchange flux (default: 1e-6)
+
+    Returns:
+        list: Species --> Metabolite --> Species SMETANA scores
+        dict: Extra information
+    """
     scscores, scextras = species_coupling_score(community, environment, min_growth=min_growth, max_uptake=max_uptake, abstol=abstol)
+    mpscores, mpextras = metabolite_production_score(community, environment)
+    muscores, muextras = metabolite_uptake_score(community, environment, min_mass_weight=min_mass_weight, min_growth=min_growth, max_uptake=max_uptake, abstol=abstol, validate=validate)
     metabolites = {met for mets in mpscores.itervalues() if mets for met in mets}
 
     scores = []
@@ -74,18 +94,27 @@ def smetana_score(community, environment, report_zero_scores=False, min_mass_wei
     return scores, extras
 
 
-def species_coupling_score(community, environment, min_growth=1, max_uptake=100, abstol=1e-6):
-    if community.merge_extracellular_compartments:
-        raise KeyError("For MIP calculation <Community.merge_extracellular_compartments> should be disabled")
+def species_coupling_score(community, environment, minimal_media=None, min_growth=1, max_uptake=100, abstol=1e-6):
+    """
+    Calculate frequency of community species dependency on each other
 
-    if not community.create_biomass_reaction:
-        raise KeyError("For MIP calculation <Community.create_biomass_reaction> should be enabled")
+    Zelezniak A. et al, Metabolic dependencies drive species co-occurrence in diverse microbial communities (PNAS 2015)
 
-    if not community.interacting:
-        raise KeyError("For MIP calculation <Community.interacting> should be enabled")
+    Args:
+        community (Community): community object
+        environment (Environment): Metabolic environment in which the SMETANA score is colulated
+        min_growth (float): minimum growth rate (default: 1)
+        max_uptake (float): maximum uptake rate (default: 100)
+        abstol (float): tolerance for detecting a non-zero exchange flux (default: 1e-6)
 
-    interacting_community = community.copy(copy_models=True, interacting=True, create_biomass=False)
-    environment.apply(interacting_community.merged, exclusive=True)
+    Returns:
+        dict: Keys are dependant model names, values are dictionaries with required species frequencies 
+        dict: Extra information
+    """
+    interacting_community = community.copy(copy_models=False, interacting=True, create_biomass=False,
+                                           merge_extracellular_compartments=False)
+    environment.apply(interacting_community.merged, inplace=True) # other values are copied from previous copy
+    write_model_to_file(interacting_community.merged, "community2.framed")
 
     for b in interacting_community.organisms_biomass_reactions.itervalues():
         interacting_community.merged.reactions[b].lb = 0
@@ -101,13 +130,20 @@ def species_coupling_score(community, environment, min_growth=1, max_uptake=100,
 
     solver.update()
 
+    # solver.merged.biomass_reaction = "bio09254_Seed272562_1_51162"
+    # print minimal_medium(interacting_community.merged)
+    #
+    # sol = solver.solve({"bio09254_Seed272562_1_51162": 1}, minimize=False, get_values=True)
+    # solver.problem.write("test.lp")
+    # print sol
+
     n_solutions = 30000
 
     scores = {}
     extras = {'dependencies': {}}
 
     for org_id, biomass_id in interacting_community.organisms_biomass_reactions.iteritems():
-        other_biomasses = {o: b for o, v in interacting_community.organisms.iteritems() if o != org_id}
+        other_biomasses = {o for o in interacting_community.organisms if o != org_id}
         solver.add_constraint('SMETANA_Biomass', {interacting_community.organisms_biomass_reactions[org_id]: 1}, '>', min_growth)
         objective = {"y_{}".format(o): 1.0 for o in other_biomasses}
 
@@ -115,8 +151,6 @@ def species_coupling_score(community, environment, min_growth=1, max_uptake=100,
         donors_list = []
         for i in xrange(n_solutions):
             sol = solver.solve(objective, minimize=True, get_values=True)
-
-            solver.problem.write("{}_mpscore_{}a.lp".format(org_id, i))
 
             if sol.status != Status.OPTIMAL:
                 if i == 0: donors_list = None # species can not grow
@@ -146,9 +180,28 @@ def species_coupling_score(community, environment, min_growth=1, max_uptake=100,
 
     return scores, extras
 
-def metabolite_uptake_score(community, environment, min_mass_weight=True, min_growth=1.0, max_uptake=100.0, abstol=1e-6):
-    solutions = []
-    interacting_community = community.copy(copy_models=True, interacting=True, create_biomass=False)
+def metabolite_uptake_score(community, environment, min_mass_weight=True, min_growth=1.0, max_uptake=100.0, abstol=1e-6, validate=False):
+    """
+    Calculate frequency of metabolite requirement for species growth
+
+    Zelezniak A. et al, Metabolic dependencies drive species co-occurrence in diverse microbial communities (PNAS 2015)
+
+    Args:
+        community (Community): community object
+        environment (Environment): Metabolic environment in which the SMETANA score is colulated
+        min_mass_weight: Prefer simpler compounds 
+        min_growth (float): minimum growth rate (default: 1)
+        max_uptake (float): maximum uptake rate (default: 100)
+        abstol (float): tolerance for detecting a non-zero exchange flux (default: 1e-6)
+        validate (bool): validate solution using FBA (for debugging purposes, default: False)
+
+    Returns:
+        dict: Keys are dependant model names, values are dictionaries with required compounds frequencies 
+        dict: Extra information
+    """
+    interacting_community = community.copy(copy_models=False, interacting=True, create_biomass=False,
+                                           merge_extracellular_compartments=False)
+
     environment.apply(interacting_community.merged, inplace=True)
     rxn2met = {ex.organism_reaction: ex.original_metabolite
                for org_exchanges in interacting_community.organisms_exchange_reactions.itervalues()
@@ -160,6 +213,7 @@ def metabolite_uptake_score(community, environment, min_mass_weight=True, min_gr
            for met in exch_mets
            if exch_id in m_rxns and m_rxns[exch_id].lb < 0}
 
+    solutions = []
     scores = {}
     extras = {'dependencies': {}}
     for org_id, exchange_rxns in community.organisms_exchange_reactions.iteritems():
@@ -176,7 +230,7 @@ def metabolite_uptake_score(community, environment, min_mass_weight=True, min_gr
                                    min_mass_weight=min_mass_weight,
                                    min_growth=min_growth,
                                    n_solutions=30000,
-                                   max_uptake=max_uptake, validate=True, abstol=abstol)
+                                   max_uptake=max_uptake, validate=validate, abstol=abstol)
         solutions.append(sol)
 
         if medium_list:
@@ -190,9 +244,27 @@ def metabolite_uptake_score(community, environment, min_mass_weight=True, min_gr
     return scores, extras
 
 
-def metabolite_production_score(community, environment, max_uptake=100, min_growth=1.0, abstol=1e-6):
-    interacting_community = community.copy(copy_models=True, interacting=True, create_biomass=False)
-    environment.apply(interacting_community.merged, inplace=True)
+def metabolite_production_score(community, environment=None, max_uptake=100, min_growth=1.0, abstol=1e-6):
+    """
+    Discover metabolites which species can produce in community
+
+    Zelezniak A. et al, Metabolic dependencies drive species co-occurrence in diverse microbial communities (PNAS 2015)
+
+    Args:
+        community (Community): community object
+        environment (Environment): Metabolic environment in which the SMETANA score is colulated
+        min_growth (float): minimum growth rate (default: 1)
+        max_uptake (float): maximum uptake rate (default: 100)
+        abstol (float): tolerance for detecting a non-zero exchange flux (default: 1e-6)
+
+    Returns:
+        dict: Keys are model names, values are list with produced compounds
+        dict: Extra information
+    """
+    interacting_community = community.copy(copy_models=False, interacting=True, create_biomass=False,
+                                           merge_extracellular_compartments=False)
+    if environment:
+        environment.apply(interacting_community.merged, inplace=True)
 
     reactions = interacting_community.merged.reactions
     rxn2met = {ex.organism_reaction: ex.original_metabolite
@@ -254,64 +326,67 @@ def metabolite_production_score(community, environment, max_uptake=100, min_grow
     return scores, {}
 
 
-def mip_score(community, min_mass_weight=False, min_growth=1, direction=-1, max_uptake=100):
+def mip_score(community, environment=None, min_mass_weight=False, min_growth=1, direction=-1, max_uptake=100, validate=False):
     """
     Implements the metabolic interaction potential (MIP) score as defined in (Zelezniak et al, 2015).
 
     Args:
         community (Community): microbial community model
-        exchange_pattern (str): regex patter for guessing exchange reactions
+        environment (Environment): Metabolic environment in which the SMETANA score is colulated
         direction (int): direction of uptake reactions (negative or positive, default: -1)
         extracellular_id (str): extracellular compartment id
         min_mass_weight (bool): minimize by molecular weight of nutrients (default: False)
         min_growth (float): minimum growth rate (default: 1)
         max_uptake (float): maximum uptake rate (default: 100)
+        validate (bool): validate solution using FBA (for debugging purposes, default: False)
 
     Returns:
         float: MIP score
     """
-    if community.merge_extracellular_compartments:
-        raise KeyError("For MIP calculation <Community.merge_extracellular_compartments> should be disabled")
+    interacting_community = community.copy(interacting=True, merge_extracellular_compartments=False, create_biomass=True)
+    noninteracting_community = community.copy(interacting=False)
 
-    if not community.create_biomass_reaction:
-        raise KeyError("For MIP calculation <Community.create_biomass_reaction> should be enabled")
-
-    if not community.interacting:
-        raise KeyError("For MIP calculation <Community.interacting> should be enabled")
-
-    community_medium, sol1 = minimal_medium(community.merged, direction=direction,
+    exch_reactions = set(interacting_community.merged.get_exchange_reactions()) - set([interacting_community.merged.biomass_reaction])
+    if environment:
+        environment.apply(interacting_community.merged, inplace=True)
+        environment.apply(noninteracting_community.merged, inplace=True)
+        exch_reactions = exch_reactions - set(environment)
+        
+    interacting_medium, sol1 = minimal_medium(interacting_community.merged, direction=direction,
+                                             exchange_reactions=exch_reactions,
                                              min_mass_weight=min_mass_weight,
                                              min_growth=min_growth,
-                                             max_uptake=max_uptake, validate=True)
+                                             max_uptake=max_uptake, validate=validate)
 
     #
     # Calculate minimal media for non-interacting community
     #
-    noninteracting_community = community.copy(copy_models=False, interacting=False)
     noninteracting_medium, sol2 = minimal_medium(noninteracting_community.merged,
+                                                 exchange_reactions=exch_reactions,
                                                  direction=direction,
                                                  min_mass_weight=min_mass_weight,
                                                  min_growth=min_growth,
-                                                 max_uptake=max_uptake, validate=True)
+                                                 max_uptake=max_uptake, validate=validate)
 
 
     if noninteracting_medium is None:
         score = None
     else:
-        score = len(noninteracting_medium) - len(community_medium)
+        score = len(noninteracting_medium) - len(interacting_medium)
 
-    extras = {'noninteracting_medium': noninteracting_medium, 'interacting_medium': community_medium,
+    extras = {'noninteracting_medium': noninteracting_medium, 'interacting_medium': interacting_medium,
               'noninteracting_solution': sol2, 'interacting_solution': sol1}
 
     return score, extras
 
 
-def mro_score(community, direction=-1, min_mass_weight=False, min_growth=1, max_uptake=100):
+def mro_score(community, environment=None, direction=-1, min_mass_weight=False, min_growth=1, max_uptake=100, validate=False):
     """
     Implements the metabolic resource overlap (MRO) score as defined in (Zelezniak et al, 2015).
 
     Args:
         community (Community): microbial community model
+        environment (Environment): Metabolic environment in which the SMETANA score is colulated
         direction (int): direction of uptake reactions (negative or positive, default: -1)
         extracellular_id (str): extracellular compartment id
         min_mass_weight (bool): minimize by molecular weight of nutrients (default: False)
@@ -321,59 +396,58 @@ def mro_score(community, direction=-1, min_mass_weight=False, min_growth=1, max_
     Returns:
         float: MRO score
     """
-    if community.merge_extracellular_compartments:
-        raise KeyError("For MRO calculation <Community.merge_extracellular_compartments> should be disabled")
+    inter_community = community.copy(interacting=True, merge_extracellular_compartments=False, create_biomass=False)
+    indep_community = inter_community.copy(interacting=False, create_biomass=True)
 
-    interacting_community = community.copy(copy_models=True, interacting=True, create_biomass=True)
-    # TODO: currently this is not needed. Should we change the algorithm not to touch the initial bounds
-    # on exchange reactions?
-    for model in community.organisms.values():
-        Environment.complete(model, inplace=True)
+    exch_reactions = set(inter_community.merged.get_exchange_reactions()) - set([inter_community.merged.biomass_reaction])
+    if environment:
+        environment.apply(inter_community.merged, inplace=True)
+        environment.apply(indep_community.merged, inplace=True)
+        exch_reactions = exch_reactions - set(environment)
 
-    noninteracting_community = community.copy(copy_models=False, interacting=False, create_biomass=True)
-    noninteracting_medium, sol = minimal_medium(noninteracting_community.merged,
+    noninteracting_medium, sol = minimal_medium(indep_community.merged,
+                                                    exchange_reactions=exch_reactions,
                                                     direction=direction,
                                                     min_mass_weight=min_mass_weight,
                                                     min_growth=min_growth,
-                                                    max_uptake=max_uptake, validate=True)
+                                                    max_uptake=max_uptake, validate=validate)
 
     solutions = [sol]
 
     if sol.status != Status.OPTIMAL:
         raise RuntimeError('Failed to find a valid solution')
 
-    # Allow uptake of only metabolites that both of species need to reduce number of binary variables
-    Environment.empty(interacting_community.merged, inplace=True)
-    for r_id in noninteracting_medium:
-        interacting_community.merged.set_lower_bound(r_id, -max_uptake)
+    # anabiotic environment is limited to non-interacting community minimal media
+    noninteracting_exch = set(noninteracting_medium)
 
     individual_media = {}
-    for org_id, exchange_rxns in interacting_community.organisms_exchange_reactions.iteritems():
-        biomass_reaction = interacting_community.organisms_biomass_reactions[org_id]
-        interacting_community.merged.biomass_reaction = biomass_reaction
+    for org_id in inter_community.organisms:
+        biomass_reaction = inter_community.organisms_biomass_reactions[org_id]
+        inter_community.merged.biomass_reaction = biomass_reaction
 
-        medium, sol = minimal_medium(interacting_community.merged,
+        medium, sol = minimal_medium(inter_community.merged,
+                                   exchange_reactions=noninteracting_exch,
                                    direction=direction,
                                    min_mass_weight=min_mass_weight,
                                    min_growth=min_growth,
-                                   max_uptake=max_uptake, validate=True)
+                                   max_uptake=max_uptake, validate=validate)
         solutions.append(sol)
 
         if sol.status != Status.OPTIMAL:
             raise RuntimeError('Failed to find a valid solution')
 
-        individual_media[org_id] = {r_id[:-(1+len(org_id))] for r_id in medium}
+        individual_media[org_id] = medium
+
 
     pairwise = {(org1, org2): individual_media[org1] & individual_media[org2]
-                for i, org1 in enumerate(community.organisms)
-                for j, org2 in enumerate(community.organisms) if i < j}
+                for org1, org2 in itertools.combinations(community.organisms, 2)}
 
-    numerator = sum(map(len, pairwise.values())) / float(len(pairwise))
-    denominator = sum(map(len, individual_media.values())) / float(len(individual_media))
+    numerator = float(len(individual_media)) * sum(map(len, pairwise.values()))
+    denominator = float(len(pairwise)) * sum(map(len, individual_media.values()))
 
     score = numerator / denominator if denominator != 0 else None
-    extras = {'noninteracting_medium': noninteracting_medium, 'individual_media': individual_media, 'pairwise': pairwise,
-              'solutions': solutions}
+    extras = {'noninteracting_medium': noninteracting_medium, 'individual_media': individual_media, 
+              'pairwise': pairwise, 'solutions': solutions}
 
     return score, extras
 

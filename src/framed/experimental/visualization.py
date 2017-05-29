@@ -47,7 +47,7 @@ def list_escher_maps():
     return [entry['map_name'] for entry in maps]
 
 
-def highligh_enzymes_in_KEGG(pathway_id, enzymes, ax=None):
+def highligh_enzymes_in_KEGG(pathway_id, enzymes, ax=None, color="#FF1414"):
     """ Highlight enzymes in KEGG map
 
     Args:
@@ -105,7 +105,7 @@ def highligh_enzymes_in_KEGG(pathway_id, enzymes, ax=None):
         if len(el['orthologs'].intersection(highlighted_orthologs)) > 0:
             overlay_image = PIL.Image.new('RGBA', pathway_image.size)
             draw = PIL.ImageDraw.Draw(overlay_image)
-            draw.rectangle([el["x0"], el["y0"] - 1, el["x1"], el["y1"] - 1], outline=(255, 20, 20, 255))
+            draw.rectangle([el["x0"], el["y0"] - 1, el["x1"], el["y1"] - 1], outline=color)
             pathway_image_copy.paste(overlay_image, mask=overlay_image)
 
     if not ax:
