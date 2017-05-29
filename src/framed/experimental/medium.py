@@ -103,12 +103,12 @@ def minimal_medium(model, exchange_reactions=None, direction=-1, min_mass_weight
     solution = solver.solve(objective, minimize=True)
 
     if solution.status != Status.OPTIMAL:
-        warn('No solution found')
+#        warn('No solution found')
         return None, solution
 
-    medium = [r_id for r_id in exchange_reactions
+    medium = set(r_id for r_id in exchange_reactions
               if (direction < 0 and solution.values[r_id] < -abstol
-                  or direction > 0 and solution.values[r_id] > abstol)]
+                  or direction > 0 and solution.values[r_id] > abstol))
 
     if validate:
         validate_solution(model, medium, exchange_reactions, direction, min_growth, max_uptake)
@@ -126,12 +126,11 @@ def minimal_medium(model, exchange_reactions=None, direction=-1, min_mass_weight
             solution = solver.solve(objective, minimize=True)
 
             if solution.status != Status.OPTIMAL:
-                warn('Unable to enumerate more solutions')
                 break
             else:
-                medium = [r_id for r_id in exchange_reactions
+                medium = set(r_id for r_id in exchange_reactions
                           if (direction < 0 and solution.values[r_id] < -abstol
-                              or direction > 0 and solution.values[r_id] > abstol)]
+                              or direction > 0 and solution.values[r_id] > abstol))
                 medium_list.append(medium)
                 solutions.append(solution)
 

@@ -88,9 +88,9 @@ class GPRAssociation:
 class CBReaction(Reaction):
 
     def __init__(self, elem_id, name=None, reversible=True, stoichiometry=None, regulators=None,
-                 lb=None, ub=None, objective=0, gpr_association=None, is_exchange=None):
+                 lb=None, ub=None, objective=0, gpr_association=None, is_exchange=None, is_sink=None):
         Reaction.__init__(self, elem_id, name=name, reversible=reversible, stoichiometry=stoichiometry,
-                          regulators=regulators, is_exchange=is_exchange)
+                          regulators=regulators, is_exchange=is_exchange, is_sink=is_sink)
 
         if lb is None and not reversible:
             lb = 0
