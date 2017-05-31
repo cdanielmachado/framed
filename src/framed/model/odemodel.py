@@ -1,5 +1,4 @@
 from collections import OrderedDict
-from math import log
 from .model import Model
 
 
@@ -18,6 +17,7 @@ class ODEModel(Model):
         self.ratelaws = OrderedDict()
         self.assignment_rules = OrderedDict()
         self._func_str = None
+        self._constants = None
 
     def _clear_temp(self):
         Model._clear_temp(self)
@@ -149,7 +149,7 @@ class ODEModel(Model):
             rule = rule.replace(' ' + p_id + ' ', " v['{}'] ".format(p_id))
 
         for r_id in self.reactions:
-            rule = rule.replace(' ' + r_id + ' ', '({})'.format(parsed_rates[r_id]))
+           rule = rule.replace(' ' + r_id + ' ', '({})'.format(parsed_rates[r_id]))
 
         return rule
 
@@ -171,12 +171,12 @@ class ODEModel(Model):
                           for p_id in self.assignment_rules]
 
             func_str = 'def ode_func(t, x, r, p, v):\n\n' + \
-               '\n'.join(rule_exprs) + '\n\n' + \
-               '\n'.join(rate_exprs) + '\n\n' + \
-               '    dxdt = [\n' + \
-               ',\n'.join(balances) + '\n' + \
-               '    ]\n\n' + \
-               '    return dxdt\n'
+                '\n'.join(rate_exprs) + '\n\n' + \
+                '\n'.join(rule_exprs) + '\n\n' + \
+                '    dxdt = [\n' + \
+                ',\n'.join(balances) + '\n' + \
+                '    ]\n\n' + \
+                '    return dxdt\n'
 
             self._func_str = func_str
 
