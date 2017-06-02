@@ -2,8 +2,8 @@ from framed.community.model import Community
 from framed.experimental.medium import minimal_medium
 from framed.solvers import solver_instance
 from framed.solvers.solver import VarType, Status
-from framed.model.cbmodel import Environment, CBReaction
-from framed import FBA, write_model_to_file
+from framed.model.cbmodel import CBReaction
+from framed import FBA, write_model_to_file, Environment
 
 from collections import Counter
 from itertools import combinations, chain
