@@ -187,7 +187,7 @@ def _load_metabolite(species, flavor=None):
 def _load_reactions(sbml_model, model, exchange_detection_mode=None):
     for reaction in sbml_model.getListOfReactions():
         r = _load_reaction(reaction, sbml_model=sbml_model, exchange_detection_mode=exchange_detection_mode)
-        model.add_reaction(r, clear_tmp = False)
+        model.add_reaction(r, clear_tmp=False)
 
 
 def _load_reaction(reaction, sbml_model, exchange_detection_mode=None):
@@ -533,7 +533,7 @@ def save_sbml_model(model, filename, flavor=None):
     """
 
     document = SBMLDocument(DEFAULT_SBML_LEVEL, DEFAULT_SBML_VERSION)
-    if flavor in {Flavor.BIGG or Flavor.FBC2}:
+    if flavor in {Flavor.BIGG, Flavor.FBC2}:
         document.enablePackage(FbcExtension.getXmlnsL3V1V2(), 'fbc', True)
     sbml_model = document.createModel(model.id)
     _save_compartments(model, sbml_model)
