@@ -574,7 +574,9 @@ class Environment(MutableMapping):
         if not iter(compounds):
             raise TypeError("Compounds are not iterable")
 
-        env = Environment.from_reactions((exchange_format.format(met) for met in compounds), max_uptake=max_uptake)
+        reactions = [eval(exchange_format.format(met)) for met in compounds]
+
+        env = Environment.from_reactions(reactions, max_uptake=max_uptake)
 
         return env
 

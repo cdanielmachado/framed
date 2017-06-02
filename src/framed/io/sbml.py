@@ -46,6 +46,7 @@ INHIBITOR_TAG = 'SBO:0000020'
 non_alphanum = re.compile('\W+')
 re_type = type(non_alphanum)
 
+
 def load_sbml_model(filename, kind=None, flavor=None, exchange_detection_mode=None):
     """ Loads a metabolic model from a file.
     
