@@ -49,7 +49,7 @@ class Flavor:
 
     COBRA = 'cobra'  # UCSD models in the old cobra toolbox format
     COBRA_OTHER = 'cobra:other'  # other models using the old cobra toolbox format
-    SEED = 'seed'  # modelSEED format
+#    SEED = 'seed'  # modelSEED format
     BIGG = 'bigg'  # BiGG database format (uses sbml-fbc2)
     FBC2 = 'fbc2'  # other models in sbml-fbc2 format
 
@@ -257,7 +257,7 @@ def _load_reaction(reaction, sbml_model, exchange_detection_mode=None):
     elif exchange_detection_mode is None:
         pass
     elif isinstance(exchange_detection_mode, re_type):
-        is_exchange = exchange_detection_mode.match(reaction.getId())
+        is_exchange = exchange_detection_mode.match(reaction.getId()) is not None
     else:
         raise ValueError("Unknow exchange_detection_mode value. Allowed values include 'unbalanced', 'boundary' or" +
                          "<compiled regular expression>")
