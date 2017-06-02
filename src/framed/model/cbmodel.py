@@ -536,7 +536,7 @@ class Environment(MutableMapping):
         return deepcopy(self)
 
     @staticmethod
-    def from_reactions(reactions, max_uptake=1.0):
+    def from_reactions(reactions, max_uptake=1000.0):
         if not iter(reactions):
             raise TypeError("Reactions are not iterable")
 
@@ -547,14 +547,14 @@ class Environment(MutableMapping):
         return env
 
     @staticmethod
-    def from_compounds(compounds, exchange_format="'R_EX_{}_e'", max_uptake=1.0):
+    def from_compounds(compounds, exchange_format="'R_EX_{}_e'", max_uptake=1000.0):
         """
         Initialize environment from list of medium compounds
 
         Arguments:
             compounds (list): List of compounds present in the medium
             exchange_format (str): python format string (see Notes)
-            max_uptake (float): maximum uptake rate for given compounds (default: 1.0)
+            max_uptake (float): maximum uptake rate for given compounds (default: 1000.0)
 
         Returns:
             Environment: Complete medium for provided model
