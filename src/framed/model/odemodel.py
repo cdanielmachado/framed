@@ -1,4 +1,5 @@
 from collections import OrderedDict
+from re import findall
 from .model import Model
 
 
@@ -159,8 +160,13 @@ class ODEModel(Model):
             parsed_rates = {r_id: self.parse_rate(r_id, ratelaw)
                             for r_id, ratelaw in self.ratelaws.items()}
 
-            parsed_rules = {p_id: self.parse_rule(rule, parsed_rates)
+            # put parsed rules by order
+            aux = {p_id: self.parse_rule(rule, parsed_rates)
                             for p_id, rule in self.assignment_rules.items()}
+            trees = [_build_tree_rules(v_id, aux) for v_id in aux.keys()]
+            order = _get_oder_rules(trees)
+
+            parsed_rules = OrderedDict([(id, aux[id]) for id in order])
 
             rate_exprs = ["    r['{}'] = {}".format(r_id, parsed_rates[r_id])
                           for r_id in self.reactions]
@@ -168,18 +174,18 @@ class ODEModel(Model):
             balances = [' '*8 + self.print_balance(m_id) for m_id in self.metabolites]
 
             rule_exprs = ["    v['{}'] = {}".format(p_id, parsed_rules[p_id])
-                          for p_id in self.assignment_rules]
+                          for p_id in parsed_rules]
 
             func_str = 'def ode_func(t, x, r, p, v):\n\n' + \
-                '\n'.join(rate_exprs) + '\n\n' + \
                 '\n'.join(rule_exprs) + '\n\n' + \
+                '\n'.join(rate_exprs) + '\n\n' + \
                 '    dxdt = [\n' + \
                 ',\n'.join(balances) + '\n' + \
                 '    ]\n\n' + \
                 '    return dxdt\n'
 
             self._func_str = func_str
-
+        print func_str
         return self._func_str
 
     def get_ode(self, r_dict=None, params=None):
@@ -208,3 +214,52 @@ class ODEModel(Model):
 
     def __setstate__(self, state):
         self.__dict__.update(state)
+
+# auxiliar functions to set the assignment rules by the correct order in the ODE system
+def _build_tree_rules(parent, rules):
+    regexp = "v\[\'(.*?)\'\]"
+    children = findall(regexp, rules[parent])
+    if len(children) == 0:
+        return MyTree(parent, None)
+    else:
+        childrenTrees = [_build_tree_rules(child, rules) for child in children]
+        return MyTree(parent, childrenTrees)
+
+
+def _get_oder_rules(trees):
+    res = []
+    for tree in trees:
+        new_elems = _get_order_nodes(tree)
+        [res.append(item) for item in new_elems if item not in res]
+    print res
+    return res
+
+
+def _get_order_nodes(tree):
+    res = [tree.name]
+    if len(tree.children) > 0:
+        for child in tree.children:
+            res = _get_order_nodes(child) + res
+    return res
+
+class MyTree:
+    "Generic tree node."
+    def __init__(self, name='root', children=None):
+        self.name = name
+        self.children = []
+        if children is not None:
+            for child in children:
+                self.add_child(child)
+
+    def add_child(self, node):
+       # assert isinstance(node, MyTree)
+        self.children.append(node)
+
+def get_order_nodes(tree):
+    if tree.children is None:
+        return [tree.name];
+    else:
+        res = []
+        for child in tree.children:
+            res = res + get_order_nodes(child)
+        return res
