@@ -185,7 +185,6 @@ class ODEModel(Model):
                 '    return dxdt\n'
 
             self._func_str = func_str
-        print func_str
         return self._func_str
 
     def get_ode(self, r_dict=None, params=None):
