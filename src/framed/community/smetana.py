@@ -94,7 +94,7 @@ def smetana_score(community, environment, report_zero_scores=False, min_mass_wei
     return scores, extras
 
 
-def species_coupling_score(community, environment, minimal_media=None, min_growth=1, max_uptake=100, abstol=1e-6):
+def species_coupling_score(community, environment, min_growth=1, max_uptake=100, abstol=1e-6):
     """
     Calculate frequency of community species dependency on each other
 
@@ -129,13 +129,6 @@ def species_coupling_score(community, environment, minimal_media=None, min_growt
             solver.add_constraint('c_{}_ub'.format(r_id), {r_id: 1, org_var: -max_uptake}, '<', 0, update_problem=False)
 
     solver.update()
-
-    # solver.merged.biomass_reaction = "bio09254_Seed272562_1_51162"
-    # print minimal_medium(interacting_community.merged)
-    #
-    # sol = solver.solve({"bio09254_Seed272562_1_51162": 1}, minimize=False, get_values=True)
-    # solver.problem.write("test.lp")
-    # print sol
 
     n_solutions = 30000
 
@@ -314,13 +307,15 @@ def metabolite_production_score(community, environment=None, max_uptake=100, min
                 break
 
             i_products = {r_id for r_id in exchange_rxns if solution.values[r_id] > abstol}
-            if not i_products:
-                break
-
             org_products = org_products.union(i_products)
             exchange_rxns = exchange_rxns - i_products
 
-        scores[org_id] = {rxn2met[r_id] for r_id in org_products} if org_products else None
+            if not i_products:
+                break
+
+
+        if org_products is not None:
+            scores[org_id] = {rxn2met[r_id] for r_id in org_products}
         solver.remove_constraint('SMETANA_Biomass')
 
     return scores, {}
