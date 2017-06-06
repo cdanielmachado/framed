@@ -28,9 +28,7 @@ def default_fixes(model):
     """ Apply default fixes to a constraint-based model
 
     Args:
-        model:
-
-    Returns:
+        model: CBModel
 
     """
     remove_boundary_metabolites(model)
