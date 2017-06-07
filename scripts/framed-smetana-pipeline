@@ -1,0 +1,246 @@
+#!/usr/bin/env python
+
+import os, sys, re, argparse, traceback, warnings, textwrap, ConfigParser
+import pandas
+from collections import OrderedDict
+from framed import FBA, load_cbmodel
+from framed.community.smetana import *
+from framed.community.model import Community
+from framed.experimental.medium import minimal_medium
+from framed.model.environment import Environment
+
+status_codes = {0: "Unknown", 1: "Optimal", -1: "Suboptimal", -4: "Infeasible_or_Unbounded", -3: "Infeasible",
+                -2: "Unbounded"}
+
+
+def row_string(row):
+    return "\t".join(("" if x is None else str(x)) for x in row.itervalues()) + "\n"
+
+
+class Logger(object):
+    def __init__(self):
+        self._log = ""
+
+    def log(self, *args, **kwargs):
+        if 'newline' in kwargs:
+            newline = kwargs['newline']
+            del kwargs['newline']
+        else:
+            newline = True
+
+        txt = (args[0].format(*args[1:]) if len(args) > 1 else args[0])
+        self._log += txt
+        if newline: self._log += "\n"
+
+    def flush(self, error=False):
+        self._log += "================================================================="
+        stream = sys.stderr if error else sys.stdout
+        stream.write(self._log)
+        stream.flush()
+        self._log = "\n"
+
+def main():
+    parser = argparse.ArgumentParser(formatter_class=argparse.RawDescriptionHelpFormatter,
+                                     description="Run SMATANA on list of organisms communities",
+                                     epilog=textwrap.dedent('''\
+        configuration file (* = optional):
+    
+        [communities]
+        communities             Path to tab separated file with community description. Two columns are required, 
+                                community ID (column:id) and list of community species (column:species, space-separated)
+        exchange_metabolites    Path to tab separated file with list of all exchange metabolites. Two columns are required,
+                                metabolite ID (column:id) and metabolite name (column:name)
+        models_dir*             Path to directory where SBML models are located. If not provided current folder is searched.
+        models_locations*       Path to tab separated file mapping species ID (column:id) in <communities> to 
+                                SBML file (column:path) relative <models_dir> path. If not provided model ID is assumed to be 
+                                SBML file name
+        inorganic_media*        Path to tab separated file with list of metabolites always present in the environment. 
+                                Metabolite ID is the only required column (column:id). If not the always-present environment 
+                                is assumed to be empty
+    '''))
+    parser.add_argument('config', help='Path to configuration file (see epilog)')
+    parser.add_argument('output', nargs="?",
+                        help='Path to output file (have to include {i} and {total} placeholders. example: "results/output_{i}_{total}.tsv")')
+    parser.add_argument('--part', dest='part', type=int, help='Which part is calculated (start from 1)', default=1)
+    parser.add_argument('--parts-total', dest='parts_total', type=int, help='Total number of parts', default=1)
+    parser.add_argument('--no-warnings', dest='no_warnings', action="store_true", help="Suppress warnings")
+    args = parser.parse_args()
+
+    if os.path.dirname(args.output) and not os.path.exists(os.path.dirname(args.output)):
+        os.makedirs(os.path.dirname(args.output))
+
+    if args.no_warnings:
+        warnings.simplefilter("ignore", UserWarning)
+
+    #
+    # Load configuration
+    #
+    logger = Logger()
+    config = ConfigParser.ConfigParser()
+    config.read(args.config)
+    models_dir = config.get("communities", "models_dir")
+    if config.has_option("communities", "models_locations"):
+        models_locations = {r['id']: r['path'] for _, r in
+                            pandas.read_table(config.get("communities", "models_locations")).iterrows()}
+    else:
+        models_locations = {}
+    exch_metabolites = {r['id']: r['name'] for _, r in
+                        pandas.read_table(config.get("communities", "exchange_metabolites")).iterrows()}
+    exch_metabolites_list = sorted(exch_metabolites)
+    rxn_inorganic = {"R_EX_{}_e_pool".format(r['id']) for _, r in
+                     pandas.read_table(config.get("communities", "inorganic_media")).iterrows()}
+    env_inorganic = Environment.from_reactions(rxn_inorganic, max_uptake=100)
+
+    #
+    # Load communities descriptions
+    #
+    communities = []
+    for _, r in pandas.read_table(config.get("communities", "communities")).iterrows():
+        community_models = (models_locations.get(m_id, m_id) for m_id in re.split(" ", r[1]))
+        communities.append({
+            'id': r[0],
+            'species': [m_id for m_id in re.split(" ", r[1])],
+            'paths': [os.path.join(models_dir, m_id) for m_id in community_models]})
+    max_community_size = max(len(com["species"]) for com in communities)
+
+    #
+    # Prepare template for results table and header
+    #
+    row_template = OrderedDict(
+        [("community_id", ""), ("size", ""), ("mip", ""), ("mro", ""), ("fba_community", ""), ("mmedia_status", ""),
+         ("fba_status", "")])
+    for i in range(1, max_community_size + 1): row_template["org{}".format(i)] = ""
+    for i in range(1, max_community_size + 1): row_template["fba_org{}".format(i)] = ""
+    for m_id in exch_metabolites_list: row_template["mmedia_{}".format(m_id)] = 0
+    for i in range(1, max_community_size + 1):
+        for m_id in exch_metabolites_list: row_template["muscore_org{}_{}".format(i, m_id)] = 0
+    for i in range(1, max_community_size + 1):
+        for m_id in exch_metabolites_list: row_template["mpscore_org{}_{}".format(i, m_id)] = 0
+    for i in range(1, max_community_size + 1):
+        for j in range(1, max_community_size + 1): row_template["scscore_org{}_org{}".format(i, j)] = 0
+
+    communities_sample = [communities[i::args.parts_total] for i in xrange(args.parts_total)][args.part - 1]
+
+    #
+    # Main loop
+    #
+    with open(args.output.format(i=args.part, total=args.parts_total), "w") as file:
+        # Write header
+        file.write("\t".join(row_template) + "\n")
+        logger.log("Total number of communities: {} (sample: {})", len(communities), len(communities_sample))
+        logger.flush()
+
+        for community_i, community_data in enumerate(communities_sample, start=1):
+            try:
+                row = row_template.copy()
+                community_all_i = next(c_i for c_i, c in enumerate(communities, start=1) if c['id'] == community_data['id'])
+
+                #
+                # Read SBML files representing community organisms
+                #
+                models = []
+                models_i = {}
+                for i, path in enumerate(community_data['paths'], start=1):
+                    model = load_cbmodel(path, exchange_detection_mode="boundary")
+                    model.biomass_reaction = next(r for r in model.reactions if r.startswith("bio"))
+                    models.append(model)
+                    models_i[model.id] = i
+
+                #
+                # Print community description
+                #
+                community = Community(community_data['id'], models, extracellular_compartment_id="Extracellular",
+                                      create_biomass=True, interacting=True)
+                species_short = ", ".join(re.sub("([^_]+).*", "\\1", m.id) for m in models)
+                logger.log("{}/{:<5} (all: {}/{:<5}) [{}]: {}", community_i, len(communities_sample), community_all_i,
+                           len(communities), community_data['id'], species_short)
+                logger.log("Inorganic media ({}):", len(rxn_inorganic), newline=False)
+                logger.log(", ".join(re.sub("R_EX_(.*)_e_pool", "\\1", r) for r in rxn_inorganic))
+                for model in models: row_template["org{}".format(models_i[model.id])] = model.id
+                row['community_id'] = community_data['id']
+                row['size'] = len(models)
+
+                #
+                # Calculate minimal media for community. Predefined inorganic compounds are always present !
+                #
+                env_inorganic.apply(community.merged, inplace=True)
+                rxn_minimal = set(community.merged.get_exchange_reactions()) - rxn_inorganic
+                rxn_minimal, sol = minimal_medium(community.merged, exchange_reactions=rxn_minimal, validate=True,
+                                                  min_mass_weight=False)  # Min mass weight requires 41 metabolites in MM whicle normal algorithm finds only 8
+                row["mmedia_status"] = status_codes[sol.status]
+                if sol.status != Status.OPTIMAL:
+                    logger.log("No minimal media available")
+                    logger.flush(error=True)
+                    file.write(row_string(row))
+                    file.flush()
+                    continue
+
+                rxn_minimal = set(community.merged.get_exchange_reactions()) & (rxn_minimal | rxn_inorganic)
+                env_minimal = Environment.from_reactions(rxn_minimal)
+                logger.log("Minimal media ({} + {}):", len(rxn_inorganic), len(rxn_minimal) - len(rxn_inorganic),
+                           newline=False)
+                for r_i, r in enumerate(rxn_minimal, start=1):
+                    m_id = re.sub("R_EX_(.*)_pool", "\\1", r)
+                    row["mmedia_{}".format(m_id)] = 1
+                    logger.log("{}, ", m_id, newline=(r_i == len(rxn_minimal)))
+
+                #
+                # Calculate MIP and MRO
+                #
+                mip, mip_extras = mip_score(community, env_inorganic)
+                row["mip"] = mip
+                logger.log("MIP: {}", mip)
+                mro, mro_extras = mro_score(community, env_inorganic)
+                row["mro"] = mro
+                logger.log("MRO: {}", mro)
+
+                #
+                # Apply minimal+inorganic media
+                #
+                env_minimal.apply(community.merged, inplace=True)
+                community_copy = community.copy(create_biomass=False)
+                for r_id in rxn_minimal: community_copy.merged.reactions[r_id].lb = -1
+                sol = FBA(community_copy.merged, get_values=True)
+                row["fba_status"] = status_codes[sol.status]
+                logger.log("Growth on minimal media (uptakes 1.0): {:.1f} ({}) = ", sol.fobj, status_codes[sol.status],
+                           newline=False)
+                if sol.status == Status.OPTIMAL:
+                    row["fba_community"] = sol.fobj
+                    for m_i, model_id in enumerate(community.organisms, start=1):
+                        b = community_copy.organisms_biomass_reactions[model_id]
+                        logger.log("{:.1f}'{} + ", sol.values[b], re.sub("_.*", "", model_id),
+                                   newline=(len(community.organisms) == m_i))
+                        row["fba_org{}".format(models_i[model_id])] = sol.values[b]
+
+                # mpscores, mpextras = metabolite_production_score(community, env_minimal)
+
+                #
+                # Calculate SMETANA
+                #
+                smetana, smetana_extras = smetana_score(community, env_minimal)
+                logger.log("Smetana (sum={}): ", sum(s.score for s in smetana))
+                if smetana:
+                    logger.log(", ".join(str(s) for s in smetana))
+                    for m_receiver, dependants in smetana_extras["species_coupling"]["scores"].iteritems():
+                        for m_donor, scscore in dependants.iteritems():
+                            row["scscore_org{}_org{}".format(models_i[m_receiver], models_i[m_donor])] = scscore
+
+                    for model_id, metabolites in smetana_extras["metabolite_uptake"]["scores"].iteritems():
+                        for m_id, muscore in metabolites.iteritems():
+                            row["muscore_org{}_{}".format(models_i[model_id], m_id)] = muscore
+
+                    for model_id, metabolites in smetana_extras["metabolite_production"]["scores"].iteritems():
+                        for m_id in metabolites:
+                            row["mpscore_org{}_{}".format(models_i[model_id], m_id)] = 1
+
+                file.write(row_string(row))
+                file.flush()
+                logger.flush(error=False)
+            except:
+                logger.log("-------------------- START_ERROR --------------------")
+                logger.log(traceback.format_exc())
+                logger.log("-------------------- END_ERROR --------------------")
+                logger.flush(error=True)
+
+if __name__ == "__main__":
+    main()

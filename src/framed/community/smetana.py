@@ -114,7 +114,6 @@ def species_coupling_score(community, environment, min_growth=1, max_uptake=100,
     interacting_community = community.copy(copy_models=False, interacting=True, create_biomass=False,
                                            merge_extracellular_compartments=False)
     environment.apply(interacting_community.merged, inplace=True) # other values are copied from previous copy
-    write_model_to_file(interacting_community.merged, "community2.framed")
 
     for b in interacting_community.organisms_biomass_reactions.itervalues():
         interacting_community.merged.reactions[b].lb = 0
