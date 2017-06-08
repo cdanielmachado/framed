@@ -49,7 +49,7 @@ class Flavor:
 
     COBRA = 'cobra'  # UCSD models in the old cobra toolbox format
     COBRA_OTHER = 'cobra:other'  # other models using the old cobra toolbox format
-#    SEED = 'seed'  # modelSEED format
+    SEED = 'seed'  # modelSEED format
     BIGG = 'bigg'  # BiGG database format (uses sbml-fbc2)
     FBC2 = 'fbc2'  # other models in sbml-fbc2 format
 
@@ -269,18 +269,24 @@ def _load_reaction(reaction, sbml_model, exchange_detection_mode=None):
 
 
 def _load_cbmodel(sbml_model, flavor, exchange_detection_mode=None):
-
-    if not exchange_detection_mode and flavor in {Flavor.COBRA, Flavor.BIGG}:
-        exchange_detection_mode = '^R_EX'
-
-    if exchange_detection_mode not in {None, 'unbalanced', 'boundary'}:
+    if exchange_detection_mode and exchange_detection_mode not in {None, 'unbalanced', 'boundary'}:
         exchange_detection_mode = re.compile(exchange_detection_mode)
+
+    if exchange_detection_mode is None:
+        if flavor in {Flavor.COBRA, Flavor.BIGG}:
+            exchange_detection_mode = '^R_EX'
+        elif flavor or flavor in {Flavor.COBRA_OTHER, Flavor.SEED}:
+            exchange_detection_mode = 'boundary'
+        elif flavor in {Flavor.FBC2}:
+            exchange_detection_mode = 'unbalanced'
+        else:
+            raise TypeError("Unsupported SBML flavor: {}".format(flavor))
 
     model = CBModel(sbml_model.getId())
     _load_compartments(sbml_model, model)
     _load_metabolites(sbml_model, model, flavor)
     _load_reactions(sbml_model, model, exchange_detection_mode=exchange_detection_mode)
-    if not flavor or flavor in {Flavor.COBRA, Flavor.COBRA_OTHER}:
+    if not flavor or flavor in {Flavor.COBRA, Flavor.COBRA_OTHER, Flavor.SEED}:
         _load_cobra_bounds(sbml_model, model)
         _load_cobra_objective(sbml_model, model)
         _load_cobra_gpr(sbml_model, model)
@@ -290,6 +296,9 @@ def _load_cbmodel(sbml_model, flavor, exchange_detection_mode=None):
         _load_fbc2_gpr(sbml_model, model)
     else:
         raise TypeError("Unsupported SBML flavor: {}".format(flavor))
+
+    if exchange_detection_mode and len(model.get_exchange_reactions()) == 0:
+        raise RuntimeError("Exchange reactions were not detected")
 
     return model
 

@@ -312,9 +312,10 @@ def metabolite_production_score(community, environment=None, max_uptake=100, min
             if not i_products:
                 break
 
-
         if org_products is not None:
             scores[org_id] = {rxn2met[r_id] for r_id in org_products}
+        else:
+            scores[org_id] = None
         solver.remove_constraint('SMETANA_Biomass')
 
     return scores, {}
