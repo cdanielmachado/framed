@@ -206,7 +206,6 @@ def _load_reaction(reaction, sbml_model, exchange_detection_mode=None):
 
     stoichiometry = OrderedDict()
     modifiers = OrderedDict()
-    sbmlSpecies = {s.getId(): s for s in sbml_model.getListOfSpecies()}
 
     for reactant in reaction.getListOfReactants():
         m_id = reactant.getSpecies()
@@ -249,10 +248,10 @@ def _load_reaction(reaction, sbml_model, exchange_detection_mode=None):
     elif exchange_detection_mode == "boundary":
         products = {m_id for m_id, c in stoichiometry.iteritems() if c > 0}
         reactants = {m_id for m_id, c in stoichiometry.iteritems() if c < 0}
-        boundary_products = {m_id for m_id in products if sbmlSpecies[m_id].getBoundaryCondition()}
+        boundary_products = {m_id for m_id in products if sbml_model.getSpecies(m_id).getBoundaryCondition()}
         is_exchange = (boundary_products and not (products - boundary_products))
         if not is_exchange:
-            boundary_reactants = {m_id for m_id in products if sbmlSpecies[m_id].getBoundaryCondition()}
+            boundary_reactants = {m_id for m_id in products if sbml_model.getSpecies(m_id).getBoundaryCondition()}
             is_exchange = (boundary_reactants and not (reactants - boundary_reactants))
     elif exchange_detection_mode is None:
         pass
