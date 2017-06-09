@@ -9,6 +9,7 @@ from ..model.odemodel import ODEModel
 from ..model.cbmodel import CBModel, Gene, Protein, GPRAssociation
 from ..model.fixes import fix_cb_model
 
+import os
 from collections import OrderedDict
 from sympy.parsing.sympy_parser import parse_expr
 from sympy import to_dnf, Or, And
@@ -82,6 +83,8 @@ def load_sbml_model(filename, kind=None, flavor=None, exchange_detection_mode=No
         Note that some flavors (cobra, bigg) have their own exchange detection mode.
 
     """
+    if not os.path.exists(filename):
+        raise IOError("Model file was not found")
 
     reader = SBMLReader()
     document = reader.readSBML(filename)
@@ -259,7 +262,7 @@ def _load_reaction(reaction, sbml_model, exchange_detection_mode=None):
         is_exchange = exchange_detection_mode.match(reaction.getId()) is not None
     else:
         raise ValueError("Unknow exchange_detection_mode value. Allowed values include 'unbalanced', 'boundary' or" +
-                         "<compiled regular expression>")
+                         " <compiled regular expression>")
 
     rxn = Reaction(reaction.getId(), name=reaction.getName(), reversible=reaction.getReversible(),
                    stoichiometry=stoichiometry, regulators=modifiers, is_exchange=is_exchange)
@@ -273,7 +276,7 @@ def _load_cbmodel(sbml_model, flavor, exchange_detection_mode=None):
 
     if exchange_detection_mode is None:
         if flavor in {Flavor.COBRA, Flavor.BIGG}:
-            exchange_detection_mode = '^R_EX'
+            exchange_detection_mode = re.compile('^R_EX')
         elif flavor or flavor in {Flavor.COBRA_OTHER, Flavor.SEED}:
             exchange_detection_mode = 'boundary'
         elif flavor in {Flavor.FBC2}:

@@ -63,6 +63,8 @@ def main():
         [framed]
         flavor                  SBML flavor to use when parsing the models. Allowed values are 'cobra', 'cobra:other', 
                                 'seed', 'bigg' and 'fbc2'
+        biomass_regex           Regular expression to match biomass reaction (default: "iomass")
+        extracellular_comp_id   Extracellular compartment id (default: Extracellular)
                                 
     '''))
     parser.add_argument('config', help='Path to configuration file (see epilog)')
@@ -87,6 +89,8 @@ def main():
     config.read(args.config)
     communities_sep = config.get("communities", "communities_separator").strip('"') if config.has_option("communities", "communities_separator") else ","
     flavor = config.get("framed", "flavor") if config.has_option("framed", "flavor") else "fbc2"
+    re_biomass = re.compile(config.get("framed", "biomass_regex")) if config.has_option("framed", "biomass_regex") else re.compile("iomass")
+    extracellular_comp_id = config.get("framed", "extracellular_comp_id") if config.has_option("framed", "extracellular_comp_id") else "Extracellular"
     models_dir = config.get("communities", "models_dir")
     if config.has_option("communities", "models_locations"):
         models_locations = {r['id']: r['path'] for _, r in
@@ -105,9 +109,18 @@ def main():
     communities = []
     for _, r in pandas.read_table(config.get("communities", "communities")).iterrows():
         community_models = [m_id for m_id in re.split(communities_sep, r[1])]
-        community_model_files = (models_locations.get(m_id, m_id) for m_id in community_models)
-        community_model_paths = [os.path.join(models_dir, m_id) for m_id in community_model_files]
-        communities.append({'id': r[0], 'species': community_models, 'paths': community_model_paths})
+        community_model_paths = []
+        missing_models = []
+        for m_id in community_models:
+            if models_locations:
+                m_file = models_locations.get(m_id, m_id)
+                m_path = os.path.join(models_dir, m_file)
+                if m_id not in models_locations or not os.path.exists(m_path):
+                    missing_models.append(m_id)
+
+                    community_model_paths.append(m_path)
+
+        communities.append({'id': r[0], 'species': community_models, 'paths': community_model_paths, 'missing_models': missing_models})
     max_community_size = max(len(com["species"]) for com in communities)
 
     #
@@ -135,6 +148,7 @@ def main():
         # Write header
         file.write("\t".join(row_template) + "\n")
         logger.log("Total number of communities: {} (sample: {})", len(communities), len(communities_sample))
+        logger.log("Missing models: {} (sample: {})", len([m for m in communities if len(m['missing_models'])]), len([m for m in communities_sample if len(m['missing_models'])]))
         logger.flush()
 
         for community_i, community_data in enumerate(communities_sample, start=1):
@@ -145,6 +159,10 @@ def main():
                 logger.log("{}/{:<5} (all: {}/{:<5}) [{}]: {}", community_i, len(communities_sample), community_all_i,
                            len(communities), community_data['id'], ", ".join(community_data["species"]))
 
+                if len(community_data['missing_models']):
+                    logger.log("Skiping because missing models: {}".format(", ".join(community_data['missing_models'])), newline=True)
+                    logger.flush(error=True)
+                    continue
                 #
                 # Read SBML files representing community organisms
                 #
@@ -153,14 +171,14 @@ def main():
                 for i, path in enumerate(community_data['paths'], start=1):
                     logger.log("Reading {}:'{}' SBML file...".format(i, path), newline=True)
                     model = load_cbmodel(path, flavor=flavor)
-                    model.biomass_reaction = next(r for r in model.reactions if r.startswith("bio"))
+                    model.biomass_reaction = next(r for r in model.reactions if re.match(re_biomass, r))
                     models.append(model)
                     models_i[model.id] = i
 
                 #
                 # Print community description
                 #
-                community = Community(community_data['id'], models, extracellular_compartment_id="Extracellular",
+                community = Community(community_data['id'], models, extracellular_compartment_id=extracellular_comp_id,
                                       create_biomass=True, interacting=True)
                 logger.log("Inorganic media ({}):", len(rxn_inorganic), newline=False)
                 logger.log(", ".join(r for r in rxn_inorganic))
