@@ -275,6 +275,9 @@ def _load_cbmodel(sbml_model, flavor, exchange_detection_mode=None):
     if exchange_detection_mode not in {None, 'unbalanced', 'boundary'}:
         exchange_detection_mode = re.compile(exchange_detection_mode)
 
+    if exchange_detection_mode is None:
+        warnings.warn('No exchange reaction detection mode selected.')
+
     model = CBModel(sbml_model.getId())
     _load_compartments(sbml_model, model)
     _load_metabolites(sbml_model, model, flavor)

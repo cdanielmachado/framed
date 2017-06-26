@@ -48,7 +48,7 @@ class Environment(MutableMapping):
         return deepcopy(self)
 
     @staticmethod
-    def from_reactions(reactions, max_uptake=1000.0):
+    def from_reactions(reactions, max_uptake=10.0):
         if not iter(reactions):
             raise TypeError("Reactions are not iterable")
 
@@ -59,7 +59,7 @@ class Environment(MutableMapping):
         return env
 
     @staticmethod
-    def from_compounds(compounds, exchange_format="'R_EX_{}_e'", max_uptake=1000.0):
+    def from_compounds(compounds, exchange_format="'R_EX_{}_e'", max_uptake=10.0):
         """
         Initialize environment from list of medium compounds
 
@@ -188,13 +188,13 @@ class Environment(MutableMapping):
             return constraints
 
     @staticmethod
-    def from_defaults(model, max_uptake=1000.0, max_secretion=1000.0, inplace=False):
+    def from_defaults(model, max_uptake=10.0, max_secretion=None, inplace=False):
         """
         Generate default environmental conditions for a given model
 
         Arguments:
             model (CBModel): model from which the exchange reactions are determined
-            max_uptake (float): maximum uptake rate (default: 1000.0)
+            max_uptake (float): maximum uptake rate (default: 10.0)
             max_secretion (float): maximum secretion rate (default: 1000.0)
             inplace (bool): apply to model (default: False)
 
@@ -213,7 +213,7 @@ class Environment(MutableMapping):
             return env
 
     @staticmethod
-    def complete(model, max_uptake=1000.0, inplace=False):
+    def complete(model, max_uptake=10.0, inplace=False):
         """
         Generate a complete growth medium for a given model
 
