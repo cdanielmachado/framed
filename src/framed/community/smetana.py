@@ -33,7 +33,7 @@ class SmetanaScore(object):
     def __repr__(self):
         return "<{}/{}/{}:{}>".format(self.donor_organism, self.metabolite, self.receiver_organism, self.score)
 
-def smetana_score(community, environment, report_zero_scores=False, min_mass_weight=True, min_growth=1, max_uptake=100, abstol=1e-6, validate=False):
+def smetana_score(community, environment, report_zero_scores=False, min_mass_weight=False, min_growth=1, max_uptake=100, abstol=1e-6, validate=False, n_solutions=100):
     """
     SMETANA value scores likelyhood of metabolite exchange from species A to species B
     
@@ -48,14 +48,15 @@ def smetana_score(community, environment, report_zero_scores=False, min_mass_wei
         max_uptake (float): maximum uptake rate (default: 100)
         validate (bool): validate solution using FBA (for debugging purposes, default: False)
         abstol (float): tolerance for detecting a non-zero exchange flux (default: 1e-6)
+        n_solutions (int): How many unique solutions to calculate for Metabolite Uptake and Species Coupling scores  (default: 100)
 
     Returns:
         list: Species --> Metabolite --> Species SMETANA scores
         dict: Extra information
     """
-    scscores, scextras = species_coupling_score(community, environment, min_growth=min_growth, max_uptake=max_uptake, abstol=abstol)
+    scscores, scextras = species_coupling_score(community, environment, min_growth=min_growth, max_uptake=max_uptake, n_solutions=n_solutions)
     mpscores, mpextras = metabolite_production_score(community, environment)
-    muscores, muextras = metabolite_uptake_score(community, environment, min_mass_weight=min_mass_weight, min_growth=min_growth, max_uptake=max_uptake, abstol=abstol, validate=validate)
+    muscores, muextras = metabolite_uptake_score(community, environment, min_mass_weight=min_mass_weight, min_growth=min_growth, max_uptake=max_uptake, abstol=abstol, validate=validate, n_solutions=n_solutions)
     metabolites = {met for mets in mpscores.itervalues() if mets for met in mets}
 
     scores = []
@@ -94,7 +95,7 @@ def smetana_score(community, environment, report_zero_scores=False, min_mass_wei
     return scores, extras
 
 
-def species_coupling_score(community, environment, min_growth=1, max_uptake=100, abstol=1e-6):
+def species_coupling_score(community, environment, min_growth=1, max_uptake=100, n_solutions=100):
     """
     Calculate frequency of community species dependency on each other
 
@@ -106,6 +107,7 @@ def species_coupling_score(community, environment, min_growth=1, max_uptake=100,
         min_growth (float): minimum growth rate (default: 1)
         max_uptake (float): maximum uptake rate (default: 100)
         abstol (float): tolerance for detecting a non-zero exchange flux (default: 1e-6)
+        n_solutions (int): How many unique solutions to calculate (default: 100)
 
     Returns:
         dict: Keys are dependant model names, values are dictionaries with required species frequencies 
@@ -128,9 +130,6 @@ def species_coupling_score(community, environment, min_growth=1, max_uptake=100,
             solver.add_constraint('c_{}_ub'.format(r_id), {r_id: 1, org_var: -max_uptake}, '<', 0, update_problem=False)
 
     solver.update()
-
-    n_solutions = 30000
-
     scores = {}
     extras = {'dependencies': {}}
 
@@ -172,7 +171,7 @@ def species_coupling_score(community, environment, min_growth=1, max_uptake=100,
 
     return scores, extras
 
-def metabolite_uptake_score(community, environment, min_mass_weight=True, min_growth=1.0, max_uptake=100.0, abstol=1e-6, validate=False):
+def metabolite_uptake_score(community, environment, min_mass_weight=True, min_growth=1.0, max_uptake=100.0, abstol=1e-6, validate=False, n_solutions=100):
     """
     Calculate frequency of metabolite requirement for species growth
 
@@ -186,6 +185,7 @@ def metabolite_uptake_score(community, environment, min_mass_weight=True, min_gr
         max_uptake (float): maximum uptake rate (default: 100)
         abstol (float): tolerance for detecting a non-zero exchange flux (default: 1e-6)
         validate (bool): validate solution using FBA (for debugging purposes, default: False)
+        n_solutions (int): How many unique solutions to calculate (default: 100)
 
     Returns:
         dict: Keys are dependant model names, values are dictionaries with required compounds frequencies 
@@ -221,7 +221,7 @@ def metabolite_uptake_score(community, environment, min_mass_weight=True, min_gr
                                    direction=-1,
                                    min_mass_weight=min_mass_weight,
                                    min_growth=min_growth,
-                                   n_solutions=30000,
+                                   n_solutions=n_solutions,
                                    max_uptake=max_uptake, validate=validate, abstol=abstol)
         solutions.append(sol)
 
@@ -345,6 +345,7 @@ def mip_score(community, environment=None, min_mass_weight=False, min_growth=1, 
     if environment:
         environment.apply(interacting_community.merged, inplace=True)
         environment.apply(noninteracting_community.merged, inplace=True)
+        env_reactions = exch_reactions & set(environment)
         exch_reactions = exch_reactions - set(environment)
         
     interacting_medium, sol1 = minimal_medium(interacting_community.merged, direction=direction,

@@ -312,6 +312,7 @@ class Community(object):
             self._organisms_reactions[org_id] = set()
             self._organisms_exchange_reactions[org_id] = {}
             self._organisms_biomass_reactions[org_id] = {}
+            exchanged_metabolites = set(m for m_ex in model.get_exchange_reactions().itervalues() for m in m_ex)
 
             #
             # Create additional extracellular compartment
@@ -328,13 +329,14 @@ class Community(object):
                     merged_model.add_compartment(deepcopy(comp))
 
             for m_id, met in model.metabolites.items():
+
                 if met.compartment != self._extracellular_compartment or not self._merge_extracellular_compartments:
                     new_met = _copy_object(met, org_id, _id_pattern(met.compartment, org_id))
                     merged_model.add_metabolite(new_met, clear_tmp=False)
                 elif m_id not in merged_model.metabolites:
                     merged_model.add_metabolite(deepcopy(met), clear_tmp=False)
 
-                if met.compartment == self._extracellular_compartment and not self._merge_extracellular_compartments:
+                if met.id in exchanged_metabolites and not self._merge_extracellular_compartments:
                     pool_id = _id_pattern(m_id, "pool")
                     if pool_id not in merged_model.metabolites:
                         new_met = _copy_object(met, "pool", "pool")

@@ -18,7 +18,7 @@ def minimal_medium(model, exchange_reactions=None, direction=-1, min_mass_weight
         model (CBModel): model
         exchange_reactions: list of exchange reactions (if not provided all model exchange reactions are used)
         direction (int): direction of uptake reactions (negative or positive, default: -1)
-        min_mass_weight (bool): minimize by molecular weight of nutrients (default: False)
+        min_mass_weight (bool): minimize by molecular weight of nutrients (default: False) 
         min_growth (float): minimum growth rate (default: 1)
         max_uptake (float): maximum uptake rate (default: 100)
         max_compounds (int): limit maximum number of compounds (optional)
@@ -90,7 +90,7 @@ def minimal_medium(model, exchange_reactions=None, direction=-1, min_mass_weight
 
             formulas = metabolite.metadata['FORMULA'].split(';')
 
-            if len(formulas) > 0:
+            if len(formulas) > 1:
                 warn('Multiple formulas for compound')
 
             weight = molecular_weight(formulas[0])
@@ -127,12 +127,12 @@ def minimal_medium(model, exchange_reactions=None, direction=-1, min_mass_weight
 
             if solution.status != Status.OPTIMAL:
                 break
-            else:
-                medium = set(r_id for r_id in exchange_reactions
-                          if (direction < 0 and solution.values[r_id] < -abstol
-                              or direction > 0 and solution.values[r_id] > abstol))
-                medium_list.append(medium)
-                solutions.append(solution)
+
+            medium = set(r_id for r_id in exchange_reactions
+                      if (direction < 0 and solution.values[r_id] < -abstol
+                          or direction > 0 and solution.values[r_id] > abstol))
+            medium_list.append(medium)
+            solutions.append(solution)
 
         return medium_list, solutions
 
