@@ -67,6 +67,7 @@ def main():
         biomass_regex           Regular expression to match biomass reaction (default: "iomass")
         extracellular_comp_id   Extracellular compartment id (default: Extracellular)
         smetana_n_solutions     How many unique solutions to calculate for Metabolite Uptake and Species Coupling scores  (default: 50)
+        max_uptake              How much of uptake/exchange should be allowed for active exchange reactions (default: 1000)
                                 
     '''))
     parser.add_argument('config', help='Path to configuration file (see epilog)')
@@ -94,6 +95,7 @@ def main():
     n_solutions = int(config.get("framed", "smetana_n_solutions")) if config.has_option("framed", "smetana_n_solutions") else 50
     minimize_media = int(config.get("communities", "minimize_media")) if config.has_option("communities", "minimize_media") else 0
     min_mass_weight = int(config.get("framed", "min_mass_weight")) if config.has_option("framed", "min_mass_weight") else 0
+    max_uptake = float(config.get("framed", "max_uptake")) if config.has_option("framed", "max_uptake") else 1000.0
     re_biomass = re.compile(config.get("framed", "biomass_regex")) if config.has_option("framed", "biomass_regex") else re.compile("iomass")
     extracellular_comp_id = config.get("framed", "extracellular_comp_id") if config.has_option("framed", "extracellular_comp_id") else "Extracellular"
     models_dir = config.get("communities", "models_dir")
@@ -106,7 +108,7 @@ def main():
                         pandas.read_table(config.get("communities", "exchange_metabolites")).iterrows()}
     exch_metabolites_list = sorted(exch_metabolites)
     rxn_inorganic = {r['id'].strip() for _, r in pandas.read_table(config.get("communities", "inorganic_media"), comment="#").iterrows()}
-    env_inorganic = Environment.from_reactions(rxn_inorganic, max_uptake=100)
+    env_inorganic = Environment.from_reactions(rxn_inorganic, max_uptake=max_uptake)
 
     #
     # Load communities descriptions
@@ -243,7 +245,7 @@ def main():
                     com_rxn_minimal = com_rxn_defined
 
 
-                env_minimal = Environment.from_reactions(com_rxn_minimal)
+                env_minimal = Environment.from_reactions(com_rxn_minimal, max_uptake=max_uptake)
                 logger.log("SMETANA media ({}'inorganic + {}'minimal ({}'defined)):",
                            len(com_rxn_minimal & com_rxn_inorganic),
                            len(com_rxn_minimal - com_rxn_inorganic),
