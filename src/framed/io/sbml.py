@@ -275,9 +275,9 @@ def _load_cbmodel(sbml_model, flavor, exchange_detection_mode=None):
         exchange_detection_mode = re.compile(exchange_detection_mode)
 
     if exchange_detection_mode is None:
-        if not flavor or flavor in {Flavor.COBRA, Flavor.BIGG}:
+        if flavor in {Flavor.COBRA, Flavor.BIGG}:
             exchange_detection_mode = re.compile('^R_EX')
-        elif flavor in {Flavor.COBRA_OTHER, Flavor.SEED}:
+        elif flavor or flavor in {Flavor.COBRA_OTHER, Flavor.SEED}:
             exchange_detection_mode = 'boundary'
         elif flavor in {Flavor.FBC2}:
             exchange_detection_mode = 'unbalanced'

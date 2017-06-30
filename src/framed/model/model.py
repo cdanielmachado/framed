@@ -445,6 +445,19 @@ class Model(object):
 
         return consumers
 
+    def get_metabolite_reactions(self, m_id):
+        """ Return the list of reactions associated with a given metabolite
+
+        Arguments:
+            m_id (str): metabolite id
+
+        Returns:
+            list: associated reactions
+        """
+        table = self.metabolite_reaction_lookup()
+
+        return table[m_id].keys()
+
     def get_activation_targets(self, m_id):
         table = self.regulatory_lookup()
         return [r_id for r_id, kind in table[m_id].items() if kind == '+']
