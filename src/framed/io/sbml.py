@@ -258,11 +258,8 @@ def _load_reaction(reaction, sbml_model, exchange_detection_mode=None):
             is_exchange = (boundary_reactants and not (reactants - boundary_reactants))
     elif exchange_detection_mode is None:
         pass
-    elif isinstance(exchange_detection_mode, re_type):
-        is_exchange = exchange_detection_mode.match(reaction.getId()) is not None
     else:
-        raise ValueError("Unknow exchange_detection_mode value. Allowed values include 'unbalanced', 'boundary' or" +
-                         " <compiled regular expression>")
+        is_exchange = exchange_detection_mode.match(reaction.getId()) is not None
 
     rxn = Reaction(reaction.getId(), name=reaction.getName(), reversible=reaction.getReversible(),
                    stoichiometry=stoichiometry, regulators=modifiers, is_exchange=is_exchange)
@@ -272,7 +269,10 @@ def _load_reaction(reaction, sbml_model, exchange_detection_mode=None):
 
 def _load_cbmodel(sbml_model, flavor, exchange_detection_mode=None):
     if exchange_detection_mode and exchange_detection_mode not in {None, 'unbalanced', 'boundary'}:
-        exchange_detection_mode = re.compile(exchange_detection_mode)
+        try:
+            exchange_detection_mode = re.compile(exchange_detection_mode)
+        except:
+            raise RuntimeError("Exchange detection mode must be: 'unbalanced', 'boundary', or a valid regular expression.")
 
     if exchange_detection_mode is None:
         if flavor in {Flavor.COBRA, Flavor.BIGG}:
@@ -281,14 +281,12 @@ def _load_cbmodel(sbml_model, flavor, exchange_detection_mode=None):
             exchange_detection_mode = 'boundary'
         elif flavor in {Flavor.FBC2}:
             exchange_detection_mode = 'unbalanced'
-        else:
-            raise TypeError("Unsupported SBML flavor: {}".format(flavor))
 
     model = CBModel(sbml_model.getId())
     _load_compartments(sbml_model, model)
     _load_metabolites(sbml_model, model, flavor)
     _load_reactions(sbml_model, model, exchange_detection_mode=exchange_detection_mode)
-    if not flavor or flavor in {Flavor.COBRA, Flavor.COBRA_OTHER, Flavor.SEED}:
+    if flavor in {None, Flavor.COBRA, Flavor.COBRA_OTHER, Flavor.SEED}:
         _load_cobra_bounds(sbml_model, model)
         _load_cobra_objective(sbml_model, model)
         _load_cobra_gpr(sbml_model, model)

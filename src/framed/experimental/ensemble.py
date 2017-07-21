@@ -39,6 +39,14 @@ class EnsembleModel:
         for r_id in inactive:
             del self.reaction_states[r_id]
 
+    def get_reactions_by_index(self, i):
+        return [r_id for r_id in self.model.reactions
+                if r_id not in self.reaction_states or self.reaction_states[r_id][i]]
+
+    def get_genes_by_index(self, i):
+        return {gene for r_id in self.get_reactions_by_index(i)
+                for gene in self.model.reactions[r_id].get_associated_genes()}
+
 
 def simulate_ensemble(ensemble, method='FBA', constraints=None, solver=None, get_fluxes=True):
 
