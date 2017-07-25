@@ -7,8 +7,10 @@ Authors: Daniel Machado, Kai Zhuang
 from collections import OrderedDict
 from ..solvers import solver_instance
 from ..solvers.solver import Status
-from simulation import FBA, looplessFBA
+from simulation import FBA
+from thermodynamics import looplessFBA
 from numpy import linspace
+from warnings import warn
 
 
 def FVA(model, obj_percentage=0, reactions=None, constraints=None, loopless=False, internal=None, solver=None):
@@ -35,7 +37,7 @@ def FVA(model, obj_percentage=0, reactions=None, constraints=None, loopless=Fals
         solver = solver_instance(model)
 
     if obj_percentage > 0:
-        target = model.detect_biomass_reaction()
+        target = model.biomass_reaction
         solution = FBA(model, objective={target: 1}, constraints=constraints, solver=solver)
         _constraints[target] = (obj_percentage * solution.fobj, None)
 
@@ -54,14 +56,13 @@ def FVA(model, obj_percentage=0, reactions=None, constraints=None, loopless=Fals
         if solution.status == Status.OPTIMAL:
             variability[r_id][0] = solution.fobj
         elif solution.status == Status.UNBOUNDED:
-            variability[r_id][0] = None
-        elif solution.status == Status.INF_OR_UNB: #taking a wild guess here!
-            variability[r_id][0] = None
+            pass
+        elif solution.status == Status.INF_OR_UNB:
+            pass
         elif solution.status == Status.INFEASIBLE:
-            variability[r_id][0] = 0
+            warn('Infeasible solution status')
         else:
-            print 'Warning: unknown solver status'
-            variability[r_id][0] = None
+            warn('Unknown solution status')
 
     for r_id in reactions:
         if loopless:
@@ -73,30 +74,31 @@ def FVA(model, obj_percentage=0, reactions=None, constraints=None, loopless=Fals
         if solution.status == Status.OPTIMAL:
             variability[r_id][1] = solution.fobj
         elif solution.status == Status.UNBOUNDED:
-            variability[r_id][1] = None
-        elif solution.status == Status.INF_OR_UNB: #taking a wild guess here!
-            variability[r_id][1] = None
+            pass
+        elif solution.status == Status.INF_OR_UNB:
+            pass
         elif solution.status == Status.INFEASIBLE:
-            variability[r_id][1] = 0
+            warn('Infeasible solution status')
         else:
-            print 'Warning: unknown solver status'
-            variability[r_id][1] = None
+            warn('Unknown solution status')
 
     return variability
 
 
-def blocked_reactions(model, abstol=1e-9):
+def blocked_reactions(model, constraints=None, reactions=None, abstol=1e-9):
     """ Find all blocked reactions in a model
     
     Arguments:
         model (CBModel): a constraint-based model
+        constraints (dict): additional constraints (optional)
+        reactions (list): List of reactions which will be tested (default: None, test all reactions)
         abstol (float): absolute tolerance (default: 1e-9)
         
     Returns:
         list: blocked reactions
     """
 
-    variability = FVA(model)
+    variability = FVA(model, reactions=reactions, constraints=constraints)
 
     return [r_id for r_id, (lb, ub) in variability.items()
             if lb is not None and ub is not None and abs(lb) < abstol and abs(ub) < abstol]
@@ -149,7 +151,7 @@ def production_envelope(model, r_target, r_biomass=None, steps=10, constraints=N
         tuple: biomass values, target minimum values, target maximum values
     """
     if not r_biomass:
-        r_biomass = model.detect_biomass_reaction()
+        r_biomass = model.biomass_reaction
 
     return flux_envelope(model, r_x=r_biomass, r_y=r_target, steps=steps, constraints=constraints)
 

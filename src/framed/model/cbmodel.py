@@ -1,3 +1,5 @@
+import re
+import warnings
 from collections import OrderedDict
 
 from .model import Model, Metabolite, Reaction, AttrOrderedDict
@@ -32,8 +34,15 @@ class Protein:
         self.metadata = OrderedDict()
 
     def __str__(self):
+        return self.to_string()
+
+    def to_string(self, sort=False):
+
         if len(self.genes) > 1:
-            return '(' + ' and '.join(self.genes) + ')'
+            if sort:
+                return '(' + ' and '.join(sorted(self.genes)) + ')'
+            else:
+                return '(' + ' and '.join(self.genes) + ')'
         else:
             return str(self.genes[0])
 
@@ -50,7 +59,16 @@ class GPRAssociation:
         self.metadata = OrderedDict()
 
     def __str__(self):
-        gpr_str = ' or '.join(map(str, self.proteins))
+        return self.to_string()
+
+    def to_string(self, sort=False):
+        proteins_str = [protein.to_string(sort) for protein in self.proteins]
+
+        if sort:
+            proteins_str.sort()
+
+        gpr_str = ' or '.join(proteins_str)
+
         if len(self.proteins) > 1:
             return '(' + gpr_str + ')'
         else:
@@ -68,8 +86,9 @@ class GPRAssociation:
 class CBReaction(Reaction):
 
     def __init__(self, elem_id, name=None, reversible=True, stoichiometry=None, regulators=None,
-                 lb=None, ub=None, objective=0, gpr_association=None):
-        Reaction.__init__(self, elem_id, name, reversible, stoichiometry, regulators)
+                 lb=None, ub=None, objective=0, gpr_association=None, is_exchange=None, is_sink=None):
+        Reaction.__init__(self, elem_id, name=name, reversible=reversible, stoichiometry=stoichiometry,
+                          regulators=regulators, is_exchange=is_exchange, is_sink=is_sink)
 
         if lb is None and not reversible:
             lb = 0
@@ -80,14 +99,25 @@ class CBReaction(Reaction):
         self.gpr = gpr_association
         self._bool_function = None
 
+    def __getstate__(self):
+        state = self.__dict__.copy()
+        del state['_bool_function']
+        return state
+
+    def __setstate__(self, state):
+        self.__dict__.update(state)
+        self._bool_function = None
+
     def set_lower_bound(self, value):
         self.lb = value
+        self.reversible = bool(value is None or value < 0)
 
     def set_upper_bound(self, value):
         self.ub = value
 
     def set_flux_bounds(self, lb, ub):
         self.lb, self.ub = lb, ub
+        self.reversible = bool(lb is None or lb < 0)
 
     def set_gpr_association(self, gpr_association):
         self.gpr = gpr_association
@@ -156,7 +186,41 @@ class CBModel(Model):
         """
         Model.__init__(self, model_id)
         self.genes = AttrOrderedDict()
-        self.biomass_reaction = None
+        self._biomass_reaction = None
+        self._biomass_reaction_set = False
+
+    def _clear_temp(self):
+        Model._clear_temp(self)
+        self._g_r_lookup = None
+
+    @property
+    def biomass_reaction(self):
+        if not self._biomass_reaction_set:
+            self.detect_biomass_reaction()
+
+        return self._biomass_reaction
+
+    @biomass_reaction.setter
+    def biomass_reaction(self, r_id):
+        if r_id:
+            assert r_id in self.reactions, "{} is not a valid reaction id in this model".format(r_id)
+
+        self._biomass_reaction = r_id
+        self._biomass_reaction_set = True
+
+    def get_flux_bounds(self, r_id):
+        """ Get flux bounds for reaction
+
+        Arguments:
+            r_id (str): reaction id
+
+        Returns:
+            float: lower bound
+            float: upper bound
+        """
+
+        reaction = self.reactions[r_id]
+        return reaction.lb, reaction.ub
 
     def set_flux_bounds(self, r_id, lb, ub):
         """ Define flux bounds for one reaction
@@ -169,7 +233,7 @@ class CBModel(Model):
         if r_id in self.reactions:
             self.reactions[r_id].set_flux_bounds(lb, ub)
         else:
-            print 'No such reaction', r_id
+            raise KeyError("Reaction '{}' not found".format(r_id))
 
     def set_lower_bound(self, r_id, lb):
         """ Define lower bound for one reaction
@@ -181,7 +245,7 @@ class CBModel(Model):
         if r_id in self.reactions:
             self.reactions[r_id].lb = lb
         else:
-            print 'No such reaction', r_id
+            raise KeyError("Reaction '{}' not found".format(r_id))
 
     def set_upper_bound(self, r_id, ub):
         """ Define upper bound for one reaction
@@ -193,7 +257,7 @@ class CBModel(Model):
         if r_id in self.reactions:
             self.reactions[r_id].ub = ub
         else:
-            print 'No such reaction', r_id
+            raise KeyError("Reaction '{}' not found".format(r_id))
 
     def set_objective(self, coefficients):
         """ Define objective coefficients for a list of reactions
@@ -215,9 +279,9 @@ class CBModel(Model):
         if r_id in self.reactions:
             self.reactions[r_id].objective = coeff
         else:
-            print 'No such reaction', r_id
+            raise KeyError("Reaction '{}' not found".format(r_id))
 
-    def add_reaction(self, reaction):
+    def add_reaction(self, reaction, clear_tmp=True):
         """ Add a single reaction to the model.
         If a reaction with the same id exists, it will be replaced.
 
@@ -228,36 +292,42 @@ class CBModel(Model):
         if not isinstance(reaction, CBReaction):
             cbreaction = CBReaction(
                 reaction.id,
-                reaction.name,
-                reaction.reversible,
-                reaction.stoichiometry,
-                reaction.regulators)
+                name=reaction.name,
+                reversible=reaction.reversible,
+                stoichiometry=reaction.stoichiometry,
+                regulators=reaction.regulators,
+                is_exchange=reaction.is_exchange
+            )
 
             cbreaction.metadata = reaction.metadata
-            Model.add_reaction(self, cbreaction)
+            Model.add_reaction(self, cbreaction, clear_tmp=clear_tmp)
         else:
-            Model.add_reaction(self, reaction)
+            Model.add_reaction(self, reaction, clear_tmp=clear_tmp)
 
-    def detect_biomass_reaction(self):
+    def detect_biomass_reaction(self, update=False):
         """ Detects biomass reaction in the model (searches by objective coefficient)
 
         Returns:
             str: first reaction that matches (or else None)
         """
 
-        if not self.biomass_reaction:
+        if self._biomass_reaction is None or update:
             matches = [r_id for r_id, rxn in self.reactions.items() if rxn.objective]
 
             if matches:
-                self.biomass_reaction = matches[0]
-                if len(matches) == 1:
-                    print 'Biomass reaction detected:', self.biomass_reaction
-                else:
-                    print 'Multiple biomass reactions detected (first selected):', " ".join(matches)
-            else:
-                print 'No biomass reaction detected.'
+                self._biomass_reaction = matches[0]
+                if len(matches) > 1:
+                    w = 'Multiple biomass reactions detected (first selected): {}'.format(" ".join(matches))
+                    warnings.warn(w, UserWarning)
 
-        return self.biomass_reaction
+                if not re.search("biomass|growth", self._biomass_reaction, re.IGNORECASE):
+                    w = "Suspicious biomass reaction '{}' name".format(self._biomass_reaction)
+                    warnings.warn(w, UserWarning)
+            else:
+                w = 'No biomass reaction detected'
+                warnings.warn(w, UserWarning)
+
+        return self._biomass_reaction
 
     def add_gene(self, gene):
         """ Add a gene metabolite to the model.
@@ -289,7 +359,7 @@ class CBModel(Model):
             if gene_id in self.genes:
                 del self.genes[gene_id]
             else:
-                print 'No such gene', gene_id
+                warnings.warn("No such gene '{}'".format(gene_id), RuntimeWarning)
 
     def set_gpr_association(self, r_id, gpr):
         """ Set GPR association for a given reaction:
@@ -302,7 +372,7 @@ class CBModel(Model):
         if r_id in self.reactions:
             self.reactions[r_id].gpr = gpr
         else:
-            print 'No such reaction', r_id
+            warnings.warn("No such reaction '{}'".format(r_id), RuntimeWarning)
 
     def evaluate_gprs(self, active_genes):
         """ Boolean evaluation of the GPR associations for a given set of active genes.
@@ -316,12 +386,13 @@ class CBModel(Model):
         genes_state = {gene: gene in active_genes for gene in self.genes}
         return [r_id for r_id, rxn in self.reactions.items() if rxn.evaluate_gpr(genes_state)]
 
+
     def add_ratio_constraint(self, r_id_num, r_id_den, ratio):
         """ Add a flux ratio constraint to the model.
 
         Arguments:
             r_id_num (str): id of the numerator
-            r_id_num (str): id of the denominator
+            r_id_den (str): id of the denominator
             ratio (float): ratio value
 
         Returns:
@@ -335,14 +406,14 @@ class CBModel(Model):
             self.reactions[r_id_den].stoichiometry[m_id] = -ratio
             return m_id
         else:
-            print 'Invalid reactions.'
+            raise KeyError('Invalid reactions in ratio {}/{}'.format(r_id_num, r_id_den))
 
     def remove_ratio_constraint(self, r_id_num, r_id_den):
         """ Remove a flux ratio constraint from the model.
 
         Arguments:
             r_id_num (str): id of the numerator
-            r_id_num (str): id of the denominator
+            r_id_den (str): id of the denominator
 
         """
 
@@ -351,11 +422,11 @@ class CBModel(Model):
             if m_id in self.metabolites:
                 self.remove_metabolite(m_id)
             else:
-                print 'No ratio constraint for {}/{}'.format(r_id_num, r_id_den)
+                warnings.warn('No ratio constraint for {}/{}'.format(r_id_num, r_id_den), RuntimeWarning)
         else:
-            print 'Invalid reactions.'
+            raise KeyError('Invalid reactions in ratio {}/{}'.format(r_id_num, r_id_den))
 
-    def add_reaction_from_str(self, reaction_str, default_compartment=None):
+    def add_reaction_from_str(self, reaction_str, default_compartment=None, clear_tmp=True):
         """ Parse a reaction from a string and add it to the model.
 
         Arguments:
@@ -376,13 +447,47 @@ class CBModel(Model):
 
         for m_id in stoichiometry:
             if m_id not in self.metabolites:
-                self.add_metabolite(Metabolite(m_id, m_id, compartment=default_compartment))
+                self.add_metabolite(Metabolite(m_id, m_id, compartment=default_compartment), clear_tmp=clear_tmp)
 
         reaction = CBReaction(r_id, r_id, reversible, stoichiometry, None, lb, ub, obj_coeff)
-        self.add_reaction(reaction)
+        self.add_reaction(reaction, clear_tmp=clear_tmp)
 
         return r_id
 
-
     def get_objective(self):
         return {r_id: rxn.objective for r_id, rxn in self.reactions.items() if rxn.objective}
+
+    def gene_to_reaction_lookup(self):
+        """ Build a dictionary from genes to associated reactions.
+
+        Returns:
+            dict: gene to reaction mapping
+
+        """
+        if not self._g_r_lookup:
+            self._g_r_lookup = OrderedDict([(g_id, []) for g_id in self.genes])
+
+            for r_id, rxn in self.reactions.items():
+                genes = rxn.get_associated_genes()
+                for g_id in genes:
+                    self._g_r_lookup[g_id].append(r_id)
+
+        return self._g_r_lookup
+
+    def get_reactions_by_gene(self, g_id):
+        """ Get a list of reactions associated with a given gene.
+
+        Args:
+            g_id (str): gene id
+
+        Returns:
+            list: reactions catalyzed by any proteins (or subunits) encoded by this gene
+        """
+        g_r_lookup = self.gene_to_reaction_lookup()
+        return g_r_lookup[g_id]
+
+    def print_objective(self):
+        coeffs = ['{:+g} {}'.format(rxn.objective, r_id) for r_id, rxn in self.reactions.items() if rxn.objective]
+        return ' '.join(coeffs)
+
+

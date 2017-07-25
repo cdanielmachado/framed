@@ -9,6 +9,8 @@ from collections import OrderedDict
 from .solver import Solver, Solution, Status, VarType, Parameter, default_parameters
 from gurobipy import Model as GurobiModel, GRB, quicksum
 
+import warnings
+
 
 status_mapping = {
     GRB.OPTIMAL: Status.OPTIMAL,
@@ -94,7 +96,7 @@ class GurobiSolver(Solver):
             constr = self.problem.getConstrByName(constr_id)
             self.problem.remove(constr)
 
-        expr = quicksum([coeff * self.problem.getVarByName(r_id) for r_id, coeff in lhs.items() if coeff])
+        expr = quicksum(coeff * self.problem.getVarByName(r_id) for r_id, coeff in lhs.items() if coeff)
         self.problem.addConstr(expr, grb_sense[sense], rhs, constr_id)
         self.constr_ids.append(constr_id)
             
@@ -128,14 +130,42 @@ class GurobiSolver(Solver):
         """ Update internal structure. Used for efficient lazy updating. """
         self.problem.update()
 
-    def solve(self, objective, quadratic=None, minimize=True, model=None, constraints=None, get_values=True,
+    def set_objective(self, linear=None, quadratic=None, minimize=True):
+        """ Set a predefined objective for this problem.
+
+        Args:
+            linear (dict): linear coefficients (optional)
+            quadratic (dict): quadratic coefficients (optional)
+            minimize (bool): solve a minimization problem (default: True)
+
+        Notes:
+            Setting the objective is optional. It can also be passed directly when calling **solve**.
+
+        """
+
+        lin_obj = []
+        quad_obj = []
+
+        if linear:
+            lin_obj = [f * self.problem.getVarByName(r_id) for r_id, f in linear.items() if f]
+
+        if quadratic:
+            quad_obj = [q * self.problem.getVarByName(r_id1) * self.problem.getVarByName(r_id2)
+                        for (r_id1, r_id2), q in quadratic.items() if q]
+
+        obj_expr = quicksum(quad_obj + lin_obj)
+        sense = GRB.MINIMIZE if minimize else GRB.MAXIMIZE
+
+        self.problem.setObjective(obj_expr, sense)
+
+    def solve(self, linear=None, quadratic=None, minimize=None, model=None, constraints=None, get_values=True,
               get_shadow_prices=False, get_reduced_costs=False):
         """ Solve the optimization problem.
 
         Arguments:
-            objective (dict): linear objective
+            linear (dict): linear objective (optional)
             quadratic (dict): quadratic objective (optional)
-            minimize (bool): minimization problem (default: True)
+            minimize (bool): solve a minimization problem (default: True)
             model (CBModel): model (optional, leave blank to reuse previous model structure)
             constraints (dict): additional constraints (optional)
             get_values (bool): set to false for speedup if you only care about the objective value (default: True)
@@ -161,21 +191,10 @@ class GurobiSolver(Solver):
                     lpvar.lb = lb if lb is not None else -GRB.INFINITY
                     lpvar.ub = ub if ub is not None else GRB.INFINITY
                 else:
-                    print 'Error: constrained variable not previously declared', r_id
+                    warnings.warn("Constrained variable '{}' not previously declared".format(r_id), RuntimeWarning)
             problem.update()
 
-        #create objective function
-        quad_obj_expr = [q * problem.getVarByName(r_id1) * problem.getVarByName(r_id2)
-                         for (r_id1, r_id2), q in quadratic.items() if q] if quadratic else []
-
-        lin_obj_expr = [f * problem.getVarByName(r_id)
-                        for r_id, f in objective.items() if f] if objective else []
-
-        obj_expr = quicksum(quad_obj_expr + lin_obj_expr)
-        sense = GRB.MINIMIZE if minimize else GRB.MAXIMIZE
-
-        problem.setObjective(obj_expr, sense)
-        problem.update()
+        self.set_objective(linear, quadratic, minimize)
 
         #run the optimization
         problem.optimize()

@@ -76,15 +76,16 @@ class Solution:
 
         return 'Objective: {}\nStatus: {}\n'.format(self.fobj, status_codes[self.status])
 
-    def show_values(self, zeros=False, pattern=None):
+    def show_values(self, zeros=False, pattern=None, sort=False, abstol=1e-9):
         """ Show solution results.
 
         Arguments:
             zeros (bool): show zero values (default: False)
             pattern (str): show only reactions that contain pattern (optional)
+            sort (bool): sort values by magnitude (default: False)
             
         Returns:
-            str: printed table with variable values (and reduced costs if calculated) 
+            str: printed table with variable values
         """
 
         if not self.values:
@@ -92,8 +93,11 @@ class Solution:
 
         values = self.values.items()
 
+        if sort:
+            values.sort(key= lambda (_, val): abs(val), reverse=True)
+
         if not zeros:
-            values = filter(lambda (r_id, val): val, values)
+            values = filter(lambda (r_id, val): abs(val) > abstol, values)
 
         if pattern:
             values = filter(lambda (r_id, val): pattern in r_id, values)
@@ -102,7 +106,7 @@ class Solution:
 
         return '\n'.join(entries)
 
-    def show_shadow_prices(self, zeros=False, pattern=None):
+    def show_shadow_prices(self, zeros=False, pattern=None, abstol=1e-9):
         """ Show shadow prices.
 
         Arguments:
@@ -119,7 +123,7 @@ class Solution:
         values = self.shadow_prices.items()
 
         if not zeros:
-            values = filter(lambda (m_id, val): val, values)
+            values = filter(lambda (m_id, val): abs(val) > abstol, values)
 
         if pattern:
             values = filter(lambda (m_id, val): pattern in m_id, values)
@@ -128,7 +132,7 @@ class Solution:
 
         return '\n'.join(entries)
 
-    def show_reduced_costs(self, zeros=False, pattern=None):
+    def show_reduced_costs(self, zeros=False, pattern=None, abstol=1e-9):
         """ Show reduced costs.
 
         Arguments:
@@ -145,7 +149,7 @@ class Solution:
         values = self.reduced_costs.items()
 
         if not zeros:
-            values = filter(lambda (r_id, val): val, values)
+            values = filter(lambda (r_id, val): abs(val) > abstol, values)
 
         if pattern:
             values = filter(lambda (r_id, val): pattern in r_id, values)
@@ -217,10 +221,44 @@ class Solution:
             dict: metabolite turnover rates
         """
 
+        if not self.values:
+            return None
+
         m_r_table = model.metabolite_reaction_lookup()
         t = {m_id: 0.5*sum([abs(coeff * self.values[r_id]) for r_id, coeff in neighbours.items()])
              for m_id, neighbours in m_r_table.items()}
         return t
+
+    def show_metabolite_turnover(self, model, zeros=False, pattern=None, sort=False, abstol=1e-9):
+        """ Show solution results.
+
+        Arguments:
+            model (CBModel): model that generated the solution
+            zeros (bool): show zero values (default: False)
+            pattern (str): show only reactions that contain pattern (optional)
+            sort (bool): sort values by magnitude (default: False)
+
+        Returns:
+            str: printed table
+        """
+
+        if not self.values:
+            return None
+
+        values = self.get_metabolites_turnover(model).items()
+
+        if sort:
+            values.sort(key=lambda (_, val): abs(val), reverse=True)
+
+        if not zeros:
+            values = filter(lambda (_, val): abs(val) > abstol, values)
+
+        if pattern:
+            values = filter(lambda (key, val): pattern in key, values)
+
+        entries = ['{:<12} {: .6g}'.format(key, val) for (key, val) in values]
+
+        return '\n'.join(entries)
 
 
 class Solver:
@@ -313,7 +351,21 @@ class Solver:
     def update(self):
         """ Update internal structure. Used for efficient lazy updating. """
         pass
-        
+
+    def set_objective(self, linear=None, quadratic=None, minimize=True):
+        """ Set a predefined objective for this problem.
+
+        Args:
+            linear (dict): linear coefficients (optional)
+            quadratic (dict): quadratic coefficients (optional)
+            minimize (bool): solve a minimization problem (default: True)
+
+        Notes:
+            Setting the objective is optional. It can also be passed directly when calling **solve**.
+
+        """
+        pass
+
     def build_problem(self, model):
         """ Create problem structure for a given model.
 
@@ -330,14 +382,14 @@ class Solver:
             self.add_constraint(m_id, table[m_id], update_problem=False)
         self.update()
             
-    def solve(self, objective, quadratic=None, minimize=True, model=None, constraints=None, get_values=True,
+    def solve(self, linear=None, quadratic=None, minimize=None, model=None, constraints=None, get_values=True,
               get_shadow_prices=False, get_reduced_costs=False):
         """ Solve the optimization problem.
 
         Arguments:
-            objective (dict): linear objective
+            linear (dict): linear objective (optional)
             quadratic (dict): quadratic objective (optional)
-            minimize (bool): minimization problem (default: True)
+            minimize (bool): solve a minimization problem (default: True)
             model (CBModel): model (optional, leave blank to reuse previous model structure)
             constraints (dict): additional constraints (optional)
             get_values (bool): set to false for speedup if you only care about the objective value (default: True)
@@ -389,3 +441,7 @@ class Solver:
         """
 
         raise Exception('Not implemented for this solver.')
+
+
+class OptimizationWarning(UserWarning):
+    pass

@@ -11,7 +11,7 @@ from simulation import FBA
 from deletion import gene_deletion, reaction_deletion
 
 
-def essential_genes(model, min_growth=0.01, constraints=None):
+def essential_genes(model, min_growth=0.01, constraints=None, solver=None):
     """ Compute the set of essential genes.
     
     Arguments:
@@ -22,10 +22,10 @@ def essential_genes(model, min_growth=0.01, constraints=None):
     Returns:
         list: essential genes
     """
-    return essentiality(model, 'genes', min_growth, constraints)
+    return essentiality(model, 'genes', min_growth, constraints, solver)
 
 
-def essential_reactions(model, min_growth=0.01, constraints=None):
+def essential_reactions(model, min_growth=0.01, constraints=None, solver=None):
     """ Compute the set of essential reactions.
     
     Arguments:
@@ -37,10 +37,10 @@ def essential_reactions(model, min_growth=0.01, constraints=None):
         list: essential reactions
     """
 
-    return essentiality(model, 'reactions', min_growth, constraints)
+    return essentiality(model, 'reactions', min_growth, constraints, solver)
 
 
-def essentiality(model, kind='reactions', min_growth=0.01, constraints=None):
+def essentiality(model, kind='reactions', min_growth=0.01, constraints=None, solver=None):
     """ Generic interface for computing gene or reaction essentiality.
     
     Arguments:
@@ -53,7 +53,8 @@ def essentiality(model, kind='reactions', min_growth=0.01, constraints=None):
         list: essential elements
     """
 
-    solver = solver_instance(model)
+    if solver is None:
+        solver = solver_instance(model)
 
     wt_solution = FBA(model, constraints=constraints, solver=solver)
     wt_growth = wt_solution.fobj

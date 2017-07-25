@@ -11,7 +11,7 @@ try:
     from .glpk_interface import GlpkSolver
 
     solvers['glpk'] = GlpkSolver
-except:
+except ImportError:
     pass
 
 
@@ -19,7 +19,7 @@ try:
     from .gurobi_interface import GurobiSolver
 
     solvers['gurobi'] = GurobiSolver
-except:
+except ImportError:
     pass
 
 
@@ -27,7 +27,7 @@ try:
     from .cplex_interface import CplexSolver
 
     solvers['cplex'] = CplexSolver
-except:
+except ImportError:
     pass
 
 
@@ -38,6 +38,9 @@ def get_default_solver():
 
     global default_solver
 
+    if default_solver:
+        return default_solver
+
     solver_order = ['gurobi', 'cplex', 'glpk', 'glpk_lazy']
 
     for solver in solver_order:
@@ -46,7 +49,7 @@ def get_default_solver():
             break
 
     if not default_solver:
-        print 'Error: No solver available.'
+        raise EnvironmentError("No solver available")
 
     return default_solver
 
@@ -63,7 +66,7 @@ def set_default_solver(solvername):
     if solvername.lower() in solvers.keys():
         default_solver = solvername.lower()
     else:
-        print 'Error: solver ' + solvername + ' not available.'
+        raise EnvironmentError("Solver '{}' not available.".format(solvername))
 
 
 def solver_instance(model=None):

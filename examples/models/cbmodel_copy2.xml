@@ -1,6 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <sbml xmlns="http://www.sbml.org/sbml/level3/version1/core" xmlns:fbc="http://www.sbml.org/sbml/level3/version1/fbc/version2" level="3" version="1">
   <model id="e_coli_core">
+    <notes>
+      <html xmlns="http://www.w3.org/1999/xhtml">
+        <p> version of May 9, 2016, where it is currently hosted and identified
+      by: </p>
+        <p>Redistribution and use of any part of this model from BiGG Models knowledgebase, with or without modification, are permitted provided that the following conditions are met: </p>
+        <p>BiGG Models: A platform for integrating, standardizing, and sharing genome-scale models.</p>
+        <p>doi: 10.1093/nar/gkv1049</p>
+      </html>
+    </notes>
     <listOfCompartments>
       <compartment id="c" name="cytosol" size="NaN"/>
       <compartment id="e" name="extracellular space" size="NaN"/>

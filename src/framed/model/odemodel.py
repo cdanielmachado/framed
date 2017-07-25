@@ -2,6 +2,8 @@ from collections import OrderedDict
 from re import findall
 from .model import Model
 
+import warnings
+
 
 class ODEModel(Model):
 
@@ -24,8 +26,8 @@ class ODEModel(Model):
         Model._clear_temp(self)
         self._func_str = None
 
-    def add_reaction(self, reaction, ratelaw=''):
-        Model.add_reaction(self, reaction)
+    def add_reaction(self, reaction, ratelaw='', clear_tmp=True):
+        Model.add_reaction(self, reaction, clear_tmp=clear_tmp)
         self.ratelaws[reaction.id] = ratelaw
         self.local_params[reaction.id] = OrderedDict()
 
@@ -33,19 +35,19 @@ class ODEModel(Model):
         if m_id in self.metabolites:
             self.concentrations[m_id] = concentration
         else:
-            print 'No such metabolite', m_id
+            warnings.warn("No such metabolite '{}'".format(m_id), RuntimeWarning)
 
     def set_ratelaw(self, r_id, ratelaw):
         if r_id in self.reactions:
             self.ratelaws[r_id] = ratelaw
         else:
-            print 'No such reaction', r_id
+            warnings.warn("No such reaction '{}'".format(r_id), RuntimeWarning)
 
     def set_assignment_rule(self, p_id, rule):
         if p_id in self.variable_params or p_id in self.metabolites:
             self.assignment_rules[p_id] = rule
         else:
-            print 'No such variable parameter', p_id
+            warnings.warn("No such variable parameter '{}'".format(p_id), RuntimeWarning)
 
     def set_global_parameter(self, key, value, constant=True):
         if constant:
@@ -57,7 +59,7 @@ class ODEModel(Model):
         if r_id in self.reactions:
             self.local_params[r_id][p_id] = value
         else:
-            print 'No such reaction', r_id
+            warnings.warn("No such reaction '{}'".format(r_id), RuntimeWarning)
 
     def remove_reactions(self, id_list):
         Model.remove_reactions(self, id_list)
@@ -99,7 +101,7 @@ class ODEModel(Model):
         table = self.metabolite_reaction_lookup()
         terms = ["{:+g} * r['{}']".format(coeff, r_id) for r_id, coeff in table[m_id].items()]
         if len(terms)==0 or (self.metabolites[m_id].constant and self.metabolites[m_id].boundary):
-            expr= "1/p['{}'] * 0".format(c_id)
+            expr= "0"
         else:
             expr = "1/p['{}'] * ({})".format(c_id, ' '.join(terms))
         return expr
@@ -200,6 +202,7 @@ class ODEModel(Model):
         if params:
             p.update(params)
 
+        exec 'from math import log' in globals()
         exec self.build_ode() in globals()
         ode_func = eval('ode_func')
 

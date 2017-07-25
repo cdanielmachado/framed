@@ -30,23 +30,26 @@ def read_model_from_file(filename, kind=None):
         Model: model (or respective subclass)
     """
 
-    try:
-        with open(filename, 'r') as stream:
-            model_id = splitext(basename(filename))[0]
+    with open(filename, 'r') as stream:
+        model_id = splitext(basename(filename))[0]
 
-            if kind == 'cb':
-                model = CBModel(model_id)
-            else:
-                model = Model(model_id)
+        if kind == 'cb':
+            model = CBModel(model_id)
+        else:
+            model = Model(model_id)
 
-            for line in stream:
-                line = line.strip()
-                if line != '' and line[0] != '#':
-                    model.add_reaction_from_str(line)
+        for line in stream:
+            line = line.strip()
+            if not line:
+                continue
 
-    except Exception as e:
-        print e
-        return None
+            # If line ends with comment ignore it as well
+            line = line.split("#", 1)[0]
+            line = line.strip()
+            if not line:
+                continue
+
+            model.add_reaction_from_str(line, clear_tmp=False)
 
     return model
 
@@ -72,10 +75,7 @@ def write_model_to_file(model, filename, print_instructions=True):
         filename (str): file path
         print_instructions (bool): print plain text format instructions as header
     """
-    try:
-        with open(filename, 'w') as stream:
-            if print_instructions:
-                stream.write(INSTRUCTIONS)
-            stream.write(str(model))
-    except Exception as e:
-        print e
+    with open(filename, 'w') as stream:
+        if print_instructions:
+            stream.write(INSTRUCTIONS)
+        stream.write(str(model))
