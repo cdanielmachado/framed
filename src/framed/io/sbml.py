@@ -169,9 +169,8 @@ def _load_metabolites(sbml_model, model, flavor=None):
     for species in sbml_model.getListOfSpecies():
         model.add_metabolite(_load_metabolite(species, flavor), clear_tmp=False)
 
-
-def _load_metabolite(species, flavor=None):
-    metabolite = Metabolite(species.getId(), species.getName(), species.getCompartment(), species.getBoundaryCondition())
+def _load_metabolite(species):
+    metabolite = Metabolite(species.getId(), species.getName(), species.getCompartment(), species.getBoundaryCondition(), species.getConstant())
 
     if flavor in {Flavor.BIGG or Flavor.FBC2}:
         fbc_species = species.getPlugin('fbc')
@@ -581,6 +580,7 @@ def _save_metabolites(model, sbml_model, flavor):
         species.setName(metabolite.name)
         species.setCompartment(metabolite.compartment)
         species.setBoundaryCondition(metabolite.boundary)
+        species.setConstant(metabolite.constant) #SGC
 
         if flavor in {Flavor.BIGG or Flavor.FBC2}:
             fbc_species = species.getPlugin('fbc')
