@@ -8,6 +8,10 @@ from framed import FBA, pFBA
 
 
 class EnsembleModel:
+    """ An Ensemble Model represents a collection of models that differ by a few reactions.
+    They can be used to account for uncertainty in the structure of the metabolic network.
+
+    """
 
     def __init__(self, model, size, reaction_states=None):
         self.model = model.copy()
@@ -16,8 +20,8 @@ class EnsembleModel:
 
         if reaction_states:
             for r_id, states in reaction_states.items():
-                assert r_id in model.reactions, 'Reaction ids in reaction states must match model ids'
-                assert len(states) == size, 'Size of state vector must match ensemble size'
+                assert r_id in model.reactions
+                assert len(states) == size
                 self.reaction_states[r_id] = states[:]
         else:
             self.reaction_states = {r_id: [True]*size for r_id in model.reactions}
@@ -39,16 +43,22 @@ class EnsembleModel:
         for r_id in inactive:
             del self.reaction_states[r_id]
 
-    def get_reactions_by_index(self, i):
-        return [r_id for r_id in self.model.reactions
-                if r_id not in self.reaction_states or self.reaction_states[r_id][i]]
-
-    def get_genes_by_index(self, i):
-        return {gene for r_id in self.get_reactions_by_index(i)
-                for gene in self.model.reactions[r_id].get_associated_genes()}
-
 
 def simulate_ensemble(ensemble, method='FBA', constraints=None, solver=None, get_fluxes=True):
+    """ Simulate an Ensemble Model
+
+    Args:
+        ensemble (EnsembleModel): ensemble model
+        method (str): simulation method (default: 'FBA')
+        constraints (dict): additional constraints (optional)
+        solver (Solver): solver instance (optional)
+        get_fluxes (bool): if True returns flux distributions for all models,
+            otherwise only the objective function values are returned (default: True)
+
+    Returns:
+        ensemble flux distributions or ensemble objective function values
+
+    """
 
     if method not in ['FBA', 'pFBA']:
         print 'Method not available:', method
@@ -88,6 +98,14 @@ def simulate_ensemble(ensemble, method='FBA', constraints=None, solver=None, get
 
 
 def save_ensemble(ensemble, outputfile, **kwargs):
+    """ Save ensemble model as an SBML file.
+
+    Args:
+        ensemble (EnsembleModel): model ensemble
+        outputfile (str): output file
+        **kwargs (dict): additional arguments to *save_cbmodel* method
+
+    """
 
     for r_id, states in ensemble.reaction_states.items():
         state_as_str = ' '.join(map(str, map(int, states)))
@@ -97,6 +115,16 @@ def save_ensemble(ensemble, outputfile, **kwargs):
 
 
 def load_ensemble(inputfile, **kwargs):
+    """ Load ensemble model from SBML file.
+
+    Args:
+        inputfile (str): input file
+        **kwargs (dict): additional arguments to *load_cbmodel* method
+
+    Returns:
+        EnsembleModel: ensemble model
+
+    """
 
     model = load_cbmodel(inputfile, **kwargs)
     reaction_states = {}
