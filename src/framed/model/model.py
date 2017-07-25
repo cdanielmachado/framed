@@ -6,6 +6,7 @@ Author: Daniel Machado
 
 from collections import OrderedDict
 from copy import copy, deepcopy
+import itertools
 
 from .parser import ReactionParser
 import warnings
@@ -35,7 +36,8 @@ class Metabolite:
 class Reaction:
     """ Base class for modeling reactions. """
 
-    def __init__(self, elem_id, name=None, reversible=True, stoichiometry=None, regulators=None):
+    def __init__(self, elem_id, name=None, reversible=True, stoichiometry=None, regulators=None, is_exchange=None,
+                 is_sink=None):
         """
         Arguments:
             elem_id (str): a valid unique identifier
@@ -47,8 +49,10 @@ class Reaction:
         self.id = elem_id
         self.name = name
         self.reversible = reversible
+        self.is_exchange = is_exchange
+        self.is_sink = is_sink
         self.stoichiometry = OrderedDict()
-        self.regulators =  OrderedDict()
+        self.regulators = OrderedDict()
         self.metadata = OrderedDict()
 
         if stoichiometry:
@@ -154,7 +158,8 @@ class Compartment:
 
 class AttrOrderedDict(OrderedDict):
 
-    def __init__(self, *args):
+    def __init__(self, *args, **nargs):
+        self._immutable = "immutable" in nargs and nargs["immutable"]
         super(AttrOrderedDict, self).__init__(*args)
 
     def __getattr__(self, name):
@@ -183,8 +188,18 @@ class AttrOrderedDict(OrderedDict):
             my_copy[key] = deepcopy(val)
         return my_copy
 
+    def __setitem__(self, key, value, force=False):
+        if self._immutable and not force:
+            raise KeyError("This dictionary is immutable")
+        super(AttrOrderedDict, self).__setitem__(key, value)
 
-class Model:
+    def __delitem__(self, key, force=False):
+        if self._immutable and not force:
+            raise KeyError("This dictionary is immutable")
+        super(AttrOrderedDict, self).__delitem__(key)
+
+
+class Model(object):
     """ Base class for all metabolic models implemented as a bipartite network.
     Contains the list of metabolites, reactions, compartments, and stoichiometry.
     """
@@ -199,13 +214,27 @@ class Model:
         self.reactions = AttrOrderedDict()
         self.compartments = AttrOrderedDict()
         self.metadata = OrderedDict()
-        self._clear_temp()
-
-    def _clear_temp(self):
+        self._exchange_reactions = None
+        self._sink_reactions = None
         self._m_r_lookup = None
         self._reg_lookup = None
         self._s_matrix = None
         self._parser = None
+
+    def _clear_temp(self):
+        self._exchange_reactions = None
+        self._sink_reactions = None
+        self._m_r_lookup = None
+        self._reg_lookup = None
+        self._s_matrix = None
+
+    def __getstate__(self):
+        state = self.__dict__.copy()
+        state['_parser'] = None
+        return state
+
+    def __setstate__(self, state):
+        self.__dict__.update(state)
 
     def copy(self):
         """ Create an identical copy of the model.
@@ -214,11 +243,50 @@ class Model:
             Model: model copy
 
         """
-
-        self._clear_temp()
+        self._updated = False
         return deepcopy(self)
 
-    def add_metabolite(self, metabolite):
+    def get_exchange_reactions(self, include_sink=False):
+        """
+        Get dict of exchange reactions where keys are reaction ids and values are list of exchanged
+        metabolites
+        
+        Args:
+            include_sink: Include sink reactions in the list
+        
+        Returns: dict
+        """
+        if not self._exchange_reactions:
+            self._exchange_reactions = OrderedDict()
+            for r in self.reactions.itervalues():
+                if not r.is_exchange:
+                    continue
+
+                self._exchange_reactions[r.id] = [k for k, v in r.stoichiometry.iteritems() if v < 0]
+
+        if include_sink:
+            return itertools.chain(self._exchange_reactions, self.get_sink_reactions())
+        else:
+            return self._exchange_reactions
+
+    def get_sink_reactions(self):
+        """
+        Get dict of sink reactions where keys are reaction ids and values are list of exchanged
+        metabolites
+
+        Returns: dict
+        """
+        if not self._sink_reactions:
+            self._sink_reactions = OrderedDict()
+            for r in self.reactions.itervalues():
+                if not r.is_sink:
+                    continue
+
+                self._sink_reactions[r.id] = [k for k, v in r.stoichiometry.iteritems() if v < 0]
+
+        return self._sink_reactions
+
+    def add_metabolite(self, metabolite, clear_tmp=True):
         """ Add a single metabolite to the model.
         If a metabolite with the same id exists, it will be replaced.
         If the metabolite compartment is defined, then it must exist in the model.
@@ -228,11 +296,12 @@ class Model:
         """
         if metabolite.compartment in self.compartments or not metabolite.compartment:
             self.metabolites[metabolite.id] = metabolite
-            self._clear_temp()
+            if clear_tmp:
+                self._clear_temp()
         else:
             raise KeyError("Failed to add metabolite '{}' (invalid compartment)".format(metabolite.id))
 
-    def add_reaction(self, reaction):
+    def add_reaction(self, reaction, clear_tmp=True):
         """ Add a single reaction to the model.
         If a reaction with the same id exists, it will be replaced.
 
@@ -240,7 +309,8 @@ class Model:
             reaction (Reaction): reaction to add
         """
         self.reactions[reaction.id] = reaction
-        self._clear_temp()
+        if clear_tmp:
+            self._clear_temp()
 
     def add_compartment(self, compartment):
         """ Add a single compartment to the model.
@@ -375,6 +445,19 @@ class Model:
 
         return consumers
 
+    def get_metabolite_reactions(self, m_id):
+        """ Return the list of reactions associated with a given metabolite
+
+        Arguments:
+            m_id (str): metabolite id
+
+        Returns:
+            list: associated reactions
+        """
+        table = self.metabolite_reaction_lookup()
+
+        return table[m_id].keys()
+
     def get_activation_targets(self, m_id):
         table = self.regulatory_lookup()
         return [r_id for r_id, kind in table[m_id].items() if kind == '+']
@@ -462,7 +545,7 @@ class Model:
     def __str__(self):
         return self.to_string()
 
-    def add_reaction_from_str(self, reaction_str, default_compartment=None):
+    def add_reaction_from_str(self, reaction_str, default_compartment=None, clear_tmp=True):
         """ Parse a reaction from a string and add it to the model.
 
         Arguments:
@@ -482,11 +565,10 @@ class Model:
 
         for m_id in stoichiometry:
             if m_id not in self.metabolites:
-                self.add_metabolite(Metabolite(m_id, m_id, compartment=default_compartment))
+                self.add_metabolite(Metabolite(m_id, m_id, compartment=default_compartment), clear_tmp=clear_tmp)
 
         reaction = Reaction(r_id, r_id, reversible, stoichiometry)
-        self.add_reaction(reaction)
-        self._clear_temp()
+        self.add_reaction(reaction, clear_tmp=clear_tmp)
 
         return r_id
 
@@ -498,3 +580,19 @@ class Model:
 
         """
         return [m_id for m_id, met in self.metabolites.items() if met.boundary]
+
+    def get_metabolites_by_compartment(self, c_id):
+        """ Get list of metabolites in a given compartment.
+
+        Args:
+            c_id (str): compartment id
+
+        Returns:
+            list: metabolites in given compartment
+
+
+        """
+
+        assert c_id in self.compartments.keys(), 'No such compartment: ' + c_id
+
+        return [m_id for m_id, met in self.metabolites.items() if met.compartment == c_id]

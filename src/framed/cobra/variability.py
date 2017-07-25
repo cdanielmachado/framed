@@ -37,7 +37,7 @@ def FVA(model, obj_percentage=0, reactions=None, constraints=None, loopless=Fals
         solver = solver_instance(model)
 
     if obj_percentage > 0:
-        target = model.detect_biomass_reaction()
+        target = model.biomass_reaction
         solution = FBA(model, objective={target: 1}, constraints=constraints, solver=solver)
         _constraints[target] = (obj_percentage * solution.fobj, None)
 
@@ -151,7 +151,7 @@ def production_envelope(model, r_target, r_biomass=None, steps=10, constraints=N
         tuple: biomass values, target minimum values, target maximum values
     """
     if not r_biomass:
-        r_biomass = model.detect_biomass_reaction()
+        r_biomass = model.biomass_reaction
 
     return flux_envelope(model, r_x=r_biomass, r_y=r_target, steps=steps, constraints=constraints)
 

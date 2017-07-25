@@ -49,7 +49,7 @@ def read_model_from_file(filename, kind=None):
             if not line:
                 continue
 
-            model.add_reaction_from_str(line)
+            model.add_reaction_from_str(line, clear_tmp=False)
 
     return model
 

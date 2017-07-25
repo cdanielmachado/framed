@@ -26,8 +26,8 @@ class ODEModel(Model):
         Model._clear_temp(self)
         self._func_str = None
 
-    def add_reaction(self, reaction, ratelaw=''):
-        Model.add_reaction(self, reaction)
+    def add_reaction(self, reaction, ratelaw='', clear_tmp=True):
+        Model.add_reaction(self, reaction, clear_tmp=clear_tmp)
         self.ratelaws[reaction.id] = ratelaw
         self.local_params[reaction.id] = OrderedDict()
 

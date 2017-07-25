@@ -7,7 +7,7 @@ from framed import load_cbmodel, save_cbmodel
 from framed import FBA, pFBA
 
 
-class EnsembleModel():
+class EnsembleModel:
 
     def __init__(self, model, size, reaction_states=None):
         self.model = model.copy()
@@ -16,8 +16,8 @@ class EnsembleModel():
 
         if reaction_states:
             for r_id, states in reaction_states.items():
-                assert r_id in model.reactions
-                assert len(states) == size
+                assert r_id in model.reactions, 'Reaction ids in reaction states must match model ids'
+                assert len(states) == size, 'Size of state vector must match ensemble size'
                 self.reaction_states[r_id] = states[:]
         else:
             self.reaction_states = {r_id: [True]*size for r_id in model.reactions}
@@ -38,6 +38,14 @@ class EnsembleModel():
 
         for r_id in inactive:
             del self.reaction_states[r_id]
+
+    def get_reactions_by_index(self, i):
+        return [r_id for r_id in self.model.reactions
+                if r_id not in self.reaction_states or self.reaction_states[r_id][i]]
+
+    def get_genes_by_index(self, i):
+        return {gene for r_id in self.get_reactions_by_index(i)
+                for gene in self.model.reactions[r_id].get_associated_genes()}
 
 
 def simulate_ensemble(ensemble, method='FBA', constraints=None, solver=None, get_fluxes=True):

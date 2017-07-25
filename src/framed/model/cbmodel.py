@@ -1,10 +1,9 @@
-
-from .model import Model, Metabolite, Reaction, AttrOrderedDict
-from collections import OrderedDict
-from .parser import ReactionParser
-
 import re
 import warnings
+from collections import OrderedDict
+
+from .model import Model, Metabolite, Reaction, AttrOrderedDict
+from .parser import ReactionParser
 
 
 class Gene:
@@ -87,8 +86,9 @@ class GPRAssociation:
 class CBReaction(Reaction):
 
     def __init__(self, elem_id, name=None, reversible=True, stoichiometry=None, regulators=None,
-                 lb=None, ub=None, objective=0, gpr_association=None):
-        Reaction.__init__(self, elem_id, name, reversible, stoichiometry, regulators)
+                 lb=None, ub=None, objective=0, gpr_association=None, is_exchange=None, is_sink=None):
+        Reaction.__init__(self, elem_id, name=name, reversible=reversible, stoichiometry=stoichiometry,
+                          regulators=regulators, is_exchange=is_exchange, is_sink=is_sink)
 
         if lb is None and not reversible:
             lb = 0
@@ -99,14 +99,25 @@ class CBReaction(Reaction):
         self.gpr = gpr_association
         self._bool_function = None
 
+    def __getstate__(self):
+        state = self.__dict__.copy()
+        del state['_bool_function']
+        return state
+
+    def __setstate__(self, state):
+        self.__dict__.update(state)
+        self._bool_function = None
+
     def set_lower_bound(self, value):
         self.lb = value
+        self.reversible = bool(value is None or value < 0)
 
     def set_upper_bound(self, value):
         self.ub = value
 
     def set_flux_bounds(self, lb, ub):
         self.lb, self.ub = lb, ub
+        self.reversible = bool(lb is None or lb < 0)
 
     def set_gpr_association(self, gpr_association):
         self.gpr = gpr_association
@@ -175,8 +186,8 @@ class CBModel(Model):
         """
         Model.__init__(self, model_id)
         self.genes = AttrOrderedDict()
-        self.__biomass_reaction = None
-        self.__biomass_reaction_detected = False
+        self._biomass_reaction = None
+        self._biomass_reaction_set = False
 
     def _clear_temp(self):
         Model._clear_temp(self)
@@ -184,15 +195,18 @@ class CBModel(Model):
 
     @property
     def biomass_reaction(self):
-        if not self.__biomass_reaction_detected:
+        if not self._biomass_reaction_set:
             self.detect_biomass_reaction()
 
-        return self.__biomass_reaction
+        return self._biomass_reaction
 
     @biomass_reaction.setter
-    def biomass_reaction(self, reaction_name):
-        self.__biomass_reaction_detected = True
-        self.__biomass_reaction = reaction_name
+    def biomass_reaction(self, r_id):
+        if r_id:
+            assert r_id in self.reactions, "{} is not a valid reaction id in this model".format(r_id)
+
+        self._biomass_reaction = r_id
+        self._biomass_reaction_set = True
 
     def get_flux_bounds(self, r_id):
         """ Get flux bounds for reaction
@@ -267,7 +281,7 @@ class CBModel(Model):
         else:
             raise KeyError("Reaction '{}' not found".format(r_id))
 
-    def add_reaction(self, reaction):
+    def add_reaction(self, reaction, clear_tmp=True):
         """ Add a single reaction to the model.
         If a reaction with the same id exists, it will be replaced.
 
@@ -278,41 +292,42 @@ class CBModel(Model):
         if not isinstance(reaction, CBReaction):
             cbreaction = CBReaction(
                 reaction.id,
-                reaction.name,
-                reaction.reversible,
-                reaction.stoichiometry,
-                reaction.regulators)
+                name=reaction.name,
+                reversible=reaction.reversible,
+                stoichiometry=reaction.stoichiometry,
+                regulators=reaction.regulators,
+                is_exchange=reaction.is_exchange
+            )
 
             cbreaction.metadata = reaction.metadata
-            Model.add_reaction(self, cbreaction)
+            Model.add_reaction(self, cbreaction, clear_tmp=clear_tmp)
         else:
-            Model.add_reaction(self, reaction)
+            Model.add_reaction(self, reaction, clear_tmp=clear_tmp)
 
-    def detect_biomass_reaction(self):
+    def detect_biomass_reaction(self, update=False):
         """ Detects biomass reaction in the model (searches by objective coefficient)
 
         Returns:
             str: first reaction that matches (or else None)
         """
 
-        if not self.__biomass_reaction:
+        if self._biomass_reaction is None or update:
             matches = [r_id for r_id, rxn in self.reactions.items() if rxn.objective]
 
             if matches:
-                self.__biomass_reaction = matches[0]
+                self._biomass_reaction = matches[0]
                 if len(matches) > 1:
-                    w ='Multiple biomass reactions detected (first selected): {}'.format(" ".join(matches))
+                    w = 'Multiple biomass reactions detected (first selected): {}'.format(" ".join(matches))
                     warnings.warn(w, UserWarning)
 
-                if not re.search("biomas|growth", self.__biomass_reaction, re.IGNORECASE):
-                    w = "Suspicious biomass reaction '{}' name".format(self.__biomass_reaction)
+                if not re.search("biomass|growth", self._biomass_reaction, re.IGNORECASE):
+                    w = "Suspicious biomass reaction '{}' name".format(self._biomass_reaction)
                     warnings.warn(w, UserWarning)
             else:
                 w = 'No biomass reaction detected'
                 warnings.warn(w, UserWarning)
 
-        self.__biomass_reaction_detected = True
-        return self.__biomass_reaction
+        return self._biomass_reaction
 
     def add_gene(self, gene):
         """ Add a gene metabolite to the model.
@@ -371,6 +386,7 @@ class CBModel(Model):
         genes_state = {gene: gene in active_genes for gene in self.genes}
         return [r_id for r_id, rxn in self.reactions.items() if rxn.evaluate_gpr(genes_state)]
 
+
     def add_ratio_constraint(self, r_id_num, r_id_den, ratio):
         """ Add a flux ratio constraint to the model.
 
@@ -410,7 +426,7 @@ class CBModel(Model):
         else:
             raise KeyError('Invalid reactions in ratio {}/{}'.format(r_id_num, r_id_den))
 
-    def add_reaction_from_str(self, reaction_str, default_compartment=None):
+    def add_reaction_from_str(self, reaction_str, default_compartment=None, clear_tmp=True):
         """ Parse a reaction from a string and add it to the model.
 
         Arguments:
@@ -431,10 +447,10 @@ class CBModel(Model):
 
         for m_id in stoichiometry:
             if m_id not in self.metabolites:
-                self.add_metabolite(Metabolite(m_id, m_id, compartment=default_compartment))
+                self.add_metabolite(Metabolite(m_id, m_id, compartment=default_compartment), clear_tmp=clear_tmp)
 
         reaction = CBReaction(r_id, r_id, reversible, stoichiometry, None, lb, ub, obj_coeff)
-        self.add_reaction(reaction)
+        self.add_reaction(reaction, clear_tmp=clear_tmp)
 
         return r_id
 
@@ -473,4 +489,5 @@ class CBModel(Model):
     def print_objective(self):
         coeffs = ['{:+g} {}'.format(rxn.objective, r_id) for r_id, rxn in self.reactions.items() if rxn.objective]
         return ' '.join(coeffs)
+
 

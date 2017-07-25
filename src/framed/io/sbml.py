@@ -9,6 +9,7 @@ from ..model.odemodel import ODEModel
 from ..model.cbmodel import CBModel, Gene, Protein, GPRAssociation
 from ..model.fixes import fix_cb_model
 
+import os
 from collections import OrderedDict
 from sympy.parsing.sympy_parser import parse_expr
 from sympy import to_dnf, Or, And
@@ -25,9 +26,6 @@ DEFAULT_SBML_VERSION = 1
 CB_MODEL = 'cb'
 ODE_MODEL = 'ode'
 
-COBRA_MODEL = 'cobra'
-FBC2_MODEL = 'fbc2'
-
 LB_TAG = 'LOWER_BOUND'
 UB_TAG = 'UPPER_BOUND'
 OBJ_TAG = 'OBJECTIVE_COEFFICIENT'
@@ -43,18 +41,50 @@ DEFAULT_UPPER_BOUND = 1000
 ACTIVATOR_TAG = 'SBO:0000459'
 INHIBITOR_TAG = 'SBO:0000020'
 
+non_alphanum = re.compile('\W+')
+re_type = type(non_alphanum)
 
-def load_sbml_model(filename, kind=None, flavor=None):
+
+class Flavor:
+    """ Enumeration of available model flavors. """
+
+    COBRA = 'cobra'  # UCSD models in the old cobra toolbox format
+    COBRA_OTHER = 'cobra:other'  # other models using the old cobra toolbox format
+    SEED = 'seed'  # modelSEED format
+    BIGG = 'bigg'  # BiGG database format (uses sbml-fbc2)
+    FBC2 = 'fbc2'  # other models in sbml-fbc2 format
+
+
+def load_sbml_model(filename, kind=None, flavor=None, exchange_detection_mode=None):
     """ Loads a metabolic model from a file.
     
     Arguments:
         filename (str): SBML file path
         kind (str): define kind of model to load ('cb' or 'ode', optional)
-        flavor (str): adapt to different modeling conventions (optional, currently available: 'cobra', 'fbc2')
+        flavor (str): adapt to different modeling conventions (optional, see Notes)
+        exchange_detection_mode (str): detect exchange reactions (optional, see Notes)
     
     Returns:
         Model: Simple model or respective subclass
+
+    Notes:
+        Currently supported flavors:
+            * 'cobra': UCSD models in the old cobra toolbox format
+            * 'cobra:other': other models using the old cobra toolbox format
+            * 'seed': modelSEED format
+            * 'bigg': BiGG database format (uses sbml-fbc2)
+            * 'fbc2': other models using sbml-fbc2
+
+        Supported exchange detection modes:
+            * 'unbalanced': Exchange reactions is the one that have either only reactants or products
+            * 'boundary': Exchange reaction is the one that have single boundary metabolite on one side
+            * <regular expression pattern>: Regular expression which is executed against reaction ID
+
+        Note that some flavors (cobra, bigg) have their own exchange detection mode.
+
     """
+    if not os.path.exists(filename):
+        raise IOError("Model file was not found")
 
     reader = SBMLReader()
     document = reader.readSBML(filename)
@@ -65,7 +95,7 @@ def load_sbml_model(filename, kind=None, flavor=None):
         raise IOError('Failed to load model.')
 
     if kind and kind.lower() == CB_MODEL:
-        model = _load_cbmodel(sbml_model, flavor)
+        model = _load_cbmodel(sbml_model, flavor, exchange_detection_mode=exchange_detection_mode)
     elif kind and kind.lower() == ODE_MODEL:
         model = _load_odemodel(sbml_model)
     else:
@@ -76,11 +106,38 @@ def load_sbml_model(filename, kind=None, flavor=None):
     return model
 
 
-def load_cbmodel(filename, flavor=None, apply_fixes=True):
-    model = load_sbml_model(filename, kind=CB_MODEL, flavor=flavor)
+def load_cbmodel(filename, flavor=None, exchange_detection_mode=None):
+    """
+    Args:
+        filename (str): SBML file path
+        flavor (str): adapt to different modeling conventions (optional, see Notes)
+        exchange_detection_mode (str): detect exchange reactions (optional, see Notes)
 
-    if apply_fixes:
-        fix_cb_model(model, flavor=flavor)
+    Returns:
+        Model: Simple model or respective subclass
+
+    Notes:
+        Currently supported flavors:
+            * 'cobra': UCSD models in the old cobra toolbox format
+            * 'cobra:other': other models using the old cobra toolbox format
+            * 'seed': modelSEED format
+            * 'bigg': BiGG database format (uses sbml-fbc2)
+            * 'fbc2': other models using sbml-fbc2
+
+        Supported exchange detection modes:
+            * 'unbalanced': Exchange reactions is the one that have either only reactants or products
+            * 'boundary': Exchange reaction is the one that have single boundary metabolite on one side
+            * <regular expression pattern>: Regular expression which is executed against reaction ID
+
+        Note that some flavors (cobra, bigg) have their own exchange detection mode.
+            
+    Returns:
+        CBModel: constraint-based model
+    """
+
+    model = load_sbml_model(filename, kind=CB_MODEL, flavor=flavor, exchange_detection_mode=exchange_detection_mode)
+
+    fix_cb_model(model, flavor=flavor)
 
     return model
 
@@ -110,13 +167,13 @@ def _load_compartment(compartment):
 
 def _load_metabolites(sbml_model, model, flavor=None):
     for species in sbml_model.getListOfSpecies():
-        model.add_metabolite(_load_metabolite(species, flavor))
+        model.add_metabolite(_load_metabolite(species, flavor), clear_tmp=False)
 
 
 def _load_metabolite(species, flavor=None):
     metabolite = Metabolite(species.getId(), species.getName(), species.getCompartment(), species.getBoundaryCondition())
 
-    if flavor == FBC2_MODEL:
+    if flavor in {Flavor.BIGG or Flavor.FBC2}:
         fbc_species = species.getPlugin('fbc')
         if fbc_species.isSetChemicalFormula():
             formula = fbc_species.getChemicalFormula()
@@ -130,12 +187,25 @@ def _load_metabolite(species, flavor=None):
     return metabolite
 
 
-def _load_reactions(sbml_model, model):
+def _load_reactions(sbml_model, model, exchange_detection_mode=None):
     for reaction in sbml_model.getListOfReactions():
-        model.add_reaction(_load_reaction(reaction))
+        r = _load_reaction(reaction, sbml_model=sbml_model, exchange_detection_mode=exchange_detection_mode)
+        model.add_reaction(r, clear_tmp=False)
 
 
-def _load_reaction(reaction):
+def _load_reaction(reaction, sbml_model, exchange_detection_mode=None):
+    """
+    Args:
+        reaction: <SBMLReaction> object 
+        exchange_detection_mode: Argument describing how to detect exchange reaction (possible values
+            'unbalanced' - Exchange reactions is the one that have either only reactants or products
+            'boundary' - Exchange reaction is the one that have single boundary metabolite on one side
+            Regex object - Regular expression which is executed against reaction ID
+            None - All reactions are NOT exchange reactions
+
+    Returns:
+
+    """
 
     stoichiometry = OrderedDict()
     modifiers = OrderedDict()
@@ -168,26 +238,67 @@ def _load_reaction(reaction):
             kind = '-'
         modifiers[m_id] = kind
 
-    rxn = Reaction(reaction.getId(), reaction.getName(), reaction.getReversible(), stoichiometry, modifiers)
+    is_exchange = False
+    if exchange_detection_mode == "unbalanced":
+        sign = None
+        is_exchange = True
+        for m_id, c in stoichiometry.iteritems():
+            if sign is None:
+                sign = c > 0
+            else:
+                if sign != c > 0:
+                    is_exchange = False
+    elif exchange_detection_mode == "boundary":
+        products = {m_id for m_id, c in stoichiometry.iteritems() if c > 0}
+        reactants = {m_id for m_id, c in stoichiometry.iteritems() if c < 0}
+        boundary_products = {m_id for m_id in products if sbml_model.getSpecies(m_id).getBoundaryCondition()}
+        is_exchange = (boundary_products and not (products - boundary_products))
+        if not is_exchange:
+            boundary_reactants = {m_id for m_id in products if sbml_model.getSpecies(m_id).getBoundaryCondition()}
+            is_exchange = (boundary_reactants and not (reactants - boundary_reactants))
+    elif exchange_detection_mode is None:
+        pass
+    else:
+        is_exchange = exchange_detection_mode.match(reaction.getId()) is not None
+
+    rxn = Reaction(reaction.getId(), name=reaction.getName(), reversible=reaction.getReversible(),
+                   stoichiometry=stoichiometry, regulators=modifiers, is_exchange=is_exchange)
     _load_metadata(reaction, rxn)
     return rxn
 
 
-def _load_cbmodel(sbml_model, flavor):
+def _load_cbmodel(sbml_model, flavor, exchange_detection_mode=None):
+    if exchange_detection_mode and exchange_detection_mode not in {None, 'unbalanced', 'boundary'}:
+        try:
+            exchange_detection_mode = re.compile(exchange_detection_mode)
+        except:
+            raise RuntimeError("Exchange detection mode must be: 'unbalanced', 'boundary', or a valid regular expression.")
+
+    if exchange_detection_mode is None:
+        if flavor in {Flavor.COBRA, Flavor.BIGG}:
+            exchange_detection_mode = re.compile('^R_EX')
+        elif flavor in {Flavor.COBRA_OTHER, Flavor.SEED}:
+            exchange_detection_mode = 'boundary'
+        elif flavor in {Flavor.FBC2}:
+            exchange_detection_mode = 'unbalanced'
+
     model = CBModel(sbml_model.getId())
     _load_compartments(sbml_model, model)
     _load_metabolites(sbml_model, model, flavor)
-    _load_reactions(sbml_model, model)
-    if not flavor or flavor == COBRA_MODEL:
+    _load_reactions(sbml_model, model, exchange_detection_mode=exchange_detection_mode)
+    if flavor in {None, Flavor.COBRA, Flavor.COBRA_OTHER, Flavor.SEED}:
         _load_cobra_bounds(sbml_model, model)
         _load_cobra_objective(sbml_model, model)
         _load_cobra_gpr(sbml_model, model)
-    elif flavor == FBC2_MODEL:
+    elif flavor in {Flavor.BIGG, Flavor.FBC2}:
         _load_fbc2_bounds(sbml_model, model)
         _load_fbc2_objective(sbml_model, model)
         _load_fbc2_gpr(sbml_model, model)
     else:
-        raise TypeError("Unsupported SBML flavor '{}' (supported: {}".format(flavor, ",".join([COBRA_MODEL, FBC2_MODEL])))
+        raise TypeError("Unsupported SBML flavor: {}".format(flavor))
+
+    if exchange_detection_mode and len(model.get_exchange_reactions()) == 0:
+        raise RuntimeError("Exchange reactions were not detected")
 
     return model
 
@@ -240,6 +351,10 @@ def _load_cobra_gpr(sbml_model, model):
         model.set_gpr_association(r_id, gpr)
 
 
+def sanitize_id(identifier):
+    return non_alphanum.sub('_', identifier)
+
+
 def parse_gpr_rule(rule):
 
     if not rule:
@@ -257,9 +372,9 @@ def parse_gpr_rule(rule):
         elif token == '(' or token == ')':
             return token
         elif token.startswith('G_'):
-            return non_alphanum.sub('_', token)
+            return sanitize_id(token)
         else:
-            return 'G_' + non_alphanum.sub('_', token)
+            return 'G_' + sanitize_id(token)
 
     rule = ' '.join(map(replacement, rule.split()))
 
@@ -427,7 +542,7 @@ def save_sbml_model(model, filename, flavor=None):
     """
 
     document = SBMLDocument(DEFAULT_SBML_LEVEL, DEFAULT_SBML_VERSION)
-    if flavor == FBC2_MODEL:
+    if flavor in {Flavor.BIGG, Flavor.FBC2}:
         document.enablePackage(FbcExtension.getXmlnsL3V1V2(), 'fbc', True)
     sbml_model = document.createModel(model.id)
     _save_compartments(model, sbml_model)
@@ -446,7 +561,7 @@ def save_sbml_model(model, filename, flavor=None):
     writer.writeSBML(document, filename)
 
 
-def save_cbmodel(model, filename, flavor=COBRA_MODEL):
+def save_cbmodel(model, filename, flavor=Flavor.COBRA):
     save_sbml_model(model, filename, flavor)
 
 
@@ -467,7 +582,7 @@ def _save_metabolites(model, sbml_model, flavor):
         species.setCompartment(metabolite.compartment)
         species.setBoundaryCondition(metabolite.boundary)
 
-        if flavor == FBC2_MODEL:
+        if flavor in {Flavor.BIGG or Flavor.FBC2}:
             fbc_species = species.getPlugin('fbc')
             if 'FORMULA' in metabolite.metadata:
                 fbc_species.setChemicalFormula(metabolite.metadata['FORMULA'])
@@ -509,9 +624,9 @@ def _save_reactions(model, sbml_model):
 
 def _save_cb_parameters(model, sbml_model, flavor):
 
-    if flavor == COBRA_MODEL:
+    if flavor == Flavor.COBRA:
         _save_cobra_parameters(model, sbml_model, set_default_bounds=True)
-    elif flavor == FBC2_MODEL:
+    elif flavor in {Flavor.BIGG, Flavor.FBC2}:
         _save_fbc_fluxbounds(model, sbml_model)
         _save_fbc_objective(model, sbml_model)
     else:
@@ -519,7 +634,7 @@ def _save_cb_parameters(model, sbml_model, flavor):
 
 
 def _save_gpr_associations(model, sbml_model, flavor):
-    if flavor == FBC2_MODEL:
+    if flavor in {Flavor.BIGG, Flavor.FBC2}:
         _save_fbc_gprs(model, sbml_model)
     else:
         _save_cobra_gprs(model, sbml_model)

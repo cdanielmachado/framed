@@ -120,7 +120,7 @@ def calculate_performance(strain, bioreactor, r_substrate, r_target, t0, tf, dt,
         performance (Dict): contains the calculated performance metrics of a strain
     """
     performance = {'strain_id': strain.id}
-    r_biomass = strain.model.detect_biomass_reaction()
+    r_biomass = strain.model.biomass_reaction
 
     # perform FBA simulation
     if verbose:

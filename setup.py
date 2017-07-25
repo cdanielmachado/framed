@@ -6,6 +6,7 @@ setup(
     package_dir = {'':'src'},
     packages = find_packages('src'),
     install_requires = [], # e.g. ["numpy>=1.3.0"]
+    scripts = ["scripts/framed-smetana-pipeline"],
     author = 'Daniel Machado',
     author_email = 'cdanielmachado@gmail.com',
     description = 'framed - metabolic modeling for python',
