@@ -2,10 +2,15 @@ from setuptools import setup, find_packages
 
 setup(
     name = 'framed',
-    version = '0.3.2',
+    version = '0.3.3',
     package_dir = {'':'src'},
     packages = find_packages('src'),
-    install_requires = [], # e.g. ["numpy>=1.3.0"]
+    install_requires = ["numpy",
+                        "scipy",
+                        "sympy",
+                        "python-libsbml",
+                        "matplotlib",
+                        "seaborn"],
     scripts = ["scripts/framed-smetana-pipeline"],
     author = 'Daniel Machado',
     author_email = 'cdanielmachado@gmail.com',

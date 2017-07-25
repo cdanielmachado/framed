@@ -1,0 +1,65 @@
+Metadata-Version: 1.1
+Name: framed
+Version: 0.3.3
+Summary: framed - metabolic modeling for python
+Home-page: https://github.com/cdanielmachado/framed
+Author: Daniel Machado
+Author-email: cdanielmachado@gmail.com
+License: Apache License Version 2.0
+Description: .. image:: https://zenodo.org/badge/DOI/10.5281/zenodo.240430.svg
+           :target: https://doi.org/10.5281/zenodo.240430
+        
+        FRAMED
+        ======
+        
+        *framed* is a python package for analysis and simulation of metabolic
+        models. The main focus is to provide support for different modeling
+        approaches.
+        
+        -  Modeling: Constraint-based models, Kinetic models, Bioprocess models
+        -  I/O: Import/Export from SBML and/or plain text formats
+        -  Solver support: Gurobi, CPLEX, GLPK
+        -  COBRA tools:
+        
+           -  Simulation: FBA, pFBA, loopless-FBA, MOMA, linearMOMA, ROOM
+           -  Analysis: FVA, gene essentiality, PhPP, flux envelope plots
+           -  Omics integration: GIMME, E-Flux
+           -  Strain design: brute force, hill climbing
+        
+        -  Kinetic tools:
+        
+           -  Time-course and steady-state simulation
+           -  Parameter and flux sampling
+           -  Calibration from metabolomics data
+        
+        -  Bioprocess modeling: Dynamic FBA (single and multi-species)
+        
+        Documentation
+        ~~~~~~~~~~~~~
+        
+        For documentation and API please check: http://framed.readthedocs.io/
+        
+        Instalation
+        ~~~~~~~~~~~
+        
+        ::
+        
+            pip install framed
+        
+        Credits and License
+        ~~~~~~~~~~~~~~~~~~~
+        
+        Developed at:
+        
+        -  The Novo Nordisk Fundation Center for Biosustainability (2013)
+        -  Centre of Biological Engineering, University of Minho (2014-2015)
+        -  European Molecular Biology Laboratory (2016-2017)
+        
+        Released under an Apache License.
+        
+Keywords: metabolism modeling
+Platform: UNKNOWN
+Classifier: Development Status :: 4 - Beta
+Classifier: Topic :: Utilities
+Classifier: Programming Language :: Python :: 2.7
+Classifier: License :: OSI Approved :: Apache Software License

@@ -45,6 +45,6 @@ Developed at:
 
 -  The Novo Nordisk Fundation Center for Biosustainability (2013)
 -  Centre of Biological Engineering, University of Minho (2014-2015)
--  European Molecular Biology Laboratory (2016)
+-  European Molecular Biology Laboratory (2016-2017)
 
 Released under an Apache License.
