@@ -1,23 +1,21 @@
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
-    <title>Kinetic modeling &#8212; framed 0.3.0 documentation</title>
-    
+    <title>Kinetic modeling &#8212; framed 0.3.3 documentation</title>
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '0.3.0',
+        VERSION:     '0.3.3',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
       };
     </script>
     <script type="text/javascript" src="_static/jquery.js"></script>
@@ -25,8 +23,7 @@
     <script type="text/javascript" src="_static/doctools.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="top" title="framed 0.3.0 documentation" href="index.html" />
-    <link rel="next" title="API" href="modules.html" />
+    <link rel="next" title="API" href="apidoc/modules.html" />
     <link rel="prev" title="Constraint-based analysis" href="cobra.html" />
    
   <link rel="stylesheet" href="_static/custom.css" type="text/css" />
@@ -35,7 +32,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
 
   </head>
-  <body role="document">
+  <body>
   
 
     <div class="document">
@@ -112,8 +109,8 @@
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">fit_from_metabolomics</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">t_steps</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">bounds</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;Vmax1&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">10</span><span class="p">),</span> <span class="s1">&#39;Km1&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mf">0.1</span><span class="p">,</span> <span class="mi">100</span><span class="p">)})</span>
 </pre></div>
 </div>
-<p><em>framed</em> uses scipy&#8217;s <a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.optimize.minimize.html">minimize</a>,
-function which implements several optimization methods. You can select the optimization method (see the scipy&#8217;s documentation
+<p><em>framed</em> uses scipy’s <a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.optimize.minimize.html">minimize</a>,
+function which implements several optimization methods. You can select the optimization method (see the scipy’s documentation
 for a list of available methods):</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">fit_from_metabolomics</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">t_steps</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;Nelder-Mead&#39;</span><span class="p">)</span>
 </pre></div>
@@ -179,14 +176,14 @@ for a list of available methods):</p>
 <ul>
   <li><a href="index.html">Documentation overview</a><ul>
       <li>Previous: <a href="cobra.html" title="previous chapter">Constraint-based analysis</a></li>
-      <li>Next: <a href="modules.html" title="next chapter">API</a></li>
+      <li>Next: <a href="apidoc/modules.html" title="next chapter">API</a></li>
   </ul></li>
 </ul>
 </div>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
-      <li><a href="_sources/kinetic.txt"
+      <li><a href="_sources/kinetic.rst.txt"
             rel="nofollow">Show Source</a></li>
     </ul>
    </div>
@@ -205,14 +202,14 @@ for a list of available methods):</p>
       <div class="clearer"></div>
     </div>
     <div class="footer">
-      &copy;2016, Daniel Machado.
+      &copy;2017, Daniel Machado.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.4.8</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.9</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.3</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
       
       |
-      <a href="_sources/kinetic.txt"
+      <a href="_sources/kinetic.rst.txt"
           rel="nofollow">Page source</a>
     </div>
 

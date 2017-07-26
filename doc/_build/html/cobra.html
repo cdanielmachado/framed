@@ -1,23 +1,21 @@
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
-    <title>Constraint-based analysis &#8212; framed 0.3.0 documentation</title>
-    
+    <title>Constraint-based analysis &#8212; framed 0.3.3 documentation</title>
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '0.3.0',
+        VERSION:     '0.3.3',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
       };
     </script>
     <script type="text/javascript" src="_static/jquery.js"></script>
@@ -25,7 +23,6 @@
     <script type="text/javascript" src="_static/doctools.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="top" title="framed 0.3.0 documentation" href="index.html" />
     <link rel="next" title="Kinetic modeling" href="kinetic.html" />
     <link rel="prev" title="Getting started" href="start.html" />
    
@@ -35,7 +32,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
 
   </head>
-  <body role="document">
+  <body>
   
 
     <div class="document">
@@ -181,12 +178,12 @@ without changing the model.</p>
 </pre></div>
 </div>
 <p>You can change the minimum growth threshold for which you consider a deletion to be lethal.</p>
-<p>Let&#8217;s be more conservative and set it to 20% of the original growth rate:</p>
+<p>Let’s be more conservative and set it to 20% of the original growth rate:</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">essential_genes</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">min_growth</span><span class="o">=</span><span class="mf">0.2</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>Remember, gene (and reaction) essentiality is very much depedent on the environmental conditions.</p>
-<p>Let&#8217;s try changing the carbon source:</p>
+<p>Let’s try changing the carbon source:</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">essential_genes</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">constraints</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;R_EX_glc_e&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;R_EX_fru_e&#39;</span><span class="p">:</span> <span class="p">(</span><span class="o">-</span><span class="mi">10</span><span class="p">,</span> <span class="mi">0</span><span class="p">)})</span>
 </pre></div>
 </div>
@@ -215,7 +212,7 @@ without changing the model.</p>
 </div>
 <div class="section" id="strain-design">
 <h2>Strain design<a class="headerlink" href="#strain-design" title="Permalink to this headline">¶</a></h2>
-<p><em>framed</em> doesn&#8217;t aim to be a strain design package. For that try <a class="reference external" href="http://cameo.bio">Cameo</a> instead.</p>
+<p><em>framed</em> doesn’t aim to be a strain design package. For that try <a class="reference external" href="http://cameo.bio">Cameo</a> instead.</p>
 <p>Nonetheless, a few naive strain design methods are provided.</p>
 <p>The first is a brute force approach that tries all possible combinations of gene/reaction deletions.</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">framed</span> <span class="k">import</span> <span class="n">combinatorial_gene_deletion</span>
@@ -292,7 +289,7 @@ without changing the model.</p>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
-      <li><a href="_sources/cobra.txt"
+      <li><a href="_sources/cobra.rst.txt"
             rel="nofollow">Show Source</a></li>
     </ul>
    </div>
@@ -311,14 +308,14 @@ without changing the model.</p>
       <div class="clearer"></div>
     </div>
     <div class="footer">
-      &copy;2016, Daniel Machado.
+      &copy;2017, Daniel Machado.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.4.8</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.9</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.3</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
       
       |
-      <a href="_sources/cobra.txt"
+      <a href="_sources/cobra.rst.txt"
           rel="nofollow">Page source</a>
     </div>
 

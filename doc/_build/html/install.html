@@ -1,23 +1,21 @@
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
-    <title>Installation &#8212; framed 0.3.0 documentation</title>
-    
+    <title>Installation &#8212; framed 0.3.3 documentation</title>
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '0.3.0',
+        VERSION:     '0.3.3',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
       };
     </script>
     <script type="text/javascript" src="_static/jquery.js"></script>
@@ -25,7 +23,6 @@
     <script type="text/javascript" src="_static/doctools.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="top" title="framed 0.3.0 documentation" href="index.html" />
     <link rel="next" title="Getting started" href="start.html" />
     <link rel="prev" title="Welcome to framed’s documentation!" href="index.html" />
    
@@ -35,7 +32,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
 
   </head>
-  <body role="document">
+  <body>
   
 
     <div class="document">
@@ -51,14 +48,18 @@ distribution</a>.</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="n">framed</span>
 </pre></div>
 </div>
-<p>Additional dependencies:</p>
+<p>Dependencies (automatically installed):</p>
 <ul class="simple">
 <li>libsbml (import/export of models in SBML format)</li>
 <li>sympy   (parsing GPR associations)</li>
 <li>scipy   (kinetic modeling)</li>
-<li>seaborn (plotting methods)</li>
+<li>matplotlib (plotting methods)</li>
 </ul>
-<p>Also, for any kind of constraint-based modeling you will need at least one solver installed. <em>framed</em> currently supports:</p>
+<p>Additional dependences (not automatically installed):</p>
+<ul class="simple">
+<li>seaborn (for some types of plots)</li>
+</ul>
+<p>For constraint-based modeling you will need at least one solver installed. <em>framed</em> currently supports:</p>
 <ul class="simple">
 <li>Gurobi</li>
 <li>CPLEX</li>
@@ -75,7 +76,7 @@ distribution</a>.</p>
 <h3>Related Topics</h3>
 <ul>
   <li><a href="index.html">Documentation overview</a><ul>
-      <li>Previous: <a href="index.html" title="previous chapter">Welcome to <em>framed&#8217;s</em> documentation!</a></li>
+      <li>Previous: <a href="index.html" title="previous chapter">Welcome to <em>framed’s</em> documentation!</a></li>
       <li>Next: <a href="start.html" title="next chapter">Getting started</a></li>
   </ul></li>
 </ul>
@@ -83,7 +84,7 @@ distribution</a>.</p>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
-      <li><a href="_sources/install.txt"
+      <li><a href="_sources/install.rst.txt"
             rel="nofollow">Show Source</a></li>
     </ul>
    </div>
@@ -102,14 +103,14 @@ distribution</a>.</p>
       <div class="clearer"></div>
     </div>
     <div class="footer">
-      &copy;2016, Daniel Machado.
+      &copy;2017, Daniel Machado.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.4.8</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.9</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.3</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
       
       |
-      <a href="_sources/install.txt"
+      <a href="_sources/install.rst.txt"
           rel="nofollow">Page source</a>
     </div>
 

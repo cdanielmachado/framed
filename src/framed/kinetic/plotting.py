@@ -6,7 +6,6 @@ Author: Daniel Machado
 
 from ..kinetic.simulation import time_course
 from matplotlib.pyplot import figure, subplot2grid
-from seaborn import kdeplot
 from numpy import array
 
 
@@ -65,6 +64,11 @@ def plot_flux_sampling(model, sample, reactions=None):
 
     """
     # TODO: this is generic enough to be kinetic/cobra compatible (move to core.plotting ?)
+
+    try:
+        from seaborn import kdeplot
+    except:
+        raise RuntimeError('to run this method please install seaborn')
 
     if not reactions:
         reactions = model.reactions.keys()

@@ -1,23 +1,21 @@
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
-    <title>Getting started &#8212; framed 0.3.0 documentation</title>
-    
+    <title>Getting started &#8212; framed 0.3.3 documentation</title>
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '0.3.0',
+        VERSION:     '0.3.3',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
       };
     </script>
     <script type="text/javascript" src="_static/jquery.js"></script>
@@ -25,7 +23,6 @@
     <script type="text/javascript" src="_static/doctools.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="top" title="framed 0.3.0 documentation" href="index.html" />
     <link rel="next" title="Constraint-based analysis" href="cobra.html" />
     <link rel="prev" title="Installation" href="install.html" />
    
@@ -35,7 +32,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
 
   </head>
-  <body role="document">
+  <body>
   
 
     <div class="document">
@@ -95,7 +92,7 @@ to improve compatibility (for example, removing boundary metabolites):</p>
 </div>
 <div class="section" id="model-manipulation">
 <h2>Model manipulation<a class="headerlink" href="#model-manipulation" title="Permalink to this headline">¶</a></h2>
-<p>Once you load a model you can easily access the model&#8217;s attributes perform different kinds of operations using the <em>model</em> object.
+<p>Once you load a model you can easily access the model’s attributes perform different kinds of operations using the <em>model</em> object.
 Note that some operations might be specific to constraint-based or kinetic models.</p>
 <p>You can quickly look at your model by printing it:</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="nb">print</span> <span class="n">model</span>
@@ -128,7 +125,7 @@ Note that some operations might be specific to constraint-based or kinetic model
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">G_b2465</span> <span class="ow">or</span> <span class="n">G_b2935</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>You can easily make changes to a model. For instance, let&#8217;s change the maximum glucose uptake rate:</p>
+<p>You can easily make changes to a model. For instance, let’s change the maximum glucose uptake rate:</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">model</span><span class="o">.</span><span class="n">reactions</span><span class="o">.</span><span class="n">R_EX_glc_e</span><span class="o">.</span><span class="n">lb</span> <span class="o">=</span> <span class="o">-</span><span class="mi">10</span>
 </pre></div>
 </div>
@@ -171,7 +168,7 @@ dead-end metabolites (only for constraint-based models):</p>
 <span class="n">make_irreversible</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>If you don&#8217;t want to change your original model, in both cases you can generate a new model:</p>
+<p>If you don’t want to change your original model, in both cases you can generate a new model:</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">new_model</span> <span class="o">=</span> <span class="n">simplify</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -212,7 +209,7 @@ dead-end metabolites (only for constraint-based models):</p>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
-      <li><a href="_sources/start.txt"
+      <li><a href="_sources/start.rst.txt"
             rel="nofollow">Show Source</a></li>
     </ul>
    </div>
@@ -231,14 +228,14 @@ dead-end metabolites (only for constraint-based models):</p>
       <div class="clearer"></div>
     </div>
     <div class="footer">
-      &copy;2016, Daniel Machado.
+      &copy;2017, Daniel Machado.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.4.8</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.9</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.3</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
       
       |
-      <a href="_sources/start.txt"
+      <a href="_sources/start.rst.txt"
           rel="nofollow">Page source</a>
     </div>
 
