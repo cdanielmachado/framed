@@ -16,24 +16,24 @@
       <compartment id="cytosol" size="1"/>
     </listOfCompartments>
     <listOfSpecies>
-      <species id="cpep" name="Phosphoenol pyruvate" compartment="cytosol" initialConcentration="2.67" boundaryCondition="false"/>
-      <species id="cglcex" name="Extracellular Glucose" compartment="extracellular" initialConcentration="2" boundaryCondition="false"/>
-      <species id="cg6p" name="Glucose-6-Phosphate" compartment="cytosol" initialConcentration="3.48" boundaryCondition="false"/>
-      <species id="cpyr" name="Pyruvate" compartment="cytosol" initialConcentration="2.67" boundaryCondition="false"/>
-      <species id="cf6p" name="Fructose-6-Phosphate" compartment="cytosol" initialConcentration="0.6" boundaryCondition="false"/>
-      <species id="cg1p" name="Glucose-1-Phosphate" compartment="cytosol" initialConcentration="0.653" boundaryCondition="false"/>
-      <species id="cpg" name="6-Phosphogluconate" compartment="cytosol" initialConcentration="0.808" boundaryCondition="false"/>
-      <species id="cfdp" name="Fructose-1,6-bisphosphate" compartment="cytosol" initialConcentration="0.272" boundaryCondition="false"/>
-      <species id="csed7p" name="sedoheptulose-7-phosphate" compartment="cytosol" initialConcentration="0.276" boundaryCondition="false"/>
-      <species id="cgap" name="Glyceraldehyde-3-Phosphate" compartment="cytosol" initialConcentration="0.218" boundaryCondition="false"/>
-      <species id="ce4p" name="Erythrose-4-phosphate" compartment="cytosol" initialConcentration="0.098" boundaryCondition="false"/>
-      <species id="cxyl5p" name="Xylulose-5-phosphate" compartment="cytosol" initialConcentration="0.138" boundaryCondition="false"/>
-      <species id="crib5p" name="Ribose-5-phosphate" compartment="cytosol" initialConcentration="0.398" boundaryCondition="false"/>
-      <species id="cdhap" name="Dihydroxyacetonephosphate" compartment="cytosol" initialConcentration="0.167" boundaryCondition="false"/>
-      <species id="cpgp" name="1,3-diphosphosphoglycerate" compartment="cytosol" initialConcentration="0.008" boundaryCondition="false"/>
-      <species id="cpg3" name="3-Phosphoglycerate" compartment="cytosol" initialConcentration="2.13" boundaryCondition="false"/>
-      <species id="cpg2" name="2-Phosphoglycerate" compartment="cytosol" initialConcentration="0.399" boundaryCondition="false"/>
-      <species id="cribu5p" name="Ribulose-5-phosphate" compartment="cytosol" initialConcentration="0.111" boundaryCondition="false"/>
+      <species id="cpep" name="Phosphoenol pyruvate" compartment="cytosol" initialConcentration="2.67" boundaryCondition="false" constant="false"/>
+      <species id="cglcex" name="Extracellular Glucose" compartment="extracellular" initialConcentration="2" boundaryCondition="false" constant="false"/>
+      <species id="cg6p" name="Glucose-6-Phosphate" compartment="cytosol" initialConcentration="3.48" boundaryCondition="false" constant="false"/>
+      <species id="cpyr" name="Pyruvate" compartment="cytosol" initialConcentration="2.67" boundaryCondition="false" constant="false"/>
+      <species id="cf6p" name="Fructose-6-Phosphate" compartment="cytosol" initialConcentration="0.6" boundaryCondition="false" constant="false"/>
+      <species id="cg1p" name="Glucose-1-Phosphate" compartment="cytosol" initialConcentration="0.653" boundaryCondition="false" constant="false"/>
+      <species id="cpg" name="6-Phosphogluconate" compartment="cytosol" initialConcentration="0.808" boundaryCondition="false" constant="false"/>
+      <species id="cfdp" name="Fructose-1,6-bisphosphate" compartment="cytosol" initialConcentration="0.272" boundaryCondition="false" constant="false"/>
+      <species id="csed7p" name="sedoheptulose-7-phosphate" compartment="cytosol" initialConcentration="0.276" boundaryCondition="false" constant="false"/>
+      <species id="cgap" name="Glyceraldehyde-3-Phosphate" compartment="cytosol" initialConcentration="0.218" boundaryCondition="false" constant="false"/>
+      <species id="ce4p" name="Erythrose-4-phosphate" compartment="cytosol" initialConcentration="0.098" boundaryCondition="false" constant="false"/>
+      <species id="cxyl5p" name="Xylulose-5-phosphate" compartment="cytosol" initialConcentration="0.138" boundaryCondition="false" constant="false"/>
+      <species id="crib5p" name="Ribose-5-phosphate" compartment="cytosol" initialConcentration="0.398" boundaryCondition="false" constant="false"/>
+      <species id="cdhap" name="Dihydroxyacetonephosphate" compartment="cytosol" initialConcentration="0.167" boundaryCondition="false" constant="false"/>
+      <species id="cpgp" name="1,3-diphosphosphoglycerate" compartment="cytosol" initialConcentration="0.008" boundaryCondition="false" constant="false"/>
+      <species id="cpg3" name="3-Phosphoglycerate" compartment="cytosol" initialConcentration="2.13" boundaryCondition="false" constant="false"/>
+      <species id="cpg2" name="2-Phosphoglycerate" compartment="cytosol" initialConcentration="0.399" boundaryCondition="false" constant="false"/>
+      <species id="cribu5p" name="Ribulose-5-phosphate" compartment="cytosol" initialConcentration="0.111" boundaryCondition="false" constant="false"/>
     </listOfSpecies>
     <listOfParameters>
       <parameter id="catp" value="4.27" constant="false"/>
