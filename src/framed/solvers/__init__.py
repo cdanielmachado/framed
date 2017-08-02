@@ -8,14 +8,6 @@ Author: Daniel Machado, Marta Matos
 solvers = dict()
 
 try:
-    from .glpk_interface import GlpkSolver
-
-    solvers['glpk'] = GlpkSolver
-except ImportError:
-    pass
-
-
-try:
     from .gurobi_interface import GurobiSolver
 
     solvers['gurobi'] = GurobiSolver
@@ -41,7 +33,7 @@ def get_default_solver():
     if default_solver:
         return default_solver
 
-    solver_order = ['gurobi', 'cplex', 'glpk', 'glpk_lazy']
+    solver_order = ['gurobi', 'cplex']
 
     for solver in solver_order:
         if solver in solvers.keys():

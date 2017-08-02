@@ -1,19 +1,19 @@
-framed.omics package
-====================
+framed\.omics package
+=====================
 
 Submodules
 ----------
 
-framed.omics.dataset module
----------------------------
+framed\.omics\.dataset module
+-----------------------------
 
 .. automodule:: framed.omics.dataset
     :members:
     :undoc-members:
     :show-inheritance:
 
-framed.omics.simulation module
-------------------------------
+framed\.omics\.simulation module
+--------------------------------
 
 .. automodule:: framed.omics.simulation
     :members:

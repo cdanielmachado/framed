@@ -8,6 +8,7 @@ Subpackages
 
     framed.bioreactor
     framed.cobra
+    framed.community
     framed.io
     framed.kinetic
     framed.model

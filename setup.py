@@ -21,7 +21,8 @@ setup(
     long_description = open('README.rst').read(),
     classifiers = [
         'Development Status :: 4 - Beta',
-        'Topic :: Utilities',
+        'Topic :: Scientific/Engineering :: Bio-Informatics',
+        'Intended Audience :: Science/Research',
         'Programming Language :: Python :: 2.7',
         'License :: OSI Approved :: Apache Software License',
     ],

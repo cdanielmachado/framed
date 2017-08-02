@@ -347,3 +347,17 @@ texinfo_documents = [
 # If true, do not generate a @detailmenu in the "Top" node's menu.
 #
 # texinfo_no_detailmenu = False
+
+
+def run_apidoc(_):
+    import os
+    from sphinx.apidoc import main
+    sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
+    cur_dir = os.path.abspath(os.path.dirname(__file__))
+    out_dir = os.path.join(cur_dir, "apidoc")
+    module = os.path.join(cur_dir, "../src/framed")
+    main(['-e', '-o', out_dir, module])
+
+
+def setup(app):
+    app.connect('builder-inited', run_apidoc)
