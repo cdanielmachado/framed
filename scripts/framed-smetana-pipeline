@@ -133,6 +133,17 @@ def main():
     n_solutions = config.getint("framed", "smetana_n_solutions") if config.has_option("framed", "smetana_n_solutions") else 50
     minimize_media = config.getint("communities", "minimize_media") if config.has_option("communities", "minimize_media") else 0
     min_mass_weight = config.getint("framed", "min_mass_weight") if config.has_option("framed", "min_mass_weight") else False
+
+    algorithms = config.get("framed", "algorithms") if config.has_option("framed", "algorithms") else None
+    all_algorithms = set(["mip", "mro", "scscore", "mpscore", "muscore"])
+    if algorithms is None:
+        algorithms = all_algorithms
+    else:
+        algorithms = set(x.strip() for x in re.split(",", algorithms))
+        unknown_algorithmms = algorithms - all_algorithms
+        if len(unknown_algorithmms) > 0:
+            raise NameError("Unknown algorithm in section [framed/algorithms]")
+
     max_uptake = config.getfloat("framed", "max_uptake") if config.has_option("framed", "max_uptake") else 1000.0
     re_biomass = re.compile(config.get("framed", "biomass_regex")) if config.has_option("framed", "biomass_regex") else re.compile("iomass")
     extracellular_comp_id = config.get("framed", "extracellular_comp_id") if config.has_option("framed", "extracellular_comp_id") else "Extracellular"
@@ -174,30 +185,40 @@ def main():
     #
     # Prepare template for results table and header
     #
-    row_template = OrderedDict(
-        [("community_id", ""), ("size", ""), ("mip", ""), ("mro", ""), ("fba_community", ""), ("mmedia_status", ""),
-         ("fba_status", "")])
+    row_template = OrderedDict([("community_id", ""), ("size", "")])
+    if "mip" in algorithms:
+        row_template["mip"] = ""
+    if "mro" in algorithms:
+        row_template["mro"] = ""
+    if "fba" in algorithms:
+        row_template["fba_status"] = ""
+        row_template["fba_community"] = ""
+    row_template["mmedia_status"] = ""
 
     for i in range(1, max_community_size + 1):
         row_template["org{}".format(i)] = ""
 
-    for i in range(1, max_community_size + 1):
-        row_template["fba.org{}".format(i)] = ""
+    if "fba" in algorithms:
+        for i in range(1, max_community_size + 1):
+            row_template["fba.org{}".format(i)] = ""
 
     for m_id in exch_metabolites_list:
         row_template["mmedia.{}".format(m_id)] = 0
 
-    for i in range(1, max_community_size + 1):
-        for m_id in exch_metabolites_list:
-            row_template["muscore.org{}.{}".format(i, m_id)] = 0
+    if "muscore" in algorithms:
+        for i in range(1, max_community_size + 1):
+            for m_id in exch_metabolites_list:
+                row_template["muscore.org{}.{}".format(i, m_id)] = 0
 
-    for i in range(1, max_community_size + 1):
-        for m_id in exch_metabolites_list:
-            row_template["mpscore.org{}.{}".format(i, m_id)] = 0
+    if "mpscore" in algorithms:
+        for i in range(1, max_community_size + 1):
+            for m_id in exch_metabolites_list:
+                row_template["mpscore.org{}.{}".format(i, m_id)] = 0
 
-    for i in range(1, max_community_size + 1):
-        for j in range(1, max_community_size + 1):
-            row_template["scscore.org{}.org{}".format(i, j)] = 0
+    if "scscore" in algorithms:
+        for i in range(1, max_community_size + 1):
+            for j in range(1, max_community_size + 1):
+                row_template["scscore.org{}.org{}".format(i, j)] = 0
 
     communities_sample = [communities[i::args.parts_total] for i in xrange(args.parts_total)][args.part - 1]
 
@@ -265,7 +286,7 @@ def main():
                 logger.log("Inorganic media ({}):", len(com_rxn_inorganic), newline=False)
                 logger.log(", ".join(r for r in com_rxn_inorganic))
                 for model_i, model_id in enumerate(community_data['species'], start=1):
-                    row_template["org{}".format(model_i)] = model_id
+                    row["org{}".format(model_i)] = model_id
                 row['community_id'] = community_data['id']
                 row['size'] = len(models)
 
@@ -276,12 +297,9 @@ def main():
 
 #                candidates_rxn_minimal = set(community.merged.get_exchange_reactions()) - com_rxn_inorganic
 
-                external_env = Environment.from_compounds(exch_metabolites_list, exchange_format=exch_met_to_rxn_format,
-                                                          max_uptake=max_uptake)
-
+                # TODO: Change RegEx to proper mapping
+                external_env = Environment.from_compounds(exch_metabolites_list, exchange_format=exch_met_to_rxn_format, max_uptake=max_uptake)
                 candidates_rxn_minimal = (set(community.merged.get_exchange_reactions()) & set(external_env.keys())) - com_rxn_inorganic
-
-
                 com_rxn_defined, sol = minimal_medium(community.merged, exchange_reactions=candidates_rxn_minimal,
                                                       validate=True, min_mass_weight=min_mass_weight)
 
@@ -337,12 +355,16 @@ def main():
                 #
                 # Calculate MIP and MRO
                 #
-                mip, mip_extras = mip_score(community, env_inorganic, validate=True)
-                row["mip"] = mip
-                logger.log("MIP: {}", mip)
-                mro, mro_extras = mro_score(community, env_inorganic, validate=True)
-                row["mro"] = mro
-                logger.log("MRO: {}", mro)
+                if "mip" in algorithms:
+                    mip, mip_extras = mip_score(community, env_inorganic, validate=True)
+                    row["mip"] = mip
+                    logger.log("MIP: {}", mip)
+
+
+                if "mro" in algorithms:
+                    mro, mro_extras = mro_score(community, env_inorganic, validate=True)
+                    row["mro"] = mro
+                    logger.log("MRO: {}", mro)
 
                 #
                 # Apply minimal+inorganic media
@@ -357,50 +379,52 @@ def main():
                     for r_id in r_exchanges:
                         community_fba.merged.reactions[r_id].lb = -1
 
-                sol = FBA(community_fba.merged, get_values=True)
-                row["fba_status"] = status_codes[sol.status]
-                logger.log("Growth on minimal media (uptakes 1.0/org): {:.1f} ({}) = ",
-                           sol.fobj, status_codes[sol.status], newline=False)
+                if "fba" in algorithms:
+                    sol = FBA(community_fba.merged, get_values=True)
+                    row["fba_status"] = status_codes[sol.status]
+                    logger.log("Growth on minimal media (uptakes 1.0/org): {:.1f} ({}) = ",
+                               sol.fobj, status_codes[sol.status], newline=False)
 
-                if sol.status == Status.OPTIMAL:
-                    row["fba_community"] = sol.fobj
-                    for m_i, model_id in enumerate(community.organisms, start=1):
-                        b = community_fba.organisms_biomass_reactions[model_id]
-                        logger.log("{:.1f}'{} + ", sol.values[b], community_data['species'][m_i - 1],
-                                   newline=(len(community.organisms) == m_i))
-                        row_id = "fba.org{}".format(models_i[model_id])
-                        if row_id not in row:
-                            raise KeyError("Column '{}' was not found in row".format(row_id))
-                        row[row_id] = sol.values[b]
+                    if sol.status == Status.OPTIMAL:
+                        row["fba_community"] = sol.fobj
+                        for m_i, model_id in enumerate(community.organisms, start=1):
+                            b = community_fba.organisms_biomass_reactions[model_id]
+                            logger.log("{:.1f}'{} + ", sol.values[b], community_data['species'][m_i - 1],
+                                       newline=(len(community.organisms) == m_i))
+                            row_id = "fba.org{}".format(models_i[model_id])
+                            if row_id not in row:
+                                raise KeyError("Column '{}' was not found in row".format(row_id))
+                            row[row_id] = sol.values[b]
 
                 #
                 # Calculate SMETANA
                 #
-                smetana, smetana_extras = smetana_score(community, env_minimal, n_solutions=n_solutions,
-                                                        min_mass_weight=min_mass_weight)
-                logger.log("Smetana (sum={}): ", sum(s.score for s in smetana))
-                if smetana:
-                    logger.log(", ".join(str(s) for s in smetana))
-                    for m_receiver, dependants in smetana_extras["species_coupling"]["scores"].iteritems():
-                        for m_donor, scscore in dependants.iteritems():
-                            row_id = "scscore.org{}.org{}".format(models_i[m_receiver], models_i[m_donor])
-                            if row_id not in row:
-                                raise KeyError("Column '{}' was not found in row".format(row_id))
-                            row[row_id] = scscore
+                if "scscore" in algorithms or "mpscore" in algorithms or "muscore" in algorithms:
+                    smetana, smetana_extras = smetana_score(community, env_minimal, n_solutions=n_solutions,
+                                                            min_mass_weight=min_mass_weight)
+                    logger.log("Smetana (sum={}): ", sum(s.score for s in smetana))
+                    if smetana:
+                        logger.log(", ".join(str(s) for s in smetana))
+                        for m_receiver, dependants in smetana_extras["species_coupling"]["scores"].iteritems():
+                            for m_donor, scscore in dependants.iteritems():
+                                row_id = "scscore.org{}.org{}".format(models_i[m_receiver], models_i[m_donor])
+                                if row_id not in row:
+                                    raise KeyError("Column '{}' was not found in row".format(row_id))
+                                row[row_id] = scscore
 
-                    for model_id, metabolites in smetana_extras["metabolite_uptake"]["scores"].iteritems():
-                        for m_id, muscore in metabolites.iteritems():
-                            row_id = "muscore.org{}.{}".format(models_i[model_id], m_id)
-                            if row_id not in row:
-                                raise KeyError("Column '{}' was not found in row".format(row_id))
-                            row[row_id] = muscore
+                        for model_id, metabolites in smetana_extras["metabolite_uptake"]["scores"].iteritems():
+                            for m_id, muscore in metabolites.iteritems():
+                                row_id = "muscore.org{}.{}".format(models_i[model_id], m_id)
+                                if row_id not in row:
+                                    raise KeyError("Column '{}' was not found in row".format(row_id))
+                                row[row_id] = muscore
 
-                    for model_id, metabolites in smetana_extras["metabolite_production"]["scores"].iteritems():
-                        for m_id in metabolites:
-                            row_id = "mpscore.org{}.{}".format(models_i[model_id], m_id)
-                            if row_id not in row:
-                                raise KeyError("Column '{}' was not found in row".format(row_id))
-                            row[row_id] = 1
+                        for model_id, metabolites in smetana_extras["metabolite_production"]["scores"].iteritems():
+                            for m_id in metabolites:
+                                row_id = "mpscore.org{}.{}".format(models_i[model_id], m_id)
+                                if row_id not in row:
+                                    raise KeyError("Column '{}' was not found in row".format(row_id))
+                                row[row_id] = 1
 
                 file.write(row_string(row))
                 file.flush()
