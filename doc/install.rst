@@ -27,6 +27,5 @@ For constraint-based modeling you will need at least one solver installed. *fram
 
 - Gurobi
 - CPLEX
-- GLPK (note: this interface is no longer maintained)
 
 

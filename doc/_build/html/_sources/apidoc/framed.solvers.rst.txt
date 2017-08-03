@@ -12,14 +12,6 @@ framed.solvers.cplex_interface module
     :undoc-members:
     :show-inheritance:
 
-framed.solvers.glpk_interface module
-------------------------------------
-
-.. automodule:: framed.solvers.glpk_interface
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
 framed.solvers.gurobi_interface module
 --------------------------------------
 

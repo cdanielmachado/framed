@@ -68,6 +68,14 @@ framed.cobra.variability module
     :undoc-members:
     :show-inheritance:
 
+framed.cobra.ensemble module
+----------------------------
+
+.. automodule:: framed.cobra.ensemble
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 
 Module contents
 ---------------

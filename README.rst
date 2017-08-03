@@ -10,7 +10,7 @@ approaches.
 
 -  Modeling: Constraint-based models, Kinetic models, Bioprocess models
 -  I/O: Import/Export from SBML and/or plain text formats
--  Solver support: Gurobi, CPLEX, GLPK
+-  Solver support: Gurobi, CPLEX
 -  COBRA tools:
 
    -  Simulation: FBA, pFBA, loopless-FBA, MOMA, linearMOMA, ROOM

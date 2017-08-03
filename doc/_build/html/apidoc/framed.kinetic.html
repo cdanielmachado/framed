@@ -5,13 +5,13 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>framed.kinetic package &#8212; framed 0.3.3 documentation</title>
+    <title>framed.kinetic package &#8212; framed 0.3.5 documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '0.3.3',
+        VERSION:     '0.3.5',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true,
@@ -45,20 +45,198 @@
 <div class="section" id="submodules">
 <h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
 </div>
-<div class="section" id="framed-kinetic-fitting-module">
-<h2>framed.kinetic.fitting module<a class="headerlink" href="#framed-kinetic-fitting-module" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="module-framed.kinetic.fitting">
+<span id="framed-kinetic-fitting-module"></span><h2>framed.kinetic.fitting module<a class="headerlink" href="#module-framed.kinetic.fitting" title="Permalink to this headline">¶</a></h2>
+<p>This module implements kinetic model calibration methods.</p>
+<p>Author: Daniel Machado</p>
+<dl class="function">
+<dt id="framed.kinetic.fitting.fit_from_metabolomics">
+<code class="descclassname">framed.kinetic.fitting.</code><code class="descname">fit_from_metabolomics</code><span class="sig-paren">(</span><em>model</em>, <em>t_steps</em>, <em>data</em>, <em>parameters=None</em>, <em>bounds=None</em>, <em>method=None</em>, <em>update_model=False</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.kinetic.fitting.fit_from_metabolomics" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fit model parameters using time-course metabolomics data</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>model</strong> (<a class="reference internal" href="framed.model.html#framed.model.odemodel.ODEModel" title="framed.model.odemodel.ODEModel"><em>ODEModel</em></a>) – kinetic model</li>
+<li><strong>t_steps</strong> (<em>list</em>) – measured time steps</li>
+<li><strong>data</strong> (<em>dict</em>) – metabolomics data in dict format (metabolite id to meausured values)</li>
+<li><strong>parameters</strong> (<em>list</em>) – specify list of parameters to be calibrated (optional, default: all)</li>
+<li><strong>bounds</strong> (<em>list</em>) – list of bounds for each parameter (optional, default: (0, None))</li>
+<li><strong>method</strong> (<em>str</em>) – optimization method (optional, see <cite>scipy.optimize.minimize</cite> for details)</li>
+<li><strong>update_model</strong> (<em>bool</em>) – automatically update model with new parameters (default: False)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">fitted parameters</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">dict</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
 </div>
-<div class="section" id="framed-kinetic-plotting-module">
-<h2>framed.kinetic.plotting module<a class="headerlink" href="#framed-kinetic-plotting-module" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="module-framed.kinetic.plotting">
+<span id="framed-kinetic-plotting-module"></span><h2>framed.kinetic.plotting module<a class="headerlink" href="#module-framed.kinetic.plotting" title="Permalink to this headline">¶</a></h2>
+<p>This module implements plotting utilities for kinetic models.</p>
+<p>Author: Daniel Machado</p>
+<dl class="function">
+<dt id="framed.kinetic.plotting.plot_flux_sampling">
+<code class="descclassname">framed.kinetic.plotting.</code><code class="descname">plot_flux_sampling</code><span class="sig-paren">(</span><em>model</em>, <em>sample</em>, <em>reactions=None</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.kinetic.plotting.plot_flux_sampling" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plot flux sampling results.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>model</strong> (<a class="reference internal" href="framed.model.html#framed.model.model.Model" title="framed.model.model.Model"><em>Model</em></a>) – your model (can be of any kind)</li>
+<li><strong>sample</strong> (<em>list</em>) – flux vector samples</li>
+<li><strong>reactions</strong> (<em>list</em>) – only plot specified reactions (default: all)</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="framed.kinetic.plotting.plot_timecourse">
+<code class="descclassname">framed.kinetic.plotting.</code><code class="descname">plot_timecourse</code><span class="sig-paren">(</span><em>model</em>, <em>time</em>, <em>steps=100</em>, <em>parameters=None</em>, <em>metabolites=None</em>, <em>xlabel=None</em>, <em>ylabel=None</em>, <em>data=None</em>, <em>data_steps=None</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.kinetic.plotting.plot_timecourse" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plot a time-course simulation using a kinetic model.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>model</strong> (<a class="reference internal" href="framed.model.html#framed.model.odemodel.ODEModel" title="framed.model.odemodel.ODEModel"><em>ODEModel</em></a>) – kinetic model</li>
+<li><strong>time</strong> (<em>float</em>) – final simulation time</li>
+<li><strong>steps</strong> (<em>int</em>) – number of simulations steps (default: 100)</li>
+<li><strong>parameters</strong> (<em>dict</em>) – override model parameters (optional)</li>
+<li><strong>metabolites</strong> (<em>list</em>) – only plot specific metabolites (optional)</li>
+<li><strong>xlabel</strong> (<em>str</em>) – specify label for x axis (optional)</li>
+<li><strong>ylabel</strong> (<em>str</em>) – specify label for y axis (optional)</li>
+<li><strong>data</strong> (<em>dict</em>) – metabolomics data (to overlay in the plot)</li>
+<li><strong>data_steps</strong> (<em>list</em>) – time_steps of metabolomics data</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">axes handle from matplotlib</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">AxesSubplot</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
 </div>
-<div class="section" id="framed-kinetic-sampling-module">
-<h2>framed.kinetic.sampling module<a class="headerlink" href="#framed-kinetic-sampling-module" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="module-framed.kinetic.sampling">
+<span id="framed-kinetic-sampling-module"></span><h2>framed.kinetic.sampling module<a class="headerlink" href="#module-framed.kinetic.sampling" title="Permalink to this headline">¶</a></h2>
+<p>This module implements flux space sampling for kinetic models.</p>
+<p>Author: Daniel Machado</p>
+<dl class="function">
+<dt id="framed.kinetic.sampling.parameter_perturbation">
+<code class="descclassname">framed.kinetic.sampling.</code><code class="descname">parameter_perturbation</code><span class="sig-paren">(</span><em>p0</em>, <em>distribution</em>, <em>dist_args</em>, <em>log_scale=True</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.kinetic.sampling.parameter_perturbation" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="framed.kinetic.sampling.sample_kinetic_model">
+<code class="descclassname">framed.kinetic.sampling.</code><code class="descname">sample_kinetic_model</code><span class="sig-paren">(</span><em>model</em>, <em>size</em>, <em>parameters=None</em>, <em>distribution='normal'</em>, <em>dist_args=(0</em>, <em>1)</em>, <em>log_scale=True</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.kinetic.sampling.sample_kinetic_model" title="Permalink to this definition">¶</a></dt>
+<dd><p>Random flux sampling using a kinetic model.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>model</strong> (<a class="reference internal" href="framed.model.html#framed.model.odemodel.ODEModel" title="framed.model.odemodel.ODEModel"><em>ODEModel</em></a>) – kinetic model</li>
+<li><strong>size</strong> (<em>int</em>) – sample size</li>
+<li><strong>parameters</strong> (<em>list</em>) – list of parameters that can vary (default: all)</li>
+<li><strong>distribution</strong> (<em>str</em>) – parameter sampling distribution (‘normal’ (default) or ‘uniform’)</li>
+<li><strong>dist_args</strong> (<em>tuple</em>) – distribution specific arguments:
+(mean, std) for normal distribution (default: (0,1))
+(min, max) for uniform distribution</li>
+<li><strong>log_scale</strong> (<em>bool</em>) – perform variation in log scale (default: True)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">parameter samples, flux samples</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">tuple</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
 </div>
-<div class="section" id="framed-kinetic-simulation-module">
-<h2>framed.kinetic.simulation module<a class="headerlink" href="#framed-kinetic-simulation-module" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="module-framed.kinetic.simulation">
+<span id="framed-kinetic-simulation-module"></span><h2>framed.kinetic.simulation module<a class="headerlink" href="#module-framed.kinetic.simulation" title="Permalink to this headline">¶</a></h2>
+<p>This module implements time-course and steady-state simulation for kinetic models.</p>
+<p>Author: Daniel Machado</p>
+<dl class="function">
+<dt id="framed.kinetic.simulation.find_steady_state">
+<code class="descclassname">framed.kinetic.simulation.</code><code class="descname">find_steady_state</code><span class="sig-paren">(</span><em>model</em>, <em>parameters=None</em>, <em>endtime=1000000000.0</em>, <em>abstol=1e-06</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.kinetic.simulation.find_steady_state" title="Permalink to this definition">¶</a></dt>
+<dd><p>Determine steady-state</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>model</strong> (<a class="reference internal" href="framed.model.html#framed.model.odemodel.ODEModel" title="framed.model.odemodel.ODEModel"><em>ODEModel</em></a>) – kinetic model</li>
+<li><strong>parameters</strong> (<em>dict</em>) – override model parameters</li>
+<li><strong>endtime</strong> (<em>float</em>) – final integration time (default: 1e9)</li>
+<li><strong>abstol</strong> (<em>float</em>) – maximum tolerance for norm(S*v)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">steady-state concentrations, steady-state fluxes</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">tuple</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="framed.kinetic.simulation.time_course">
+<code class="descclassname">framed.kinetic.simulation.</code><code class="descname">time_course</code><span class="sig-paren">(</span><em>model</em>, <em>time=0</em>, <em>steps=100</em>, <em>t_steps=None</em>, <em>parameters=None</em>, <em>compute_rates=False</em>, <em>integrator_args=None</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.kinetic.simulation.time_course" title="Permalink to this definition">¶</a></dt>
+<dd><p>Perform a time-course simulation using a kinetic model.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>model</strong> (<a class="reference internal" href="framed.model.html#framed.model.odemodel.ODEModel" title="framed.model.odemodel.ODEModel"><em>ODEModel</em></a>) – kinetic model</li>
+<li><strong>time</strong> (<em>float</em>) – final simulation time (optional if t_steps is used instead)</li>
+<li><strong>steps</strong> (<em>int</em>) – number of simulations steps (default: 100)</li>
+<li><strong>t_steps</strong> (<em>list</em>) – list of exact time steps to evaluate (optional)</li>
+<li><strong>parameters</strong> (<em>dict</em>) – override model parameters (optional)</li>
+<li><strong>integrator_args</strong> (<em>dict</em>) – additional parameters to pass along to scipy odeint integrator</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">time steps, metabolite concentrations[, reaction rates (optional)]</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">tuple</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
 </div>
-<div class="section" id="module-contents">
-<h2>Module contents<a class="headerlink" href="#module-contents" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="module-framed.kinetic">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-framed.kinetic" title="Permalink to this headline">¶</a></h2>
+<p>Package implementing kinetic modeling methods.</p>
+<p>Author: Daniel Machado</p>
 </div>
 </div>
 
@@ -72,11 +250,11 @@
   <ul>
 <li><a class="reference internal" href="#">framed.kinetic package</a><ul>
 <li><a class="reference internal" href="#submodules">Submodules</a></li>
-<li><a class="reference internal" href="#framed-kinetic-fitting-module">framed.kinetic.fitting module</a></li>
-<li><a class="reference internal" href="#framed-kinetic-plotting-module">framed.kinetic.plotting module</a></li>
-<li><a class="reference internal" href="#framed-kinetic-sampling-module">framed.kinetic.sampling module</a></li>
-<li><a class="reference internal" href="#framed-kinetic-simulation-module">framed.kinetic.simulation module</a></li>
-<li><a class="reference internal" href="#module-contents">Module contents</a></li>
+<li><a class="reference internal" href="#module-framed.kinetic.fitting">framed.kinetic.fitting module</a></li>
+<li><a class="reference internal" href="#module-framed.kinetic.plotting">framed.kinetic.plotting module</a></li>
+<li><a class="reference internal" href="#module-framed.kinetic.sampling">framed.kinetic.sampling module</a></li>
+<li><a class="reference internal" href="#module-framed.kinetic.simulation">framed.kinetic.simulation module</a></li>
+<li><a class="reference internal" href="#module-framed.kinetic">Module contents</a></li>
 </ul>
 </li>
 </ul>
