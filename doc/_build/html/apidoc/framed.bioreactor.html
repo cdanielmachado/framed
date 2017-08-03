@@ -5,13 +5,13 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>framed.bioreactor package &#8212; framed 0.3.3 documentation</title>
+    <title>framed.bioreactor package &#8212; framed 0.3.5 documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '0.3.3',
+        VERSION:     '0.3.5',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true,
@@ -45,20 +45,475 @@
 <div class="section" id="submodules">
 <h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
 </div>
-<div class="section" id="framed-bioreactor-base-module">
-<h2>framed.bioreactor.base module<a class="headerlink" href="#framed-bioreactor-base-module" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="module-framed.bioreactor.base">
+<span id="framed-bioreactor-base-module"></span><h2>framed.bioreactor.base module<a class="headerlink" href="#module-framed.bioreactor.base" title="Permalink to this headline">¶</a></h2>
+<p>This module defines the base classes used for modeling and analyzing bioreactors</p>
+<p>Author: Kai Zhuang</p>
+<dl class="class">
+<dt id="framed.bioreactor.base.Bioreactor">
+<em class="property">class </em><code class="descclassname">framed.bioreactor.base.</code><code class="descname">Bioreactor</code><span class="sig-paren">(</span><em>organisms=[]</em>, <em>metabolites=[]</em>, <em>id='Generic Bioreactor'</em>, <em>flow_rate_in=0</em>, <em>flow_rate_out=0</em>, <em>volume_max=None</em>, <em>Xfeed=None</em>, <em>Sfeed=None</em>, <em>deltaX=None</em>, <em>deltaS=None</em>, <em>initial_conditions=[]</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.bioreactor.base.Bioreactor" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#framed.bioreactor.base.Environment" title="framed.bioreactor.base.Environment"><code class="xref py py-class docutils literal"><span class="pre">framed.bioreactor.base.Environment</span></code></a>, <a class="reference internal" href="#framed.bioreactor.base.DynamicSystem" title="framed.bioreactor.base.DynamicSystem"><code class="xref py py-class docutils literal"><span class="pre">framed.bioreactor.base.DynamicSystem</span></code></a></p>
+<p>This class describes a generic bioreactor with one influent (feed) stream and one effluent stream</p>
+<dl class="method">
+<dt id="framed.bioreactor.base.Bioreactor.calculate_productivity_from_dfba">
+<code class="descname">calculate_productivity_from_dfba</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#framed.bioreactor.base.Bioreactor.calculate_productivity_from_dfba" title="Permalink to this definition">¶</a></dt>
+<dd><p>Abstract used for calculating productivity from dFBA solution.
+This is useful for certain analysis methods (eg. DySScO).</p>
+<p>This should be implemented for specific bioreactors</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="framed.bioreactor.base.Bioreactor.calculate_titer_from_dfba">
+<code class="descname">calculate_titer_from_dfba</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#framed.bioreactor.base.Bioreactor.calculate_titer_from_dfba" title="Permalink to this definition">¶</a></dt>
+<dd><p>Abstract used for calculating product titer from dFBA solution.
+This is useful for certain analysis methods (eg. DySScO).</p>
+<p>This should be implemented for specific bioreactors</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="framed.bioreactor.base.Bioreactor.calculate_yield_from_dfba">
+<code class="descname">calculate_yield_from_dfba</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#framed.bioreactor.base.Bioreactor.calculate_yield_from_dfba" title="Permalink to this definition">¶</a></dt>
+<dd><p>Abstract used for calculating product yield from dFBA solution.
+This is useful for certain analysis methods (eg. DySScO).</p>
+<p>This should be implemented for specific bioreactors</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="framed.bioreactor.base.Bioreactor.set_Sfeed">
+<code class="descname">set_Sfeed</code><span class="sig-paren">(</span><em>Sfeed</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.bioreactor.base.Bioreactor.set_Sfeed" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="framed.bioreactor.base.Bioreactor.set_Xfeed">
+<code class="descname">set_Xfeed</code><span class="sig-paren">(</span><em>Xfeed</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.bioreactor.base.Bioreactor.set_Xfeed" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="framed.bioreactor.base.Bioreactor.set_deltaS">
+<code class="descname">set_deltaS</code><span class="sig-paren">(</span><em>deltaS</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.bioreactor.base.Bioreactor.set_deltaS" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="framed.bioreactor.base.Bioreactor.set_deltaX">
+<code class="descname">set_deltaX</code><span class="sig-paren">(</span><em>deltaX</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.bioreactor.base.Bioreactor.set_deltaX" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="framed.bioreactor.base.Bioreactor.set_initial_conditions">
+<code class="descname">set_initial_conditions</code><span class="sig-paren">(</span><em>Vinit</em>, <em>Xinit</em>, <em>Sinit</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.bioreactor.base.Bioreactor.set_initial_conditions" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="framed.bioreactor.base.Bioreactor.set_metabolites">
+<code class="descname">set_metabolites</code><span class="sig-paren">(</span><em>metabolites</em>, <em>Sfeed=None</em>, <em>deltaS=None</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.bioreactor.base.Bioreactor.set_metabolites" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="framed.bioreactor.base.Bioreactor.set_organisms">
+<code class="descname">set_organisms</code><span class="sig-paren">(</span><em>organisms</em>, <em>Xfeed=None</em>, <em>deltaX=None</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.bioreactor.base.Bioreactor.set_organisms" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="framed.bioreactor.base.Bioreactor.update">
+<code class="descname">update</code><span class="sig-paren">(</span><em>time</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.bioreactor.base.Bioreactor.update" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="framed.bioreactor.base.DynamicSystem">
+<em class="property">class </em><code class="descclassname">framed.bioreactor.base.</code><code class="descname">DynamicSystem</code><a class="headerlink" href="#framed.bioreactor.base.DynamicSystem" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<p>This class describes a generic dynamic system</p>
+<dl class="method">
+<dt id="framed.bioreactor.base.DynamicSystem.analytical_integrator">
+<code class="descname">analytical_integrator</code><span class="sig-paren">(</span><em>t0</em>, <em>tf</em>, <em>dt</em>, <em>initial_conditions</em>, <em>solver</em>, <em>verbose</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.bioreactor.base.DynamicSystem.analytical_integrator" title="Permalink to this definition">¶</a></dt>
+<dd><p>the analytical_integrator() method integrates the ODE of the dynamic system using a user-defined analytical method</p>
+<p>** this is an abstract method, must be implemented for specific dynamic systems **</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="framed.bioreactor.base.DynamicSystem.integrate">
+<code class="descname">integrate</code><span class="sig-paren">(</span><em>t0</em>, <em>tf</em>, <em>dt</em>, <em>initial_conditions</em>, <em>solver</em>, <em>verbose=False</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.bioreactor.base.DynamicSystem.integrate" title="Permalink to this definition">¶</a></dt>
+<dd><p>the integrate() solves the ODE of the dynamic system using the designated solver
+:param t0: initial time
+:param tf: final time
+:param dt: time step
+:param initial_conditions (array-like): initial conditions of the ODE system
+:param solver: the designated solver
+:return:</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="framed.bioreactor.base.DynamicSystem.numerical_integrator">
+<code class="descname">numerical_integrator</code><span class="sig-paren">(</span><em>t0</em>, <em>tf</em>, <em>dt</em>, <em>initial_conditions</em>, <em>solver</em>, <em>verbose</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.bioreactor.base.DynamicSystem.numerical_integrator" title="Permalink to this definition">¶</a></dt>
+<dd><p>the numerical_integrator() method integrates the ODE of the dynamic system using a numerical solver</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="framed.bioreactor.base.DynamicSystem.ode_RHS">
+<code class="descname">ode_RHS</code><span class="sig-paren">(</span><em>y</em>, <em>t</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.bioreactor.base.DynamicSystem.ode_RHS" title="Permalink to this definition">¶</a></dt>
+<dd><p>this is the Right Hand Side of the system of ODE that describe the dynamic multi-species system
+:param y: state variables such as liquid volume, biomass concentrations, and metabolite concentrations
+:param t: time
+:return:</p>
+<p>** this is an abstract method, must be implemented for specific environments **</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="framed.bioreactor.base.Environment">
+<em class="property">class </em><code class="descclassname">framed.bioreactor.base.</code><code class="descname">Environment</code><a class="headerlink" href="#framed.bioreactor.base.Environment" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<p>This class describes a generic environment that contains a number of organisms and metabolites</p>
+<dl class="method">
+<dt id="framed.bioreactor.base.Environment.add_metabolite">
+<code class="descname">add_metabolite</code><span class="sig-paren">(</span><em>metabolite</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.bioreactor.base.Environment.add_metabolite" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="framed.bioreactor.base.Environment.add_metabolites">
+<code class="descname">add_metabolites</code><span class="sig-paren">(</span><em>metabolites</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.bioreactor.base.Environment.add_metabolites" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="framed.bioreactor.base.Environment.add_organism">
+<code class="descname">add_organism</code><span class="sig-paren">(</span><em>organism</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.bioreactor.base.Environment.add_organism" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="framed.bioreactor.base.Environment.add_organisms">
+<code class="descname">add_organisms</code><span class="sig-paren">(</span><em>organisms</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.bioreactor.base.Environment.add_organisms" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="framed.bioreactor.base.Environment.set_metabolites">
+<code class="descname">set_metabolites</code><span class="sig-paren">(</span><em>metabolites</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.bioreactor.base.Environment.set_metabolites" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="framed.bioreactor.base.Environment.set_organisms">
+<code class="descname">set_organisms</code><span class="sig-paren">(</span><em>organisms</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.bioreactor.base.Environment.set_organisms" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="framed.bioreactor.base.Environment.update">
+<code class="descname">update</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#framed.bioreactor.base.Environment.update" title="Permalink to this definition">¶</a></dt>
+<dd><p>The update() method is used to change the internal state of the environment.
+This method is called at each integration step.</p>
+<p>** this is an abstract method, must be implemented for specific environments **</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="framed.bioreactor.base.Organism">
+<em class="property">class </em><code class="descclassname">framed.bioreactor.base.</code><code class="descname">Organism</code><span class="sig-paren">(</span><em>model</em>, <em>id=None</em>, <em>fba_objective=None</em>, <em>fba_constraints={}</em>, <em>model_deepcopy=True</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.bioreactor.base.Organism" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<p>Organism describes a generic biological organism.</p>
+<dl class="method">
+<dt id="framed.bioreactor.base.Organism.update">
+<code class="descname">update</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#framed.bioreactor.base.Organism.update" title="Permalink to this definition">¶</a></dt>
+<dd><p>The update() method is used to change the internal state of the organism.
+- This method is called at each integration step.
+- One usage of this method is to describe how the FBA uptake constraint changes in response to the changes in</p>
+<blockquote>
+<div>the metabolite concentrations.</div></blockquote>
+<p>** this is an abstract method, must be implemented in strain specific subclasses **</p>
+</dd></dl>
+
+</dd></dl>
+
 </div>
-<div class="section" id="framed-bioreactor-bioreactors-module">
-<h2>framed.bioreactor.bioreactors module<a class="headerlink" href="#framed-bioreactor-bioreactors-module" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="module-framed.bioreactor.bioreactors">
+<span id="framed-bioreactor-bioreactors-module"></span><h2>framed.bioreactor.bioreactors module<a class="headerlink" href="#module-framed.bioreactor.bioreactors" title="Permalink to this headline">¶</a></h2>
+<p>This module defines classes for commonly used bioreactor types subclassed from Bioreactor</p>
+<p>&#64;author: Kai Zhuang</p>
+<dl class="class">
+<dt id="framed.bioreactor.bioreactors.Bioreactor_ox">
+<em class="property">class </em><code class="descclassname">framed.bioreactor.bioreactors.</code><code class="descname">Bioreactor_ox</code><span class="sig-paren">(</span><em>organisms=[]</em>, <em>metabolites=[]</em>, <em>id='Generic Bioreactor'</em>, <em>flow_rate_in=0</em>, <em>flow_rate_out=0</em>, <em>volume_max=None</em>, <em>Xfeed=None</em>, <em>Sfeed=None</em>, <em>deltaX=None</em>, <em>deltaS=None</em>, <em>initial_conditions=[]</em>, <em>oxygen_availability=None</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.bioreactor.bioreactors.Bioreactor_ox" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#framed.bioreactor.base.Bioreactor" title="framed.bioreactor.base.Bioreactor"><code class="xref py py-class docutils literal"><span class="pre">framed.bioreactor.base.Bioreactor</span></code></a></p>
+<p>Bioreactor class with oxygen_availability flag</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="framed.bioreactor.bioreactors.IdealBatch">
+<em class="property">class </em><code class="descclassname">framed.bioreactor.bioreactors.</code><code class="descname">IdealBatch</code><span class="sig-paren">(</span><em>organisms=[]</em>, <em>metabolites=[]</em>, <em>id='IdealBatch'</em>, <em>volume_max=None</em>, <em>deltaX=None</em>, <em>deltaS=None</em>, <em>initial_conditions=[]</em>, <em>oxygen_availability=None</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.bioreactor.bioreactors.IdealBatch" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#framed.bioreactor.bioreactors.Bioreactor_ox" title="framed.bioreactor.bioreactors.Bioreactor_ox"><code class="xref py py-class docutils literal"><span class="pre">framed.bioreactor.bioreactors.Bioreactor_ox</span></code></a></p>
+<dl class="docutils">
+<dt>This class describes an ideal batch reactor.</dt>
+<dd><ul class="first last simple">
+<li>flow_rate_in, flow_rate_out, Xfeed, Sfeed are all set to zero (no feeding in batch reactor).</li>
+</ul>
+</dd>
+</dl>
+<dl class="method">
+<dt id="framed.bioreactor.bioreactors.IdealBatch.calculate_yield_from_dfba">
+<code class="descname">calculate_yield_from_dfba</code><span class="sig-paren">(</span><em>dfba_solution</em>, <em>r_substrate</em>, <em>r_product</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.bioreactor.bioreactors.IdealBatch.calculate_yield_from_dfba" title="Permalink to this definition">¶</a></dt>
+<dd><p>calculates the product yield from dFBA solution</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="framed.bioreactor.bioreactors.IdealFedbatch">
+<em class="property">class </em><code class="descclassname">framed.bioreactor.bioreactors.</code><code class="descname">IdealFedbatch</code><span class="sig-paren">(</span><em>organisms=[]</em>, <em>metabolites=[]</em>, <em>id='IdealFedbatch'</em>, <em>primary_substrate=None</em>, <em>volume_max=None</em>, <em>Xfeed=None</em>, <em>Sfeed=None</em>, <em>deltaX=None</em>, <em>deltaS=None</em>, <em>initial_conditions=[]</em>, <em>oxygen_availability=None</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.bioreactor.bioreactors.IdealFedbatch" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#framed.bioreactor.bioreactors.Bioreactor_ox" title="framed.bioreactor.bioreactors.Bioreactor_ox"><code class="xref py py-class docutils literal"><span class="pre">framed.bioreactor.bioreactors.Bioreactor_ox</span></code></a></p>
+<dl class="docutils">
+<dt>This class describes an ideal fedbatch reactor with a single primary substrate.</dt>
+<dd><ul class="first last simple">
+<li><dl class="first docutils">
+<dt>The flow_rate_in is automatically adjusted using the following rules:</dt>
+<dd><ul class="first last">
+<li>otherwise, calculates flow_rate_in so that substrate concentration is maintained (d_substrate/dt = 0)</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li>The primary substrate (usually the carbon &amp; energy source) can be specified in the __init__() method.
+If it is not specified, the first element of metabolites is assumed to be the substrate</li>
+</ul>
+</dd>
+</dl>
+<dl class="method">
+<dt id="framed.bioreactor.bioreactors.IdealFedbatch.update">
+<code class="descname">update</code><span class="sig-paren">(</span><em>time</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.bioreactor.bioreactors.IdealFedbatch.update" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="docutils">
+<dt>calculates the flow_rate_in of the fedbatch reactor is calculated here.</dt>
+<dd><ul class="first last simple">
+<li>if liquid volume &gt;= volume_max, then the tank is full, set flow_rate_in to zero</li>
+<li>otherwise, calculate the flow rate so that d_substrate/dt = 0</li>
+</ul>
+</dd>
+</dl>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>(</strong><strong>float</strong><strong>)</strong> (<em>time</em>) – the simulation time.  can be used in subclasses to trigger time-specific events</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
 </div>
-<div class="section" id="framed-bioreactor-dfba-module">
-<h2>framed.bioreactor.dfba module<a class="headerlink" href="#framed-bioreactor-dfba-module" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="module-framed.bioreactor.dfba">
+<span id="framed-bioreactor-dfba-module"></span><h2>framed.bioreactor.dfba module<a class="headerlink" href="#module-framed.bioreactor.dfba" title="Permalink to this headline">¶</a></h2>
+<p>This module implements the Dynamic Flux Balance Analysis with support for multi-organism communities.
+This multi-organism version of the dFBA is derived from the Dynamic Multi-species Metabolic Modeling (DyMMM) framework.</p>
+<dl class="docutils">
+<dt>For dFBA, please cite:</dt>
+<dd>Mahadevan et al. 2002. Dynamic flux balance analysis of diauxic growth in Escherichia coli.</dd>
+<dt>For DyMMM, please cite:</dt>
+<dd><dl class="first last docutils">
+<dt>Zhuang et al. 2011. Genome-scale dynamic modeling of the competition between Rhodoferax and Geobacter in anoxic</dt>
+<dd>subsurface environments.</dd>
+<dt>Zhuang et al. 2012. The design of long-term effective uranium bioremediation strategy using a community metabolic</dt>
+<dd>model.</dd>
+</dl>
+</dd>
+</dl>
+<p>&#64;TODO: implement the analytical solver</p>
+<p>&#64;author: Kai Zhuang</p>
+<dl class="function">
+<dt id="framed.bioreactor.dfba.DyMMM">
+<code class="descclassname">framed.bioreactor.dfba.</code><code class="descname">DyMMM</code><span class="sig-paren">(</span><em>) is a alias for dFBAm(</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.bioreactor.dfba.DyMMM" title="Permalink to this definition">¶</a></dt>
+<dd><p>It is intended to provide legacy support for the name “DyMMM”</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="framed.bioreactor.dfba.dFBA">
+<code class="descclassname">framed.bioreactor.dfba.</code><code class="descname">dFBA</code><span class="sig-paren">(</span><em>bioreactor</em>, <em>t0</em>, <em>tf</em>, <em>dt</em>, <em>initial_conditions=None</em>, <em>solver='dopri5'</em>, <em>verbose=False</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.bioreactor.dfba.dFBA" title="Permalink to this definition">¶</a></dt>
+<dd><p>dFBA() is a alias for dFBAm().
+It is intended to provide legacy support for the name “dFBA”</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="framed.bioreactor.dfba.dFBA_combination">
+<code class="descclassname">framed.bioreactor.dfba.</code><code class="descname">dFBA_combination</code><span class="sig-paren">(</span><em>organisms</em>, <em>bioreactors</em>, <em>t0</em>, <em>tf</em>, <em>dt</em>, <em>initial_conditions=None</em>, <em>solver='dopri5'</em>, <em>verbose=False</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.bioreactor.dfba.dFBA_combination" title="Permalink to this definition">¶</a></dt>
+<dd><p>Run dFBA for all possible combinations of the given organisms and reactors.</p>
+<p>For example, given two organisms “ecoli” and “scerevisiae”, and two reactors “batch” and “fedbatch”,
+the call dFBA_combination([ecoli, scerevisiae], [batch, fedbatch], t0, ft, dt] will perform four simulations:</p>
+<blockquote>
+<div><ol class="arabic simple">
+<li>ecoli in batch</li>
+<li>ecoli in fedbatch</li>
+<li>scerevisiae in batch</li>
+<li>scerevisiae in fedbtach</li>
+</ol>
+</div></blockquote>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>organisms</strong> – list of Organism</li>
+<li><strong>bioreactors</strong> – list of Bioreactor</li>
+<li><strong>t0</strong> (<em>float</em>) – initial time</li>
+<li><strong>tf</strong> (<em>float</em>) – final time</li>
+<li><strong>dt</strong> (<em>float</em>) – time step</li>
+<li><strong>initial_conditions</strong> (<em>list of float</em>) – the initial conditions in the order of V0, X0, S0 (default: None)</li>
+<li><strong>solver</strong> (<em>str</em>) – ODE solver.  (default: ‘dopri5’)</li>
+<li><strong>verbose</strong> (<em>bool</em>) – Verbosity control.  (default: False).</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">a dictionary of dfba results</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">result (OrderedDict)</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="framed.bioreactor.dfba.dFBAm">
+<code class="descclassname">framed.bioreactor.dfba.</code><code class="descname">dFBAm</code><span class="sig-paren">(</span><em>bioreactor</em>, <em>t0</em>, <em>tf</em>, <em>dt</em>, <em>initial_conditions=None</em>, <em>solver='dopri5'</em>, <em>verbose=False</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.bioreactor.dfba.dFBAm" title="Permalink to this definition">¶</a></dt>
+<dd><p>Dynamic Flux Balance Analysis with Multi-organism support</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>bioreactor</strong> (<a class="reference internal" href="#framed.bioreactor.base.Bioreactor" title="framed.bioreactor.base.Bioreactor"><em>Bioreactor</em></a>) – a bioreactor instance with defined organisms and metabolites</li>
+<li><strong>t0</strong> (<em>float</em>) – initial time</li>
+<li><strong>tf</strong> (<em>float</em>) – final time</li>
+<li><strong>dt</strong> (<em>float</em>) – time step</li>
+<li><strong>initial_conditions</strong> (<em>list of float</em>) – the initial conditions in the order of V0, X0, S0 (default: None)</li>
+<li><strong>solver</strong> (<em>str</em>) – ODE solver.  (default: ‘dopri5’)</li>
+<li><strong>verbose</strong> (<em>bool</em>) – Verbosity control.  (default: False).</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">simulation results</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">results (OrderedDict)</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
 </div>
-<div class="section" id="framed-bioreactor-dyssco-module">
-<h2>framed.bioreactor.dyssco module<a class="headerlink" href="#framed-bioreactor-dyssco-module" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="module-framed.bioreactor.dyssco">
+<span id="framed-bioreactor-dyssco-module"></span><h2>framed.bioreactor.dyssco module<a class="headerlink" href="#module-framed.bioreactor.dyssco" title="Permalink to this headline">¶</a></h2>
+<p>This module implements classes and methods useful for the Dynamic Strain Scanning Optimization strategy</p>
+<p>Cite:
+Kai Zhuang et al. 2013. Dynamic strain scanning optimization: an efficient strain design strategy for balanced yield,
+titer, and productivity.</p>
+<p>&#64;author: Kai Zhuang</p>
+<dl class="function">
+<dt id="framed.bioreactor.dyssco.calculate_performance">
+<code class="descclassname">framed.bioreactor.dyssco.</code><code class="descname">calculate_performance</code><span class="sig-paren">(</span><em>strain</em>, <em>bioreactor</em>, <em>r_substrate</em>, <em>r_target</em>, <em>t0</em>, <em>tf</em>, <em>dt</em>, <em>initial_conditions=[]</em>, <em>dfba_solver='vode'</em>, <em>additional_yields=[]</em>, <em>verbose=False</em>, <em>save_dfba_solution=False</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.bioreactor.dyssco.calculate_performance" title="Permalink to this definition">¶</a></dt>
+<dd><p>calculates the performances of a list of strains in a given bioreactor</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>strain</strong> – Organism</li>
+<li><strong>bioreactor</strong> – Bioreactor</li>
+<li><strong>r_substrate</strong> (<em>str</em>) – reaction id of the substrate uptake reaction</li>
+<li><strong>r_target</strong> (<em>str</em>) – reaction id of the target metabolite exchange reaction</li>
+<li><strong>t0</strong> (<em>float</em>) – initial time</li>
+<li><strong>tf</strong> (<em>float</em>) – final time</li>
+<li><strong>dt</strong> (<em>float</em>) – time step</li>
+<li><strong>initial_conditions</strong> (<em>list</em><em> (</em><em>of float</em><em>)</em>) – the initial conditions in the order of V0, X0, S0 (default: None)</li>
+<li><strong>dfba_solver</strong> (<em>str</em>) – ODE solver.  (default: ‘dopri5’)</li>
+<li><strong>additional_yields</strong> (<em>list</em><em> (</em><em>of str</em><em>)</em>) – the reaction ids of the additional yields (yields other than target yield)
+to be calculated.</li>
+<li><strong>verbose</strong> (<em>bool</em>) – Verbosity control.  (default: False).</li>
+<li><strong>save_dfba_solution</strong> (<em>bool</em>) – controls whether dfba solutions are returned (default: False)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">contains the calculated performance metrics of a strain</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">performance (Dict)</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="framed.bioreactor.dyssco.calculate_performances">
+<code class="descclassname">framed.bioreactor.dyssco.</code><code class="descname">calculate_performances</code><span class="sig-paren">(</span><em>strains</em>, <em>bioreactor</em>, <em>r_substrate</em>, <em>r_target</em>, <em>t0</em>, <em>tf</em>, <em>dt</em>, <em>initial_conditions=[]</em>, <em>dfba_solver='dopri5'</em>, <em>additional_yields=[]</em>, <em>verbose=False</em>, <em>save_dfba_solution=False</em>, <em>func_dfba2yield=None</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.bioreactor.dyssco.calculate_performances" title="Permalink to this definition">¶</a></dt>
+<dd><p>calculates the performances of a list of strains in a given bioreactor</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>strains</strong> – list (of Organism)</li>
+<li><strong>bioreactor</strong> – Bioreactor</li>
+<li><strong>r_substrate</strong> (<em>str</em>) – reaction id of the substrate uptake reaction</li>
+<li><strong>r_target</strong> (<em>str</em>) – reaction id of the target metabolite exchange reaction</li>
+<li><strong>t0</strong> (<em>float</em>) – initial time</li>
+<li><strong>tf</strong> (<em>float</em>) – final time</li>
+<li><strong>dt</strong> (<em>float</em>) – time step</li>
+<li><strong>initial_conditions</strong> (<em>list</em><em> (</em><em>of float</em><em>)</em>) – the initial conditions in the order of V0, X0, S0 (default: None)</li>
+<li><strong>dfba_solver</strong> (<em>str</em>) – ODE solver.  (default: ‘dopri5’)</li>
+<li><strong>additional_yields</strong> (<em>list</em><em> (</em><em>of str</em><em>)</em>) – the reaction ids of the additional yields (yields other than target yield)
+to be calculated.</li>
+<li><strong>verbose</strong> (<em>bool</em>) – Verbosity control.  (default: False).</li>
+<li><strong>save_dfba_solution</strong> (<em>bool</em>) – controls whether dfba solutions are returned (default: False)</li>
+<li><strong>func_dfba2yield</strong> (<em>function</em>) – if None, yield is calculated from FBA solutions.
+if a function is passed in, yield is calculated from dFBA solutions.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">a list of dictionaries, each entry contains the calculated performance metrics
+of a strain</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">performances (list (of Dict))</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="framed.bioreactor.dyssco.make_envelope_strains">
+<code class="descclassname">framed.bioreactor.dyssco.</code><code class="descname">make_envelope_strains</code><span class="sig-paren">(</span><em>base_organism</em>, <em>r_substrate</em>, <em>r_target</em>, <em>N=10</em>, <em>constraints=None</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.bioreactor.dyssco.make_envelope_strains" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="docutils">
+<dt>Create N strains along the product envelope.</dt>
+<dd>(Used for Steps 1 and 2 of DySScO strategy)</dd>
+</dl>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>base_organism</strong> (<a class="reference internal" href="#framed.bioreactor.base.Organism" title="framed.bioreactor.base.Organism"><em>Organism</em></a>) – the host organism used to product the target product</li>
+<li><strong>r_substrate</strong> (<em>str</em>) – the rxn id of the substrate</li>
+<li><strong>r_target</strong> (<em>str</em>) – the rxn id of the target product</li>
+<li><strong>N</strong> (<em>int</em>) – the number of strains to be generated along the production envelope</li>
+<li><strong>constraints</strong> (<em>dict</em>) – custom constraints</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">N strains that are fixed to the production envelope</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">strains (list of Organism)</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
 </div>
-<div class="section" id="module-contents">
-<h2>Module contents<a class="headerlink" href="#module-contents" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="module-framed.bioreactor">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-framed.bioreactor" title="Permalink to this headline">¶</a></h2>
 </div>
 </div>
 
@@ -72,11 +527,11 @@
   <ul>
 <li><a class="reference internal" href="#">framed.bioreactor package</a><ul>
 <li><a class="reference internal" href="#submodules">Submodules</a></li>
-<li><a class="reference internal" href="#framed-bioreactor-base-module">framed.bioreactor.base module</a></li>
-<li><a class="reference internal" href="#framed-bioreactor-bioreactors-module">framed.bioreactor.bioreactors module</a></li>
-<li><a class="reference internal" href="#framed-bioreactor-dfba-module">framed.bioreactor.dfba module</a></li>
-<li><a class="reference internal" href="#framed-bioreactor-dyssco-module">framed.bioreactor.dyssco module</a></li>
-<li><a class="reference internal" href="#module-contents">Module contents</a></li>
+<li><a class="reference internal" href="#module-framed.bioreactor.base">framed.bioreactor.base module</a></li>
+<li><a class="reference internal" href="#module-framed.bioreactor.bioreactors">framed.bioreactor.bioreactors module</a></li>
+<li><a class="reference internal" href="#module-framed.bioreactor.dfba">framed.bioreactor.dfba module</a></li>
+<li><a class="reference internal" href="#module-framed.bioreactor.dyssco">framed.bioreactor.dyssco module</a></li>
+<li><a class="reference internal" href="#module-framed.bioreactor">Module contents</a></li>
 </ul>
 </li>
 </ul>

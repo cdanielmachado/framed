@@ -5,13 +5,13 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>framed.io package &#8212; framed 0.3.3 documentation</title>
+    <title>framed.io package &#8212; framed 0.3.5 documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '0.3.3',
+        VERSION:     '0.3.5',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true,
@@ -45,14 +45,252 @@
 <div class="section" id="submodules">
 <h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
 </div>
-<div class="section" id="framed-io-plaintext-module">
-<h2>framed.io.plaintext module<a class="headerlink" href="#framed-io-plaintext-module" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="module-framed.io.plaintext">
+<span id="framed-io-plaintext-module"></span><h2>framed.io.plaintext module<a class="headerlink" href="#module-framed.io.plaintext" title="Permalink to this headline">¶</a></h2>
+<p>This module implements methods for reading and writing models using a plain text format.</p>
+<p>Author: Daniel Machado</p>
+<dl class="function">
+<dt id="framed.io.plaintext.read_cbmodel_from_file">
+<code class="descclassname">framed.io.plaintext.</code><code class="descname">read_cbmodel_from_file</code><span class="sig-paren">(</span><em>filename</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.io.plaintext.read_cbmodel_from_file" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reads a constraint-based model from a file.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>filename</strong> (<em>str</em>) – file path</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">constraint-based model</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="framed.model.html#framed.model.cbmodel.CBModel" title="framed.model.cbmodel.CBModel">CBModel</a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="framed.io.plaintext.read_model_from_file">
+<code class="descclassname">framed.io.plaintext.</code><code class="descname">read_model_from_file</code><span class="sig-paren">(</span><em>filename</em>, <em>kind=None</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.io.plaintext.read_model_from_file" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reads a model from a file.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>filename</strong> (<em>str</em>) – file path</li>
+<li><strong>kind</strong> (<em>str</em>) – define kind of model to read (None or ‘cb’, optional)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">model (or respective subclass)</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference internal" href="framed.model.html#framed.model.model.Model" title="framed.model.model.Model">Model</a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="framed.io.plaintext.write_model_to_file">
+<code class="descclassname">framed.io.plaintext.</code><code class="descname">write_model_to_file</code><span class="sig-paren">(</span><em>model</em>, <em>filename</em>, <em>print_instructions=True</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.io.plaintext.write_model_to_file" title="Permalink to this definition">¶</a></dt>
+<dd><p>Writes a model to a file.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>model</strong> (<a class="reference internal" href="framed.model.html#framed.model.model.Model" title="framed.model.model.Model"><em>Model</em></a>) – model (currently supports Model and CBModel)</li>
+<li><strong>filename</strong> (<em>str</em>) – file path</li>
+<li><strong>print_instructions</strong> (<em>bool</em>) – print plain text format instructions as header</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
 </div>
-<div class="section" id="framed-io-sbml-module">
-<h2>framed.io.sbml module<a class="headerlink" href="#framed-io-sbml-module" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="module-framed.io.sbml">
+<span id="framed-io-sbml-module"></span><h2>framed.io.sbml module<a class="headerlink" href="#module-framed.io.sbml" title="Permalink to this headline">¶</a></h2>
+<p>This module implements methods for reading and writing SBML files.</p>
+<p>Author: Daniel Machado</p>
+<dl class="class">
+<dt id="framed.io.sbml.Flavor">
+<em class="property">class </em><code class="descclassname">framed.io.sbml.</code><code class="descname">Flavor</code><a class="headerlink" href="#framed.io.sbml.Flavor" title="Permalink to this definition">¶</a></dt>
+<dd><p>Enumeration of available model flavors.</p>
+<dl class="attribute">
+<dt id="framed.io.sbml.Flavor.BIGG">
+<code class="descname">BIGG</code><em class="property"> = 'bigg'</em><a class="headerlink" href="#framed.io.sbml.Flavor.BIGG" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="framed.io.sbml.Flavor.COBRA">
+<code class="descname">COBRA</code><em class="property"> = 'cobra'</em><a class="headerlink" href="#framed.io.sbml.Flavor.COBRA" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="framed.io.sbml.Flavor.COBRA_OTHER">
+<code class="descname">COBRA_OTHER</code><em class="property"> = 'cobra:other'</em><a class="headerlink" href="#framed.io.sbml.Flavor.COBRA_OTHER" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="framed.io.sbml.Flavor.FBC2">
+<code class="descname">FBC2</code><em class="property"> = 'fbc2'</em><a class="headerlink" href="#framed.io.sbml.Flavor.FBC2" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="framed.io.sbml.Flavor.SEED">
+<code class="descname">SEED</code><em class="property"> = 'seed'</em><a class="headerlink" href="#framed.io.sbml.Flavor.SEED" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="framed.io.sbml.load_cbmodel">
+<code class="descclassname">framed.io.sbml.</code><code class="descname">load_cbmodel</code><span class="sig-paren">(</span><em>filename</em>, <em>flavor=None</em>, <em>exchange_detection_mode=None</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.io.sbml.load_cbmodel" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>filename</strong> (<em>str</em>) – SBML file path</li>
+<li><strong>flavor</strong> (<em>str</em>) – adapt to different modeling conventions (optional, see Notes)</li>
+<li><strong>exchange_detection_mode</strong> (<em>str</em>) – detect exchange reactions (optional, see Notes)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Simple model or respective subclass</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference internal" href="framed.model.html#framed.model.model.Model" title="framed.model.model.Model">Model</a></p>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Notes</p>
+<dl class="docutils">
+<dt>Currently supported flavors:</dt>
+<dd><ul class="first last simple">
+<li>‘cobra’: UCSD models in the old cobra toolbox format</li>
+<li>‘cobra:other’: other models using the old cobra toolbox format</li>
+<li>‘seed’: modelSEED format</li>
+<li>‘bigg’: BiGG database format (uses sbml-fbc2)</li>
+<li>‘fbc2’: other models using sbml-fbc2</li>
+</ul>
+</dd>
+<dt>Supported exchange detection modes:</dt>
+<dd><ul class="first last simple">
+<li>‘unbalanced’: Exchange reactions is the one that have either only reactants or products</li>
+<li>‘boundary’: Exchange reaction is the one that have single boundary metabolite on one side</li>
+<li>&lt;regular expression pattern&gt;: Regular expression which is executed against reaction ID</li>
+</ul>
+</dd>
+</dl>
+<p>Note that some flavors (cobra, bigg) have their own exchange detection mode.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">constraint-based model</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="framed.model.html#framed.model.cbmodel.CBModel" title="framed.model.cbmodel.CBModel">CBModel</a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="framed.io.sbml.load_odemodel">
+<code class="descclassname">framed.io.sbml.</code><code class="descname">load_odemodel</code><span class="sig-paren">(</span><em>filename</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.io.sbml.load_odemodel" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="framed.io.sbml.load_sbml_model">
+<code class="descclassname">framed.io.sbml.</code><code class="descname">load_sbml_model</code><span class="sig-paren">(</span><em>filename</em>, <em>kind=None</em>, <em>flavor=None</em>, <em>exchange_detection_mode=None</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.io.sbml.load_sbml_model" title="Permalink to this definition">¶</a></dt>
+<dd><p>Loads a metabolic model from a file.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>filename</strong> (<em>str</em>) – SBML file path</li>
+<li><strong>kind</strong> (<em>str</em>) – define kind of model to load (‘cb’ or ‘ode’, optional)</li>
+<li><strong>flavor</strong> (<em>str</em>) – adapt to different modeling conventions (optional, see Notes)</li>
+<li><strong>exchange_detection_mode</strong> (<em>str</em>) – detect exchange reactions (optional, see Notes)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Simple model or respective subclass</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference internal" href="framed.model.html#framed.model.model.Model" title="framed.model.model.Model">Model</a></p>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Notes</p>
+<dl class="docutils">
+<dt>Currently supported flavors:</dt>
+<dd><ul class="first last simple">
+<li>‘cobra’: UCSD models in the old cobra toolbox format</li>
+<li>‘cobra:other’: other models using the old cobra toolbox format</li>
+<li>‘seed’: modelSEED format</li>
+<li>‘bigg’: BiGG database format (uses sbml-fbc2)</li>
+<li>‘fbc2’: other models using sbml-fbc2</li>
+</ul>
+</dd>
+<dt>Supported exchange detection modes:</dt>
+<dd><ul class="first last simple">
+<li>‘unbalanced’: Exchange reactions is the one that have either only reactants or products</li>
+<li>‘boundary’: Exchange reaction is the one that have single boundary metabolite on one side</li>
+<li>&lt;regular expression pattern&gt;: Regular expression which is executed against reaction ID</li>
+</ul>
+</dd>
+</dl>
+<p>Note that some flavors (cobra, bigg) have their own exchange detection mode.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="framed.io.sbml.parse_gpr_rule">
+<code class="descclassname">framed.io.sbml.</code><code class="descname">parse_gpr_rule</code><span class="sig-paren">(</span><em>rule</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.io.sbml.parse_gpr_rule" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="framed.io.sbml.sanitize_id">
+<code class="descclassname">framed.io.sbml.</code><code class="descname">sanitize_id</code><span class="sig-paren">(</span><em>identifier</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.io.sbml.sanitize_id" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="framed.io.sbml.save_cbmodel">
+<code class="descclassname">framed.io.sbml.</code><code class="descname">save_cbmodel</code><span class="sig-paren">(</span><em>model</em>, <em>filename</em>, <em>flavor='cobra'</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.io.sbml.save_cbmodel" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="framed.io.sbml.save_sbml_model">
+<code class="descclassname">framed.io.sbml.</code><code class="descname">save_sbml_model</code><span class="sig-paren">(</span><em>model</em>, <em>filename</em>, <em>flavor=None</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.io.sbml.save_sbml_model" title="Permalink to this definition">¶</a></dt>
+<dd><p>Save a model to an SBML file.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>model</strong> (<a class="reference internal" href="framed.model.html#framed.model.model.Model" title="framed.model.model.Model"><em>Model</em></a>) – model</li>
+<li><strong>filename</strong> (<em>str</em>) – file path</li>
+<li><strong>flavor</strong> (<em>str</em>) – adapt to different modeling conventions (optional, currently available: ‘cobra’, ‘fbc2’)</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
 </div>
-<div class="section" id="module-contents">
-<h2>Module contents<a class="headerlink" href="#module-contents" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="module-framed.io">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-framed.io" title="Permalink to this headline">¶</a></h2>
+<p>Package implementing all I/O methods for reading and writing models.</p>
+<p>Currently supports SBML files and an in-house plain text format.</p>
+<p>Author: Daniel Machado</p>
 </div>
 </div>
 
@@ -66,9 +304,9 @@
   <ul>
 <li><a class="reference internal" href="#">framed.io package</a><ul>
 <li><a class="reference internal" href="#submodules">Submodules</a></li>
-<li><a class="reference internal" href="#framed-io-plaintext-module">framed.io.plaintext module</a></li>
-<li><a class="reference internal" href="#framed-io-sbml-module">framed.io.sbml module</a></li>
-<li><a class="reference internal" href="#module-contents">Module contents</a></li>
+<li><a class="reference internal" href="#module-framed.io.plaintext">framed.io.plaintext module</a></li>
+<li><a class="reference internal" href="#module-framed.io.sbml">framed.io.sbml module</a></li>
+<li><a class="reference internal" href="#module-framed.io">Module contents</a></li>
 </ul>
 </li>
 </ul>

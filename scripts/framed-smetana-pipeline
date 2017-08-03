@@ -1,16 +1,33 @@
 #!/usr/bin/env python
 
-import os, sys, re, argparse, traceback, warnings, textwrap, ConfigParser
-import pandas
+import ConfigParser
+import argparse
+import os
+import re
+import sys
+import textwrap
+import traceback
+import warnings
 from collections import OrderedDict
-from framed import FBA, load_cbmodel
-from framed.community.smetana import *
+from shutil import copyfile
+import pandas
+from framed import load_cbmodel, FBA
 from framed.community.model import Community
+from framed.community.smetana import mip_score, mro_score, smetana_score
 from framed.experimental.medium import minimal_medium
 from framed.model.environment import Environment
-from shutil import copyfile
+from framed.solvers.solver import Status
 
-status_codes = {0: "Unknown", 1: "Optimal", -1: "Suboptimal", -4: "Infeasible_or_Unbounded", -3: "Infeasible", -2: "Unbounded"}
+
+status_codes = {
+    0: "Unknown",
+    1: "Optimal",
+    -1: "Suboptimal",
+    -4: "Infeasible_or_Unbounded",
+    -3: "Infeasible",
+    -2: "Unbounded"
+}
+
 
 def row_string(row):
     return "\t".join(("" if x is None else str(x)) for x in row.itervalues()) + "\n"
@@ -29,7 +46,8 @@ class Logger(object):
 
         txt = (args[0].format(*args[1:]) if len(args) > 1 else args[0])
         self._log += txt
-        if newline: self._log += "\n"
+        if newline:
+            self._log += "\n"
 
     def flush(self, error=False):
         self._log += "================================================================="
@@ -38,38 +56,58 @@ class Logger(object):
         stream.flush()
         self._log = "\n"
 
+
 def main():
     parser = argparse.ArgumentParser(formatter_class=argparse.RawDescriptionHelpFormatter,
                                      description="Run SMATANA on list of organisms communities",
                                      epilog=textwrap.dedent('''\
-        configuration file (* = optional):
+        configuration file (* = mandatory):
     
         [communities]
-        communities             Path to tab separated file with community description. Two columns are required, 
+        
+        communities*            Path to tab separated file with community description. Two columns are required, 
                                 community ID (column:id) and list of community species (column:species, separator 
                                 <communities_separator>)
-        communities_separator   Separator character used to separate community members (default: " ")                                
-        exchange_metabolites    Path to tab separated file with list of all exchange metabolites. Two columns are required,
+                                
+        communities_separator   Separator character used to separate community members (default: " ")         
+                               
+        exchange_metabolites*   Path to tab separated file with list of all exchange metabolites. Two columns are required,
                                 metabolite ID (column:id) and metabolite name (column:name)
-        models_dir*             Path to directory where SBML models are located. If not provided current folder is searched.
-        models_locations*       Path to tab separated file mapping species ID (column:id) in <communities> to 
+                                
+        models_dir*             Path to directory where SBML models are located. 
+        
+        models_locations        Path to tab separated file mapping species ID (column:id) in <communities> to 
                                 SBML file (column:path) relative <models_dir> path. If not provided model ID is assumed to be 
                                 SBML file name
+                                
         inorganic_media*        Path to tab separated file with list of metabolites always present in the environment. 
                                 Metabolite ID is the only required column (column:id). If not the always-present environment 
                                 is assumed to be empty
+                                
         minimize_media          After finding minimal media (inorganic always present) perform another optimization to find
                                 true media
                                 
         [framed]
+        
         flavor                  SBML flavor to use when parsing the models. Allowed values are 'cobra', 'cobra:other', 
                                 'seed', 'bigg' and 'fbc2'
+                                
         biomass_regex           Regular expression to match biomass reaction (default: "iomass")
+        
         extracellular_comp_id   Extracellular compartment id (default: Extracellular)
-        smetana_n_solutions     How many unique solutions to calculate for Metabolite Uptake and Species Coupling scores  (default: 50)
+        
+        exch_met_to_rxn_format  Conversion string to convert exchange metabolites to exchange reaction identifiers.
+                                Note: this is evaluated as a python format string, so it must be a nested string.
+                                (Default value, appropriate for BiGG ids: "'R_EX_{}_pool'")
+        
+        smetana_n_solutions     How many unique solutions to calculate for Metabolite Uptake and Species Coupling scores (default: 50)
+        
         max_uptake              How much of uptake/exchange should be allowed for active exchange reactions (default: 1000)
+        
+        min_mass_weight         Calculate minimal media using mass weight minimization (default: False)
                                 
     '''))
+
     parser.add_argument('config', help='Path to configuration file (see epilog)')
     parser.add_argument('output', nargs="?",
                         help='Path to output file (have to include {i} and {total} placeholders. example: "results/output_{i}_{total}.tsv")')
@@ -92,12 +130,13 @@ def main():
     config.read(args.config)
     communities_sep = config.get("communities", "communities_separator").strip('"') if config.has_option("communities", "communities_separator") else ","
     flavor = config.get("framed", "flavor") if config.has_option("framed", "flavor") else "fbc2"
-    n_solutions = int(config.get("framed", "smetana_n_solutions")) if config.has_option("framed", "smetana_n_solutions") else 50
-    minimize_media = int(config.get("communities", "minimize_media")) if config.has_option("communities", "minimize_media") else 0
-    min_mass_weight = int(config.get("framed", "min_mass_weight")) if config.has_option("framed", "min_mass_weight") else 0
-    max_uptake = float(config.get("framed", "max_uptake")) if config.has_option("framed", "max_uptake") else 1000.0
+    n_solutions = config.getint("framed", "smetana_n_solutions") if config.has_option("framed", "smetana_n_solutions") else 50
+    minimize_media = config.getint("communities", "minimize_media") if config.has_option("communities", "minimize_media") else 0
+    min_mass_weight = config.getint("framed", "min_mass_weight") if config.has_option("framed", "min_mass_weight") else False
+    max_uptake = config.getfloat("framed", "max_uptake") if config.has_option("framed", "max_uptake") else 1000.0
     re_biomass = re.compile(config.get("framed", "biomass_regex")) if config.has_option("framed", "biomass_regex") else re.compile("iomass")
     extracellular_comp_id = config.get("framed", "extracellular_comp_id") if config.has_option("framed", "extracellular_comp_id") else "Extracellular"
+    exch_met_to_rxn_format = config.get("framed", "exch_met_to_rxn_format") if config.has_option("framed", "exch_met_to_rxn_format") else "'R_EX_{}_pool'"
     models_dir = config.get("communities", "models_dir")
     if config.has_option("communities", "models_locations"):
         models_locations = {r['id']: r['path'] for _, r in
@@ -107,7 +146,8 @@ def main():
     exch_metabolites = {r['id']: r['name'] for _, r in
                         pandas.read_table(config.get("communities", "exchange_metabolites")).iterrows()}
     exch_metabolites_list = sorted(exch_metabolites)
-    rxn_inorganic = {r['id'].strip() for _, r in pandas.read_table(config.get("communities", "inorganic_media"), comment="#").iterrows()}
+    rxn_inorganic = {r['id'].strip() for _, r in
+                     pandas.read_table(config.get("communities", "inorganic_media"), comment="#").iterrows()}
     env_inorganic = Environment.from_reactions(rxn_inorganic, max_uptake=max_uptake)
 
     #
@@ -127,7 +167,8 @@ def main():
 
                 community_model_paths.append(m_path)
 
-        communities.append({'id': r['id'], 'species': community_models, 'paths': community_model_paths, 'missing_models': missing_models})
+        communities.append({'id': r['id'], 'species': community_models, 'paths': community_model_paths,
+                            'missing_models': missing_models})
     max_community_size = max(len(com["species"]) for com in communities)
 
     #
@@ -136,15 +177,27 @@ def main():
     row_template = OrderedDict(
         [("community_id", ""), ("size", ""), ("mip", ""), ("mro", ""), ("fba_community", ""), ("mmedia_status", ""),
          ("fba_status", "")])
-    for i in range(1, max_community_size + 1): row_template["org{}".format(i)] = ""
-    for i in range(1, max_community_size + 1): row_template["fba.org{}".format(i)] = ""
-    for m_id in exch_metabolites_list: row_template["mmedia.{}".format(m_id)] = 0
+
     for i in range(1, max_community_size + 1):
-        for m_id in exch_metabolites_list: row_template["muscore.org{}.{}".format(i, m_id)] = 0
+        row_template["org{}".format(i)] = ""
+
     for i in range(1, max_community_size + 1):
-        for m_id in exch_metabolites_list: row_template["mpscore.org{}.{}".format(i, m_id)] = 0
+        row_template["fba.org{}".format(i)] = ""
+
+    for m_id in exch_metabolites_list:
+        row_template["mmedia.{}".format(m_id)] = 0
+
     for i in range(1, max_community_size + 1):
-        for j in range(1, max_community_size + 1): row_template["scscore.org{}.org{}".format(i, j)] = 0
+        for m_id in exch_metabolites_list:
+            row_template["muscore.org{}.{}".format(i, m_id)] = 0
+
+    for i in range(1, max_community_size + 1):
+        for m_id in exch_metabolites_list:
+            row_template["mpscore.org{}.{}".format(i, m_id)] = 0
+
+    for i in range(1, max_community_size + 1):
+        for j in range(1, max_community_size + 1):
+            row_template["scscore.org{}.org{}".format(i, j)] = 0
 
     communities_sample = [communities[i::args.parts_total] for i in xrange(args.parts_total)][args.part - 1]
 
@@ -157,19 +210,22 @@ def main():
         missing_communities_sample = [m['id'] for m in communities_sample if len(m['missing_models'])]
         file.write("\t".join(row_template) + "\n")
         logger.log("Total number of communities: {} (sample: {})", len(communities), len(communities_sample))
-        logger.log("Missing models: {} (sample: {}): {}", len(missing_communities), len(missing_communities_sample), ", ".join(missing_communities_sample))
+        logger.log("Missing models: {} (sample: {}): {}", len(missing_communities), len(missing_communities_sample),
+                   ", ".join(missing_communities_sample))
         logger.flush()
 
         for community_i, community_data in enumerate(communities_sample, start=1):
             try:
                 row = row_template.copy()
-                community_all_i = next(c_i for c_i, c in enumerate(communities, start=1) if c['id'] == community_data['id'])
+                community_all_i = next(
+                    c_i for c_i, c in enumerate(communities, start=1) if c['id'] == community_data['id'])
 
                 logger.log("{}/{:<5} (all: {}/{:<5}) [{}]: {}", community_i, len(communities_sample), community_all_i,
                            len(communities), community_data['id'], ", ".join(community_data["species"]))
 
                 if len(community_data['missing_models']):
-                    logger.log("Skiping because missing models: {}".format(", ".join(community_data['missing_models'])), newline=True)
+                    logger.log("Skiping because missing models: {}".format(", ".join(community_data['missing_models'])),
+                               newline=True)
                     logger.flush(error=True)
                     continue
                 #
@@ -181,7 +237,7 @@ def main():
                 for i, path in enumerate(community_data['paths'], start=1):
                     logger.log("Reading {}:'{}' SBML file...".format(i, path), newline=True)
                     model = load_cbmodel(path, flavor=flavor)
-                    model.id = re.sub("[^A-Za-z0-9]", "_", community_data['species'][i-1])
+                    model.id = re.sub("[^A-Za-z0-9]", "_", community_data['species'][i - 1])
                     biomass_candidates = [r for r in model.reactions if re_biomass.match(r)]
                     if len(biomass_candidates) != 1:
                         biomass_valid = False
@@ -218,9 +274,18 @@ def main():
                 #
                 env_inorganic.apply(community.merged, inplace=True)
 
-                candidates_rxn_minimal = set(community.merged.get_exchange_reactions()) - com_rxn_inorganic
+#                candidates_rxn_minimal = set(community.merged.get_exchange_reactions()) - com_rxn_inorganic
+
+                external_env = Environment.from_compounds(exch_metabolites_list, exchange_format=exch_met_to_rxn_format,
+                                                          max_uptake=max_uptake)
+
+                candidates_rxn_minimal = (set(community.merged.get_exchange_reactions()) & set(external_env.keys())) - com_rxn_inorganic
+
+
                 com_rxn_defined, sol = minimal_medium(community.merged, exchange_reactions=candidates_rxn_minimal,
                                                       validate=True, min_mass_weight=min_mass_weight)
+
+
                 row["mmedia_status"] = status_codes[sol.status]
                 if sol.status != Status.OPTIMAL:
                     logger.log("No defined media available")
@@ -232,7 +297,7 @@ def main():
                 com_rxn_defined = com_rxn_defined | com_rxn_inorganic
                 if minimize_media:
                     com_rxn_minimal, sol = minimal_medium(community.merged, exchange_reactions=com_rxn_defined,
-                                                      validate=True, min_mass_weight=min_mass_weight)
+                                                          validate=True, min_mass_weight=min_mass_weight)
 
                     row["mmedia_status"] = status_codes[sol.status]
                     if sol.status != Status.OPTIMAL:
@@ -244,7 +309,6 @@ def main():
                 else:
                     com_rxn_minimal = com_rxn_defined
 
-
                 env_minimal = Environment.from_reactions(com_rxn_minimal, max_uptake=max_uptake)
                 logger.log("SMETANA media ({}'inorganic + {}'minimal ({}'defined)):",
                            len(com_rxn_minimal & com_rxn_inorganic),
@@ -255,9 +319,9 @@ def main():
                 for r_i, r in enumerate(com_rxn_minimal, start=1):
                     m = community.merged.get_exchange_reactions()[r][0]
                     orig_m = list({org_m.original_metabolite
-                          for org_exch in community.organisms_exchange_reactions.itervalues()
-                          for org_m in org_exch.itervalues()
-                          if org_m.extracellular_metabolite == m})
+                                   for org_exch in community.organisms_exchange_reactions.itervalues()
+                                   for org_m in org_exch.itervalues()
+                                   if org_m.extracellular_metabolite == m})
                     if len(orig_m):
                         orig_m = orig_m[0]
                     else:
@@ -285,18 +349,24 @@ def main():
                 #
                 env_minimal.apply(community.merged, inplace=True)
                 community_fba = community.copy(create_biomass=False, interacting=False)
-                for r_id in com_rxn_minimal: community_fba.merged.reactions[r_id].lb = -1000
+
+                for r_id in com_rxn_minimal:
+                    community_fba.merged.reactions[r_id].lb = -1000
+
                 for r_exchanges in community_fba.organisms_exchange_reactions.itervalues():
-                    for r_id in r_exchanges: community_fba.merged.reactions[r_id].lb = -1
+                    for r_id in r_exchanges:
+                        community_fba.merged.reactions[r_id].lb = -1
+
                 sol = FBA(community_fba.merged, get_values=True)
                 row["fba_status"] = status_codes[sol.status]
                 logger.log("Growth on minimal media (uptakes 1.0/org): {:.1f} ({}) = ",
                            sol.fobj, status_codes[sol.status], newline=False)
+
                 if sol.status == Status.OPTIMAL:
                     row["fba_community"] = sol.fobj
                     for m_i, model_id in enumerate(community.organisms, start=1):
                         b = community_fba.organisms_biomass_reactions[model_id]
-                        logger.log("{:.1f}'{} + ", sol.values[b], community_data['species'][i-1],
+                        logger.log("{:.1f}'{} + ", sol.values[b], community_data['species'][m_i - 1],
                                    newline=(len(community.organisms) == m_i))
                         row_id = "fba.org{}".format(models_i[model_id])
                         if row_id not in row:
@@ -306,7 +376,8 @@ def main():
                 #
                 # Calculate SMETANA
                 #
-                smetana, smetana_extras = smetana_score(community, env_minimal, n_solutions=n_solutions, min_mass_weight=min_mass_weight)
+                smetana, smetana_extras = smetana_score(community, env_minimal, n_solutions=n_solutions,
+                                                        min_mass_weight=min_mass_weight)
                 logger.log("Smetana (sum={}): ", sum(s.score for s in smetana))
                 if smetana:
                     logger.log(", ".join(str(s) for s in smetana))
