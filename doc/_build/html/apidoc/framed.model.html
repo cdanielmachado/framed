@@ -493,6 +493,249 @@ Each protein is encoded by one or several genes.</p>
 </dd></dl>
 
 </div>
+<div class="section" id="module-framed.model.environment">
+<span id="framed-model-environment-module"></span><h2>framed.model.environment module<a class="headerlink" href="#module-framed.model.environment" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="framed.model.environment.Environment">
+<em class="property">class </em><code class="descclassname">framed.model.environment.</code><code class="descname">Environment</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.model.environment.Environment" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">_abcoll.MutableMapping</span></code></p>
+<p>This class represents the exchange of compounds between an organism and the environment.</p>
+<dl class="method">
+<dt id="framed.model.environment.Environment.apply">
+<code class="descname">apply</code><span class="sig-paren">(</span><em>model</em>, <em>exclusive=True</em>, <em>inplace=True</em>, <em>warning=True</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.model.environment.Environment.apply" title="Permalink to this definition">¶</a></dt>
+<dd><p>Apply environmental conditions to a given model</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>model</strong> (<a class="reference internal" href="#framed.model.cbmodel.CBModel" title="framed.model.cbmodel.CBModel"><em>CBModel</em></a>) – model</li>
+<li><strong>exclusive</strong> (<em>bool</em>) – block uptake of any model compounds not specified in this environment (default: True)</li>
+<li><strong>warning</strong> (<em>bool</em>) – print warning for exchange reactions not found in the model (default: True)</li>
+<li><strong>inplace</strong> (<em>bool</em>) – apply to model, otherwise return a constraints dict (default: True)</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="framed.model.environment.Environment.complete">
+<em class="property">static </em><code class="descname">complete</code><span class="sig-paren">(</span><em>model</em>, <em>max_uptake=10.0</em>, <em>inplace=False</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.model.environment.Environment.complete" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generate a complete growth medium for a given model</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>model</strong> (<a class="reference internal" href="#framed.model.cbmodel.CBModel" title="framed.model.cbmodel.CBModel"><em>CBModel</em></a>) – model from which the exchange reactions are determined</li>
+<li><strong>max_uptake</strong> (<em>float</em>) – maximum uptake rate (default: 1000.0)</li>
+<li><strong>inplace</strong> (<em>bool</em>) – apply to model (default: False)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">complete medium for provided model</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference internal" href="#framed.model.environment.Environment" title="framed.model.environment.Environment">Environment</a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="framed.model.environment.Environment.copy">
+<code class="descname">copy</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#framed.model.environment.Environment.copy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create an identical copy of this Environment.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">deep copy</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="#framed.model.environment.Environment" title="framed.model.environment.Environment">Environment</a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="framed.model.environment.Environment.empty">
+<em class="property">static </em><code class="descname">empty</code><span class="sig-paren">(</span><em>model</em>, <em>inplace=False</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.model.environment.Environment.empty" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generate an empty growth medium for a given model</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>model</strong> (<a class="reference internal" href="#framed.model.cbmodel.CBModel" title="framed.model.cbmodel.CBModel"><em>CBModel</em></a>) – model from which the exchange reactions are determined</li>
+<li><strong>inplace</strong> (<em>bool</em>) – apply to model (default: False)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">empty medium for provided model</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference internal" href="#framed.model.environment.Environment" title="framed.model.environment.Environment">Environment</a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="framed.model.environment.Environment.from_community_models">
+<em class="property">static </em><code class="descname">from_community_models</code><span class="sig-paren">(</span><em>community</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.model.environment.Environment.from_community_models" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="staticmethod">
+<dt id="framed.model.environment.Environment.from_compounds">
+<em class="property">static </em><code class="descname">from_compounds</code><span class="sig-paren">(</span><em>compounds</em>, <em>exchange_format=&quot;'R_EX_{}_e'&quot;</em>, <em>max_uptake=10.0</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.model.environment.Environment.from_compounds" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize environment from list of medium compounds</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>compounds</strong> (<em>list</em>) – List of compounds present in the medium</li>
+<li><strong>exchange_format</strong> (<em>str</em>) – python format string (see Notes)</li>
+<li><strong>max_uptake</strong> (<em>float</em>) – maximum uptake rate for given compounds (default: 1000.0)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Complete medium for provided model</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference internal" href="#framed.model.environment.Environment" title="framed.model.environment.Environment">Environment</a></p>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Notes</p>
+<p>The exchange format string is used to convert metabolite ids to exchange reaction ids.
+The string should include a place holder for the metabolite id (str.format() syntax).
+The string is evaluated as an expression to allow more complex substitutions,
+therefore two quote levels must be included.</p>
+<p>For example, to transform ‘o2’ to ‘R_EX_o2_e’, one can use the format string: “‘R_EX_{}_e’”.</p>
+<p>To transform ‘M_o2_e’ to ‘R_EX_o2_e’, the format string is a bit more complex:  “’<a href="#id1"><span class="problematic" id="id2">R_EX_</span></a>’ + ‘{}’[2:]”.</p>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="framed.model.environment.Environment.from_csv">
+<em class="property">static </em><code class="descname">from_csv</code><span class="sig-paren">(</span><em>path</em>, <em>reaction_col='reaction'</em>, <em>lower_bound_col='lower_bound'</em>, <em>upper_bound_col='upper_bound'</em>, <em>sep='\t'</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.model.environment.Environment.from_csv" title="Permalink to this definition">¶</a></dt>
+<dd><p>Load environment from tab separated file</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>path</strong> (<em>str</em>) – Path to medium file</li>
+<li><strong>reaction_col</strong> (<em>str</em>) – Column name with reaction names</li>
+<li><strong>lower_bound_col</strong> (<em>str</em>) – Column name with upper bounds</li>
+<li><strong>upper_bound_col</strong> (<em>str</em>) – Column name with upper bounds</li>
+<li><strong>sep</strong> (<em>str</em>) – Separator for columns</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p>Returns: Environment</p>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="framed.model.environment.Environment.from_defaults">
+<em class="property">static </em><code class="descname">from_defaults</code><span class="sig-paren">(</span><em>model</em>, <em>max_uptake=10.0</em>, <em>max_secretion=None</em>, <em>inplace=False</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.model.environment.Environment.from_defaults" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generate default environmental conditions for a given model</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>model</strong> (<a class="reference internal" href="#framed.model.cbmodel.CBModel" title="framed.model.cbmodel.CBModel"><em>CBModel</em></a>) – model from which the exchange reactions are determined</li>
+<li><strong>max_uptake</strong> (<em>float</em>) – maximum uptake rate (default: 10.0)</li>
+<li><strong>max_secretion</strong> (<em>float</em>) – maximum secretion rate (default: 1000.0)</li>
+<li><strong>inplace</strong> (<em>bool</em>) – apply to model (default: False)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Default environment for provided model</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference internal" href="#framed.model.environment.Environment" title="framed.model.environment.Environment">Environment</a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="framed.model.environment.Environment.from_environments">
+<em class="property">static </em><code class="descname">from_environments</code><span class="sig-paren">(</span><em>environments</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.model.environment.Environment.from_environments" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="staticmethod">
+<dt id="framed.model.environment.Environment.from_model">
+<em class="property">static </em><code class="descname">from_model</code><span class="sig-paren">(</span><em>model</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.model.environment.Environment.from_model" title="Permalink to this definition">¶</a></dt>
+<dd><p>Extract environmental conditions from a given model</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>model</strong> (<a class="reference internal" href="#framed.model.cbmodel.CBModel" title="framed.model.cbmodel.CBModel"><em>CBModel</em></a>) – model from which the exchange reactions are determined</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">environment from provided model</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="#framed.model.environment.Environment" title="framed.model.environment.Environment">Environment</a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="framed.model.environment.Environment.from_models">
+<em class="property">static </em><code class="descname">from_models</code><span class="sig-paren">(</span><em>models</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.model.environment.Environment.from_models" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="staticmethod">
+<dt id="framed.model.environment.Environment.from_reactions">
+<em class="property">static </em><code class="descname">from_reactions</code><span class="sig-paren">(</span><em>reactions</em>, <em>max_uptake=10.0</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.model.environment.Environment.from_reactions" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="framed.model.environment.Environment.get_compounds">
+<code class="descname">get_compounds</code><span class="sig-paren">(</span><em>format_str=&quot;'{}'[5:-2]&quot;</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.model.environment.Environment.get_compounds" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the list of compounds in the growth medium for this environment.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>format_str</strong> (<em>str</em>) – python format string (see Notes)</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">compounds in the medium</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">list</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Notes</p>
+<p>The exchange format string is used to convert exchange reaction ids to metabolite ids.
+The string should include a place holder for the reaction id (str.format() syntax).
+The string is evaluated as an expression to allow more complex substitutions,
+therefore two quote levels must be included.</p>
+<p>For example, to transform ‘R_EX_o2_e’ to ‘o2’, one can use the format string: “’{}’[5:-2]”.</p>
+<p>To transform ‘R_EX_o2_e’ to ‘M_o2_e’, the format string is a bit more complex:  “’<a href="#id3"><span class="problematic" id="id4">M_</span></a>’ + ‘{}’[5:]”.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="framed.model.environment.Environment.join">
+<code class="descname">join</code><span class="sig-paren">(</span><em>other</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.model.environment.Environment.join" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
 <div class="section" id="module-framed.model.fixes">
 <span id="framed-model-fixes-module"></span><h2>framed.model.fixes module<a class="headerlink" href="#module-framed.model.fixes" title="Permalink to this headline">¶</a></h2>
 <p>Fixes to clean up common models from different sources/groups.</p>
@@ -1308,6 +1551,7 @@ metabolites</p>
 <li><a class="reference internal" href="#">framed.model package</a><ul>
 <li><a class="reference internal" href="#submodules">Submodules</a></li>
 <li><a class="reference internal" href="#module-framed.model.cbmodel">framed.model.cbmodel module</a></li>
+<li><a class="reference internal" href="#module-framed.model.environment">framed.model.environment module</a></li>
 <li><a class="reference internal" href="#module-framed.model.fixes">framed.model.fixes module</a></li>
 <li><a class="reference internal" href="#module-framed.model.model">framed.model.model module</a></li>
 <li><a class="reference internal" href="#module-framed.model.odemodel">framed.model.odemodel module</a></li>
@@ -1321,7 +1565,7 @@ metabolites</p>
 <h3>Related Topics</h3>
 <ul>
   <li><a href="../index.html">Documentation overview</a><ul>
-  <li><a href="modules.html">API</a><ul>
+  <li><a href="modules.html">src</a><ul>
   <li><a href="framed.html">framed package</a><ul>
       <li>Previous: <a href="framed.kinetic.html" title="previous chapter">framed.kinetic package</a></li>
       <li>Next: <a href="framed.omics.html" title="next chapter">framed.omics package</a></li>

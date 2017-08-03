@@ -1,35 +1,35 @@
-framed.kinetic package
-======================
+framed\.kinetic package
+=======================
 
 Submodules
 ----------
 
-framed.kinetic.fitting module
------------------------------
+framed\.kinetic\.fitting module
+-------------------------------
 
 .. automodule:: framed.kinetic.fitting
     :members:
     :undoc-members:
     :show-inheritance:
 
-framed.kinetic.plotting module
-------------------------------
+framed\.kinetic\.plotting module
+--------------------------------
 
 .. automodule:: framed.kinetic.plotting
     :members:
     :undoc-members:
     :show-inheritance:
 
-framed.kinetic.sampling module
-------------------------------
+framed\.kinetic\.sampling module
+--------------------------------
 
 .. automodule:: framed.kinetic.sampling
     :members:
     :undoc-members:
     :show-inheritance:
 
-framed.kinetic.simulation module
---------------------------------
+framed\.kinetic\.simulation module
+----------------------------------
 
 .. automodule:: framed.kinetic.simulation
     :members:
