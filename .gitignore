@@ -17,3 +17,7 @@ dist
 src/framed.egg-info
 
 src/main.py
+
+doc/_build/
+
+framed.egg-info
