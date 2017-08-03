@@ -1,19 +1,19 @@
-framed.io package
-=================
+framed\.io package
+==================
 
 Submodules
 ----------
 
-framed.io.plaintext module
---------------------------
+framed\.io\.plaintext module
+----------------------------
 
 .. automodule:: framed.io.plaintext
     :members:
     :undoc-members:
     :show-inheritance:
 
-framed.io.sbml module
----------------------
+framed\.io\.sbml module
+-----------------------
 
 .. automodule:: framed.io.sbml
     :members:

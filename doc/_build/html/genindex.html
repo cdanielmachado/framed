@@ -51,6 +51,7 @@
  | <a href="#F"><strong>F</strong></a>
  | <a href="#G"><strong>G</strong></a>
  | <a href="#I"><strong>I</strong></a>
+ | <a href="#J"><strong>J</strong></a>
  | <a href="#L"><strong>L</strong></a>
  | <a href="#M"><strong>M</strong></a>
  | <a href="#N"><strong>N</strong></a>
@@ -67,6 +68,8 @@
 <h2 id="A">A</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="apidoc/framed.community.html#framed.community.model.Community.abundances">abundances (framed.community.model.Community attribute)</a>
+</li>
       <li><a href="apidoc/framed.model.html#framed.model.odemodel.MyTree.add_child">add_child() (framed.model.odemodel.MyTree method)</a>
 </li>
       <li><a href="apidoc/framed.model.html#framed.model.model.Model.add_compartment">add_compartment() (framed.model.model.Model method)</a>
@@ -92,11 +95,15 @@
       <li><a href="apidoc/framed.bioreactor.html#framed.bioreactor.base.Environment.add_metabolites">add_metabolites() (framed.bioreactor.base.Environment method)</a>
 </li>
       <li><a href="apidoc/framed.bioreactor.html#framed.bioreactor.base.Environment.add_organism">add_organism() (framed.bioreactor.base.Environment method)</a>
+
+      <ul>
+        <li><a href="apidoc/framed.community.html#framed.community.model.Community.add_organism">(framed.community.model.Community method)</a>
 </li>
-      <li><a href="apidoc/framed.bioreactor.html#framed.bioreactor.base.Environment.add_organisms">add_organisms() (framed.bioreactor.base.Environment method)</a>
-</li>
+      </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="apidoc/framed.bioreactor.html#framed.bioreactor.base.Environment.add_organisms">add_organisms() (framed.bioreactor.base.Environment method)</a>
+</li>
       <li><a href="apidoc/framed.model.html#framed.model.cbmodel.CBModel.add_ratio_constraint">add_ratio_constraint() (framed.model.cbmodel.CBModel method)</a>
 </li>
       <li><a href="apidoc/framed.model.html#framed.model.cbmodel.CBModel.add_reaction">add_reaction() (framed.model.cbmodel.CBModel method)</a>
@@ -124,6 +131,8 @@
       <li><a href="apidoc/framed.solvers.html#framed.solvers.cplex_interface.CplexSolver.add_variables">add_variables() (framed.solvers.cplex_interface.CplexSolver method)</a>
 </li>
       <li><a href="apidoc/framed.bioreactor.html#framed.bioreactor.base.DynamicSystem.analytical_integrator">analytical_integrator() (framed.bioreactor.base.DynamicSystem method)</a>
+</li>
+      <li><a href="apidoc/framed.model.html#framed.model.environment.Environment.apply">apply() (framed.model.environment.Environment method)</a>
 </li>
       <li><a href="apidoc/framed.model.html#framed.model.model.AttrOrderedDict">AttrOrderedDict (class in framed.model.model)</a>
 </li>
@@ -183,27 +192,43 @@
 </li>
       <li><a href="apidoc/framed.model.html#framed.model.fixes.clean_bounds">clean_bounds() (in module framed.model.fixes)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="apidoc/framed.solvers.html#framed.solvers.solver.Solver.clean_up">clean_up() (framed.solvers.solver.Solver method)</a>
 </li>
       <li><a href="apidoc/framed.io.html#framed.io.sbml.Flavor.COBRA">COBRA (framed.io.sbml.Flavor attribute)</a>
 </li>
       <li><a href="apidoc/framed.io.html#framed.io.sbml.Flavor.COBRA_OTHER">COBRA_OTHER (framed.io.sbml.Flavor attribute)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="apidoc/framed.cobra.html#framed.cobra.strain_design.combinatorial_deletion">combinatorial_deletion() (in module framed.cobra.strain_design)</a>
 </li>
       <li><a href="apidoc/framed.cobra.html#framed.cobra.strain_design.combinatorial_gene_deletion">combinatorial_gene_deletion() (in module framed.cobra.strain_design)</a>
 </li>
       <li><a href="apidoc/framed.cobra.html#framed.cobra.strain_design.combinatorial_reaction_deletion">combinatorial_reaction_deletion() (in module framed.cobra.strain_design)</a>
 </li>
+      <li><a href="apidoc/framed.community.html#framed.community.model.Community">Community (class in framed.community.model)</a>
+</li>
+      <li><a href="apidoc/framed.community.html#framed.community.model.CommunityNameMapping">CommunityNameMapping (class in framed.community.model)</a>
+</li>
       <li><a href="apidoc/framed.model.html#framed.model.model.Compartment">Compartment (class in framed.model.model)</a>
+</li>
+      <li><a href="apidoc/framed.model.html#framed.model.environment.Environment.complete">complete() (framed.model.environment.Environment static method)</a>
 </li>
       <li><a href="apidoc/framed.solvers.html#framed.solvers.solver.VarType.CONTINUOUS">CONTINUOUS (framed.solvers.solver.VarType attribute)</a>
 </li>
-      <li><a href="apidoc/framed.model.html#framed.model.model.Model.copy">copy() (framed.model.model.Model method)</a>
+      <li><a href="apidoc/framed.community.html#framed.community.model.Community.copy">copy() (framed.community.model.Community method)</a>
+
+      <ul>
+        <li><a href="apidoc/framed.model.html#framed.model.environment.Environment.copy">(framed.model.environment.Environment method)</a>
+</li>
+        <li><a href="apidoc/framed.model.html#framed.model.model.Model.copy">(framed.model.model.Model method)</a>
+</li>
+      </ul></li>
+      <li><a href="apidoc/framed.community.html#framed.community.model.Community.copy_models">copy_models (framed.community.model.Community attribute)</a>
 </li>
       <li><a href="apidoc/framed.solvers.html#framed.solvers.cplex_interface.CplexSolver">CplexSolver (class in framed.solvers.cplex_interface)</a>
+</li>
+      <li><a href="apidoc/framed.community.html#framed.community.model.Community.create_biomass_reaction">create_biomass_reaction (framed.community.model.Community attribute)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -219,12 +244,14 @@
 </li>
       <li><a href="apidoc/framed.cobra.html#framed.cobra.deletion.deletion">deletion() (in module framed.cobra.deletion)</a>
 </li>
-      <li><a href="apidoc/framed.model.html#framed.model.cbmodel.CBModel.detect_biomass_reaction">detect_biomass_reaction() (framed.model.cbmodel.CBModel method)</a>
+      <li><a href="apidoc/framed.community.html#framed.community.smetana.GrowthStatus.DEPENDENT">DEPENDENT (framed.community.smetana.GrowthStatus attribute)</a>
 </li>
-      <li><a href="apidoc/framed.bioreactor.html#framed.bioreactor.dfba.dFBA">dFBA() (in module framed.bioreactor.dfba)</a>
+      <li><a href="apidoc/framed.model.html#framed.model.cbmodel.CBModel.detect_biomass_reaction">detect_biomass_reaction() (framed.model.cbmodel.CBModel method)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="apidoc/framed.bioreactor.html#framed.bioreactor.dfba.dFBA">dFBA() (in module framed.bioreactor.dfba)</a>
+</li>
       <li><a href="apidoc/framed.bioreactor.html#framed.bioreactor.dfba.dFBA_combination">dFBA_combination() (in module framed.bioreactor.dfba)</a>
 </li>
       <li><a href="apidoc/framed.bioreactor.html#framed.bioreactor.dfba.dFBAm">dFBAm() (in module framed.bioreactor.dfba)</a>
@@ -245,16 +272,22 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="apidoc/framed.omics.html#framed.omics.simulation.eFlux">eFlux() (in module framed.omics.simulation)</a>
 </li>
+      <li><a href="apidoc/framed.model.html#framed.model.environment.Environment.empty">empty() (framed.model.environment.Environment static method)</a>
+</li>
       <li><a href="apidoc/framed.model.html#framed.model.transformation.empty_compartments">empty_compartments() (in module framed.model.transformation)</a>
 </li>
       <li><a href="apidoc/framed.cobra.html#framed.cobra.ensemble.EnsembleModel">EnsembleModel (class in framed.cobra.ensemble)</a>
 </li>
       <li><a href="apidoc/framed.bioreactor.html#framed.bioreactor.base.Environment">Environment (class in framed.bioreactor.base)</a>
+
+      <ul>
+        <li><a href="apidoc/framed.model.html#framed.model.environment.Environment">(class in framed.model.environment)</a>
 </li>
-      <li><a href="apidoc/framed.cobra.html#framed.cobra.essentiality.essential_genes">essential_genes() (in module framed.cobra.essentiality)</a>
-</li>
+      </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="apidoc/framed.cobra.html#framed.cobra.essentiality.essential_genes">essential_genes() (in module framed.cobra.essentiality)</a>
+</li>
       <li><a href="apidoc/framed.cobra.html#framed.cobra.essentiality.essential_reactions">essential_reactions() (in module framed.cobra.essentiality)</a>
 </li>
       <li><a href="apidoc/framed.cobra.html#framed.cobra.essentiality.essentiality">essentiality() (in module framed.cobra.essentiality)</a>
@@ -323,14 +356,22 @@
 </li>
       <li><a href="apidoc/framed.cobra.html#module-framed.cobra.reconstruction">framed.cobra.reconstruction (module)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="apidoc/framed.cobra.html#module-framed.cobra.simulation">framed.cobra.simulation (module)</a>
 </li>
       <li><a href="apidoc/framed.cobra.html#module-framed.cobra.strain_design">framed.cobra.strain_design (module)</a>
 </li>
+      <li><a href="apidoc/framed.cobra.html#module-framed.cobra.thermodynamics">framed.cobra.thermodynamics (module)</a>
+</li>
       <li><a href="apidoc/framed.cobra.html#module-framed.cobra.variability">framed.cobra.variability (module)</a>
 </li>
+      <li><a href="apidoc/framed.community.html#module-framed.community">framed.community (module)</a>
+</li>
+      <li><a href="apidoc/framed.community.html#module-framed.community.model">framed.community.model (module)</a>
+</li>
+      <li><a href="apidoc/framed.community.html#module-framed.community.smetana">framed.community.smetana (module)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="apidoc/framed.io.html#module-framed.io">framed.io (module)</a>
 </li>
       <li><a href="apidoc/framed.io.html#module-framed.io.plaintext">framed.io.plaintext (module)</a>
@@ -350,6 +391,8 @@
       <li><a href="apidoc/framed.model.html#module-framed.model">framed.model (module)</a>
 </li>
       <li><a href="apidoc/framed.model.html#module-framed.model.cbmodel">framed.model.cbmodel (module)</a>
+</li>
+      <li><a href="apidoc/framed.model.html#module-framed.model.environment">framed.model.environment (module)</a>
 </li>
       <li><a href="apidoc/framed.model.html#module-framed.model.fixes">framed.model.fixes (module)</a>
 </li>
@@ -375,6 +418,22 @@
 </li>
       <li><a href="apidoc/framed.solvers.html#module-framed.solvers.solver">framed.solvers.solver (module)</a>
 </li>
+      <li><a href="apidoc/framed.model.html#framed.model.environment.Environment.from_community_models">from_community_models() (framed.model.environment.Environment static method)</a>
+</li>
+      <li><a href="apidoc/framed.model.html#framed.model.environment.Environment.from_compounds">from_compounds() (framed.model.environment.Environment static method)</a>
+</li>
+      <li><a href="apidoc/framed.model.html#framed.model.environment.Environment.from_csv">from_csv() (framed.model.environment.Environment static method)</a>
+</li>
+      <li><a href="apidoc/framed.model.html#framed.model.environment.Environment.from_defaults">from_defaults() (framed.model.environment.Environment static method)</a>
+</li>
+      <li><a href="apidoc/framed.model.html#framed.model.environment.Environment.from_environments">from_environments() (framed.model.environment.Environment static method)</a>
+</li>
+      <li><a href="apidoc/framed.model.html#framed.model.environment.Environment.from_model">from_model() (framed.model.environment.Environment static method)</a>
+</li>
+      <li><a href="apidoc/framed.model.html#framed.model.environment.Environment.from_models">from_models() (framed.model.environment.Environment static method)</a>
+</li>
+      <li><a href="apidoc/framed.model.html#framed.model.environment.Environment.from_reactions">from_reactions() (framed.model.environment.Environment static method)</a>
+</li>
       <li><a href="apidoc/framed.cobra.html#framed.cobra.variability.FVA">FVA() (in module framed.cobra.variability)</a>
 </li>
   </ul></td>
@@ -397,6 +456,8 @@
 </li>
       <li><a href="apidoc/framed.model.html#framed.model.cbmodel.CBModel.gene_to_reaction_lookup">gene_to_reaction_lookup() (framed.model.cbmodel.CBModel method)</a>
 </li>
+      <li><a href="apidoc/framed.community.html#framed.community.model.Community.generate_merged_model">generate_merged_model() (framed.community.model.Community method)</a>
+</li>
       <li><a href="apidoc/framed.model.html#framed.model.model.Model.get_activation_targets">get_activation_targets() (framed.model.model.Model method)</a>
 </li>
       <li><a href="apidoc/framed.model.html#framed.model.model.Reaction.get_activators">get_activators() (framed.model.model.Reaction method)</a>
@@ -404,6 +465,8 @@
       <li><a href="apidoc/framed.model.html#framed.model.cbmodel.CBReaction.get_associated_genes">get_associated_genes() (framed.model.cbmodel.CBReaction method)</a>
 </li>
       <li><a href="apidoc/framed.model.html#framed.model.model.Model.get_boundary_metabolites">get_boundary_metabolites() (framed.model.model.Model method)</a>
+</li>
+      <li><a href="apidoc/framed.model.html#framed.model.environment.Environment.get_compounds">get_compounds() (framed.model.environment.Environment method)</a>
 </li>
       <li><a href="apidoc/framed.cobra.html#framed.cobra.ensemble.EnsembleModel.get_constraints">get_constraints() (framed.cobra.ensemble.EnsembleModel method)</a>
 </li>
@@ -473,6 +536,8 @@
 </li>
       <li><a href="apidoc/framed.cobra.html#framed.cobra.strain_design.greedy_reaction_deletion">greedy_reaction_deletion() (in module framed.cobra.strain_design)</a>
 </li>
+      <li><a href="apidoc/framed.community.html#framed.community.smetana.GrowthStatus">GrowthStatus (class in framed.community.smetana)</a>
+</li>
       <li><a href="apidoc/framed.solvers.html#framed.solvers.gurobi_interface.GurobiSolver">GurobiSolver (class in framed.solvers.gurobi_interface)</a>
 </li>
   </ul></td>
@@ -484,6 +549,8 @@
       <li><a href="apidoc/framed.bioreactor.html#framed.bioreactor.bioreactors.IdealBatch">IdealBatch (class in framed.bioreactor.bioreactors)</a>
 </li>
       <li><a href="apidoc/framed.bioreactor.html#framed.bioreactor.bioreactors.IdealFedbatch">IdealFedbatch (class in framed.bioreactor.bioreactors)</a>
+</li>
+      <li><a href="apidoc/framed.community.html#framed.community.smetana.GrowthStatus.INDEPENDENT">INDEPENDENT (framed.community.smetana.GrowthStatus attribute)</a>
 </li>
       <li><a href="apidoc/framed.solvers.html#framed.solvers.solver.Status.INF_OR_UNB">INF_OR_UNB (framed.solvers.solver.Status attribute)</a>
 </li>
@@ -497,6 +564,16 @@
 </li>
       <li><a href="apidoc/framed.bioreactor.html#framed.bioreactor.base.DynamicSystem.integrate">integrate() (framed.bioreactor.base.DynamicSystem method)</a>
 </li>
+      <li><a href="apidoc/framed.community.html#framed.community.model.Community.interacting">interacting (framed.community.model.Community attribute)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="J">J</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="apidoc/framed.model.html#framed.model.environment.Environment.join">join() (framed.model.environment.Environment method)</a>
+</li>
   </ul></td>
 </tr></table>
 
@@ -509,15 +586,17 @@
 </li>
       <li><a href="apidoc/framed.cobra.html#framed.cobra.simulation.lMOMA">lMOMA() (in module framed.cobra.simulation)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="apidoc/framed.io.html#framed.io.sbml.load_cbmodel">load_cbmodel() (in module framed.io.sbml)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="apidoc/framed.cobra.html#framed.cobra.ensemble.load_ensemble">load_ensemble() (in module framed.cobra.ensemble)</a>
 </li>
       <li><a href="apidoc/framed.io.html#framed.io.sbml.load_odemodel">load_odemodel() (in module framed.io.sbml)</a>
 </li>
       <li><a href="apidoc/framed.io.html#framed.io.sbml.load_sbml_model">load_sbml_model() (in module framed.io.sbml)</a>
+</li>
+      <li><a href="apidoc/framed.cobra.html#framed.cobra.thermodynamics.looplessFBA">looplessFBA() (in module framed.cobra.thermodynamics)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -531,19 +610,31 @@
 </li>
       <li><a href="apidoc/framed.model.html#framed.model.odemodel.ODEModel.merge_constants">merge_constants() (framed.model.odemodel.ODEModel method)</a>
 </li>
+      <li><a href="apidoc/framed.community.html#framed.community.model.Community.merge_extracellular_compartments">merge_extracellular_compartments (framed.community.model.Community attribute)</a>
+</li>
+      <li><a href="apidoc/framed.community.html#framed.community.model.Community.merged">merged (framed.community.model.Community attribute)</a>
+</li>
       <li><a href="apidoc/framed.model.html#framed.model.model.Metabolite">Metabolite (class in framed.model.model)</a>
+</li>
+      <li><a href="apidoc/framed.community.html#framed.community.smetana.metabolite_production_score">metabolite_production_score() (in module framed.community.smetana)</a>
 </li>
       <li><a href="apidoc/framed.model.html#framed.model.model.Model.metabolite_reaction_lookup">metabolite_reaction_lookup() (framed.model.model.Model method)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="apidoc/framed.community.html#framed.community.smetana.metabolite_uptake_score">metabolite_uptake_score() (in module framed.community.smetana)</a>
+</li>
       <li><a href="apidoc/framed.solvers.html#framed.solvers.solver.Parameter.MIP_ABS_GAP">MIP_ABS_GAP (framed.solvers.solver.Parameter attribute)</a>
 </li>
       <li><a href="apidoc/framed.solvers.html#framed.solvers.solver.Parameter.MIP_REL_GAP">MIP_REL_GAP (framed.solvers.solver.Parameter attribute)</a>
 </li>
+      <li><a href="apidoc/framed.community.html#framed.community.smetana.mip_score">mip_score() (in module framed.community.smetana)</a>
+</li>
       <li><a href="apidoc/framed.model.html#framed.model.model.Model">Model (class in framed.model.model)</a>
 </li>
       <li><a href="apidoc/framed.cobra.html#framed.cobra.simulation.MOMA">MOMA() (in module framed.cobra.simulation)</a>
+</li>
+      <li><a href="apidoc/framed.community.html#framed.community.smetana.mro_score">mro_score() (in module framed.community.smetana)</a>
 </li>
       <li><a href="apidoc/framed.model.html#framed.model.odemodel.MyTree">MyTree (class in framed.model.odemodel)</a>
 </li>
@@ -553,6 +644,14 @@
 <h2 id="N">N</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="apidoc/framed.cobra.html#framed.cobra.thermodynamics.NET">NET() (in module framed.cobra.thermodynamics)</a>
+</li>
+      <li><a href="apidoc/framed.community.html#framed.community.smetana.GrowthStatus.NOGROWTH">NOGROWTH (framed.community.smetana.GrowthStatus attribute)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="apidoc/framed.cobra.html#framed.cobra.thermodynamics.nullspace">nullspace() (in module framed.cobra.thermodynamics)</a>
+</li>
       <li><a href="apidoc/framed.bioreactor.html#framed.bioreactor.base.DynamicSystem.numerical_integrator">numerical_integrator() (framed.bioreactor.base.DynamicSystem method)</a>
 </li>
   </ul></td>
@@ -567,13 +666,21 @@
 </li>
       <li><a href="apidoc/framed.solvers.html#framed.solvers.solver.Status.OPTIMAL">OPTIMAL (framed.solvers.solver.Status attribute)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="apidoc/framed.solvers.html#framed.solvers.solver.Parameter.OPTIMALITY_TOL">OPTIMALITY_TOL (framed.solvers.solver.Parameter attribute)</a>
 </li>
       <li><a href="apidoc/framed.solvers.html#framed.solvers.solver.OptimizationWarning">OptimizationWarning</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="apidoc/framed.bioreactor.html#framed.bioreactor.base.Organism">Organism (class in framed.bioreactor.base)</a>
+</li>
+      <li><a href="apidoc/framed.community.html#framed.community.model.Community.organisms">organisms (framed.community.model.Community attribute)</a>
+</li>
+      <li><a href="apidoc/framed.community.html#framed.community.model.Community.organisms_biomass_reactions">organisms_biomass_reactions (framed.community.model.Community attribute)</a>
+</li>
+      <li><a href="apidoc/framed.community.html#framed.community.model.Community.organisms_exchange_reactions">organisms_exchange_reactions (framed.community.model.Community attribute)</a>
+</li>
+      <li><a href="apidoc/framed.community.html#framed.community.model.Community.organisms_reactions">organisms_reactions (framed.community.model.Community attribute)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -661,15 +768,17 @@
         <li><a href="apidoc/framed.solvers.html#framed.solvers.solver.Solver.remove_constraint">(framed.solvers.solver.Solver method)</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="apidoc/framed.model.html#framed.model.cbmodel.CBModel.remove_gene">remove_gene() (framed.model.cbmodel.CBModel method)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="apidoc/framed.model.html#framed.model.cbmodel.CBModel.remove_genes">remove_genes() (framed.model.cbmodel.CBModel method)</a>
 </li>
       <li><a href="apidoc/framed.model.html#framed.model.model.Model.remove_metabolite">remove_metabolite() (framed.model.model.Model method)</a>
 </li>
       <li><a href="apidoc/framed.model.html#framed.model.model.Model.remove_metabolites">remove_metabolites() (framed.model.model.Model method)</a>
+</li>
+      <li><a href="apidoc/framed.community.html#framed.community.model.Community.remove_organism">remove_organism() (framed.community.model.Community method)</a>
 </li>
       <li><a href="apidoc/framed.model.html#framed.model.cbmodel.CBModel.remove_ratio_constraint">remove_ratio_constraint() (framed.model.cbmodel.CBModel method)</a>
 </li>
@@ -708,6 +817,8 @@
       <li><a href="apidoc/framed.cobra.html#framed.cobra.ensemble.save_ensemble">save_ensemble() (in module framed.cobra.ensemble)</a>
 </li>
       <li><a href="apidoc/framed.io.html#framed.io.sbml.save_sbml_model">save_sbml_model() (in module framed.io.sbml)</a>
+</li>
+      <li><a href="apidoc/framed.community.html#framed.community.smetana.score_subcommunities">score_subcommunities() (in module framed.community.smetana)</a>
 </li>
       <li><a href="apidoc/framed.io.html#framed.io.sbml.Flavor.SEED">SEED (framed.io.sbml.Flavor attribute)</a>
 </li>
@@ -773,14 +884,14 @@
         <li><a href="apidoc/framed.solvers.html#framed.solvers.solver.Solver.set_objective">(framed.solvers.solver.Solver method)</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="apidoc/framed.bioreactor.html#framed.bioreactor.base.Bioreactor.set_organisms">set_organisms() (framed.bioreactor.base.Bioreactor method)</a>
 
       <ul>
         <li><a href="apidoc/framed.bioreactor.html#framed.bioreactor.base.Environment.set_organisms">(framed.bioreactor.base.Environment method)</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="apidoc/framed.solvers.html#framed.solvers.cplex_interface.CplexSolver.set_parameter">set_parameter() (framed.solvers.cplex_interface.CplexSolver method)</a>
 
       <ul>
@@ -823,6 +934,12 @@
       </ul></li>
       <li><a href="apidoc/framed.cobra.html#framed.cobra.ensemble.simulate_ensemble">simulate_ensemble() (in module framed.cobra.ensemble)</a>
 </li>
+      <li><a href="apidoc/framed.community.html#framed.community.model.Community.size">size (framed.community.model.Community attribute)</a>
+</li>
+      <li><a href="apidoc/framed.community.html#framed.community.smetana.smetana_score">smetana_score() (in module framed.community.smetana)</a>
+</li>
+      <li><a href="apidoc/framed.community.html#framed.community.smetana.SmetanaScore">SmetanaScore (class in framed.community.smetana)</a>
+</li>
       <li><a href="apidoc/framed.solvers.html#framed.solvers.solver.Solution">Solution (class in framed.solvers.solver)</a>
 </li>
       <li><a href="apidoc/framed.solvers.html#framed.solvers.cplex_interface.CplexSolver.solve">solve() (framed.solvers.cplex_interface.CplexSolver method)</a>
@@ -837,6 +954,10 @@
 </li>
       <li><a href="apidoc/framed.solvers.html#framed.solvers.solver_instance">solver_instance() (in module framed.solvers)</a>
 </li>
+      <li><a href="apidoc/framed.community.html#framed.community.smetana.species_coupling_score">species_coupling_score() (in module framed.community.smetana)</a>
+</li>
+      <li><a href="apidoc/framed.community.html#framed.community.model.Community.split_fluxes">split_fluxes() (framed.community.model.Community method)</a>
+</li>
       <li><a href="apidoc/framed.solvers.html#framed.solvers.solver.Status">Status (class in framed.solvers.solver)</a>
 </li>
       <li><a href="apidoc/framed.model.html#framed.model.model.Model.stoichiometric_matrix">stoichiometric_matrix() (framed.model.model.Model method)</a>
@@ -850,6 +971,8 @@
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="apidoc/framed.solvers.html#framed.solvers.cplex_interface.CplexSolver.temporary_bounds">temporary_bounds() (framed.solvers.cplex_interface.CplexSolver method)</a>
+</li>
+      <li><a href="apidoc/framed.cobra.html#framed.cobra.thermodynamics.TFA">TFA() (in module framed.cobra.thermodynamics)</a>
 </li>
       <li><a href="apidoc/framed.kinetic.html#framed.kinetic.simulation.time_course">time_course() (in module framed.kinetic.simulation)</a>
 </li>
@@ -871,6 +994,8 @@
         <li><a href="apidoc/framed.model.html#framed.model.model.Reaction.to_string">(framed.model.model.Reaction method)</a>
 </li>
       </ul></li>
+      <li><a href="apidoc/framed.cobra.html#framed.cobra.thermodynamics.TVA">TVA() (in module framed.cobra.thermodynamics)</a>
+</li>
   </ul></td>
 </tr></table>
 

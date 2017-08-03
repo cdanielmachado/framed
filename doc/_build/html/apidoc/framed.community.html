@@ -1,0 +1,529 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>framed.community package &#8212; framed 0.3.5 documentation</title>
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.3.5',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="framed.io package" href="framed.io.html" />
+    <link rel="prev" title="framed.cobra package" href="framed.cobra.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="framed-community-package">
+<h1>framed.community package<a class="headerlink" href="#framed-community-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-framed.community.model">
+<span id="framed-community-model-module"></span><h2>framed.community.model module<a class="headerlink" href="#module-framed.community.model" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="framed.community.model.Community">
+<em class="property">class </em><code class="descclassname">framed.community.model.</code><code class="descname">Community</code><span class="sig-paren">(</span><em>community_id</em>, <em>models=None</em>, <em>abundances=None</em>, <em>copy_models=True</em>, <em>extracellular_compartment_id='e'</em>, <em>merge_extracellular_compartments=False</em>, <em>create_biomass=True</em>, <em>interacting=True</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.community.model.Community" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<p>This class implements a microbial community model.</p>
+<p>It serves as a container for multiple organisms, and can be used to merge multiple single-species models (CBModel)
+into a single multi-species model (CBModel) which is compatible with most types of constraint-based methods.</p>
+<dl class="attribute">
+<dt id="framed.community.model.Community.abundances">
+<code class="descname">abundances</code><a class="headerlink" href="#framed.community.model.Community.abundances" title="Permalink to this definition">¶</a></dt>
+<dd><p>Dictionary of organism abundances. Keys are model ids and values are abundances
+Returns: dict</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="framed.community.model.Community.add_organism">
+<code class="descname">add_organism</code><span class="sig-paren">(</span><em>model</em>, <em>abundance=1.0</em>, <em>copy=True</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.community.model.Community.add_organism" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add an organism to this community.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>model</strong> (<a class="reference internal" href="framed.model.html#framed.model.cbmodel.CBModel" title="framed.model.cbmodel.CBModel"><em>CBModel</em></a>) – model of the organism</li>
+<li><strong>abundance</strong> (<em>float</em>) – abundance of this organism in the community (default: 1.0)</li>
+<li><strong>copy</strong> (<em>bool</em>) – create a copy of the given model (default: True)</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="framed.community.model.Community.copy">
+<code class="descname">copy</code><span class="sig-paren">(</span><em>merge_extracellular_compartments=None</em>, <em>copy_models=None</em>, <em>interacting=None</em>, <em>create_biomass=None</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.community.model.Community.copy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Copy model object
+:param copy_models: If true copies for merged models  are created
+:type copy_models: bool
+:param interacting: If true models will be able to exchange metabolites. Otherwise all produced metabolites will go to sink
+:type interacting: bool
+:param create_biomass: create biomass reaction with biomass metabolites as reactants
+:type create_biomass: bool</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">Community</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="framed.community.model.Community.copy_models">
+<code class="descname">copy_models</code><a class="headerlink" href="#framed.community.model.Community.copy_models" title="Permalink to this definition">¶</a></dt>
+<dd><p>If true copies for merged models  are created</p>
+<p>Returns: bool</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="framed.community.model.Community.create_biomass_reaction">
+<code class="descname">create_biomass_reaction</code><a class="headerlink" href="#framed.community.model.Community.create_biomass_reaction" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create biomass reaction with biomass metabolites as reactants</p>
+<p>Returns: bool</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="framed.community.model.Community.generate_merged_model">
+<code class="descname">generate_merged_model</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#framed.community.model.Community.generate_merged_model" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="framed.community.model.Community.interacting">
+<code class="descname">interacting</code><a class="headerlink" href="#framed.community.model.Community.interacting" title="Permalink to this definition">¶</a></dt>
+<dd><p>If true models will be able to exchange metabolites. Otherwise all produced metabolites will go to sink</p>
+<p>Returns: bool</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="framed.community.model.Community.merge_extracellular_compartments">
+<code class="descname">merge_extracellular_compartments</code><a class="headerlink" href="#framed.community.model.Community.merge_extracellular_compartments" title="Permalink to this definition">¶</a></dt>
+<dd><p>Do not create organism specific extracellular compartment</p>
+<p>Returns: bool</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="framed.community.model.Community.merged">
+<code class="descname">merged</code><a class="headerlink" href="#framed.community.model.Community.merged" title="Permalink to this definition">¶</a></dt>
+<dd><p>Merged models containing every organism as separate compartment</p>
+<p>Returns: CBModel</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="framed.community.model.Community.organisms">
+<code class="descname">organisms</code><a class="headerlink" href="#framed.community.model.Community.organisms" title="Permalink to this definition">¶</a></dt>
+<dd><p>Dictionary of organism models which are part of the community. Keys are model ids and values are models
+Returns: dict</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="framed.community.model.Community.organisms_biomass_reactions">
+<code class="descname">organisms_biomass_reactions</code><a class="headerlink" href="#framed.community.model.Community.organisms_biomass_reactions" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns dictionary containing reaction exporting biomass to common environment. Keys are model ids, and values
+are reaction ids</p>
+<p>Returns: dict</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="framed.community.model.Community.organisms_exchange_reactions">
+<code class="descname">organisms_exchange_reactions</code><a class="headerlink" href="#framed.community.model.Community.organisms_exchange_reactions" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns dictionary containing list of reactions exchanging model metabolites with common environment.
+Dictionary keys are model ids. Values are dictionaries with keys containing exchange reaction ids and values
+containing various information about these reactions.</p>
+<p>Returns: dict</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="framed.community.model.Community.organisms_reactions">
+<code class="descname">organisms_reactions</code><a class="headerlink" href="#framed.community.model.Community.organisms_reactions" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns dictionary containing list of community organisms specific reactions</p>
+<p>Returns: dict</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="framed.community.model.Community.remove_organism">
+<code class="descname">remove_organism</code><span class="sig-paren">(</span><em>organism</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.community.model.Community.remove_organism" title="Permalink to this definition">¶</a></dt>
+<dd><p>Remove an organism from this community</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>organism</strong> (<em>str</em>) – organism id</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="framed.community.model.Community.size">
+<code class="descname">size</code><a class="headerlink" href="#framed.community.model.Community.size" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="framed.community.model.Community.split_fluxes">
+<code class="descname">split_fluxes</code><span class="sig-paren">(</span><em>fluxes</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.community.model.Community.split_fluxes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Decompose a flux balance solution of the merged community into organism-specific flux vectors.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>fluxes</strong> (<em>dict</em>) – flux distribution as a single dict</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">community flux distribution as a nested dict</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">dict</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="framed.community.model.CommunityNameMapping">
+<em class="property">class </em><code class="descclassname">framed.community.model.</code><code class="descname">CommunityNameMapping</code><span class="sig-paren">(</span><em>original_reaction=None</em>, <em>organism_reaction=None</em>, <em>original_metabolite=None</em>, <em>organism_metabolite=None</em>, <em>extracellular_metabolite=None</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.community.model.CommunityNameMapping" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-framed.community.smetana">
+<span id="framed-community-smetana-module"></span><h2>framed.community.smetana module<a class="headerlink" href="#module-framed.community.smetana" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="framed.community.smetana.GrowthStatus">
+<em class="property">class </em><code class="descclassname">framed.community.smetana.</code><code class="descname">GrowthStatus</code><a class="headerlink" href="#framed.community.smetana.GrowthStatus" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="attribute">
+<dt id="framed.community.smetana.GrowthStatus.DEPENDENT">
+<code class="descname">DEPENDENT</code><em class="property"> = 'dependant'</em><a class="headerlink" href="#framed.community.smetana.GrowthStatus.DEPENDENT" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="framed.community.smetana.GrowthStatus.INDEPENDENT">
+<code class="descname">INDEPENDENT</code><em class="property"> = 'independant'</em><a class="headerlink" href="#framed.community.smetana.GrowthStatus.INDEPENDENT" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="framed.community.smetana.GrowthStatus.NOGROWTH">
+<code class="descname">NOGROWTH</code><em class="property"> = 'no growth'</em><a class="headerlink" href="#framed.community.smetana.GrowthStatus.NOGROWTH" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="framed.community.smetana.SmetanaScore">
+<em class="property">class </em><code class="descclassname">framed.community.smetana.</code><code class="descname">SmetanaScore</code><span class="sig-paren">(</span><em>donor_organism</em>, <em>receiver_organism</em>, <em>metabolite</em>, <em>metabolite_production_score</em>, <em>metabolite_uptake_score</em>, <em>species_coupling_score</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.community.smetana.SmetanaScore" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+</dd></dl>
+
+<dl class="function">
+<dt id="framed.community.smetana.metabolite_production_score">
+<code class="descclassname">framed.community.smetana.</code><code class="descname">metabolite_production_score</code><span class="sig-paren">(</span><em>community</em>, <em>environment=None</em>, <em>max_uptake=100</em>, <em>min_growth=1.0</em>, <em>abstol=1e-06</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.community.smetana.metabolite_production_score" title="Permalink to this definition">¶</a></dt>
+<dd><p>Discover metabolites which species can produce in community</p>
+<p>Zelezniak A. et al, Metabolic dependencies drive species co-occurrence in diverse microbial communities (PNAS 2015)</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>community</strong> (<a class="reference internal" href="#framed.community.model.Community" title="framed.community.model.Community"><em>Community</em></a>) – community object</li>
+<li><strong>environment</strong> (<a class="reference internal" href="framed.model.html#framed.model.environment.Environment" title="framed.model.environment.Environment"><em>Environment</em></a>) – Metabolic environment in which the SMETANA score is colulated</li>
+<li><strong>min_growth</strong> (<em>float</em>) – minimum growth rate (default: 1)</li>
+<li><strong>max_uptake</strong> (<em>float</em>) – maximum uptake rate (default: 100)</li>
+<li><strong>abstol</strong> (<em>float</em>) – tolerance for detecting a non-zero exchange flux (default: 1e-6)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Keys are model names, values are list with produced compounds
+dict: Extra information</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">dict</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="framed.community.smetana.metabolite_uptake_score">
+<code class="descclassname">framed.community.smetana.</code><code class="descname">metabolite_uptake_score</code><span class="sig-paren">(</span><em>community</em>, <em>environment</em>, <em>min_mass_weight=True</em>, <em>min_growth=1.0</em>, <em>max_uptake=100.0</em>, <em>abstol=1e-06</em>, <em>validate=False</em>, <em>n_solutions=100</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.community.smetana.metabolite_uptake_score" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate frequency of metabolite requirement for species growth</p>
+<p>Zelezniak A. et al, Metabolic dependencies drive species co-occurrence in diverse microbial communities (PNAS 2015)</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>community</strong> (<a class="reference internal" href="#framed.community.model.Community" title="framed.community.model.Community"><em>Community</em></a>) – community object</li>
+<li><strong>environment</strong> (<a class="reference internal" href="framed.model.html#framed.model.environment.Environment" title="framed.model.environment.Environment"><em>Environment</em></a>) – Metabolic environment in which the SMETANA score is colulated</li>
+<li><strong>min_mass_weight</strong> – Prefer simpler compounds</li>
+<li><strong>min_growth</strong> (<em>float</em>) – minimum growth rate (default: 1)</li>
+<li><strong>max_uptake</strong> (<em>float</em>) – maximum uptake rate (default: 100)</li>
+<li><strong>abstol</strong> (<em>float</em>) – tolerance for detecting a non-zero exchange flux (default: 1e-6)</li>
+<li><strong>validate</strong> (<em>bool</em>) – validate solution using FBA (for debugging purposes, default: False)</li>
+<li><strong>n_solutions</strong> (<em>int</em>) – How many unique solutions to calculate (default: 100)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Keys are dependant model names, values are dictionaries with required compounds frequencies
+dict: Extra information</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">dict</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="framed.community.smetana.mip_score">
+<code class="descclassname">framed.community.smetana.</code><code class="descname">mip_score</code><span class="sig-paren">(</span><em>community</em>, <em>environment=None</em>, <em>min_mass_weight=False</em>, <em>min_growth=1</em>, <em>direction=-1</em>, <em>max_uptake=100</em>, <em>validate=False</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.community.smetana.mip_score" title="Permalink to this definition">¶</a></dt>
+<dd><p>Implements the metabolic interaction potential (MIP) score as defined in (Zelezniak et al, 2015).</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>community</strong> (<a class="reference internal" href="#framed.community.model.Community" title="framed.community.model.Community"><em>Community</em></a>) – microbial community model</li>
+<li><strong>environment</strong> (<a class="reference internal" href="framed.model.html#framed.model.environment.Environment" title="framed.model.environment.Environment"><em>Environment</em></a>) – Metabolic environment in which the SMETANA score is colulated</li>
+<li><strong>direction</strong> (<em>int</em>) – direction of uptake reactions (negative or positive, default: -1)</li>
+<li><strong>extracellular_id</strong> (<em>str</em>) – extracellular compartment id</li>
+<li><strong>min_mass_weight</strong> (<em>bool</em>) – minimize by molecular weight of nutrients (default: False)</li>
+<li><strong>min_growth</strong> (<em>float</em>) – minimum growth rate (default: 1)</li>
+<li><strong>max_uptake</strong> (<em>float</em>) – maximum uptake rate (default: 100)</li>
+<li><strong>validate</strong> (<em>bool</em>) – validate solution using FBA (for debugging purposes, default: False)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">MIP score</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">float</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="framed.community.smetana.mro_score">
+<code class="descclassname">framed.community.smetana.</code><code class="descname">mro_score</code><span class="sig-paren">(</span><em>community</em>, <em>environment=None</em>, <em>direction=-1</em>, <em>min_mass_weight=False</em>, <em>min_growth=1</em>, <em>max_uptake=100</em>, <em>validate=False</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.community.smetana.mro_score" title="Permalink to this definition">¶</a></dt>
+<dd><p>Implements the metabolic resource overlap (MRO) score as defined in (Zelezniak et al, 2015).</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>community</strong> (<a class="reference internal" href="#framed.community.model.Community" title="framed.community.model.Community"><em>Community</em></a>) – microbial community model</li>
+<li><strong>environment</strong> (<a class="reference internal" href="framed.model.html#framed.model.environment.Environment" title="framed.model.environment.Environment"><em>Environment</em></a>) – Metabolic environment in which the SMETANA score is colulated</li>
+<li><strong>direction</strong> (<em>int</em>) – direction of uptake reactions (negative or positive, default: -1)</li>
+<li><strong>extracellular_id</strong> (<em>str</em>) – extracellular compartment id</li>
+<li><strong>min_mass_weight</strong> (<em>bool</em>) – minimize by molecular weight of nutrients (default: False)</li>
+<li><strong>min_growth</strong> (<em>float</em>) – minimum growth rate (default: 1)</li>
+<li><strong>max_uptake</strong> (<em>float</em>) – maximum uptake rate (default: 100)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">MRO score</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">float</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="framed.community.smetana.score_subcommunities">
+<code class="descclassname">framed.community.smetana.</code><code class="descname">score_subcommunities</code><span class="sig-paren">(</span><em>models</em>, <em>metric</em>, <em>n=None</em>, <em>k=2</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.community.smetana.score_subcommunities" title="Permalink to this definition">¶</a></dt>
+<dd><p>Apply a given score to subcommunities generated from a list of organisms.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>models</strong> (<em>list</em>) – list of models (CBModel)</li>
+<li><strong>metric</strong> (<em>str</em>) – metric to apply (currently available: ‘MRO’, ‘MIP’)</li>
+<li><strong>n</strong> (<em>int</em>) – number of samples to generate (optional, all combinations by default)</li>
+<li><strong>k</strong> (<em>int</em>) – subcommunity size (default: 2)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">score results indexed by subcommunity id</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">dict</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="framed.community.smetana.smetana_score">
+<code class="descclassname">framed.community.smetana.</code><code class="descname">smetana_score</code><span class="sig-paren">(</span><em>community</em>, <em>environment</em>, <em>report_zero_scores=False</em>, <em>min_mass_weight=False</em>, <em>min_growth=1</em>, <em>max_uptake=100</em>, <em>abstol=1e-06</em>, <em>validate=False</em>, <em>n_solutions=100</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.community.smetana.smetana_score" title="Permalink to this definition">¶</a></dt>
+<dd><p>SMETANA value scores likelyhood of metabolite exchange from species A to species B</p>
+<p>Zelezniak A. et al, Metabolic dependencies drive species co-occurrence in diverse microbial communities (PNAS 2015)</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>community</strong> (<a class="reference internal" href="#framed.community.model.Community" title="framed.community.model.Community"><em>Community</em></a>) – community object</li>
+<li><strong>environment</strong> (<a class="reference internal" href="framed.model.html#framed.model.environment.Environment" title="framed.model.environment.Environment"><em>Environment</em></a>) – Metabolic environment in which the SMETANA score is colulated</li>
+<li><strong>report_zero_scores</strong> (<em>bool</em>) – Report zero SMETANA scores, where there is no metabolite exchange predicted (default false)</li>
+<li><strong>min_mass_weight</strong> (<em>bool</em>) – minimize by molecular weight of nutrients (default: False)</li>
+<li><strong>min_growth</strong> (<em>float</em>) – minimum growth rate (default: 1)</li>
+<li><strong>max_uptake</strong> (<em>float</em>) – maximum uptake rate (default: 100)</li>
+<li><strong>validate</strong> (<em>bool</em>) – validate solution using FBA (for debugging purposes, default: False)</li>
+<li><strong>abstol</strong> (<em>float</em>) – tolerance for detecting a non-zero exchange flux (default: 1e-6)</li>
+<li><strong>n_solutions</strong> (<em>int</em>) – How many unique solutions to calculate for Metabolite Uptake and Species Coupling scores  (default: 100)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Species –&gt; Metabolite –&gt; Species SMETANA scores
+dict: Extra information</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">list</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="framed.community.smetana.species_coupling_score">
+<code class="descclassname">framed.community.smetana.</code><code class="descname">species_coupling_score</code><span class="sig-paren">(</span><em>community</em>, <em>environment</em>, <em>min_growth=1</em>, <em>max_uptake=100</em>, <em>n_solutions=100</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.community.smetana.species_coupling_score" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate frequency of community species dependency on each other</p>
+<p>Zelezniak A. et al, Metabolic dependencies drive species co-occurrence in diverse microbial communities (PNAS 2015)</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>community</strong> (<a class="reference internal" href="#framed.community.model.Community" title="framed.community.model.Community"><em>Community</em></a>) – community object</li>
+<li><strong>environment</strong> (<a class="reference internal" href="framed.model.html#framed.model.environment.Environment" title="framed.model.environment.Environment"><em>Environment</em></a>) – Metabolic environment in which the SMETANA score is colulated</li>
+<li><strong>min_growth</strong> (<em>float</em>) – minimum growth rate (default: 1)</li>
+<li><strong>max_uptake</strong> (<em>float</em>) – maximum uptake rate (default: 100)</li>
+<li><strong>abstol</strong> (<em>float</em>) – tolerance for detecting a non-zero exchange flux (default: 1e-6)</li>
+<li><strong>n_solutions</strong> (<em>int</em>) – How many unique solutions to calculate (default: 100)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Keys are dependant model names, values are dictionaries with required species frequencies
+dict: Extra information</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">dict</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="module-framed.community">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-framed.community" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">framed.community package</a><ul>
+<li><a class="reference internal" href="#submodules">Submodules</a></li>
+<li><a class="reference internal" href="#module-framed.community.model">framed.community.model module</a></li>
+<li><a class="reference internal" href="#module-framed.community.smetana">framed.community.smetana module</a></li>
+<li><a class="reference internal" href="#module-framed.community">Module contents</a></li>
+</ul>
+</li>
+</ul>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="modules.html">src</a><ul>
+  <li><a href="framed.html">framed package</a><ul>
+      <li>Previous: <a href="framed.cobra.html" title="previous chapter">framed.cobra package</a></li>
+      <li>Next: <a href="framed.io.html" title="next chapter">framed.io package</a></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/apidoc/framed.community.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2017, Daniel Machado.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.3</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+      |
+      <a href="../_sources/apidoc/framed.community.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

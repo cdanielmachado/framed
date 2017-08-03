@@ -23,7 +23,7 @@
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="framed.io package" href="framed.io.html" />
+    <link rel="next" title="framed.community package" href="framed.community.html" />
     <link rel="prev" title="framed.bioreactor package" href="framed.bioreactor.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
@@ -153,6 +153,99 @@
 </td>
 </tr>
 <tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference internal" href="framed.solvers.html#framed.solvers.solver.Solution" title="framed.solvers.solver.Solution">Solution</a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="module-framed.cobra.ensemble">
+<span id="framed-cobra-ensemble-module"></span><h2>framed.cobra.ensemble module<a class="headerlink" href="#module-framed.cobra.ensemble" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="framed.cobra.ensemble.EnsembleModel">
+<em class="property">class </em><code class="descclassname">framed.cobra.ensemble.</code><code class="descname">EnsembleModel</code><span class="sig-paren">(</span><em>model</em>, <em>size</em>, <em>reaction_states=None</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.cobra.ensemble.EnsembleModel" title="Permalink to this definition">¶</a></dt>
+<dd><p>An Ensemble Model represents a collection of models that differ by a few reactions.
+They can be used to account for uncertainty in the structure of the metabolic network.</p>
+<dl class="method">
+<dt id="framed.cobra.ensemble.EnsembleModel.get_constraints">
+<code class="descname">get_constraints</code><span class="sig-paren">(</span><em>i</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.cobra.ensemble.EnsembleModel.get_constraints" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="framed.cobra.ensemble.EnsembleModel.get_reaction_states">
+<code class="descname">get_reaction_states</code><span class="sig-paren">(</span><em>i</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.cobra.ensemble.EnsembleModel.get_reaction_states" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="framed.cobra.ensemble.EnsembleModel.simplify">
+<code class="descname">simplify</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#framed.cobra.ensemble.EnsembleModel.simplify" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="framed.cobra.ensemble.load_ensemble">
+<code class="descclassname">framed.cobra.ensemble.</code><code class="descname">load_ensemble</code><span class="sig-paren">(</span><em>inputfile</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.cobra.ensemble.load_ensemble" title="Permalink to this definition">¶</a></dt>
+<dd><p>Load ensemble model from SBML file.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>inputfile</strong> (<em>str</em>) – input file</li>
+<li><strong>**kwargs</strong> (<em>dict</em>) – additional arguments to <em>load_cbmodel</em> method</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">ensemble model</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference internal" href="#framed.cobra.ensemble.EnsembleModel" title="framed.cobra.ensemble.EnsembleModel">EnsembleModel</a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="framed.cobra.ensemble.save_ensemble">
+<code class="descclassname">framed.cobra.ensemble.</code><code class="descname">save_ensemble</code><span class="sig-paren">(</span><em>ensemble</em>, <em>outputfile</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.cobra.ensemble.save_ensemble" title="Permalink to this definition">¶</a></dt>
+<dd><p>Save ensemble model as an SBML file.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>ensemble</strong> (<a class="reference internal" href="#framed.cobra.ensemble.EnsembleModel" title="framed.cobra.ensemble.EnsembleModel"><em>EnsembleModel</em></a>) – model ensemble</li>
+<li><strong>outputfile</strong> (<em>str</em>) – output file</li>
+<li><strong>**kwargs</strong> (<em>dict</em>) – additional arguments to <em>save_cbmodel</em> method</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="framed.cobra.ensemble.simulate_ensemble">
+<code class="descclassname">framed.cobra.ensemble.</code><code class="descname">simulate_ensemble</code><span class="sig-paren">(</span><em>ensemble</em>, <em>method='FBA'</em>, <em>constraints=None</em>, <em>solver=None</em>, <em>get_fluxes=True</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.cobra.ensemble.simulate_ensemble" title="Permalink to this definition">¶</a></dt>
+<dd><p>Simulate an Ensemble Model</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>ensemble</strong> (<a class="reference internal" href="#framed.cobra.ensemble.EnsembleModel" title="framed.cobra.ensemble.EnsembleModel"><em>EnsembleModel</em></a>) – ensemble model</li>
+<li><strong>method</strong> (<em>str</em>) – simulation method (default: ‘FBA’)</li>
+<li><strong>constraints</strong> (<em>dict</em>) – additional constraints (optional)</li>
+<li><strong>solver</strong> (<a class="reference internal" href="framed.solvers.html#framed.solvers.solver.Solver" title="framed.solvers.solver.Solver"><em>Solver</em></a>) – solver instance (optional)</li>
+<li><strong>get_fluxes</strong> (<em>bool</em>) – if True returns flux distributions for all models,
+otherwise only the objective function values are returned (default: True)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">ensemble flux distributions or ensemble objective function values</p>
 </td>
 </tr>
 </tbody>
@@ -504,7 +597,7 @@ db_reactions: the reactions that were added from the database to</p>
 </p>
 </td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference internal" href="framed.model.html#module-framed.model" title="framed.model">model</a></p>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference internal" href="framed.community.html#module-framed.community.model" title="framed.community.model">model</a></p>
 </td>
 </tr>
 </tbody>
@@ -536,7 +629,7 @@ db_reactions: the reactions that were added from the database to</p>
 </p>
 </td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference internal" href="framed.model.html#module-framed.model" title="framed.model">model</a></p>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference internal" href="framed.community.html#module-framed.community.model" title="framed.community.model">model</a></p>
 </td>
 </tr>
 </tbody>
@@ -871,6 +964,151 @@ db_reactions: the reactions that were added from the database to</p>
 </dd></dl>
 
 </div>
+<div class="section" id="module-framed.cobra.thermodynamics">
+<span id="framed-cobra-thermodynamics-module"></span><h2>framed.cobra.thermodynamics module<a class="headerlink" href="#module-framed.cobra.thermodynamics" title="Permalink to this headline">¶</a></h2>
+<p>This module implements thermodynamics-based simulation methods.</p>
+<p>Author: Daniel Machado</p>
+<dl class="function">
+<dt id="framed.cobra.thermodynamics.NET">
+<code class="descclassname">framed.cobra.thermodynamics.</code><code class="descname">NET</code><span class="sig-paren">(</span><em>model</em>, <em>deltaG0</em>, <em>sdeltaG0=None</em>, <em>measured_concentrations=None</em>, <em>concentration_max=0.01</em>, <em>concentration_min=1e-05</em>, <em>measured_fold_change=10</em>, <em>excluded=None</em>, <em>temperature=298.15</em>, <em>reaction_directions=None</em>, <em>get_dG_range=True</em>, <em>get_concentration_range=False</em>, <em>verbose=False</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.cobra.thermodynamics.NET" title="Permalink to this definition">¶</a></dt>
+<dd><p>Implementation of Network-embedded thermodynamic (NET) analysis (Kummel et al 2006).</p>
+<blockquote>
+<div>Differs from the original implementation by (optionally) integrating standard deviation for deltaG0.</div></blockquote>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>model</strong> (<a class="reference internal" href="framed.model.html#framed.model.cbmodel.CBModel" title="framed.model.cbmodel.CBModel"><em>CBModel</em></a>) – a constraint-based model</li>
+<li><strong>deltaG0</strong> (<em>dict</em>) – deltaG0 values</li>
+<li><strong>sdeltaG0</strong> (<em>dict</em>) – standard deviation of deltaG0 (optional)</li>
+<li><strong>measured_concentrations</strong> (<em>dict</em>) – measured metabolite concentrations (optional)</li>
+<li><strong>concentration_max</strong> (<em>float</em>) – max concentration of unmeasured metabolites (default: 1e-2 M)</li>
+<li><strong>concentration_min</strong> (<em>float</em>) – min concentration of unmeasured metabolites (default: 1e-5 M)</li>
+<li><strong>measured_fold_change</strong> (<em>float</em>) – allowable fold change of measured metabolites (default: 10)</li>
+<li><strong>excluded</strong> (<em>list</em>) – metabolites to exclude from calculations (ex: waters, protons, etc)</li>
+<li><strong>temperature</strong> (<em>float</em>) – default 298.15 Kelvin</li>
+<li><strong>reaction_directions</strong> (<em>dict</em>) – pre-defined reaction directions: +1 forward, -1 negative (optional)</li>
+<li><strong>get_dG_range</strong> (<em>bool</em>) – calculate dG ranges (default: True)</li>
+<li><strong>get_concentration_range</strong> (<em>bool</em>) – calculate metabolite concentration ranges (default: False)</li>
+<li><strong>verbose</strong> (<em>bool</em>) – Print progress information if true</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p>Returns:</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="framed.cobra.thermodynamics.TFA">
+<code class="descclassname">framed.cobra.thermodynamics.</code><code class="descname">TFA</code><span class="sig-paren">(</span><em>model</em>, <em>deltaG0</em>, <em>sdeltaG0=None</em>, <em>measured_concentrations=None</em>, <em>concentration_max=0.01</em>, <em>concentration_min=1e-05</em>, <em>measured_fold_change=10</em>, <em>excluded=None</em>, <em>temperature=298.15</em>, <em>objective=None</em>, <em>minimize=False</em>, <em>constraints=None</em>, <em>ignore_model_bounds=True</em>, <em>solver=None</em>, <em>get_values=True</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.cobra.thermodynamics.TFA" title="Permalink to this definition">¶</a></dt>
+<dd><p>Run a thermodynamic flux analysis (TFA) simulation.</p>
+<blockquote>
+<div>Implements a modified version of the TMFA method defined in Henry et al, 2007
+using reversible constraints (as defined by Hoppe et al, 2007) to avoid reaction decomposition.</div></blockquote>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>model</strong> (<a class="reference internal" href="framed.model.html#framed.model.cbmodel.CBModel" title="framed.model.cbmodel.CBModel"><em>CBModel</em></a>) – a constraint-based model</li>
+<li><strong>deltaG0</strong> (<em>dict</em>) – deltaG0 values</li>
+<li><strong>sdeltaG0</strong> (<em>dict</em>) – standard deviation of deltaG0 (optional)</li>
+<li><strong>measured_concentrations</strong> (<em>dict</em>) – measured metabolite concentrations (optional)</li>
+<li><strong>concentration_max</strong> (<em>float</em>) – max concentration of unmeasured metabolites (default: 1e-2 M)</li>
+<li><strong>concentration_min</strong> (<em>float</em>) – min concentration of unmeasured metabolites (default: 1e-5 M)</li>
+<li><strong>measured_fold_change</strong> (<em>float</em>) – allowable fold change of measured metabolites (default: 10)</li>
+<li><strong>excluded</strong> (<em>list</em>) – metabolites to exclude from calculations (ex: waters, protons, etc)</li>
+<li><strong>temperature</strong> (<em>float</em>) – default 298.15 Kelvin</li>
+<li><strong>objective</strong> (<em>dict</em>) – objective coefficients (optional)</li>
+<li><strong>minimize</strong> (<em>bool</em>) – sense of optimization (maximize by default)</li>
+<li><strong>(</strong><strong>dict</strong> (<em>constraints</em>) – environmental or additional constraints (optional)</li>
+<li><strong>ignore_model_bounds</strong> – ignore model bounds for reactions with measured deltaG0 (default: True)</li>
+<li><strong>solver</strong> (<a class="reference internal" href="framed.solvers.html#framed.solvers.solver.Solver" title="framed.solvers.solver.Solver"><em>Solver</em></a>) – solver instance instantiated with the model, for speed (optional)</li>
+<li><strong>get_values</strong> (<em>bool</em>) – set to false for speedup if you only care about the objective value (optional, default: True)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">solution</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference internal" href="framed.solvers.html#framed.solvers.solver.Solution" title="framed.solvers.solver.Solution">Solution</a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="framed.cobra.thermodynamics.TVA">
+<code class="descclassname">framed.cobra.thermodynamics.</code><code class="descname">TVA</code><span class="sig-paren">(</span><em>model</em>, <em>deltaG0</em>, <em>sdeltaG0=None</em>, <em>measured_concentrations=None</em>, <em>concentration_max=0.01</em>, <em>concentration_min=1e-05</em>, <em>measured_fold_change=10</em>, <em>excluded=None</em>, <em>temperature=298.15</em>, <em>constraints=None</em>, <em>ignore_model_bounds=True</em>, <em>reactions=None</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.cobra.thermodynamics.TVA" title="Permalink to this definition">¶</a></dt>
+<dd><p>Thermodynamic flux variability analysis (TVA) based on the thermodynamics flux analysis (TFA) method.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>model</strong> (<a class="reference internal" href="framed.model.html#framed.model.cbmodel.CBModel" title="framed.model.cbmodel.CBModel"><em>CBModel</em></a>) – a constraint-based model</li>
+<li><strong>deltaG0</strong> (<em>dict</em>) – deltaG0 values</li>
+<li><strong>sdeltaG0</strong> (<em>dict</em>) – standard deviation of deltaG0 (optional)</li>
+<li><strong>measured_concentrations</strong> (<em>dict</em>) – measured metabolite concentrations (optional)</li>
+<li><strong>concentration_max</strong> (<em>float</em>) – max concentration of unmeasured metabolites (default: 1e-2 M)</li>
+<li><strong>concentration_min</strong> (<em>float</em>) – min concentration of unmeasured metabolites (default: 1e-5 M)</li>
+<li><strong>measured_fold_change</strong> (<em>float</em>) – allowable fold change of measured metabolites (default: 10)</li>
+<li><strong>excluded</strong> (<em>list</em>) – metabolites to exclude from calculations (ex: waters, protons, etc)</li>
+<li><strong>temperature</strong> (<em>float</em>) – default 298.15 Kelvin</li>
+<li><strong>constraints</strong> (<em>dict</em>) – environmental or additional constraints (optional)</li>
+<li><strong>ignore_model_bounds</strong> (<em>bool</em>) – ignore model bounds for reactions with measured deltaG0 (default: True)</li>
+<li><strong>reactions</strong> (<em>list</em>) – list of reactions to analyse (default: all)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">flux variation ranges</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">dict</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="framed.cobra.thermodynamics.looplessFBA">
+<code class="descclassname">framed.cobra.thermodynamics.</code><code class="descname">looplessFBA</code><span class="sig-paren">(</span><em>model</em>, <em>objective=None</em>, <em>minimize=False</em>, <em>constraints=None</em>, <em>internal=None</em>, <em>solver=None</em>, <em>get_values=True</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.cobra.thermodynamics.looplessFBA" title="Permalink to this definition">¶</a></dt>
+<dd><p>Run a loopless FBA simulation (aka Energy Balance Analysis (EBA) as defined in Beard et al, 2002):</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>model</strong> (<a class="reference internal" href="framed.model.html#framed.model.cbmodel.CBModel" title="framed.model.cbmodel.CBModel"><em>CBModel</em></a>) – a constraint-based model</li>
+<li><strong>objective</strong> (<em>dict</em>) – objective coefficients (optional)</li>
+<li><strong>minimize</strong> (<em>bool</em>) – sense of optimization (maximize by default)</li>
+<li><strong>(</strong><strong>dict</strong> (<em>constraints</em>) – environmental or additional constraints (optional)</li>
+<li><strong>internal</strong> (<em>list</em>) – list of internal reactions (optional)</li>
+<li><strong>solver</strong> (<a class="reference internal" href="framed.solvers.html#framed.solvers.solver.Solver" title="framed.solvers.solver.Solver"><em>Solver</em></a>) – solver instance instantiated with the model, for speed (optional)</li>
+<li><strong>get_values</strong> (<em>bool</em>) – set to false for speedup if you only care about the objective value (optional, default: True)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">solution</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference internal" href="framed.solvers.html#framed.solvers.solver.Solution" title="framed.solvers.solver.Solution">Solution</a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="framed.cobra.thermodynamics.nullspace">
+<code class="descclassname">framed.cobra.thermodynamics.</code><code class="descname">nullspace</code><span class="sig-paren">(</span><em>M</em>, <em>eps=1e-12</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.cobra.thermodynamics.nullspace" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
 <div class="section" id="module-framed.cobra.variability">
 <span id="framed-cobra-variability-module"></span><h2>framed.cobra.variability module<a class="headerlink" href="#module-framed.cobra.variability" title="Permalink to this headline">¶</a></h2>
 <p>This module implements a few flux variability analysis methods.</p>
@@ -1013,99 +1251,6 @@ db_reactions: the reactions that were added from the database to</p>
 </dd></dl>
 
 </div>
-<div class="section" id="module-framed.cobra.ensemble">
-<span id="framed-cobra-ensemble-module"></span><h2>framed.cobra.ensemble module<a class="headerlink" href="#module-framed.cobra.ensemble" title="Permalink to this headline">¶</a></h2>
-<dl class="class">
-<dt id="framed.cobra.ensemble.EnsembleModel">
-<em class="property">class </em><code class="descclassname">framed.cobra.ensemble.</code><code class="descname">EnsembleModel</code><span class="sig-paren">(</span><em>model</em>, <em>size</em>, <em>reaction_states=None</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.cobra.ensemble.EnsembleModel" title="Permalink to this definition">¶</a></dt>
-<dd><p>An Ensemble Model represents a collection of models that differ by a few reactions.
-They can be used to account for uncertainty in the structure of the metabolic network.</p>
-<dl class="method">
-<dt id="framed.cobra.ensemble.EnsembleModel.get_constraints">
-<code class="descname">get_constraints</code><span class="sig-paren">(</span><em>i</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.cobra.ensemble.EnsembleModel.get_constraints" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="framed.cobra.ensemble.EnsembleModel.get_reaction_states">
-<code class="descname">get_reaction_states</code><span class="sig-paren">(</span><em>i</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.cobra.ensemble.EnsembleModel.get_reaction_states" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="framed.cobra.ensemble.EnsembleModel.simplify">
-<code class="descname">simplify</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#framed.cobra.ensemble.EnsembleModel.simplify" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-<dl class="function">
-<dt id="framed.cobra.ensemble.load_ensemble">
-<code class="descclassname">framed.cobra.ensemble.</code><code class="descname">load_ensemble</code><span class="sig-paren">(</span><em>inputfile</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.cobra.ensemble.load_ensemble" title="Permalink to this definition">¶</a></dt>
-<dd><p>Load ensemble model from SBML file.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>inputfile</strong> (<em>str</em>) – input file</li>
-<li><strong>**kwargs</strong> (<em>dict</em>) – additional arguments to <em>load_cbmodel</em> method</li>
-</ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">ensemble model</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference internal" href="#framed.cobra.ensemble.EnsembleModel" title="framed.cobra.ensemble.EnsembleModel">EnsembleModel</a></p>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="function">
-<dt id="framed.cobra.ensemble.save_ensemble">
-<code class="descclassname">framed.cobra.ensemble.</code><code class="descname">save_ensemble</code><span class="sig-paren">(</span><em>ensemble</em>, <em>outputfile</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.cobra.ensemble.save_ensemble" title="Permalink to this definition">¶</a></dt>
-<dd><p>Save ensemble model as an SBML file.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>ensemble</strong> (<a class="reference internal" href="#framed.cobra.ensemble.EnsembleModel" title="framed.cobra.ensemble.EnsembleModel"><em>EnsembleModel</em></a>) – model ensemble</li>
-<li><strong>outputfile</strong> (<em>str</em>) – output file</li>
-<li><strong>**kwargs</strong> (<em>dict</em>) – additional arguments to <em>save_cbmodel</em> method</li>
-</ul>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="function">
-<dt id="framed.cobra.ensemble.simulate_ensemble">
-<code class="descclassname">framed.cobra.ensemble.</code><code class="descname">simulate_ensemble</code><span class="sig-paren">(</span><em>ensemble</em>, <em>method='FBA'</em>, <em>constraints=None</em>, <em>solver=None</em>, <em>get_fluxes=True</em><span class="sig-paren">)</span><a class="headerlink" href="#framed.cobra.ensemble.simulate_ensemble" title="Permalink to this definition">¶</a></dt>
-<dd><p>Simulate an Ensemble Model</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>ensemble</strong> (<a class="reference internal" href="#framed.cobra.ensemble.EnsembleModel" title="framed.cobra.ensemble.EnsembleModel"><em>EnsembleModel</em></a>) – ensemble model</li>
-<li><strong>method</strong> (<em>str</em>) – simulation method (default: ‘FBA’)</li>
-<li><strong>constraints</strong> (<em>dict</em>) – additional constraints (optional)</li>
-<li><strong>solver</strong> (<a class="reference internal" href="framed.solvers.html#framed.solvers.solver.Solver" title="framed.solvers.solver.Solver"><em>Solver</em></a>) – solver instance (optional)</li>
-<li><strong>get_fluxes</strong> (<em>bool</em>) – if True returns flux distributions for all models,
-otherwise only the objective function values are returned (default: True)</li>
-</ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">ensemble flux distributions or ensemble objective function values</p>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-</div>
 <div class="section" id="module-framed.cobra">
 <span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-framed.cobra" title="Permalink to this headline">¶</a></h2>
 <p>Package implementing several constraint-based methods.</p>
@@ -1124,14 +1269,15 @@ otherwise only the objective function values are returned (default: True)</li>
 <li><a class="reference internal" href="#">framed.cobra package</a><ul>
 <li><a class="reference internal" href="#submodules">Submodules</a></li>
 <li><a class="reference internal" href="#module-framed.cobra.deletion">framed.cobra.deletion module</a></li>
+<li><a class="reference internal" href="#module-framed.cobra.ensemble">framed.cobra.ensemble module</a></li>
 <li><a class="reference internal" href="#module-framed.cobra.essentiality">framed.cobra.essentiality module</a></li>
 <li><a class="reference internal" href="#module-framed.cobra.phaseplane">framed.cobra.phaseplane module</a></li>
 <li><a class="reference internal" href="#module-framed.cobra.plotting">framed.cobra.plotting module</a></li>
 <li><a class="reference internal" href="#module-framed.cobra.reconstruction">framed.cobra.reconstruction module</a></li>
 <li><a class="reference internal" href="#module-framed.cobra.simulation">framed.cobra.simulation module</a></li>
 <li><a class="reference internal" href="#module-framed.cobra.strain_design">framed.cobra.strain_design module</a></li>
+<li><a class="reference internal" href="#module-framed.cobra.thermodynamics">framed.cobra.thermodynamics module</a></li>
 <li><a class="reference internal" href="#module-framed.cobra.variability">framed.cobra.variability module</a></li>
-<li><a class="reference internal" href="#module-framed.cobra.ensemble">framed.cobra.ensemble module</a></li>
 <li><a class="reference internal" href="#module-framed.cobra">Module contents</a></li>
 </ul>
 </li>
@@ -1140,10 +1286,10 @@ otherwise only the objective function values are returned (default: True)</li>
 <h3>Related Topics</h3>
 <ul>
   <li><a href="../index.html">Documentation overview</a><ul>
-  <li><a href="modules.html">API</a><ul>
+  <li><a href="modules.html">src</a><ul>
   <li><a href="framed.html">framed package</a><ul>
       <li>Previous: <a href="framed.bioreactor.html" title="previous chapter">framed.bioreactor package</a></li>
-      <li>Next: <a href="framed.io.html" title="next chapter">framed.io package</a></li>
+      <li>Next: <a href="framed.community.html" title="next chapter">framed.community package</a></li>
   </ul></li>
   </ul></li>
   </ul></li>

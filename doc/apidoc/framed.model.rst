@@ -1,51 +1,59 @@
-framed.model package
-====================
+framed\.model package
+=====================
 
 Submodules
 ----------
 
-framed.model.cbmodel module
----------------------------
+framed\.model\.cbmodel module
+-----------------------------
 
 .. automodule:: framed.model.cbmodel
     :members:
     :undoc-members:
     :show-inheritance:
 
-framed.model.fixes module
--------------------------
+framed\.model\.environment module
+---------------------------------
+
+.. automodule:: framed.model.environment
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+framed\.model\.fixes module
+---------------------------
 
 .. automodule:: framed.model.fixes
     :members:
     :undoc-members:
     :show-inheritance:
 
-framed.model.model module
--------------------------
+framed\.model\.model module
+---------------------------
 
 .. automodule:: framed.model.model
     :members:
     :undoc-members:
     :show-inheritance:
 
-framed.model.odemodel module
-----------------------------
+framed\.model\.odemodel module
+------------------------------
 
 .. automodule:: framed.model.odemodel
     :members:
     :undoc-members:
     :show-inheritance:
 
-framed.model.parser module
---------------------------
+framed\.model\.parser module
+----------------------------
 
 .. automodule:: framed.model.parser
     :members:
     :undoc-members:
     :show-inheritance:
 
-framed.model.transformation module
-----------------------------------
+framed\.model\.transformation module
+------------------------------------
 
 .. automodule:: framed.model.transformation
     :members:
