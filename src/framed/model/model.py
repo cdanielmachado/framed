@@ -501,14 +501,14 @@ class Model(object):
         compartments = [self.metabolites[m_id].compartment for m_id in compounds]
         return set(compartments)
 
-    def metabolite_reaction_lookup(self):
+    def metabolite_reaction_lookup(self, force_recalculate=False):
         """ Return the network topology as a nested map from metabolite to reaction to coefficient
 
         Returns:
             dict: lookup table
         """
 
-        if not self._m_r_lookup:
+        if not self._m_r_lookup or force_recalculate:
             self._m_r_lookup = OrderedDict([(m_id, OrderedDict()) for m_id in self.metabolites])
 
             for r_id, reaction in self.reactions.items():
