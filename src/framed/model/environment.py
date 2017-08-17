@@ -204,8 +204,8 @@ class Environment(MutableMapping):
         """
         env = Environment()
 
-        for r_id in model.get_exchange_reactions(include_sink=True):
-            env[r_id] = (0 if model.reactions[r_id].is_sink else -max_uptake, max_secretion)
+        for r_id in model.get_exchange_reactions():
+            env[r_id] = (-max_uptake, max_secretion)
 
         if inplace:
             env.apply(model, exclusive=False, inplace=True)
