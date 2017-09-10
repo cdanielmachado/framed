@@ -33,6 +33,31 @@ class SmetanaScore(object):
     def __repr__(self):
         return "<{}/{}/{}:{}>".format(self.donor_organism, self.metabolite, self.receiver_organism, self.score)
 
+def calculate_smetana_score(community, scscores, mpscores, muscores, report_zero_scores=False):
+    metabolites = {met for mets in mpscores.itervalues() if mets for met in mets}
+
+    scores = []
+    for org_donor in community.organisms:
+        for org_receiver in community.organisms:
+            if org_donor == org_receiver:
+                continue
+
+            for met in metabolites:
+                mpscore = float(mpscores[org_donor] is not None and met in mpscores[org_donor])
+                muscore = muscores[org_receiver].get(met, 0.0) if muscores[org_receiver] else 0.0
+                scscore = scscores[org_receiver].get(org_donor, 0.0) if scscores[org_receiver] else 0.0
+
+                s = SmetanaScore(donor_organism=org_donor, receiver_organism=org_receiver, metabolite=met,
+                                 metabolite_production_score=mpscore, metabolite_uptake_score=muscore,
+                                 species_coupling_score=scscore)
+
+                if not report_zero_scores and not s.score:
+                    continue
+
+                scores.append(s)
+
+    return scores
+
 def smetana_score(community, environment, report_zero_scores=False, min_mass_weight=False, min_growth=1, max_uptake=100, abstol=1e-6, validate=False, n_solutions=100):
     """
     SMETANA value scores likelyhood of metabolite exchange from species A to species B
@@ -57,28 +82,8 @@ def smetana_score(community, environment, report_zero_scores=False, min_mass_wei
     scscores, scextras = species_coupling_score(community, environment, min_growth=min_growth, max_uptake=max_uptake, n_solutions=n_solutions)
     mpscores, mpextras = metabolite_production_score(community, environment)
     muscores, muextras = metabolite_uptake_score(community, environment, min_mass_weight=min_mass_weight, min_growth=min_growth, max_uptake=max_uptake, abstol=abstol, validate=validate, n_solutions=n_solutions)
-    metabolites = {met for mets in mpscores.itervalues() if mets for met in mets}
 
-    scores = []
-    for org_donor in community.organisms:
-        for org_receiver in community.organisms:
-            if org_donor == org_receiver:
-                continue
-
-            for met in metabolites:
-                mpscore = float(mpscores[org_donor] is not None and met in mpscores[org_donor])
-                muscore = muscores[org_receiver].get(met, 0.0) if muscores[org_receiver] else 0.0
-                scscore = scscores[org_receiver].get(org_donor, 0.0) if scscores[org_receiver] else 0.0
-
-                s = SmetanaScore(donor_organism=org_donor, receiver_organism=org_receiver, metabolite=met,
-                                 metabolite_production_score=mpscore, metabolite_uptake_score=muscore,
-                                 species_coupling_score=scscore)
-
-                if not report_zero_scores and not s.score:
-                    continue
-
-                scores.append(s)
-
+    scores = calculate_smetana_score(community=community, scscores=scscores, mpscores=mpscores, muscores=muscores, report_zero_scores=report_zero_scores)
     extras = {'status': {},
               "metabolite_production": {'scores': mpscores, 'extras': mpextras},
               "metabolite_uptake": {'scores': muscores, 'extras': muextras},
@@ -327,7 +332,7 @@ def mip_score(community, environment=None, min_mass_weight=False, min_growth=1, 
 
     Args:
         community (Community): microbial community model
-        environment (Environment): Metabolic environment in which the SMETANA score is colulated
+        environment (Environment): Metabolic environment in which the SMETANA score is calculated
         direction (int): direction of uptake reactions (negative or positive, default: -1)
         extracellular_id (str): extracellular compartment id
         min_mass_weight (bool): minimize by molecular weight of nutrients (default: False)
@@ -345,7 +350,6 @@ def mip_score(community, environment=None, min_mass_weight=False, min_growth=1, 
     if environment:
         environment.apply(interacting_community.merged, inplace=True)
         environment.apply(noninteracting_community.merged, inplace=True)
-        env_reactions = exch_reactions & set(environment)
         exch_reactions = exch_reactions - set(environment)
         
     interacting_medium, sol1 = minimal_medium(interacting_community.merged, direction=direction,

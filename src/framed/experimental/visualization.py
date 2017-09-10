@@ -60,7 +60,8 @@ def highligh_enzymes_in_KEGG(pathway_id, enzymes, ax=None, color="#FF1414"):
     """
 
     # Download KEGG pathway
-    kgml_d = requests.get(KEGG_API_URL + "/get/{}/kgml".format(pathway_id))
+    uri = KEGG_API_URL + "/get/{}/kgml".format(pathway_id)
+    kgml_d = requests.get(uri)
     kgml_d = xml.parse(StringIO(kgml_d.content)).getroot()
 
     # Download KEGG pathway image

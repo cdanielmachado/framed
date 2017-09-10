@@ -8,15 +8,14 @@ import sys
 import textwrap
 import traceback
 import warnings
-from collections import OrderedDict
-from shutil import copyfile
 import pandas
-from framed import load_cbmodel, FBA
-from framed.community.model import Community
-from framed.community.smetana import mip_score, mro_score, smetana_score
+from shutil import copyfile
+from collections import OrderedDict
+import framed.community.smetana as smetana
+import framed
 from framed.experimental.medium import minimal_medium
-from framed.model.environment import Environment
 from framed.solvers.solver import Status
+
 
 
 status_codes = {
@@ -50,14 +49,14 @@ class Logger(object):
             self._log += "\n"
 
     def flush(self, error=False):
-        self._log += "================================================================="
+        self._log += "=================================================================\n"
         stream = sys.stderr if error else sys.stdout
         stream.write(self._log)
         stream.flush()
         self._log = "\n"
 
 
-def main():
+def framed_smetana_pipeline():
     parser = argparse.ArgumentParser(formatter_class=argparse.RawDescriptionHelpFormatter,
                                      description="Run SMATANA on list of organisms communities",
                                      epilog=textwrap.dedent('''\
@@ -84,8 +83,7 @@ def main():
                                 Metabolite ID is the only required column (column:id). If not the always-present environment 
                                 is assumed to be empty
                                 
-        minimize_media          After finding minimal media (inorganic always present) perform another optimization to find
-                                true media
+        simulation_media          File path to simulation media, or 'minimal' for MM calculation
                                 
         [framed]
         
@@ -103,6 +101,8 @@ def main():
         smetana_n_solutions     How many unique solutions to calculate for Metabolite Uptake and Species Coupling scores (default: 50)
         
         max_uptake              How much of uptake/exchange should be allowed for active exchange reactions (default: 1000)
+        
+        min_growth              Minimal growth (default: 0.1)
         
         min_mass_weight         Calculate minimal media using mass weight minimization (default: False)
                                 
@@ -131,18 +131,21 @@ def main():
     communities_sep = config.get("communities", "communities_separator").strip('"') if config.has_option("communities", "communities_separator") else ","
     flavor = config.get("framed", "flavor") if config.has_option("framed", "flavor") else "fbc2"
     n_solutions = config.getint("framed", "smetana_n_solutions") if config.has_option("framed", "smetana_n_solutions") else 50
-    minimize_media = config.getint("communities", "minimize_media") if config.has_option("communities", "minimize_media") else 0
     min_mass_weight = config.getint("framed", "min_mass_weight") if config.has_option("framed", "min_mass_weight") else False
+    min_growth = config.getfloat("framed", "min_growth") if config.has_option("framed", "min_growth") else 0.1
+
 
     algorithms = config.get("framed", "algorithms") if config.has_option("framed", "algorithms") else None
-    all_algorithms = set(["mip", "mro", "scscore", "mpscore", "muscore"])
+    all_algorithms = {"fba", "mip", "mro", "smetana", "mpscore", "scscore", "muscore"}
     if algorithms is None:
         algorithms = all_algorithms
     else:
         algorithms = set(x.strip() for x in re.split(",", algorithms))
+        if "smetana" in algorithms:
+            algorithms = (algorithms | {"mpscore", "scscore", "muscore"}) - {"smetana"}
         unknown_algorithmms = algorithms - all_algorithms
         if len(unknown_algorithmms) > 0:
-            raise NameError("Unknown algorithm in section [framed/algorithms]")
+            raise NameError("Unknown algorithm in section [framed/algorithms]: {}".format(",".join(unknown_algorithmms)))
 
     max_uptake = config.getfloat("framed", "max_uptake") if config.has_option("framed", "max_uptake") else 1000.0
     re_biomass = re.compile(config.get("framed", "biomass_regex")) if config.has_option("framed", "biomass_regex") else re.compile("iomass")
@@ -154,12 +157,22 @@ def main():
                             pandas.read_table(config.get("communities", "models_locations")).iterrows()}
     else:
         models_locations = {}
-    exch_metabolites = {r['id']: r['name'] for _, r in
-                        pandas.read_table(config.get("communities", "exchange_metabolites")).iterrows()}
-    exch_metabolites_list = sorted(exch_metabolites)
-    rxn_inorganic = {r['id'].strip() for _, r in
-                     pandas.read_table(config.get("communities", "inorganic_media"), comment="#").iterrows()}
-    env_inorganic = Environment.from_reactions(rxn_inorganic, max_uptake=max_uptake)
+
+    compounds_external = {r['id']: r['name'] for _, r in pandas.read_table(config.get("communities", "compounds_external")).iterrows()}
+    compounds_external = OrderedDict(sorted(compounds_external.iteritems(), key=lambda x: x[0]))
+    env_external = framed.Environment.from_compounds(compounds_external.keys(), exchange_format=exch_met_to_rxn_format, max_uptake=max_uptake)
+    rxn_external = set(env_external)
+
+    compounds_inorganic = {r['id']: r['name'] for _, r in pandas.read_table(config.get("communities", "compounds_inorganic")).iterrows()}
+    compounds_inorganic = OrderedDict(sorted(compounds_inorganic.iteritems(), key=lambda x: x[0]))
+    env_inorganic = framed.Environment.from_compounds(compounds_inorganic.keys(), exchange_format=exch_met_to_rxn_format, max_uptake=max_uptake)
+    rxn_inorganic = set(env_inorganic)
+
+    compounds_exchange_blacklist = set()
+    if config.has_option("communities", "compounds_exchange_blacklist"):
+        compounds_exchange_blacklist = {r['id'] for _, r in pandas.read_table(config.get("communities", "compounds_exchange_blacklist")).iterrows()}
+
+    compounds_exchange = set(compounds_external) - compounds_exchange_blacklist
 
     #
     # Load communities descriptions
@@ -202,17 +215,17 @@ def main():
         for i in range(1, max_community_size + 1):
             row_template["fba.org{}".format(i)] = ""
 
-    for m_id in exch_metabolites_list:
+    for m_id in compounds_external:
         row_template["mmedia.{}".format(m_id)] = 0
 
     if "muscore" in algorithms:
         for i in range(1, max_community_size + 1):
-            for m_id in exch_metabolites_list:
+            for m_id in compounds_exchange:
                 row_template["muscore.org{}.{}".format(i, m_id)] = 0
 
     if "mpscore" in algorithms:
         for i in range(1, max_community_size + 1):
-            for m_id in exch_metabolites_list:
+            for m_id in compounds_exchange:
                 row_template["mpscore.org{}.{}".format(i, m_id)] = 0
 
     if "scscore" in algorithms:
@@ -225,11 +238,11 @@ def main():
     #
     # Main loop
     #
-    with open(args.output.format(i=args.part, total=args.parts_total), "w") as file:
+    with open(args.output.format(i=args.part, total=args.parts_total), "w") as output:
         # Write header
         missing_communities = [m['id'] for m in communities if len(m['missing_models'])]
         missing_communities_sample = [m['id'] for m in communities_sample if len(m['missing_models'])]
-        file.write("\t".join(row_template) + "\n")
+        output.write("\t".join(row_template) + "\n")
         logger.log("Total number of communities: {} (sample: {})", len(communities), len(communities_sample))
         logger.log("Missing models: {} (sample: {}): {}", len(missing_communities), len(missing_communities_sample),
                    ", ".join(missing_communities_sample))
@@ -257,7 +270,7 @@ def main():
                 biomass_valid = True
                 for i, path in enumerate(community_data['paths'], start=1):
                     logger.log("Reading {}:'{}' SBML file...".format(i, path), newline=True)
-                    model = load_cbmodel(path, flavor=flavor)
+                    model = framed.load_cbmodel(path, flavor=flavor)
                     model.id = re.sub("[^A-Za-z0-9]", "_", community_data['species'][i - 1])
                     biomass_candidates = [r for r in model.reactions if re_biomass.match(r)]
                     if len(biomass_candidates) != 1:
@@ -280,11 +293,13 @@ def main():
                 #
                 # Print community description
                 #
-                community = Community(community_data['id'], models, extracellular_compartment_id=extracellular_comp_id,
-                                      create_biomass=True, interacting=True)
-                com_rxn_inorganic = set(community.merged.get_exchange_reactions()) & rxn_inorganic
-                logger.log("Inorganic media ({}):", len(com_rxn_inorganic), newline=False)
-                logger.log(", ".join(r for r in com_rxn_inorganic))
+                community_interacting = framed.Community(community_data['id'], models, extracellular_compartment_id=extracellular_comp_id,
+                                      create_biomass=True, interacting=True,
+                                      exchanged_metabolites_blacklist=compounds_exchange_blacklist)
+
+                rxn_com_inorganic = set(community_interacting.merged.get_exchange_reactions()) & rxn_inorganic
+                rxn_com_external = set(community_interacting.merged.get_exchange_reactions()) & rxn_external
+                logger.log("Inorganic media size: {}", len(rxn_com_inorganic))
                 for model_i, model_id in enumerate(community_data['species'], start=1):
                     row["org{}".format(model_i)] = model_id
                 row['community_id'] = community_data['id']
@@ -293,51 +308,35 @@ def main():
                 #
                 # Calculate minimal media for community. Predefined inorganic compounds are always present !
                 #
-                env_inorganic.apply(community.merged, inplace=True)
+                env_inorganic.apply(community_interacting.merged, inplace=True)
 
-#                candidates_rxn_minimal = set(community.merged.get_exchange_reactions()) - com_rxn_inorganic
-
-                # TODO: Change RegEx to proper mapping
-                external_env = Environment.from_compounds(exch_metabolites_list, exchange_format=exch_met_to_rxn_format, max_uptake=max_uptake)
-                candidates_rxn_minimal = (set(community.merged.get_exchange_reactions()) & set(external_env.keys())) - com_rxn_inorganic
-                com_rxn_defined, sol = minimal_medium(community.merged, exchange_reactions=candidates_rxn_minimal,
-                                                      validate=True, min_mass_weight=min_mass_weight)
-
+                rxn_com_minimal_candidates = rxn_com_external - rxn_com_inorganic
+                rxn_com_minimal, sol = minimal_medium(community_interacting.merged, exchange_reactions=rxn_com_minimal_candidates, validate=True, min_mass_weight=min_mass_weight)
+                rxn_com_minimal = rxn_com_minimal | rxn_com_inorganic
+                env_com_minimal = framed.Environment.from_reactions(rxn_com_minimal, max_uptake=max_uptake)
+                met_com_minimal = {m.original_metabolite for ee in
+                                   community_interacting.organisms_exchange_reactions.itervalues() for m in
+                                   ee.itervalues() if m.community_exchange_reaction in rxn_com_minimal}
 
                 row["mmedia_status"] = status_codes[sol.status]
                 if sol.status != Status.OPTIMAL:
-                    logger.log("No defined media available")
+                    logger.log("Failed to find media for community")
                     logger.flush(error=True)
-                    file.write(row_string(row))
-                    file.flush()
+                    output.write(row_string(row))
+                    output.flush()
                     continue
 
-                com_rxn_defined = com_rxn_defined | com_rxn_inorganic
-                if minimize_media:
-                    com_rxn_minimal, sol = minimal_medium(community.merged, exchange_reactions=com_rxn_defined,
-                                                          validate=True, min_mass_weight=min_mass_weight)
+                env_com_minimal.apply(community_interacting.merged, inplace=True)
 
-                    row["mmedia_status"] = status_codes[sol.status]
-                    if sol.status != Status.OPTIMAL:
-                        logger.log("No minimal media available")
-                        logger.flush(error=True)
-                        file.write(row_string(row))
-                        file.flush()
-                        continue
-                else:
-                    com_rxn_minimal = com_rxn_defined
+                logger.log("Interacting community media ({}'inorganic + {}'minimal + {}'external):",
+                           len(rxn_com_inorganic),
+                           len(rxn_com_minimal - rxn_com_inorganic),
+                           len(rxn_com_external - rxn_com_minimal - rxn_com_inorganic))
 
-                env_minimal = Environment.from_reactions(com_rxn_minimal, max_uptake=max_uptake)
-                logger.log("SMETANA media ({}'inorganic + {}'minimal ({}'defined)):",
-                           len(com_rxn_minimal & com_rxn_inorganic),
-                           len(com_rxn_minimal - com_rxn_inorganic),
-                           len(com_rxn_defined - com_rxn_inorganic),
-                           newline=False)
-
-                for r_i, r in enumerate(com_rxn_minimal, start=1):
-                    m = community.merged.get_exchange_reactions()[r][0]
+                for r_i, r in enumerate(rxn_com_minimal, start=1):
+                    m = community_interacting.merged.get_exchange_reactions()[r][0]
                     orig_m = list({org_m.original_metabolite
-                                   for org_exch in community.organisms_exchange_reactions.itervalues()
+                                   for org_exch in community_interacting.organisms_exchange_reactions.itervalues()
                                    for org_m in org_exch.itervalues()
                                    if org_m.extracellular_metabolite == m})
                     if len(orig_m):
@@ -350,84 +349,102 @@ def main():
                         raise KeyError("Column '{}' was not found in row".format(row_id))
                     row[row_id] = 1
 
-                    logger.log("{}, ", r, newline=(r_i == len(com_rxn_minimal)))
+                    logger.log("    {}{}", " " if r in rxn_com_inorganic else "+", compounds_external[orig_m])
 
                 #
                 # Calculate MIP and MRO
                 #
                 if "mip" in algorithms:
-                    mip, mip_extras = mip_score(community, env_inorganic, validate=True)
+                    mip, mip_extras = smetana.mip_score(community_interacting, env_inorganic, validate=True)
                     row["mip"] = mip
                     logger.log("MIP: {}", mip)
 
 
                 if "mro" in algorithms:
-                    mro, mro_extras = mro_score(community, env_inorganic, validate=True)
+                    mro, mro_extras = smetana.mro_score(community_interacting, env_inorganic, validate=True)
                     row["mro"] = mro
                     logger.log("MRO: {}", mro)
 
-                #
-                # Apply minimal+inorganic media
-                #
-                env_minimal.apply(community.merged, inplace=True)
-                community_fba = community.copy(create_biomass=False, interacting=False)
-
-                for r_id in com_rxn_minimal:
-                    community_fba.merged.reactions[r_id].lb = -1000
-
-                for r_exchanges in community_fba.organisms_exchange_reactions.itervalues():
-                    for r_id in r_exchanges:
-                        community_fba.merged.reactions[r_id].lb = -1
-
                 if "fba" in algorithms:
-                    sol = FBA(community_fba.merged, get_values=True)
+                    community_fba = community_interacting.copy(create_biomass=False, interacting=False)
+                    env_com_minimal.apply(community_fba.merged, inplace=True)
+
+                    sol = framed.FBA(community_fba.merged, get_values=True, get_shadow_prices=True)
                     row["fba_status"] = status_codes[sol.status]
                     logger.log("Growth on minimal media (uptakes 1.0/org): {:.1f} ({}) = ",
                                sol.fobj, status_codes[sol.status], newline=False)
 
                     if sol.status == Status.OPTIMAL:
                         row["fba_community"] = sol.fobj
-                        for m_i, model_id in enumerate(community.organisms, start=1):
+                        for m_i, model_id in enumerate(community_fba.organisms, start=1):
                             b = community_fba.organisms_biomass_reactions[model_id]
-                            logger.log("{:.1f}'{} + ", sol.values[b], community_data['species'][m_i - 1],
-                                       newline=(len(community.organisms) == m_i))
+                            logger.log("{:.1f}'{}{}", sol.values[b], community_data['species'][m_i - 1], " + " if m_i < len(community_fba.organisms) else "",
+                                       newline=(len(community_fba.organisms) == m_i))
                             row_id = "fba.org{}".format(models_i[model_id])
                             if row_id not in row:
                                 raise KeyError("Column '{}' was not found in row".format(row_id))
                             row[row_id] = sol.values[b]
 
                 #
+                # Apply minimal+inorganic media
+                #
+                env_com_minimal.apply(community_interacting.merged, inplace=True)
+
+                #
                 # Calculate SMETANA
                 #
-                if "scscore" in algorithms or "mpscore" in algorithms or "muscore" in algorithms:
-                    smetana, smetana_extras = smetana_score(community, env_minimal, n_solutions=n_solutions,
-                                                            min_mass_weight=min_mass_weight)
-                    logger.log("Smetana (sum={}): ", sum(s.score for s in smetana))
-                    if smetana:
-                        logger.log(", ".join(str(s) for s in smetana))
-                        for m_receiver, dependants in smetana_extras["species_coupling"]["scores"].iteritems():
-                            for m_donor, scscore in dependants.iteritems():
-                                row_id = "scscore.org{}.org{}".format(models_i[m_receiver], models_i[m_donor])
-                                if row_id not in row:
-                                    raise KeyError("Column '{}' was not found in row".format(row_id))
-                                row[row_id] = scscore
+                if "scscore" in algorithms:
+                    scscores, scextras = smetana.species_coupling_score(community_interacting, environment=env_com_minimal,
+                                                                min_growth=min_growth,
+                                                                max_uptake=max_uptake, n_solutions=n_solutions)
+                    logger.log("Species Coupling Scores:")
+                    for m_receiver, donors in scscores.iteritems():
+                        if len(donors):
+                            donors_str = ["{}'{:.0f}%".format(m_donor, 100*freq) for m_donor, freq in donors.iteritems()]
+                            logger.log("    {} <= {}".format(m_receiver, ",".join(donors_str)))
+                        for m_donor, scscore in donors.iteritems():
+                            row_id = "scscore.org{}.org{}".format(models_i[m_receiver], models_i[m_donor])
+                            if row_id not in row:
+                                raise KeyError("Column '{}' was not found in row".format(row_id))
+                            row[row_id] = scscore
 
-                        for model_id, metabolites in smetana_extras["metabolite_uptake"]["scores"].iteritems():
-                            for m_id, muscore in metabolites.iteritems():
-                                row_id = "muscore.org{}.{}".format(models_i[model_id], m_id)
-                                if row_id not in row:
-                                    raise KeyError("Column '{}' was not found in row".format(row_id))
-                                row[row_id] = muscore
+                if "mpscore" in algorithms:
+                    mpscores, mpextras = smetana.metabolite_production_score(community_interacting, env_com_minimal)
+                    logger.log("Metabolite Production Scores:")
+                    for model_id, metabolites in mpscores.iteritems():
+                        if len(metabolites):
+                            logger.log("    {} <= {}".format(model_id, ",".join([compounds_external[m] for m in metabolites])))
+                        for m_id in metabolites:
+                            row_id = "mpscore.org{}.{}".format(models_i[model_id], m_id)
+                            if row_id not in row:
+                                raise KeyError("Column '{}' was not found in row".format(row_id))
+                            row[row_id] = 1
 
-                        for model_id, metabolites in smetana_extras["metabolite_production"]["scores"].iteritems():
-                            for m_id in metabolites:
-                                row_id = "mpscore.org{}.{}".format(models_i[model_id], m_id)
-                                if row_id not in row:
-                                    raise KeyError("Column '{}' was not found in row".format(row_id))
-                                row[row_id] = 1
+                if "muscore" in algorithms:
+                    logger.log("Metabolite Uptake Scores:")
+                    muscores, muextras = smetana.metabolite_uptake_score(community_interacting, env_com_minimal,
+                                                                 min_mass_weight=min_mass_weight, min_growth=min_growth,
+                                                                 max_uptake=max_uptake,
+                                                                 n_solutions=n_solutions)
+                    for model_id, metabolites in muscores.iteritems():
+                        if len(metabolites):
+                            logger.log("    {} <= {}".format(model_id, ",".join(["{}'{:.0f}%".format(compounds_external[m], 100*freq) for m, freq in metabolites.iteritems()])))
+                        for m_id, muscore in metabolites.iteritems():
+                            row_id = "muscore.org{}.{}".format(models_i[model_id], m_id)
+                            if row_id not in row:
+                                raise KeyError("Column '{}' was not found in row".format(row_id))
+                            row[row_id] = muscore
 
-                file.write(row_string(row))
-                file.flush()
+                if "scscore" in algorithms and "mpscore" in algorithms and "muscore" in algorithms:
+                    smetana_score = smetana.calculate_smetana_score(community=community_interacting, scscores=scscores, mpscores=mpscores, muscores=muscores, report_zero_scores=False)
+                    logger.log("Smetana Scores (sum={}): ", sum(s.score for s in smetana_score))
+                    if smetana_score:
+                        for s in smetana_score:
+                            logger.log("{}/{}/{} => {}", s.donor_organism, compounds_external[s.metabolite],
+                                s.receiver_organism, s.score)
+
+                output.write(row_string(row))
+                output.flush()
                 logger.flush(error=False)
             except:
                 logger.log("-------------------- START_ERROR --------------------")
@@ -441,4 +458,4 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    framed_smetana_pipeline()

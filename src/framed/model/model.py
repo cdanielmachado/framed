@@ -294,7 +294,10 @@ class Model(object):
                 self._exchange_reactions[r.id] = [k for k, v in r.stoichiometry.iteritems() if v < 0]
 
         if include_sink:
-            return itertools.chain(self._exchange_reactions, self.get_sink_reactions())
+            plus_sink = self._exchange_reactions.copy()
+            for s_id, mets in  self.get_sink_reactions().iteritems():
+                plus_sink[s_id] = mets
+            return plus_sink
         else:
             return self._exchange_reactions
 
