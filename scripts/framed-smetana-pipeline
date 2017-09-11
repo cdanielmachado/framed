@@ -61,7 +61,6 @@ def framed_smetana_pipeline():
                                      description="Run SMATANA on list of organisms communities",
                                      epilog=textwrap.dedent('''\
         configuration file (* = mandatory):
-    
         [communities]
         
         communities*            Path to tab separated file with community description. Two columns are required, 
@@ -69,22 +68,20 @@ def framed_smetana_pipeline():
                                 <communities_separator>)
                                 
         communities_separator   Separator character used to separate community members (default: " ")         
-                               
-        exchange_metabolites*   Path to tab separated file with list of all exchange metabolites. Two columns are required,
-                                metabolite ID (column:id) and metabolite name (column:name)
-                                
+                 
         models_dir*             Path to directory where SBML models are located. 
         
         models_locations        Path to tab separated file mapping species ID (column:id) in <communities> to 
                                 SBML file (column:path) relative <models_dir> path. If not provided model ID is assumed to be 
                                 SBML file name
                                 
-        inorganic_media*        Path to tab separated file with list of metabolites always present in the environment. 
+        compounds_inorganic*    Path to tab separated file with list of metabolites always present in the environment. 
                                 Metabolite ID is the only required column (column:id). If not the always-present environment 
                                 is assumed to be empty
                                 
-        simulation_media          File path to simulation media, or 'minimal' for MM calculation
-                                
+        compounds_exchanged*    Path to tab separated file with list of metabolites that can be exchanged between species. 
+                                Two columns are required, metabolite ID (column:id) and metabolite name (column:name) 
+                
         [framed]
         
         flavor                  SBML flavor to use when parsing the models. Allowed values are 'cobra', 'cobra:other', 
@@ -105,7 +102,10 @@ def framed_smetana_pipeline():
         min_growth              Minimal growth (default: 0.1)
         
         min_mass_weight         Calculate minimal media using mass weight minimization (default: False)
-                                
+             
+        algorithms              Comma-separated list of algorithms to run. Available options: smetana, muscore, mpscore,
+                                scscore, fba, mip, mro
+    
     '''))
 
     parser.add_argument('config', help='Path to configuration file (see epilog)')
@@ -158,6 +158,8 @@ def framed_smetana_pipeline():
     else:
         models_locations = {}
 
+    compounds_exchanged = {r['id']: r['name'] for _, r in pandas.read_table(config.get("communities", "compounds_exchanged")).iterrows()}
+    compounds_exchanged = OrderedDict(sorted(compounds_exchanged.iteritems(), key=lambda x: x[0]))
     compounds_external = {r['id']: r['name'] for _, r in pandas.read_table(config.get("communities", "compounds_external")).iterrows()}
     compounds_external = OrderedDict(sorted(compounds_external.iteritems(), key=lambda x: x[0]))
     env_external = framed.Environment.from_compounds(compounds_external.keys(), exchange_format=exch_met_to_rxn_format, max_uptake=max_uptake)
@@ -172,7 +174,8 @@ def framed_smetana_pipeline():
     if config.has_option("communities", "compounds_exchange_blacklist"):
         compounds_exchange_blacklist = {r['id'] for _, r in pandas.read_table(config.get("communities", "compounds_exchange_blacklist")).iterrows()}
 
-    compounds_exchange = set(compounds_external) - compounds_exchange_blacklist
+    for met in compounds_exchange_blacklist:
+        del compounds_exchanged[met]
 
     #
     # Load communities descriptions
@@ -220,12 +223,12 @@ def framed_smetana_pipeline():
 
     if "muscore" in algorithms:
         for i in range(1, max_community_size + 1):
-            for m_id in compounds_exchange:
+            for m_id in compounds_exchanged:
                 row_template["muscore.org{}.{}".format(i, m_id)] = 0
 
     if "mpscore" in algorithms:
         for i in range(1, max_community_size + 1):
-            for m_id in compounds_exchange:
+            for m_id in compounds_exchanged:
                 row_template["mpscore.org{}.{}".format(i, m_id)] = 0
 
     if "scscore" in algorithms:
@@ -328,10 +331,10 @@ def framed_smetana_pipeline():
 
                 env_com_minimal.apply(community_interacting.merged, inplace=True)
 
-                logger.log("Interacting community media ({}'inorganic + {}'minimal + {}'external):",
+                logger.log("\nInteracting community media ({}'inorganic + {}'minimal + {}'external):\n{}",
                            len(rxn_com_inorganic),
                            len(rxn_com_minimal - rxn_com_inorganic),
-                           len(rxn_com_external - rxn_com_minimal - rxn_com_inorganic))
+                           len(rxn_com_external - rxn_com_minimal - rxn_com_inorganic), "-"*30)
 
                 for r_i, r in enumerate(rxn_com_minimal, start=1):
                     m = community_interacting.merged.get_exchange_reactions()[r][0]
@@ -347,7 +350,7 @@ def framed_smetana_pipeline():
                     row_id = "mmedia.{}".format(orig_m)
                     if row_id not in row:
                         raise KeyError("Column '{}' was not found in row".format(row_id))
-                    row[row_id] = 1
+                    row[row_id] = 1 if orig_m in compounds_inorganic else 2
 
                     logger.log("    {}{}", " " if r in rxn_com_inorganic else "+", compounds_external[orig_m])
 
@@ -397,7 +400,7 @@ def framed_smetana_pipeline():
                     scscores, scextras = smetana.species_coupling_score(community_interacting, environment=env_com_minimal,
                                                                 min_growth=min_growth,
                                                                 max_uptake=max_uptake, n_solutions=n_solutions)
-                    logger.log("Species Coupling Scores:")
+                    logger.log("Species Coupling Scores:\n{}", "-"*30)
                     for m_receiver, donors in scscores.iteritems():
                         if len(donors):
                             donors_str = ["{}'{:.0f}%".format(m_donor, 100*freq) for m_donor, freq in donors.iteritems()]
@@ -410,10 +413,10 @@ def framed_smetana_pipeline():
 
                 if "mpscore" in algorithms:
                     mpscores, mpextras = smetana.metabolite_production_score(community_interacting, env_com_minimal)
-                    logger.log("Metabolite Production Scores:")
+                    logger.log("\nMetabolite Production Scores:\n{}", "-"*30)
                     for model_id, metabolites in mpscores.iteritems():
                         if len(metabolites):
-                            logger.log("    {} <= {}".format(model_id, ",".join([compounds_external[m] for m in metabolites])))
+                            logger.log("    {} => {}".format(model_id, ",".join([compounds_exchanged.get(m, m) for m in metabolites])))
                         for m_id in metabolites:
                             row_id = "mpscore.org{}.{}".format(models_i[model_id], m_id)
                             if row_id not in row:
@@ -421,14 +424,14 @@ def framed_smetana_pipeline():
                             row[row_id] = 1
 
                 if "muscore" in algorithms:
-                    logger.log("Metabolite Uptake Scores:")
+                    logger.log("\nMetabolite Uptake Scores:\n{}", "-"*30)
                     muscores, muextras = smetana.metabolite_uptake_score(community_interacting, env_com_minimal,
                                                                  min_mass_weight=min_mass_weight, min_growth=min_growth,
                                                                  max_uptake=max_uptake,
                                                                  n_solutions=n_solutions)
                     for model_id, metabolites in muscores.iteritems():
                         if len(metabolites):
-                            logger.log("    {} <= {}".format(model_id, ",".join(["{}'{:.0f}%".format(compounds_external[m], 100*freq) for m, freq in metabolites.iteritems()])))
+                            logger.log("    {} <= {}".format(model_id, ", ".join(["{}'{:.0f}%".format(compounds_exchanged.get(m, m), 100*freq) for m, freq in metabolites.iteritems()])))
                         for m_id, muscore in metabolites.iteritems():
                             row_id = "muscore.org{}.{}".format(models_i[model_id], m_id)
                             if row_id not in row:
@@ -437,11 +440,11 @@ def framed_smetana_pipeline():
 
                 if "scscore" in algorithms and "mpscore" in algorithms and "muscore" in algorithms:
                     smetana_score = smetana.calculate_smetana_score(community=community_interacting, scscores=scscores, mpscores=mpscores, muscores=muscores, report_zero_scores=False)
-                    logger.log("Smetana Scores (sum={}): ", sum(s.score for s in smetana_score))
+                    logger.log("\nSmetana Scores (sum={}):\n{}", sum(s.score for s in smetana_score), "-"*30)
                     if smetana_score:
                         for s in smetana_score:
-                            logger.log("{}/{}/{} => {}", s.donor_organism, compounds_external[s.metabolite],
-                                s.receiver_organism, s.score)
+                            logger.log("    {}/{}/{} => {:.0f}%", s.donor_organism, compounds_exchanged.get(s.metabolite, s.metabolite),
+                                s.receiver_organism, 100*s.score)
 
                 output.write(row_string(row))
                 output.flush()

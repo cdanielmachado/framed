@@ -420,13 +420,19 @@ def mro_score(community, environment=None, direction=-1, min_mass_weight=False, 
     # anabiotic environment is limited to non-interacting community minimal media
     noninteracting_exch = set(noninteracting_medium)
 
+    minimal_medium_set = noninteracting_medium | set(environment)
+    indep_environment = Environment.from_reactions(minimal_medium_set, max_uptake=max_uptake)
+    indep_environment.apply(inter_community.merged, inplace=True)
+
     individual_media = {}
     for org_id in inter_community.organisms:
         biomass_reaction = inter_community.organisms_biomass_reactions[org_id]
         inter_community.merged.biomass_reaction = biomass_reaction
 
+        org_noninteracting_exch = inter_community.organisms_exchange_reactions[org_id]
+
         medium, sol = minimal_medium(inter_community.merged,
-                                   exchange_reactions=noninteracting_exch,
+                                   exchange_reactions=org_noninteracting_exch,
                                    direction=direction,
                                    min_mass_weight=min_mass_weight,
                                    min_growth=min_growth,
@@ -436,14 +442,13 @@ def mro_score(community, environment=None, direction=-1, min_mass_weight=False, 
         if sol.status != Status.OPTIMAL:
             raise RuntimeError('Failed to find a valid solution')
 
-        individual_media[org_id] = medium
+        individual_media[org_id] = {org_noninteracting_exch[r].original_metabolite for r in medium}
 
 
-    pairwise = {(org1, org2): individual_media[org1] & individual_media[org2]
-                for org1, org2 in itertools.combinations(community.organisms, 2)}
+    pairwise = {(o1, o2): individual_media[o1] & individual_media[o2] for o1, o2 in combinations(community.organisms, 2)}
 
-    numerator = float(len(individual_media)) * sum(map(len, pairwise.values()))
-    denominator = float(len(pairwise)) * sum(map(len, individual_media.values()))
+    numerator = len(individual_media) * sum(map(len, pairwise.values()))
+    denominator = float(len(pairwise) * sum(map(len, individual_media.values())))
 
     score = numerator / denominator if denominator != 0 else None
     extras = {'noninteracting_medium': noninteracting_medium, 'individual_media': individual_media, 
