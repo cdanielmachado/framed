@@ -298,7 +298,7 @@ def _load_cbmodel(sbml_model, flavor, exchange_detection_mode=None):
         raise TypeError("Unsupported SBML flavor: {}".format(flavor))
 
     if exchange_detection_mode and len(model.get_exchange_reactions()) == 0:
-        raise RuntimeError("Exchange reactions were not detected")
+        warnings.warn("Exchange reactions were not detected")
 
     return model
 

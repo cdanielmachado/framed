@@ -24,7 +24,7 @@ class Metabolite:
             boundary (bool): boundary condition
         """
         self.id = elem_id
-        self.name = name
+        self.name = name if name is not None else elem_id
         self.compartment = compartment
         self.boundary = boundary
         self.constant = constant
@@ -55,7 +55,7 @@ class Reaction:
             regulators (dict): reaction regulators
         """
         self.id = elem_id
-        self.name = name
+        self.name = name if name is not None else elem_id
         self.reversible = reversible
         self.is_exchange = is_exchange
         self.is_sink = is_sink
@@ -163,7 +163,7 @@ class Compartment:
             size (float): compartment size (optional)
         """
         self.id = elem_id
-        self.name = name
+        self.name = name if name is not None else elem_id
         self.size = size
         self.metadata = OrderedDict()
 

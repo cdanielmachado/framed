@@ -9,7 +9,7 @@ class MetaNetX:
 
     """
 
-    def __init__(self, path_to_files):
+    def __init__(self, path_to_files, version=2.0):
         """ Build an instance of the MetaNetX translation service.
 
         Args:
@@ -18,12 +18,15 @@ class MetaNetX:
         self.path_to_files = path_to_files
         self.reac_xref = None
         self.chem_xref = None
+        self.version = version
 
     def _get_reac_xref(self):
         if self.reac_xref is None:
             filename = self.path_to_files + '/reac_xref.tsv'
             self.reac_xref = pd.read_csv(filename, sep='\t', header=None, comment='#',
                                          names=['external_id', 'mnx_id'])
+            if self.version >= 3.0:
+                self.reac_xref = self.reac_xref[self.reac_xref['external_id'].str.contains(':')]
 
             self.reac_xref['db'] = self.reac_xref['external_id'].apply(lambda x: x.split(':')[0])
             self.reac_xref['local_id'] = self.reac_xref['external_id'].apply(lambda x: x.split(':')[1])
@@ -35,6 +38,10 @@ class MetaNetX:
             filename = self.path_to_files + '/chem_xref.tsv'
             self.chem_xref = pd.read_csv(filename, sep='\t', header=None, comment='#', usecols=[0, 1],
                                          names=['external_id', 'mnx_id'])
+
+            if self.version >= 3.0:
+                self.chem_xref = self.chem_xref[self.chem_xref['external_id'].str.contains(':')]
+
             self.chem_xref['db'] = self.chem_xref['external_id'].apply(lambda x: x.split(':')[0])
             self.chem_xref['local_id'] = self.chem_xref['external_id'].apply(lambda x: x.split(':')[1])
         return self.chem_xref
