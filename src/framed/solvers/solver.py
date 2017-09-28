@@ -138,6 +138,7 @@ class Solution:
         Arguments:
             zeros (bool): show zero values (default: False)
             pattern (str): show only reactions that contain pattern (optional)
+            abstol (float): abstolute tolerance to hide null values (default: 1e-9)
 
         Returns:
             str: printed table with shadow prices
@@ -158,17 +159,17 @@ class Solution:
 
         return '\n'.join(entries)
 
-    def show_metabolite_balance(self, m_id, model, zeros=False, sort=False, percentage=False, equations=False):
+    def show_metabolite_balance(self, m_id, model, sort=False, percentage=False, equations=False, abstol=1e-9):
         """ Show metabolite balance details.
 
         Arguments:
             m_id (str): metabolite id
             model (CBModel): model that generated the solution
             zeros (bool): show zero entries (default: False)
-            sort (bool): sort reactions by flux (default: False)
             percentage (bool): show percentage of total turnover instead of flux (default: False)
             equations (bool): show reaction equations (default: False)
-        
+            abstol (float): abstolute tolerance to hide null values (default: 1e-9)
+
         Returns:
             str: formatted output
         """
@@ -180,16 +181,16 @@ class Solution:
         outputs = model.get_metabolite_consumers(m_id)
         
         fwd_in = [(r_id, model.reactions[r_id].stoichiometry[m_id] * self.values[r_id], '--> o')
-                  for r_id in inputs if self.values[r_id] > 0 or zeros and self.values[r_id] == 0]
+                  for r_id in inputs if self.values[r_id] > 0]
         rev_in = [(r_id, model.reactions[r_id].stoichiometry[m_id] * self.values[r_id], 'o <--')
                   for r_id in outputs if self.values[r_id] < 0]
         fwd_out = [(r_id, model.reactions[r_id].stoichiometry[m_id] * self.values[r_id], 'o -->')
-                   for r_id in outputs if self.values[r_id] > 0 or zeros and self.values[r_id] == 0]
+                   for r_id in outputs if self.values[r_id] > 0]
         rev_out = [(r_id, model.reactions[r_id].stoichiometry[m_id] * self.values[r_id], '<-- o')
                     for r_id in inputs if self.values[r_id] < 0]
         
-        flux_in = fwd_in + rev_in
-        flux_out = fwd_out + rev_out
+        flux_in = [x for x in fwd_in + rev_in if x[1] > abstol]
+        flux_out = [x for x in fwd_out + rev_out if -x[1] > abstol]
         
         if sort:
             flux_in.sort(key=lambda x: x[1], reverse=True)

@@ -36,17 +36,41 @@ def flux_distance(original, other, normalize=False, quadratic=False):
         return dist
 
 
-def compare_fluxes(original, other, tolerance=1e-6, sort_values=False):
+def compare_fluxes(original, other, tolerance=1e-6, abstol=1e-9, sort=False, pattern=None):
 
+    only_left = sorted(set(original.keys()) - set(other.keys()))
+    only_right = sorted(set(other.keys()) - set(original.keys()))
     common = sorted(set(original.keys()) & set(other.keys()))
-    diff = [(r_id, abs(original[r_id] - other[r_id])) for r_id in common]
 
-    if sort_values:
-        diff.sort(key=lambda x: x[1], reverse=True)
+    difference = [(r_id, abs(original[r_id] - other[r_id])) for r_id in common]
+    flux_left = [(r_id, original[r_id]) for r_id in only_left]
+    flux_right = [(r_id, other[r_id]) for r_id in only_right]
 
-    for r_id, val in diff:
+    if pattern is not None:
+        difference = filter(lambda (a, b): pattern in a, difference)
+        flux_left = filter(lambda (a, b): pattern in a, flux_left)
+        flux_right = filter(lambda (a, b): pattern in a, flux_right)
+
+    if sort:
+        difference.sort(key=lambda x: x[1], reverse=True)
+        flux_left.sort(key=lambda x: x[1], reverse=True)
+        flux_right.sort(key=lambda x: x[1], reverse=True)
+
+    for r_id, val in difference:
         if val > tolerance:
-            print '{: <16} {: < 10.3g} {: < 10.3g}'.format(r_id, original[r_id], other[r_id])
+            x1 = original[r_id] if abs(original[r_id]) > abstol else 0
+            x2 = other[r_id] if abs(other[r_id]) > abstol else 0
+            print '{: <16} {: < 10.3g} {: < 10.3g}'.format(r_id, x1, x2)
+
+    for r_id, val in flux_left:
+        if abs(val) > tolerance:
+            x = original[r_id] if abs(original[r_id]) > abstol else 0
+            print '{: <16} {: < 10.3g}   --'.format(r_id, x)
+
+    for r_id, val in flux_right:
+        if abs(val) > tolerance:
+            x = other[r_id] if abs(other[r_id]) > abstol else 0
+            print '{: <16}   --       {: < 10.3g}'.format(r_id, x)
 
 
 def compute_turnover(model, v):
