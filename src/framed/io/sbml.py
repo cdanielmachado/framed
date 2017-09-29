@@ -171,9 +171,10 @@ def _load_metabolites(sbml_model, model, flavor=None):
 
 
 def _load_metabolite(species, flavor=None):
-    metabolite = Metabolite(species.getId(), species.getName(), species.getCompartment(), species.getBoundaryCondition(), species.getConstant())
+    metabolite = Metabolite(species.getId(), species.getName(), species.getCompartment(),
+                            species.getBoundaryCondition(), species.getConstant())
 
-    if flavor in {Flavor.BIGG or Flavor.FBC2}:
+    if flavor in {Flavor.BIGG, Flavor.FBC2}:
         fbc_species = species.getPlugin('fbc')
         if fbc_species.isSetChemicalFormula():
             formula = fbc_species.getChemicalFormula()
@@ -542,9 +543,13 @@ def save_sbml_model(model, filename, flavor=None):
     """
 
     document = SBMLDocument(DEFAULT_SBML_LEVEL, DEFAULT_SBML_VERSION)
+    sbml_model = document.createModel(model.id)
+
     if flavor in {Flavor.BIGG, Flavor.FBC2}:
         document.enablePackage(FbcExtension.getXmlnsL3V1V2(), 'fbc', True)
-    sbml_model = document.createModel(model.id)
+        fbc_model = sbml_model.getPlugin('fbc')
+        fbc_model.setStrict(True)
+        document.setPackageRequired('fbc', False)
     _save_compartments(model, sbml_model)
     _save_metabolites(model, sbml_model, flavor)
     _save_reactions(model, sbml_model)
@@ -571,6 +576,7 @@ def _save_compartments(model, sbml_model):
         sbml_compartment.setId(compartment.id)
         sbml_compartment.setName(compartment.name)
         sbml_compartment.setSize(compartment.size)
+        sbml_compartment.setConstant(True)
         _save_metadata(compartment, sbml_compartment)
 
 
@@ -581,18 +587,20 @@ def _save_metabolites(model, sbml_model, flavor):
         species.setName(metabolite.name)
         species.setCompartment(metabolite.compartment)
         species.setBoundaryCondition(metabolite.boundary)
-        species.setConstant(metabolite.constant) #SGC
+        species.setConstant(metabolite.constant)
+        species.setHasOnlySubstanceUnits(True)
 
-        if flavor in {Flavor.BIGG or Flavor.FBC2}:
-            fbc_species = species.getPlugin('fbc')
-            if 'FORMULA' in metabolite.metadata:
-                fbc_species.setChemicalFormula(metabolite.metadata['FORMULA'])
-            if 'CHARGE' in metabolite.metadata:
-                try:
-                    charge = int(metabolite.metadata['CHARGE'])
-                    fbc_species.setCharge(charge)
-                except ValueError:
-                    pass
+        # if flavor in {Flavor.BIGG, Flavor.FBC2}:
+        #     fbc_species = species.getPlugin('fbc')
+        #
+        #     if 'FORMULA' in metabolite.metadata:
+        #         fbc_species.setChemicalFormula(metabolite.metadata['FORMULA'])
+        #     if 'CHARGE' in metabolite.metadata:
+        #         try:
+        #             charge = int(metabolite.metadata['CHARGE'])
+        #             fbc_species.setCharge(charge)
+        #         except ValueError:
+        #             pass
 
         _save_metadata(metabolite, species)
 
@@ -603,6 +611,7 @@ def _save_reactions(model, sbml_model):
         sbml_reaction.setId(reaction.id)
         sbml_reaction.setName(reaction.name)
         sbml_reaction.setReversible(reaction.reversible)
+        sbml_reaction.setFast(False)
         _save_metadata(reaction, sbml_reaction)
 
         for m_id, coeff in reaction.stoichiometry.items():
@@ -610,13 +619,16 @@ def _save_reactions(model, sbml_model):
                 speciesReference = sbml_reaction.createReactant()
                 speciesReference.setSpecies(m_id)
                 speciesReference.setStoichiometry(-coeff)
+                speciesReference.setConstant(True)
             elif coeff > 0:
                 speciesReference = sbml_reaction.createProduct()
                 speciesReference.setSpecies(m_id)
                 speciesReference.setStoichiometry(coeff)
+                speciesReference.setConstant(True)
         for m_id, kind in reaction.regulators.items():
             speciesReference = sbml_reaction.createModifier()
             speciesReference.setSpecies(m_id)
+            speciesReference.setConstant(True)
             if kind == '+':
                 speciesReference.setSBOTerm(ACTIVATOR_TAG)
             if kind == '-':
@@ -676,14 +688,17 @@ def _save_fbc_fluxbounds(model, sbml_model):
     default_lb = sbml_model.createParameter()
     default_lb.setId(DEFAULT_LOWER_BOUND_ID)
     default_lb.setValue(DEFAULT_LOWER_BOUND)
+    default_lb.setConstant(True)
 
     default_ub = sbml_model.createParameter()
     default_ub.setId(DEFAULT_UPPER_BOUND_ID)
     default_ub.setValue(DEFAULT_UPPER_BOUND)
+    default_ub.setConstant(True)
 
     zero_bound = sbml_model.createParameter()
     zero_bound.setId(DEFAULT_ZERO_BOUND_ID)
     zero_bound.setValue(0)
+    zero_bound.setConstant(True)
 
     for r_id, reaction in model.reactions.items():
         fbcrxn = sbml_model.getReaction(r_id).getPlugin('fbc')
@@ -697,6 +712,7 @@ def _save_fbc_fluxbounds(model, sbml_model):
             lb_param = sbml_model.createParameter()
             lb_param.setId(lb_id)
             lb_param.setValue(reaction.lb)
+            lb_param.setConstant(True)
             fbcrxn.setLowerFluxBound(lb_id)
 
         if reaction.ub is None or reaction.ub >= DEFAULT_UPPER_BOUND:
@@ -708,12 +724,16 @@ def _save_fbc_fluxbounds(model, sbml_model):
             ub_param = sbml_model.createParameter()
             ub_param.setId(ub_id)
             ub_param.setValue(reaction.ub)
+            ub_param.setConstant(True)
             fbcrxn.setUpperFluxBound(ub_id)
 
 
 def _save_fbc_objective(model, sbml_model):
     fbcmodel = sbml_model.getPlugin('fbc')
     obj = fbcmodel.createObjective()
+    obj.setId('objective')
+    fbcmodel.setActiveObjectiveId('objective')
+    obj.setType('maximize')
     for r_id, reaction in model.reactions.items():
         if reaction.objective:
             r_obj = obj.createFluxObjective()
@@ -727,6 +747,7 @@ def _save_fbc_gprs(model, sbml_model):
         gene_prod = fbcmodel.createGeneProduct()
         gene_prod.setId(gene.id)
         gene_prod.setName(gene.name)
+        gene_prod.setLabel(gene.name)
 
     for r_id, reaction in model.reactions.items():
         if reaction.gpr:
