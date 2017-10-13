@@ -45,4 +45,4 @@ def molecular_weight(formula):
 
     weights = [ATOMIC_WEIGHTS[elem] * n for elem, n in elements.items() if elem in ATOMIC_WEIGHTS]
 
-    return reduce(mul, weights, 1)
+    return sum(weights)
