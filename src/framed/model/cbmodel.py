@@ -2,7 +2,7 @@ import re
 import warnings
 from collections import OrderedDict
 
-from .model import Model, Metabolite, Reaction, AttrOrderedDict
+from .model import Model, Metabolite, Reaction, Compartment, AttrOrderedDict
 from .parser import ReactionParser
 
 
@@ -386,7 +386,6 @@ class CBModel(Model):
         genes_state = {gene: gene in active_genes for gene in self.genes}
         return [r_id for r_id, rxn in self.reactions.items() if rxn.evaluate_gpr(genes_state)]
 
-
     def add_ratio_constraint(self, r_id_num, r_id_den, ratio):
         """ Add a flux ratio constraint to the model.
 
@@ -401,7 +400,9 @@ class CBModel(Model):
 
         if r_id_num in self.reactions and r_id_den in self.reactions:
             m_id = 'ratio_{}_{}'.format(r_id_num, r_id_den)
-            self.add_metabolite(Metabolite(m_id))
+            if 'pseudo' not in self.compartments:
+                self.add_compartment(Compartment('pseudo'))
+            self.add_metabolite(Metabolite(m_id, m_id, compartment='pseudo'))
             self.reactions[r_id_num].stoichiometry[m_id] = 1
             self.reactions[r_id_den].stoichiometry[m_id] = -ratio
             return m_id
