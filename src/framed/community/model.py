@@ -44,18 +44,7 @@ class Community(object):
     into a single multi-species model (CBModel) which is compatible with most types of constraint-based methods.
     """
 
-    """ Merge all organisms into a single multi-species model.
-
-    Args:
-        extracellular_compartment_id (str): extracellular compartment id
-        merge_extracellular (bool): merge all extracellular compartments into a single one (default: True)
-        common_biomass (bool): create a common biomass reaction for the community (default: False)
-
-    Returns:
-        CBModel: merged multi-species model
-
-    """
-    def __init__(self, community_id, models=None, abundances=None, copy_models=True, extracellular_compartment_id="e",
+    def __init__(self, community_id, models=None, copy_models=True, extracellular_compartment_id="e",
                  merge_extracellular_compartments=False, create_biomass=True, interacting=True,
                  exchanged_metabolites_blacklist=set()):
         """
@@ -63,7 +52,6 @@ class Community(object):
         Args:
             community_id (str): community identifier
             models (list): list of models to be merged into single community
-            abundances (dict): a dictionary representing each organism initial abundance (keys are organism names)
             copy_models (bool): If true copies for merged models  are created
             extracellular_compartment_id (str): Extracellular compartment id is used when merging extracellular compartments
             merge_extracellular_compartments (bool): Do not create organism specific extracellular compartment
@@ -77,7 +65,6 @@ class Community(object):
 
         self.id = community_id
         self._organisms = AttrOrderedDict(immutable=True)
-        self._abundances = AttrOrderedDict(immutable=True)
         self._extracellular_compartment = extracellular_compartment_id # TODO: maybe merge and compartment id arguments should be merged?
         self._merge_extracellular_compartments = merge_extracellular_compartments
         self._create_biomass = create_biomass
@@ -89,13 +76,8 @@ class Community(object):
         self._exchanged_metabolites_blacklist = exchanged_metabolites_blacklist
 
         if models is not None:
-            if abundances is not None:
-                assert set(m.id for m in models) == set(abundances.keys()), 'Abundance organism ids must match model ids'
-            else:
-                abundances = {model.id: 1.0 for model in models}
-
             for model in models:
-                self.add_organism(model, abundances[model.id], copy_models)
+                self.add_organism(model, copy_models)
 
     @property
     def copy_models(self):
@@ -231,32 +213,20 @@ class Community(object):
         """
         return self._organisms
 
-    @property
-    def abundances(self):
-        """
-        Dictionary of organism abundances. Keys are model ids and values are abundances
-        Returns: dict
-        """
-        return self._abundances
 
     def __str__(self):
-        if set(self._abundances.values()) != {1.0}:
-            lines = ['{} ({})'.format(org_id, self._abundances[org_id]) for org_id in self._organisms]
-        else:
-            lines = self._organisms.keys()
-        return '\n'.join(lines)
+        return '\n'.join(self._organisms.keys())
 
     def _clear_merged_model(self):
         self._merged_model = None
         self._organisms_exchange_reactions = {}
         self._organisms_reactions = {}
 
-    def add_organism(self, model, abundance=1.0, copy=True):
+    def add_organism(self, model, copy=True):
         """ Add an organism to this community.
 
         Args:
             model (CBModel): model of the organism
-            abundance (float): abundance of this organism in the community (default: 1.0)
             copy (bool): create a copy of the given model (default: True)
 
         """
@@ -269,7 +239,6 @@ class Community(object):
                 model = model.copy()
 
             self._organisms.__setitem__(model.id, model, force=True)
-            self._abundances.__setitem__(model.id, abundance, force=True)
 
     def remove_organism(self, organism):
         """ Remove an organism from this community
@@ -284,7 +253,6 @@ class Community(object):
             warn('Organism {} is not in this community'.format(organism))
         else:
             self._organisms.__delitem__(organism, force=True)
-            self._abundances.__delitem__(organism, force=True)
 
     def generate_merged_model(self):
         def _id_pattern(object_id, organism_id):
@@ -347,7 +315,7 @@ class Community(object):
                         new_met = _copy_object(met, "pool", "pool")
                         merged_model.add_metabolite(new_met, clear_tmp=False)
 
-                        exch_id = _id_pattern("R_EX_"+m_id, "pool")
+                        exch_id = _id_pattern("R_EX_" + m_id, "pool")
                         exch_name = _name_pattern(met.name, "pool exchange")
                         new_rxn = CBReaction(exch_id, name=exch_name, reversible=True, is_exchange=True)
                         new_rxn.stoichiometry[pool_id] = -1.0
@@ -399,7 +367,7 @@ class Community(object):
                         new_rxn.objective = False
 
                         # Add biomass metabolite to biomass equation
-                        m_id = _id_pattern('M_framed_biomass', org_id)
+                        m_id = _id_pattern('Biomass', org_id)
                         name = _name_pattern('Framed biomass', org_id)
                         comp = 'pool' if not self._merge_extracellular_compartments else self._extracellular_compartment
                         biomass_met = Metabolite(m_id, name, comp)
@@ -429,8 +397,8 @@ class Community(object):
                         new_rxn.reversible = False
                         new_rxn.objective = False
 
-                        m_id = _id_pattern('M_framed_biomass', org_id)
-                        name = _name_pattern('Framed biomass', org_id)
+                        m_id = _id_pattern('Biomass', org_id)
+                        name = _name_pattern('Biomass', org_id)
                         comp = 'pool' if not self._merge_extracellular_compartments else self._extracellular_compartment
                         biomass_met = Metabolite(m_id, name, comp)
                         merged_model.add_metabolite(biomass_met, clear_tmp=False)
@@ -443,8 +411,8 @@ class Community(object):
                     self._organisms_biomass_reactions[org_id] = new_rxn.id
 
         if self._create_biomass:
-            biomass_rxn = CBReaction('R_EX_framed_biomass', name="Framed biomass",
-                                     reversible=False, is_exchange=True, objective=1.0)
+            biomass_rxn = CBReaction('R_Community_Growth', name="Community Growth",
+                                     reversible=False, is_exchange=False, is_sink=True, objective=1.0)
             for org_biomass in organisms_biomass_metabolites.itervalues():
                 biomass_rxn.stoichiometry[org_biomass] = -1
 
@@ -479,7 +447,7 @@ class Community(object):
         if exchanged_metabolites_blacklist is None:
             exchanged_metabolites_blacklist = self._exchanged_metabolites_blacklist
 
-        copy_community = Community(self.id, models=self._organisms.values(), abundances=self._abundances,
+        copy_community = Community(self.id, models=self._organisms.values(),
                                    copy_models=copy_models, create_biomass=create_biomass,
                                    extracellular_compartment_id=self._extracellular_compartment,
                                    merge_extracellular_compartments=merge_extracellular_compartments,
@@ -487,7 +455,6 @@ class Community(object):
                                    exchanged_metabolites_blacklist=exchanged_metabolites_blacklist)
 
         return copy_community
-
 
     def split_fluxes(self, fluxes):
         """ Decompose a flux balance solution of the merged community into organism-specific flux vectors.
