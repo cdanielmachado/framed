@@ -30,6 +30,13 @@ For documentation and API please check: http://framed.readthedocs.io/
 pip install framed
 ```
 
+### Instalation from github
+
+```
+pip install git+https://github.com/cdanielmachado/framed.git@master
+```
+
+
 ### Credits and License
 
 Developed at:
