@@ -56,11 +56,15 @@ reference_fluxes = None
 if args.method in {"lMOMA", "MOMA"}:
     if hasattr(args, "reference"):
         if args.reference == 'FBA':
-            solution = FBA(model, solver=solver)
-            reference_fluxes = solution.values
+            sol = FBA(model, solver=solver)
+            if sol.status != Status.OPTIMAL:
+                raise Exception("Failed to find optimal solution when calculating reference fluxes")
+            reference_fluxes = sol.values
         elif args.reference == 'pFBA':
-            solution = pFBA(model, solver=solver)
-            reference_fluxes = solution.values
+            sol = pFBA(model, solver=solver)
+            reference_fluxes = sol.values
+            if sol.status != Status.OPTIMAL:
+                raise Exception("Failed to find optimal solution when calculating reference fluxes")
         else:
             reference_fluxes = {}
             with open(args.reference) as ref_file:
@@ -101,8 +105,8 @@ elif args.method == 'ROOM':
 print "Wild-type solution ({})".format(args.method)
 print "======================================="
 print "status: {}".format(status_codes[wt_sol.status])
-print "objective: {}".format(wt_sol.fobj)
-print "biomass: {}".format(wt_sol.values[model.biomass_reaction])
+print "objective: {}".format(wt_sol.fobj if wt_sol.status == Status.OPTIMAL else "")
+print "biomass: {}".format(wt_sol.values[model.biomass_reaction] if wt_sol.status == Status.OPTIMAL else "")
 
 
 #
@@ -139,8 +143,9 @@ if ko_elements:
 
         sol_str = "{genes}\t{reactions}\t{status}\t{objective}\t{biomass}".format(
             genes=",".join(ko_genes), reactions=",".join(ko_reactions),
-            status=status_codes[sol.status], objective=sol.fobj,
-            biomass=sol.values[model.biomass_reaction])
+            status=status_codes[sol.status],
+            objective=sol.fobj if sol.status == Status.OPTIMAL else "",
+            biomass=sol.values[model.biomass_reaction] if sol.status == Status.OPTIMAL else "")
 
         print "{}/{}: ".format(i, len(ko_elements)) + sol_str
         if args.output:
