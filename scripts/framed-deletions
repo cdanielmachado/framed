@@ -1,0 +1,147 @@
+#!/usr/bin/env python
+
+from framed.io.bioopt import read_cbmodel_from_file as bioopt_read
+from framed.io.plaintext import read_cbmodel_from_file as framed_read
+from framed import solver_instance
+from framed.cobra.deletion import deletion, deleted_genes_to_reactions
+from framed.io.sbml import load_cbmodel as sbml_read
+from framed import FBA, pFBA, MOMA, lMOMA, ROOM
+from itertools import chain
+from framed.solvers.solver import Status
+import warnings
+import argparse
+import re
+
+status_codes = {Status.OPTIMAL: 'Optimal',
+                Status.UNKNOWN: 'Unknown',
+                Status.SUBOPTIMAL: 'Suboptimal',
+                Status.UNBOUNDED: 'Unbounded',
+                Status.INFEASIBLE: 'Infeasible',
+                Status.INF_OR_UNB: 'Infeasible or Unbounded'}
+
+parser = argparse.ArgumentParser()
+parser.add_argument('method', help='Simulation method to use (FBA, pFBA, MOMA, lMOMA, ROOM)')
+parser.add_argument('model', help='Path to model. Type (framed, sbml, bioopt) of the model is determened by extention ')
+parser.add_argument('reference', nargs='?', help="Tab separated file with reference fluxes. If pFBA or FBA is entered the reference fluxes are calculated automatically")
+parser.add_argument('-r', action='store', nargs='?', default="unset", dest='ko_reactions', help="Comma separated file with reaction knock-out mutants. If this argument is used as a flag all the single reaction knock-out mutants are simulated")
+parser.add_argument('-g', action='store', nargs='?', default="unset", dest='ko_genes', help="Comma separated file with gene knock-out mutants. If this argument is used as a flag all the single gene knock-out mutants are simulated")
+parser.add_argument('-o', dest='output', help="Path to output file")
+parser.add_argument("--gpr", dest="gene_reaction_associations")
+parser.add_argument('--no-warnings', dest='no_warnings', action="store_true", help="Suppress warnings")
+args = parser.parse_args()
+
+if args.no_warnings:
+    warnings.simplefilter("ignore", UserWarning)
+
+if args.method not in {'FBA', 'pFBA', 'MOMA', 'lMOMA', 'ROOM'}:
+    raise RuntimeError("Not supported method '{}'".format(args.metod))
+#
+# Read model
+#
+model = None
+if re.match("(sbml|xml)", args.model):
+    model = sbml_read(args.model)
+elif re.search("bioopt", args.model):
+    model = bioopt_read(args.model, gpr_filename=args.gene_reaction_associations)
+elif re.search("framed", args.model):
+    model = framed_read(args.model)
+else:
+    raise RuntimeError("Unrecognized model file format")
+solver = solver_instance(model)
+
+#
+# Read reference fluxes
+#
+reference_fluxes = None
+if args.method in {"lMOMA", "MOMA"}:
+    if hasattr(args, "reference"):
+        if args.reference == 'FBA':
+            solution = FBA(model, solver=solver)
+            reference_fluxes = solution.values
+        elif args.reference == 'pFBA':
+            solution = pFBA(model, solver=solver)
+            reference_fluxes = solution.values
+        else:
+            reference_fluxes = {}
+            with open(args.reference) as ref_file:
+                for line in ref_file:
+                    row = [col.strip() for col in re.split("\t", line)]
+                    if row[0] in model.reactions:
+                        reference_fluxes[row[0]] = float(row[1])
+    else:
+        raise RuntimeError("lMOMA and MOMA algorithms require reference argument")
+
+#
+# Read KO elements
+#
+kind = None
+ko_elements = None
+if args.ko_reactions != "unset":
+    kind = "reactions"
+    ko_elements = args.ko_reactions if args.ko_reactions else [{r} for r in model.reactions]
+elif args.ko_genes != "unset":
+    kind = "genes"
+    ko_elements = args.ko_genes if args.ko_genes else [{g} for g in model.genes]
+
+#
+# Caclulate solution for wild-type
+#
+wt_sol = None
+if args.method == 'FBA':
+    wt_sol = FBA(model, solver=solver)
+elif args.method == 'pFBA':
+    wt_sol = pFBA(model, solver=solver)
+elif args.method == 'MOMA':
+    wt_sol = MOMA(model, reference_fluxes, solver=solver)
+elif args.method == 'lMOMA':
+    wt_sol = lMOMA(model, reference_fluxes, solver=solver)
+elif args.method == 'ROOM':
+    wt_sol = ROOM(model, reference_fluxes, solver=solver)
+
+print "Wild-type solution ({})".format(args.method)
+print "======================================="
+print "status: {}".format(status_codes[wt_sol.status])
+print "objective: {}".format(wt_sol.fobj)
+print "biomass: {}".format(wt_sol.values[model.biomass_reaction])
+
+
+#
+# Caclulate solutions for knock-outs
+#
+if ko_elements:
+    print "\nKnock-out ({}) solutions".format(kind)
+    print "======================================="
+    if isinstance(ko_elements, str):
+        genes_reactions = set(chain.from_iterable(model.genes, model.reactions))
+        ko_elements_list = []
+        with open(ko_elements) as ko_file:
+            for line in ko_file:
+                ko_elements_list.append({col.strip() for col in re.split(",", line) if col.strip() in genes_reactions})
+        ko_elements = ko_elements_list
+
+    output = None
+    header_str = "genes\treactions\tstatus\tobjective\tbiomass"
+    print header_str
+    if args.output:
+        output = open(args.output, "w")
+        output.write(header_str + "\n")
+
+    for i, ko in enumerate(ko_elements, start=1):
+        if kind == "reactions":
+            ko_genes = []
+            ko_reactions = ko
+        else:
+            ko_reactions = deleted_genes_to_reactions(model, ko)
+            ko_genes = ko
+
+        sol = deletion(model, ko, kind=kind, reference=reference_fluxes,  method=args.method, solver=solver)
+        sol = sol if sol else wt_sol # Report wild type if no reactions were affected by gene deletion
+
+        sol_str = "{genes}\t{reactions}\t{status}\t{objective}\t{biomass}".format(
+            genes=",".join(ko_genes), reactions=",".join(ko_reactions),
+            status=status_codes[sol.status], objective=sol.fobj,
+            biomass=sol.values[model.biomass_reaction])
+
+        print "{}/{}: ".format(i, len(ko_elements)) + sol_str
+        if args.output:
+            output.write(sol_str + "\n")

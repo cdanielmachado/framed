@@ -11,7 +11,7 @@ setup(
                         "python-libsbml",
                         "matplotlib",
                         "pandas"],
-    scripts = ["scripts/framed-smetana-pipeline"],
+    scripts = ["scripts/framed-smetana-pipeline", "scripts/framed-deletions"],
     author = 'Daniel Machado',
     author_email = 'cdanielmachado@gmail.com',
     description = 'framed - metabolic modeling for python',
