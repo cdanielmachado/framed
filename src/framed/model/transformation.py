@@ -5,8 +5,8 @@ Author: Daniel Machado
    
 """
 
-from .model import Reaction
-from .cbmodel import CBModel, CBReaction
+from .model import Reaction, Compartment, Metabolite
+from .cbmodel import CBModel, CBReaction, GPRAssociation
 from ..cobra.variability import blocked_reactions
 
 
@@ -110,3 +110,122 @@ def empty_compartments(model):
     used = [met.compartment for met in model.metabolites.values()]
     empty = set(model.compartments) - set(used)
     return empty
+
+
+def split_isozymes(model):
+    mapping = dict()
+
+    for r_id, reaction in model.reactions.items():
+
+        if reaction.gpr is not None and len(reaction.gpr.proteins) > 1:
+            mapping[r_id] = []
+            for i, protein in enumerate(reaction.gpr.proteins):
+                r_id_new = '{}_iso{}'.format(reaction.id, i + 1)
+                mapping[r_id].append(r_id_new)
+                gpr_new = GPRAssociation()
+                gpr_new.proteins.append(protein)
+                reaction_new = CBReaction(r_id_new, reaction.name,
+                                          reversible=reaction.reversible,
+                                          stoichiometry=reaction.stoichiometry,
+                                          regulators=reaction.regulators,
+                                          lb=reaction.lb, ub=reaction.ub,
+                                          objective=reaction.objective,
+                                          gpr_association=gpr_new)
+                model.add_reaction(reaction_new)
+            model.remove_reaction(r_id)
+
+    return mapping
+
+
+def genes_to_species(model, pseudo_genes=None):
+
+    if pseudo_genes is None:
+        pseudo_genes = {'G_s0001', 'G_S0001', 'G_s_0001', 'G_S_0001'}
+
+    new_reactions = []
+    compartment = Compartment('genes', 'gene pool')
+    model.add_compartment(compartment)
+
+    for gene in model.genes.values():
+        if gene.id in pseudo_genes:
+            continue
+        model.add_metabolite(Metabolite(gene.id, gene.id, 'genes'))
+        r_id = 'u_{}'.format(gene.id)
+        reaction = CBReaction(r_id, r_id, False, {gene.id: 1})
+        model.add_reaction(reaction)
+        new_reactions.append(r_id)
+
+    for r_id, reaction in model.reactions.items():
+
+        if reaction.gpr is not None:
+            if len(reaction.gpr.proteins) > 1:
+                print 'error: isozymes not split:', r_id
+                return
+            elif len(reaction.gpr.proteins) == 1:
+                for g_id in reaction.gpr.proteins[0].genes:
+                    if g_id not in pseudo_genes:
+                        reaction.stoichiometry[g_id] = -1
+
+    return new_reactions
+
+
+def merge_fluxes(fluxes, mapping_rev, mapping_iso, net=True):
+
+    fluxes = fluxes.copy()
+
+    for r_id, r_ids in mapping_iso.items():
+        fluxes[r_id] = sum([fluxes[r_id2] for r_id2 in r_ids])
+        for r_id2 in r_ids:
+            del fluxes[r_id2]
+
+    for r_id, (fwd_id, bwd_id) in mapping_rev.items():
+        if net:
+            fluxes[r_id] = fluxes[fwd_id] - fluxes[bwd_id]
+        else:
+            fluxes[r_id] = fluxes[fwd_id] + fluxes[bwd_id]
+        del fluxes[fwd_id]
+        del fluxes[bwd_id]
+
+    return fluxes
+
+
+def convert_constraints(constraints, mapping_rev, mapping_iso):
+    constraints = constraints.copy()
+
+    for r_id, (fwd_id, bwd_id) in mapping_rev.items():
+        if r_id in constraints:
+            x = constraints[r_id]
+            lb, ub = x if isinstance(x, tuple) else (x, x)
+            lb_fwd = max(0, lb) if lb is not None else 0
+            ub_fwd = max(0, ub) if ub is not None else None
+            lb_bwd = max(-ub, 0) if ub is not None else 0
+            ub_bwd = max(-lb, 0) if lb is not None else None
+            constraints[fwd_id] = (lb_fwd, ub_fwd)
+            constraints[bwd_id] = (lb_bwd, ub_bwd)
+            del constraints[r_id]
+
+    for r_id, r_ids in mapping_iso.items():
+        if r_id in constraints:
+            x = constraints[r_id]
+            ub = x[1] if isinstance(x, tuple) else x
+            for r_id2 in r_ids:
+                constraints[r_id2] = (0, ub)
+            del constraints[r_id]
+
+    return constraints
+
+
+def gpr_transform(model, inplace=True):
+    if not inplace:
+        model = model.copy()
+
+    mapping_rev = make_irreversible(model)
+    mapping_iso = split_isozymes(model)
+    u_reactions = genes_to_species(model)
+    model.convert_fluxes = lambda x, net=True: merge_fluxes(x, mapping_rev, mapping_iso, net)
+    model.convert_constraints = lambda x: convert_constraints(x, mapping_rev, mapping_iso)
+    if inplace:
+        return u_reactions
+    else:
+        return model, u_reactions
+

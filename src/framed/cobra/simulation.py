@@ -102,36 +102,42 @@ def pFBA(model, objective=None, minimize=False, constraints=None, reactions=None
     
     solver.remove_constraint('obj')
     solution.pre_solution = pre_solution
-                      
-    if solution.status == Status.OPTIMAL:
-        for r_id in reactions:
-            if model.reactions[r_id].reversible:
-                pos, neg = r_id + '+', r_id + '-'
-                del solution.values[pos]
-                del solution.values[neg]
+
+    # if solution.status == Status.OPTIMAL:
+    #     for r_id in reactions:
+    #         if model.reactions[r_id].reversible:
+    #             pos, neg = r_id + '+', r_id + '-'
+    #             del solution.values[pos]
+    #             del solution.values[neg]
 
     return solution
 
 
-def MOMA(model, reference=None, constraints=None, solver=None):
+def MOMA(model, reference=None, constraints=None, reactions=None, solver=None):
     """ Run a Minimization Of Metabolic Adjustment (MOMA) simulation:
     
     Arguments:
         model (CBModel): a constraint-based model
         reference (dict): reference flux distribution (optional)
         constraints (dict): environmental or additional constraints (optional)
+        reactions (list): list of reactions to include in the objective (optional, default: all)
         solver (Solver): solver instance instantiated with the model, for speed (optional)
        
     Returns:
         Solution: solution
     """
 
-    if not reference:
+    if reference is None:
         wt_solution = pFBA(model)
         reference = wt_solution.values
+    else:
+        reactions = reference.keys()
 
-    quad_obj = {(r_id, r_id): 1 for r_id in reference.keys()}
-    lin_obj = {r_id: -2 * x for r_id, x in reference.items()}
+    if reactions is None:
+        reactions = model.reactions.keys()
+
+    quad_obj = {(r_id, r_id): 1 for r_id in reactions}
+    lin_obj = {r_id: -2 * reference[r_id] for r_id in reactions}
 
     if not solver:
         solver = solver_instance(model)
@@ -141,41 +147,47 @@ def MOMA(model, reference=None, constraints=None, solver=None):
     return solution
 
 
-def lMOMA(model, reference=None, constraints=None, solver=None):
+def lMOMA(model, reference=None, constraints=None, reactions=None, solver=None):
     """ Run a (linear version of) Minimization Of Metabolic Adjustment (lMOMA) simulation:
     
     Arguments:
         model (CBModel): a constraint-based model
         reference (dict): reference flux distribution (optional)
         constraints (dict): environmental or additional constraints (optional)
+        reactions (list): list of reactions to include in the objective (optional, default: all)
         solver (Solver): solver instance instantiated with the model, for speed (optional)
        
     Returns:
         Solution: solution
     """
 
-    if not reference:
+    if reference is None:
         wt_solution = pFBA(model)
         reference = wt_solution.values
+    else:
+        reactions = reference.keys()
+
+    if reactions is None:
+        reactions = model.reactions.keys()
 
     if not solver:
         solver = solver_instance(model)
 
     if not hasattr(solver, 'lMOMA_flag'):
         solver.lMOMA_flag = True
-        for r_id in reference.keys():
+        for r_id in reactions:
             d_pos, d_neg = r_id + '_d+', r_id + '_d-'
             solver.add_variable(d_pos, 0, None, persistent=False, update_problem=False)
             solver.add_variable(d_neg, 0, None, persistent=False, update_problem=False)
         solver.update()
-        for r_id in reference.keys():
+        for r_id in reactions:
             d_pos, d_neg = r_id + '_d+', r_id + '_d-'
             solver.add_constraint('c' + d_pos, {r_id: -1, d_pos: 1}, '>', -reference[r_id], persistent=False, update_problem=False)
             solver.add_constraint('c' + d_neg, {r_id: 1, d_neg: 1}, '>', reference[r_id], persistent=False, update_problem=False)
         solver.update()
         
     objective = dict()
-    for r_id in reference.keys():
+    for r_id in reactions:
         d_pos, d_neg = r_id + '_d+', r_id + '_d-'
         objective[d_pos] = 1
         objective[d_neg] = 1
@@ -185,13 +197,14 @@ def lMOMA(model, reference=None, constraints=None, solver=None):
     return solution
 
 
-def ROOM(model, reference=None, constraints=None, solver=None, delta=0.03, epsilon=0.001):
+def ROOM(model, reference=None, constraints=None, reactions=None, solver=None, delta=0.03, epsilon=0.001):
     """ Run a Regulatory On/Off Minimization (ROOM) simulation:
     
     Arguments:
         model (CBModel): a constraint-based model
         reference (dict): reference flux distribution (optional)
         constraints (dict): environmental or additional constraints (optional)
+        reactions (list): list of reactions to include in the objective (optional, default: all)
         solver (Solver): solver instance instantiated with the model, for speed (optional)
         delta (float): relative tolerance (default: 0.03)
         epsilon (float): absolute tolerance (default: 0.001)
@@ -203,9 +216,14 @@ def ROOM(model, reference=None, constraints=None, solver=None, delta=0.03, epsil
     U = 1e6
     L = -1e6
     
-    if not reference:
+    if reference is None:
         wt_solution = pFBA(model)
         reference = wt_solution.values
+    else:
+        reactions = reference.keys()
+
+    if reactions is None:
+        reactions = model.reactions.keys()
 
     if not solver:
         solver = solver_instance(model)
@@ -214,13 +232,13 @@ def ROOM(model, reference=None, constraints=None, solver=None, delta=0.03, epsil
     if not hasattr(solver, 'ROOM_flag'):
         solver.ROOM_flag = True
 
-        for r_id in model.reactions.keys():
+        for r_id in reactions:
             y_i = 'y_' + r_id
             solver.add_variable(y_i, 0, 1, vartype=VarType.BINARY, persistent=False, update_problem=False)
             objective[y_i] = 1
         solver.update()
 
-        for r_id in model.reactions.keys():
+        for r_id in reactions:
             y_i = 'y_' + r_id
             w_i = reference[r_id]
             w_u = w_i + delta*abs(w_i) + epsilon
