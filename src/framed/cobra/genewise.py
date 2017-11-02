@@ -2,14 +2,12 @@
 
 Notes:
 
-    See http://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1005140 for details.
-
     Essentially, all methods use gene-level objective functions (rather than reaction-level). For each gene (e.g: b0001)
     a new variable (u_b0001) is introduced that represents the amount of flux carried by the respective enzyme.
     Constraints can also be specified at gene level as a dictionary with the format {'b0001': (lb, ub)}.
 
-    For instance, to simulate the metabolic adjustment of E. coli after knockout of pfkA (b3916) but not pfkB
-    (i.e. reaction PFK is still active) using gene-wise MOMA:
+    For instance, to simulate the enzyme/flux redistribution of E. coli after knockout of pfkA (b3916) but not pfkB
+    (i.e. reaction PFK is still active) using gene-wise MOMA as simulation method (pFBA, lMOMA and ROOM are also available):
 
     ::
 
@@ -19,6 +17,7 @@ Notes:
         print sol.show_values(pattern='u_')  # look at enzyme usage values
 
 
+    See http://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1005140 for details.
 
 Author: Daniel Machado
 
