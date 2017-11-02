@@ -12,28 +12,28 @@
       </html>
     </notes>
     <listOfCompartments>
-      <compartment id="extracellular" size="1"/>
-      <compartment id="cytosol" size="1"/>
+      <compartment id="extracellular" size="1" constant="true"/>
+      <compartment id="cytosol" size="1" constant="true"/>
     </listOfCompartments>
     <listOfSpecies>
-      <species id="cpep" name="Phosphoenol pyruvate" compartment="cytosol" initialConcentration="2.67" boundaryCondition="false" constant="false"/>
-      <species id="cglcex" name="Extracellular Glucose" compartment="extracellular" initialConcentration="2" boundaryCondition="false" constant="false"/>
-      <species id="cg6p" name="Glucose-6-Phosphate" compartment="cytosol" initialConcentration="3.48" boundaryCondition="false" constant="false"/>
-      <species id="cpyr" name="Pyruvate" compartment="cytosol" initialConcentration="2.67" boundaryCondition="false" constant="false"/>
-      <species id="cf6p" name="Fructose-6-Phosphate" compartment="cytosol" initialConcentration="0.6" boundaryCondition="false" constant="false"/>
-      <species id="cg1p" name="Glucose-1-Phosphate" compartment="cytosol" initialConcentration="0.653" boundaryCondition="false" constant="false"/>
-      <species id="cpg" name="6-Phosphogluconate" compartment="cytosol" initialConcentration="0.808" boundaryCondition="false" constant="false"/>
-      <species id="cfdp" name="Fructose-1,6-bisphosphate" compartment="cytosol" initialConcentration="0.272" boundaryCondition="false" constant="false"/>
-      <species id="csed7p" name="sedoheptulose-7-phosphate" compartment="cytosol" initialConcentration="0.276" boundaryCondition="false" constant="false"/>
-      <species id="cgap" name="Glyceraldehyde-3-Phosphate" compartment="cytosol" initialConcentration="0.218" boundaryCondition="false" constant="false"/>
-      <species id="ce4p" name="Erythrose-4-phosphate" compartment="cytosol" initialConcentration="0.098" boundaryCondition="false" constant="false"/>
-      <species id="cxyl5p" name="Xylulose-5-phosphate" compartment="cytosol" initialConcentration="0.138" boundaryCondition="false" constant="false"/>
-      <species id="crib5p" name="Ribose-5-phosphate" compartment="cytosol" initialConcentration="0.398" boundaryCondition="false" constant="false"/>
-      <species id="cdhap" name="Dihydroxyacetonephosphate" compartment="cytosol" initialConcentration="0.167" boundaryCondition="false" constant="false"/>
-      <species id="cpgp" name="1,3-diphosphosphoglycerate" compartment="cytosol" initialConcentration="0.008" boundaryCondition="false" constant="false"/>
-      <species id="cpg3" name="3-Phosphoglycerate" compartment="cytosol" initialConcentration="2.13" boundaryCondition="false" constant="false"/>
-      <species id="cpg2" name="2-Phosphoglycerate" compartment="cytosol" initialConcentration="0.399" boundaryCondition="false" constant="false"/>
-      <species id="cribu5p" name="Ribulose-5-phosphate" compartment="cytosol" initialConcentration="0.111" boundaryCondition="false" constant="false"/>
+      <species id="cpep" name="Phosphoenol pyruvate" compartment="cytosol" initialConcentration="2.67" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false"/>
+      <species id="cglcex" name="Extracellular Glucose" compartment="extracellular" initialConcentration="2" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false"/>
+      <species id="cg6p" name="Glucose-6-Phosphate" compartment="cytosol" initialConcentration="3.48" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false"/>
+      <species id="cpyr" name="Pyruvate" compartment="cytosol" initialConcentration="2.67" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false"/>
+      <species id="cf6p" name="Fructose-6-Phosphate" compartment="cytosol" initialConcentration="0.6" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false"/>
+      <species id="cg1p" name="Glucose-1-Phosphate" compartment="cytosol" initialConcentration="0.653" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false"/>
+      <species id="cpg" name="6-Phosphogluconate" compartment="cytosol" initialConcentration="0.808" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false"/>
+      <species id="cfdp" name="Fructose-1,6-bisphosphate" compartment="cytosol" initialConcentration="0.272" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false"/>
+      <species id="csed7p" name="sedoheptulose-7-phosphate" compartment="cytosol" initialConcentration="0.276" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false"/>
+      <species id="cgap" name="Glyceraldehyde-3-Phosphate" compartment="cytosol" initialConcentration="0.218" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false"/>
+      <species id="ce4p" name="Erythrose-4-phosphate" compartment="cytosol" initialConcentration="0.098" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false"/>
+      <species id="cxyl5p" name="Xylulose-5-phosphate" compartment="cytosol" initialConcentration="0.138" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false"/>
+      <species id="crib5p" name="Ribose-5-phosphate" compartment="cytosol" initialConcentration="0.398" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false"/>
+      <species id="cdhap" name="Dihydroxyacetonephosphate" compartment="cytosol" initialConcentration="0.167" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false"/>
+      <species id="cpgp" name="1,3-diphosphosphoglycerate" compartment="cytosol" initialConcentration="0.008" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false"/>
+      <species id="cpg3" name="3-Phosphoglycerate" compartment="cytosol" initialConcentration="2.13" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false"/>
+      <species id="cpg2" name="2-Phosphoglycerate" compartment="cytosol" initialConcentration="0.399" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false"/>
+      <species id="cribu5p" name="Ribulose-5-phosphate" compartment="cytosol" initialConcentration="0.111" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false"/>
     </listOfSpecies>
     <listOfParameters>
       <parameter id="catp" value="4.27" constant="false"/>
@@ -398,14 +398,14 @@
       </assignmentRule>
     </listOfRules>
     <listOfReactions>
-      <reaction id="vPTS" name="Phosphotransferase system" reversible="true">
+      <reaction id="vPTS" name="Phosphotransferase system" reversible="true" fast="false">
         <listOfReactants>
-          <speciesReference species="cglcex" stoichiometry="1"/>
-          <speciesReference species="cpep" stoichiometry="65"/>
+          <speciesReference species="cglcex" stoichiometry="1" constant="true"/>
+          <speciesReference species="cpep" stoichiometry="65" constant="true"/>
         </listOfReactants>
         <listOfProducts>
-          <speciesReference species="cg6p" stoichiometry="65"/>
-          <speciesReference species="cpyr" stoichiometry="65"/>
+          <speciesReference species="cg6p" stoichiometry="65" constant="true"/>
+          <speciesReference species="cpyr" stoichiometry="65" constant="true"/>
         </listOfProducts>
         <kineticLaw>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
@@ -477,12 +477,12 @@
           </listOfLocalParameters>
         </kineticLaw>
       </reaction>
-      <reaction id="vPGI" name="Glucose-6-phosphate isomerase" reversible="true">
+      <reaction id="vPGI" name="Glucose-6-phosphate isomerase" reversible="true" fast="false">
         <listOfReactants>
-          <speciesReference species="cg6p" stoichiometry="1"/>
+          <speciesReference species="cg6p" stoichiometry="1" constant="true"/>
         </listOfReactants>
         <listOfProducts>
-          <speciesReference species="cf6p" stoichiometry="1"/>
+          <speciesReference species="cf6p" stoichiometry="1" constant="true"/>
         </listOfProducts>
         <listOfModifiers>
           <modifierSpeciesReference species="cpg"/>
@@ -551,12 +551,12 @@
           </listOfLocalParameters>
         </kineticLaw>
       </reaction>
-      <reaction id="vPGM" name="Phosphoglucomutase" reversible="true">
+      <reaction id="vPGM" name="Phosphoglucomutase" reversible="true" fast="false">
         <listOfReactants>
-          <speciesReference species="cg6p" stoichiometry="1"/>
+          <speciesReference species="cg6p" stoichiometry="1" constant="true"/>
         </listOfReactants>
         <listOfProducts>
-          <speciesReference species="cg1p" stoichiometry="1"/>
+          <speciesReference species="cg1p" stoichiometry="1" constant="true"/>
         </listOfProducts>
         <kineticLaw>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
@@ -603,12 +603,12 @@
           </listOfLocalParameters>
         </kineticLaw>
       </reaction>
-      <reaction id="vG6PDH" name="Glucose-6-phosphate dehydrogenase" reversible="true">
+      <reaction id="vG6PDH" name="Glucose-6-phosphate dehydrogenase" reversible="true" fast="false">
         <listOfReactants>
-          <speciesReference species="cg6p" stoichiometry="1"/>
+          <speciesReference species="cg6p" stoichiometry="1" constant="true"/>
         </listOfReactants>
         <listOfProducts>
-          <speciesReference species="cpg" stoichiometry="1"/>
+          <speciesReference species="cpg" stoichiometry="1" constant="true"/>
         </listOfProducts>
         <kineticLaw>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
@@ -666,12 +666,12 @@
           </listOfLocalParameters>
         </kineticLaw>
       </reaction>
-      <reaction id="vPFK" name="Phosphofructokinase" reversible="true">
+      <reaction id="vPFK" name="Phosphofructokinase" reversible="true" fast="false">
         <listOfReactants>
-          <speciesReference species="cf6p" stoichiometry="1"/>
+          <speciesReference species="cf6p" stoichiometry="1" constant="true"/>
         </listOfReactants>
         <listOfProducts>
-          <speciesReference species="cfdp" stoichiometry="1"/>
+          <speciesReference species="cfdp" stoichiometry="1" constant="true"/>
         </listOfProducts>
         <listOfModifiers>
           <modifierSpeciesReference species="cpep"/>
@@ -828,14 +828,14 @@
           </listOfLocalParameters>
         </kineticLaw>
       </reaction>
-      <reaction id="vTA" name="Transaldolase" reversible="true">
+      <reaction id="vTA" name="Transaldolase" reversible="true" fast="false">
         <listOfReactants>
-          <speciesReference species="cgap" stoichiometry="1"/>
-          <speciesReference species="csed7p" stoichiometry="1"/>
+          <speciesReference species="cgap" stoichiometry="1" constant="true"/>
+          <speciesReference species="csed7p" stoichiometry="1" constant="true"/>
         </listOfReactants>
         <listOfProducts>
-          <speciesReference species="cf6p" stoichiometry="1"/>
-          <speciesReference species="ce4p" stoichiometry="1"/>
+          <speciesReference species="cf6p" stoichiometry="1" constant="true"/>
+          <speciesReference species="ce4p" stoichiometry="1" constant="true"/>
         </listOfProducts>
         <kineticLaw>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
@@ -868,14 +868,14 @@
           </listOfLocalParameters>
         </kineticLaw>
       </reaction>
-      <reaction id="vTKA" name="Transketolase a" reversible="true">
+      <reaction id="vTKA" name="Transketolase a" reversible="true" fast="false">
         <listOfReactants>
-          <speciesReference species="crib5p" stoichiometry="1"/>
-          <speciesReference species="cxyl5p" stoichiometry="1"/>
+          <speciesReference species="crib5p" stoichiometry="1" constant="true"/>
+          <speciesReference species="cxyl5p" stoichiometry="1" constant="true"/>
         </listOfReactants>
         <listOfProducts>
-          <speciesReference species="cgap" stoichiometry="1"/>
-          <speciesReference species="csed7p" stoichiometry="1"/>
+          <speciesReference species="cgap" stoichiometry="1" constant="true"/>
+          <speciesReference species="csed7p" stoichiometry="1" constant="true"/>
         </listOfProducts>
         <kineticLaw>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
@@ -908,14 +908,14 @@
           </listOfLocalParameters>
         </kineticLaw>
       </reaction>
-      <reaction id="vTKB" name="Transketolase b" reversible="true">
+      <reaction id="vTKB" name="Transketolase b" reversible="true" fast="false">
         <listOfReactants>
-          <speciesReference species="ce4p" stoichiometry="1"/>
-          <speciesReference species="cxyl5p" stoichiometry="1"/>
+          <speciesReference species="ce4p" stoichiometry="1" constant="true"/>
+          <speciesReference species="cxyl5p" stoichiometry="1" constant="true"/>
         </listOfReactants>
         <listOfProducts>
-          <speciesReference species="cgap" stoichiometry="1"/>
-          <speciesReference species="cf6p" stoichiometry="1"/>
+          <speciesReference species="cgap" stoichiometry="1" constant="true"/>
+          <speciesReference species="cf6p" stoichiometry="1" constant="true"/>
         </listOfProducts>
         <kineticLaw>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
@@ -948,9 +948,9 @@
           </listOfLocalParameters>
         </kineticLaw>
       </reaction>
-      <reaction id="vMURSyNTH" name="Mureine synthesis" reversible="true">
+      <reaction id="vMURSyNTH" name="Mureine synthesis" reversible="true" fast="false">
         <listOfReactants>
-          <speciesReference species="cf6p" stoichiometry="2"/>
+          <speciesReference species="cf6p" stoichiometry="2" constant="true"/>
         </listOfReactants>
         <kineticLaw>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
@@ -965,13 +965,13 @@
           </listOfLocalParameters>
         </kineticLaw>
       </reaction>
-      <reaction id="vALDO" name="Aldolase" reversible="true">
+      <reaction id="vALDO" name="Aldolase" reversible="true" fast="false">
         <listOfReactants>
-          <speciesReference species="cfdp" stoichiometry="1"/>
+          <speciesReference species="cfdp" stoichiometry="1" constant="true"/>
         </listOfReactants>
         <listOfProducts>
-          <speciesReference species="cdhap" stoichiometry="1"/>
-          <speciesReference species="cgap" stoichiometry="1"/>
+          <speciesReference species="cdhap" stoichiometry="1" constant="true"/>
+          <speciesReference species="cgap" stoichiometry="1" constant="true"/>
         </listOfProducts>
         <kineticLaw>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
@@ -1061,12 +1061,12 @@
           </listOfLocalParameters>
         </kineticLaw>
       </reaction>
-      <reaction id="vGAPDH" name="Glyceraldehyde-3-phosphate dehydrogenase" reversible="true">
+      <reaction id="vGAPDH" name="Glyceraldehyde-3-phosphate dehydrogenase" reversible="true" fast="false">
         <listOfReactants>
-          <speciesReference species="cgap" stoichiometry="1"/>
+          <speciesReference species="cgap" stoichiometry="1" constant="true"/>
         </listOfReactants>
         <listOfProducts>
-          <speciesReference species="cpgp" stoichiometry="1"/>
+          <speciesReference species="cpgp" stoichiometry="1" constant="true"/>
         </listOfProducts>
         <kineticLaw>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
@@ -1143,12 +1143,12 @@
           </listOfLocalParameters>
         </kineticLaw>
       </reaction>
-      <reaction id="vTIS" name="Triosephosphate isomerase" reversible="true">
+      <reaction id="vTIS" name="Triosephosphate isomerase" reversible="true" fast="false">
         <listOfReactants>
-          <speciesReference species="cdhap" stoichiometry="1"/>
+          <speciesReference species="cdhap" stoichiometry="1" constant="true"/>
         </listOfReactants>
         <listOfProducts>
-          <speciesReference species="cgap" stoichiometry="1"/>
+          <speciesReference species="cgap" stoichiometry="1" constant="true"/>
         </listOfProducts>
         <kineticLaw>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
@@ -1195,10 +1195,10 @@
           </listOfLocalParameters>
         </kineticLaw>
       </reaction>
-      <reaction id="vTRPSYNTH" name="Tryptophan synthesis" reversible="true">
+      <reaction id="vTRPSYNTH" name="Tryptophan synthesis" reversible="true" fast="false">
         <listOfProducts>
-          <speciesReference species="cpyr" stoichiometry="1"/>
-          <speciesReference species="cgap" stoichiometry="1"/>
+          <speciesReference species="cpyr" stoichiometry="1" constant="true"/>
+          <speciesReference species="cgap" stoichiometry="1" constant="true"/>
         </listOfProducts>
         <kineticLaw>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
@@ -1213,9 +1213,9 @@
           </listOfLocalParameters>
         </kineticLaw>
       </reaction>
-      <reaction id="vG3PDH" name="Glycerol-3-phosphate dehydrogenase" reversible="true">
+      <reaction id="vG3PDH" name="Glycerol-3-phosphate dehydrogenase" reversible="true" fast="false">
         <listOfReactants>
-          <speciesReference species="cdhap" stoichiometry="1"/>
+          <speciesReference species="cdhap" stoichiometry="1" constant="true"/>
         </listOfReactants>
         <kineticLaw>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
@@ -1240,12 +1240,12 @@
           </listOfLocalParameters>
         </kineticLaw>
       </reaction>
-      <reaction id="vPGK" name="Phosphoglycerate kinase" reversible="true">
+      <reaction id="vPGK" name="Phosphoglycerate kinase" reversible="true" fast="false">
         <listOfReactants>
-          <speciesReference species="cpgp" stoichiometry="1"/>
+          <speciesReference species="cpgp" stoichiometry="1" constant="true"/>
         </listOfReactants>
         <listOfProducts>
-          <speciesReference species="cpg3" stoichiometry="1"/>
+          <speciesReference species="cpg3" stoichiometry="1" constant="true"/>
         </listOfProducts>
         <kineticLaw>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
@@ -1322,9 +1322,9 @@
           </listOfLocalParameters>
         </kineticLaw>
       </reaction>
-      <reaction id="vsersynth" name="Serine synthesis" reversible="true">
+      <reaction id="vsersynth" name="Serine synthesis" reversible="true" fast="false">
         <listOfReactants>
-          <speciesReference species="cpg3" stoichiometry="1"/>
+          <speciesReference species="cpg3" stoichiometry="1" constant="true"/>
         </listOfReactants>
         <kineticLaw>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
@@ -1349,12 +1349,12 @@
           </listOfLocalParameters>
         </kineticLaw>
       </reaction>
-      <reaction id="vrpGluMu" name="Phosphoglycerate mutase" reversible="true">
+      <reaction id="vrpGluMu" name="Phosphoglycerate mutase" reversible="true" fast="false">
         <listOfReactants>
-          <speciesReference species="cpg3" stoichiometry="1"/>
+          <speciesReference species="cpg3" stoichiometry="1" constant="true"/>
         </listOfReactants>
         <listOfProducts>
-          <speciesReference species="cpg2" stoichiometry="1"/>
+          <speciesReference species="cpg2" stoichiometry="1" constant="true"/>
         </listOfProducts>
         <kineticLaw>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
@@ -1401,12 +1401,12 @@
           </listOfLocalParameters>
         </kineticLaw>
       </reaction>
-      <reaction id="vENO" name="Enolase" reversible="true">
+      <reaction id="vENO" name="Enolase" reversible="true" fast="false">
         <listOfReactants>
-          <speciesReference species="cpg2" stoichiometry="1"/>
+          <speciesReference species="cpg2" stoichiometry="1" constant="true"/>
         </listOfReactants>
         <listOfProducts>
-          <speciesReference species="cpep" stoichiometry="1"/>
+          <speciesReference species="cpep" stoichiometry="1" constant="true"/>
         </listOfProducts>
         <kineticLaw>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
@@ -1453,12 +1453,12 @@
           </listOfLocalParameters>
         </kineticLaw>
       </reaction>
-      <reaction id="vPK" name="Pyruvate kinase" reversible="true">
+      <reaction id="vPK" name="Pyruvate kinase" reversible="true" fast="false">
         <listOfReactants>
-          <speciesReference species="cpep" stoichiometry="1"/>
+          <speciesReference species="cpep" stoichiometry="1" constant="true"/>
         </listOfReactants>
         <listOfProducts>
-          <speciesReference species="cpyr" stoichiometry="1"/>
+          <speciesReference species="cpyr" stoichiometry="1" constant="true"/>
         </listOfProducts>
         <listOfModifiers>
           <modifierSpeciesReference species="cfdp"/>
@@ -1564,9 +1564,9 @@
           </listOfLocalParameters>
         </kineticLaw>
       </reaction>
-      <reaction id="vpepCxylase" name="PEP carboxylase" reversible="true">
+      <reaction id="vpepCxylase" name="PEP carboxylase" reversible="true" fast="false">
         <listOfReactants>
-          <speciesReference species="cpep" stoichiometry="1"/>
+          <speciesReference species="cpep" stoichiometry="1" constant="true"/>
         </listOfReactants>
         <listOfModifiers>
           <modifierSpeciesReference species="cfdp"/>
@@ -1609,9 +1609,9 @@
           </listOfLocalParameters>
         </kineticLaw>
       </reaction>
-      <reaction id="vSynth1" name="Synthesis 1" reversible="true">
+      <reaction id="vSynth1" name="Synthesis 1" reversible="true" fast="false">
         <listOfReactants>
-          <speciesReference species="cpep" stoichiometry="1"/>
+          <speciesReference species="cpep" stoichiometry="1" constant="true"/>
         </listOfReactants>
         <kineticLaw>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
@@ -1636,9 +1636,9 @@
           </listOfLocalParameters>
         </kineticLaw>
       </reaction>
-      <reaction id="vSynth2" name="Synthesis 2" reversible="true">
+      <reaction id="vSynth2" name="Synthesis 2" reversible="true" fast="false">
         <listOfReactants>
-          <speciesReference species="cpyr" stoichiometry="1"/>
+          <speciesReference species="cpyr" stoichiometry="1" constant="true"/>
         </listOfReactants>
         <kineticLaw>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
@@ -1663,10 +1663,10 @@
           </listOfLocalParameters>
         </kineticLaw>
       </reaction>
-      <reaction id="vDAHPS" name="DAHP synthesis" reversible="true">
+      <reaction id="vDAHPS" name="DAHP synthesis" reversible="true" fast="false">
         <listOfReactants>
-          <speciesReference species="ce4p" stoichiometry="1"/>
-          <speciesReference species="cpep" stoichiometry="1"/>
+          <speciesReference species="ce4p" stoichiometry="1" constant="true"/>
+          <speciesReference species="cpep" stoichiometry="1" constant="true"/>
         </listOfReactants>
         <kineticLaw>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
@@ -1719,9 +1719,9 @@
           </listOfLocalParameters>
         </kineticLaw>
       </reaction>
-      <reaction id="vPDH" name="Pyruvate dehydrogenase" reversible="true">
+      <reaction id="vPDH" name="Pyruvate dehydrogenase" reversible="true" fast="false">
         <listOfReactants>
-          <speciesReference species="cpyr" stoichiometry="1"/>
+          <speciesReference species="cpyr" stoichiometry="1" constant="true"/>
         </listOfReactants>
         <kineticLaw>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
@@ -1755,9 +1755,9 @@
           </listOfLocalParameters>
         </kineticLaw>
       </reaction>
-      <reaction id="vMethSynth" name="Methionine synthesis" reversible="true">
+      <reaction id="vMethSynth" name="Methionine synthesis" reversible="true" fast="false">
         <listOfProducts>
-          <speciesReference species="cpyr" stoichiometry="1"/>
+          <speciesReference species="cpyr" stoichiometry="1" constant="true"/>
         </listOfProducts>
         <kineticLaw>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
@@ -1772,12 +1772,12 @@
           </listOfLocalParameters>
         </kineticLaw>
       </reaction>
-      <reaction id="vPGDH" name="6-Phosphogluconate dehydrogenase" reversible="true">
+      <reaction id="vPGDH" name="6-Phosphogluconate dehydrogenase" reversible="true" fast="false">
         <listOfReactants>
-          <speciesReference species="cpg" stoichiometry="1"/>
+          <speciesReference species="cpg" stoichiometry="1" constant="true"/>
         </listOfReactants>
         <listOfProducts>
-          <speciesReference species="cribu5p" stoichiometry="1"/>
+          <speciesReference species="cribu5p" stoichiometry="1" constant="true"/>
         </listOfProducts>
         <kineticLaw>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
@@ -1835,12 +1835,12 @@
           </listOfLocalParameters>
         </kineticLaw>
       </reaction>
-      <reaction id="vR5PI" name="Ribose-phosphate isomerase" reversible="true">
+      <reaction id="vR5PI" name="Ribose-phosphate isomerase" reversible="true" fast="false">
         <listOfReactants>
-          <speciesReference species="cribu5p" stoichiometry="1"/>
+          <speciesReference species="cribu5p" stoichiometry="1" constant="true"/>
         </listOfReactants>
         <listOfProducts>
-          <speciesReference species="crib5p" stoichiometry="1"/>
+          <speciesReference species="crib5p" stoichiometry="1" constant="true"/>
         </listOfProducts>
         <kineticLaw>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
@@ -1865,12 +1865,12 @@
           </listOfLocalParameters>
         </kineticLaw>
       </reaction>
-      <reaction id="vRu5P" name="Ribulose-phosphate epimerase" reversible="true">
+      <reaction id="vRu5P" name="Ribulose-phosphate epimerase" reversible="true" fast="false">
         <listOfReactants>
-          <speciesReference species="cribu5p" stoichiometry="1"/>
+          <speciesReference species="cribu5p" stoichiometry="1" constant="true"/>
         </listOfReactants>
         <listOfProducts>
-          <speciesReference species="cxyl5p" stoichiometry="1"/>
+          <speciesReference species="cxyl5p" stoichiometry="1" constant="true"/>
         </listOfProducts>
         <kineticLaw>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
@@ -1895,9 +1895,9 @@
           </listOfLocalParameters>
         </kineticLaw>
       </reaction>
-      <reaction id="vPPK" name="Ribose phosphate pyrophosphokinase" reversible="true">
+      <reaction id="vPPK" name="Ribose phosphate pyrophosphokinase" reversible="true" fast="false">
         <listOfReactants>
-          <speciesReference species="crib5p" stoichiometry="1"/>
+          <speciesReference species="crib5p" stoichiometry="1" constant="true"/>
         </listOfReactants>
         <kineticLaw>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
@@ -1922,9 +1922,9 @@
           </listOfLocalParameters>
         </kineticLaw>
       </reaction>
-      <reaction id="vG1PAT" name="Glucose-1-phosphate adenyltransferase" reversible="true">
+      <reaction id="vG1PAT" name="Glucose-1-phosphate adenyltransferase" reversible="true" fast="false">
         <listOfReactants>
-          <speciesReference species="cg1p" stoichiometry="1"/>
+          <speciesReference species="cg1p" stoichiometry="1" constant="true"/>
         </listOfReactants>
         <listOfModifiers>
           <modifierSpeciesReference species="cfdp"/>
@@ -1977,9 +1977,9 @@
           </listOfLocalParameters>
         </kineticLaw>
       </reaction>
-      <reaction id="vG6P" name="G6P degradation" reversible="true">
+      <reaction id="vG6P" name="G6P degradation" reversible="true" fast="false">
         <listOfReactants>
-          <speciesReference species="cg6p" stoichiometry="1"/>
+          <speciesReference species="cg6p" stoichiometry="1" constant="true"/>
         </listOfReactants>
         <kineticLaw>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
@@ -1995,9 +1995,9 @@
           </listOfLocalParameters>
         </kineticLaw>
       </reaction>
-      <reaction id="vf6P" name="F6P degradation" reversible="true">
+      <reaction id="vf6P" name="F6P degradation" reversible="true" fast="false">
         <listOfReactants>
-          <speciesReference species="cf6p" stoichiometry="1"/>
+          <speciesReference species="cf6p" stoichiometry="1" constant="true"/>
         </listOfReactants>
         <kineticLaw>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
@@ -2013,9 +2013,9 @@
           </listOfLocalParameters>
         </kineticLaw>
       </reaction>
-      <reaction id="vfdP" name="FDP degradation" reversible="true">
+      <reaction id="vfdP" name="FDP degradation" reversible="true" fast="false">
         <listOfReactants>
-          <speciesReference species="cfdp" stoichiometry="1"/>
+          <speciesReference species="cfdp" stoichiometry="1" constant="true"/>
         </listOfReactants>
         <kineticLaw>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
@@ -2031,9 +2031,9 @@
           </listOfLocalParameters>
         </kineticLaw>
       </reaction>
-      <reaction id="vGAP" name="GAP degradation" reversible="true">
+      <reaction id="vGAP" name="GAP degradation" reversible="true" fast="false">
         <listOfReactants>
-          <speciesReference species="cgap" stoichiometry="1"/>
+          <speciesReference species="cgap" stoichiometry="1" constant="true"/>
         </listOfReactants>
         <kineticLaw>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
@@ -2049,9 +2049,9 @@
           </listOfLocalParameters>
         </kineticLaw>
       </reaction>
-      <reaction id="vDHAP" name="DHAP degradation" reversible="true">
+      <reaction id="vDHAP" name="DHAP degradation" reversible="true" fast="false">
         <listOfReactants>
-          <speciesReference species="cdhap" stoichiometry="1"/>
+          <speciesReference species="cdhap" stoichiometry="1" constant="true"/>
         </listOfReactants>
         <kineticLaw>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
@@ -2067,9 +2067,9 @@
           </listOfLocalParameters>
         </kineticLaw>
       </reaction>
-      <reaction id="vPGP" name="PGP degradation" reversible="true">
+      <reaction id="vPGP" name="PGP degradation" reversible="true" fast="false">
         <listOfReactants>
-          <speciesReference species="cpgp" stoichiometry="1"/>
+          <speciesReference species="cpgp" stoichiometry="1" constant="true"/>
         </listOfReactants>
         <kineticLaw>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
@@ -2085,9 +2085,9 @@
           </listOfLocalParameters>
         </kineticLaw>
       </reaction>
-      <reaction id="vPG3" name="PG3 degradation" reversible="true">
+      <reaction id="vPG3" name="PG3 degradation" reversible="true" fast="false">
         <listOfReactants>
-          <speciesReference species="cpg3" stoichiometry="1"/>
+          <speciesReference species="cpg3" stoichiometry="1" constant="true"/>
         </listOfReactants>
         <kineticLaw>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
@@ -2103,9 +2103,9 @@
           </listOfLocalParameters>
         </kineticLaw>
       </reaction>
-      <reaction id="vpg2" name="PG2 degradation" reversible="true">
+      <reaction id="vpg2" name="PG2 degradation" reversible="true" fast="false">
         <listOfReactants>
-          <speciesReference species="cpg2" stoichiometry="1"/>
+          <speciesReference species="cpg2" stoichiometry="1" constant="true"/>
         </listOfReactants>
         <kineticLaw>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
@@ -2121,9 +2121,9 @@
           </listOfLocalParameters>
         </kineticLaw>
       </reaction>
-      <reaction id="vPEP" name="PEP degradation" reversible="true">
+      <reaction id="vPEP" name="PEP degradation" reversible="true" fast="false">
         <listOfReactants>
-          <speciesReference species="cpep" stoichiometry="1"/>
+          <speciesReference species="cpep" stoichiometry="1" constant="true"/>
         </listOfReactants>
         <kineticLaw>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
@@ -2139,9 +2139,9 @@
           </listOfLocalParameters>
         </kineticLaw>
       </reaction>
-      <reaction id="vRibu5p" name="Ribu5P dilution" reversible="true">
+      <reaction id="vRibu5p" name="Ribu5P dilution" reversible="true" fast="false">
         <listOfReactants>
-          <speciesReference species="cribu5p" stoichiometry="1"/>
+          <speciesReference species="cribu5p" stoichiometry="1" constant="true"/>
         </listOfReactants>
         <kineticLaw>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
@@ -2157,9 +2157,9 @@
           </listOfLocalParameters>
         </kineticLaw>
       </reaction>
-      <reaction id="vRIB5P" name="Rib5P dilution" reversible="true">
+      <reaction id="vRIB5P" name="Rib5P dilution" reversible="true" fast="false">
         <listOfReactants>
-          <speciesReference species="crib5p" stoichiometry="1"/>
+          <speciesReference species="crib5p" stoichiometry="1" constant="true"/>
         </listOfReactants>
         <kineticLaw>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
@@ -2175,9 +2175,9 @@
           </listOfLocalParameters>
         </kineticLaw>
       </reaction>
-      <reaction id="vXYL5P" name="XYL5P dilution" reversible="true">
+      <reaction id="vXYL5P" name="XYL5P dilution" reversible="true" fast="false">
         <listOfReactants>
-          <speciesReference species="cxyl5p" stoichiometry="1"/>
+          <speciesReference species="cxyl5p" stoichiometry="1" constant="true"/>
         </listOfReactants>
         <kineticLaw>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
@@ -2193,9 +2193,9 @@
           </listOfLocalParameters>
         </kineticLaw>
       </reaction>
-      <reaction id="vSED7P" name="SED7P dilution" reversible="true">
+      <reaction id="vSED7P" name="SED7P dilution" reversible="true" fast="false">
         <listOfReactants>
-          <speciesReference species="csed7p" stoichiometry="1"/>
+          <speciesReference species="csed7p" stoichiometry="1" constant="true"/>
         </listOfReactants>
         <kineticLaw>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
@@ -2211,9 +2211,9 @@
           </listOfLocalParameters>
         </kineticLaw>
       </reaction>
-      <reaction id="vpyr" name="Pyruvate dilution" reversible="true">
+      <reaction id="vpyr" name="Pyruvate dilution" reversible="true" fast="false">
         <listOfReactants>
-          <speciesReference species="cpyr" stoichiometry="1"/>
+          <speciesReference species="cpyr" stoichiometry="1" constant="true"/>
         </listOfReactants>
         <kineticLaw>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
@@ -2229,9 +2229,9 @@
           </listOfLocalParameters>
         </kineticLaw>
       </reaction>
-      <reaction id="vPG" name="PG dilution" reversible="true">
+      <reaction id="vPG" name="PG dilution" reversible="true" fast="false">
         <listOfReactants>
-          <speciesReference species="cpg" stoichiometry="1"/>
+          <speciesReference species="cpg" stoichiometry="1" constant="true"/>
         </listOfReactants>
         <kineticLaw>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
@@ -2247,9 +2247,9 @@
           </listOfLocalParameters>
         </kineticLaw>
       </reaction>
-      <reaction id="vE4P" name="E4P dilution" reversible="true">
+      <reaction id="vE4P" name="E4P dilution" reversible="true" fast="false">
         <listOfReactants>
-          <speciesReference species="ce4p" stoichiometry="1"/>
+          <speciesReference species="ce4p" stoichiometry="1" constant="true"/>
         </listOfReactants>
         <kineticLaw>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
@@ -2265,9 +2265,9 @@
           </listOfLocalParameters>
         </kineticLaw>
       </reaction>
-      <reaction id="vGLP" name="GLP dilution" reversible="true">
+      <reaction id="vGLP" name="GLP dilution" reversible="true" fast="false">
         <listOfReactants>
-          <speciesReference species="cg1p" stoichiometry="1"/>
+          <speciesReference species="cg1p" stoichiometry="1" constant="true"/>
         </listOfReactants>
         <kineticLaw>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
@@ -2283,9 +2283,9 @@
           </listOfLocalParameters>
         </kineticLaw>
       </reaction>
-      <reaction id="vEXTER" name="Extracellular glucose kinetics" reversible="true">
+      <reaction id="vEXTER" name="Extracellular glucose kinetics" reversible="true" fast="false">
         <listOfProducts>
-          <speciesReference species="cglcex" stoichiometry="1"/>
+          <speciesReference species="cglcex" stoichiometry="1" constant="true"/>
         </listOfProducts>
         <kineticLaw>
           <math xmlns="http://www.w3.org/1998/Math/MathML">

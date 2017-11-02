@@ -97,6 +97,7 @@ class GurobiSolver(Solver):
             self.problem.remove(constr)
 
         expr = quicksum(coeff * self.problem.getVarByName(r_id) for r_id, coeff in lhs.items() if coeff)
+
         self.problem.addConstr(expr, grb_sense[sense], rhs, constr_id)
         self.constr_ids.append(constr_id)
             

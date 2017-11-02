@@ -2,508 +2,508 @@
 <sbml xmlns="http://www.sbml.org/sbml/level3/version1/core" level="3" version="1">
   <model id="Ecoli_core_model">
     <listOfCompartments>
-      <compartment id="C_c" name="Cytoplasm" size="1"/>
-      <compartment id="C_e" name="Extracellular" size="1"/>
+      <compartment id="C_c" name="Cytoplasm" size="1" constant="true"/>
+      <compartment id="C_e" name="Extracellular" size="1" constant="true"/>
     </listOfCompartments>
     <listOfSpecies>
-      <species id="M_13dpg_c" name="3-Phospho-D-glyceroyl-phosphate" compartment="C_c" boundaryCondition="false" constant="false">
+      <species id="M_13dpg_c" name="3-Phospho-D-glyceroyl-phosphate" compartment="C_c" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
             <p>FORMULA: C3H4O10P2</p>
           </html>
         </notes>
       </species>
-      <species id="M_2pg_c" name="D-Glycerate-2-phosphate" compartment="C_c" boundaryCondition="false" constant="false">
+      <species id="M_2pg_c" name="D-Glycerate-2-phosphate" compartment="C_c" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
             <p>FORMULA: C3H4O7P</p>
           </html>
         </notes>
       </species>
-      <species id="M_3pg_c" name="3-Phospho-D-glycerate" compartment="C_c" boundaryCondition="false" constant="false">
+      <species id="M_3pg_c" name="3-Phospho-D-glycerate" compartment="C_c" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
             <p>FORMULA: C3H4O7P</p>
           </html>
         </notes>
       </species>
-      <species id="M_6pgc_c" name="6-Phospho-D-gluconate" compartment="C_c" boundaryCondition="false" constant="false">
+      <species id="M_6pgc_c" name="6-Phospho-D-gluconate" compartment="C_c" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
             <p>FORMULA: C6H10O10P</p>
           </html>
         </notes>
       </species>
-      <species id="M_6pgl_c" name="6-phospho-D-glucono-1-5-lactone" compartment="C_c" boundaryCondition="false" constant="false">
+      <species id="M_6pgl_c" name="6-phospho-D-glucono-1-5-lactone" compartment="C_c" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
             <p>FORMULA: C6H9O9P</p>
           </html>
         </notes>
       </species>
-      <species id="M_ac_c" name="Acetate" compartment="C_c" boundaryCondition="false" constant="false">
+      <species id="M_ac_c" name="Acetate" compartment="C_c" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
             <p>FORMULA: C2H3O2</p>
           </html>
         </notes>
       </species>
-      <species id="M_ac_e" name="Acetate" compartment="C_e" boundaryCondition="false" constant="false">
+      <species id="M_ac_e" name="Acetate" compartment="C_e" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
             <p>FORMULA: C2H3O2</p>
           </html>
         </notes>
       </species>
-      <species id="M_acald_c" name="Acetaldehyde" compartment="C_c" boundaryCondition="false" constant="false">
+      <species id="M_acald_c" name="Acetaldehyde" compartment="C_c" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
             <p>FORMULA: C2H4O</p>
           </html>
         </notes>
       </species>
-      <species id="M_acald_e" name="Acetaldehyde" compartment="C_e" boundaryCondition="false" constant="false">
+      <species id="M_acald_e" name="Acetaldehyde" compartment="C_e" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
             <p>FORMULA: C2H4O</p>
           </html>
         </notes>
       </species>
-      <species id="M_accoa_c" name="Acetyl-CoA" compartment="C_c" boundaryCondition="false" constant="false">
+      <species id="M_accoa_c" name="Acetyl-CoA" compartment="C_c" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
             <p>FORMULA: C23H34N7O17P3S</p>
           </html>
         </notes>
       </species>
-      <species id="M_acon_C_c" name="cis-Aconitate" compartment="C_c" boundaryCondition="false" constant="false">
+      <species id="M_acon_C_c" name="cis-Aconitate" compartment="C_c" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
             <p>FORMULA: C6H3O6</p>
           </html>
         </notes>
       </species>
-      <species id="M_actp_c" name="Acetyl-phosphate" compartment="C_c" boundaryCondition="false" constant="false">
+      <species id="M_actp_c" name="Acetyl-phosphate" compartment="C_c" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
             <p>FORMULA: C2H3O5P</p>
           </html>
         </notes>
       </species>
-      <species id="M_adp_c" name="ADP" compartment="C_c" boundaryCondition="false" constant="false">
+      <species id="M_adp_c" name="ADP" compartment="C_c" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
             <p>FORMULA: C10H12N5O10P2</p>
           </html>
         </notes>
       </species>
-      <species id="M_akg_c" name="2-Oxoglutarate" compartment="C_c" boundaryCondition="false" constant="false">
+      <species id="M_akg_c" name="2-Oxoglutarate" compartment="C_c" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
             <p>FORMULA: C5H4O5</p>
           </html>
         </notes>
       </species>
-      <species id="M_akg_e" name="2-Oxoglutarate" compartment="C_e" boundaryCondition="false" constant="false">
+      <species id="M_akg_e" name="2-Oxoglutarate" compartment="C_e" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
             <p>FORMULA: C5H4O5</p>
           </html>
         </notes>
       </species>
-      <species id="M_amp_c" name="AMP" compartment="C_c" boundaryCondition="false" constant="false">
+      <species id="M_amp_c" name="AMP" compartment="C_c" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
             <p>FORMULA: C10H12N5O7P</p>
           </html>
         </notes>
       </species>
-      <species id="M_atp_c" name="ATP" compartment="C_c" boundaryCondition="false" constant="false">
+      <species id="M_atp_c" name="ATP" compartment="C_c" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
             <p>FORMULA: C10H12N5O13P3</p>
           </html>
         </notes>
       </species>
-      <species id="M_cit_c" name="Citrate" compartment="C_c" boundaryCondition="false" constant="false">
+      <species id="M_cit_c" name="Citrate" compartment="C_c" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
             <p>FORMULA: C6H5O7</p>
           </html>
         </notes>
       </species>
-      <species id="M_co2_c" name="CO2" compartment="C_c" boundaryCondition="false" constant="false">
+      <species id="M_co2_c" name="CO2" compartment="C_c" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
             <p>FORMULA: CO2</p>
           </html>
         </notes>
       </species>
-      <species id="M_co2_e" name="CO2" compartment="C_e" boundaryCondition="false" constant="false">
+      <species id="M_co2_e" name="CO2" compartment="C_e" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
             <p>FORMULA: CO2</p>
           </html>
         </notes>
       </species>
-      <species id="M_coa_c" name="Coenzyme-A" compartment="C_c" boundaryCondition="false" constant="false">
+      <species id="M_coa_c" name="Coenzyme-A" compartment="C_c" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
             <p>FORMULA: C21H32N7O16P3S</p>
           </html>
         </notes>
       </species>
-      <species id="M_dhap_c" name="Dihydroxyacetone-phosphate" compartment="C_c" boundaryCondition="false" constant="false">
+      <species id="M_dhap_c" name="Dihydroxyacetone-phosphate" compartment="C_c" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
             <p>FORMULA: C3H5O6P</p>
           </html>
         </notes>
       </species>
-      <species id="M_e4p_c" name="D-Erythrose-4-phosphate" compartment="C_c" boundaryCondition="false" constant="false">
+      <species id="M_e4p_c" name="D-Erythrose-4-phosphate" compartment="C_c" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
             <p>FORMULA: C4H7O7P</p>
           </html>
         </notes>
       </species>
-      <species id="M_etoh_c" name="Ethanol" compartment="C_c" boundaryCondition="false" constant="false">
+      <species id="M_etoh_c" name="Ethanol" compartment="C_c" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
             <p>FORMULA: C2H6O</p>
           </html>
         </notes>
       </species>
-      <species id="M_etoh_e" name="Ethanol" compartment="C_e" boundaryCondition="false" constant="false">
+      <species id="M_etoh_e" name="Ethanol" compartment="C_e" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
             <p>FORMULA: C2H6O</p>
           </html>
         </notes>
       </species>
-      <species id="M_f6p_c" name="D-Fructose-6-phosphate" compartment="C_c" boundaryCondition="false" constant="false">
+      <species id="M_f6p_c" name="D-Fructose-6-phosphate" compartment="C_c" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
             <p>FORMULA: C6H11O9P</p>
           </html>
         </notes>
       </species>
-      <species id="M_fdp_c" name="D-Fructose-1-6-bisphosphate" compartment="C_c" boundaryCondition="false" constant="false">
+      <species id="M_fdp_c" name="D-Fructose-1-6-bisphosphate" compartment="C_c" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
             <p>FORMULA: C6H10O12P2</p>
           </html>
         </notes>
       </species>
-      <species id="M_for_c" name="Formate" compartment="C_c" boundaryCondition="false" constant="false">
+      <species id="M_for_c" name="Formate" compartment="C_c" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
             <p>FORMULA: CH1O2</p>
           </html>
         </notes>
       </species>
-      <species id="M_for_e" name="Formate" compartment="C_e" boundaryCondition="false" constant="false">
+      <species id="M_for_e" name="Formate" compartment="C_e" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
             <p>FORMULA: CH1O2</p>
           </html>
         </notes>
       </species>
-      <species id="M_fru_e" name="D-Fructose" compartment="C_e" boundaryCondition="false" constant="false">
+      <species id="M_fru_e" name="D-Fructose" compartment="C_e" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
             <p>FORMULA: C6H12O6</p>
           </html>
         </notes>
       </species>
-      <species id="M_fum_c" name="Fumarate" compartment="C_c" boundaryCondition="false" constant="false">
+      <species id="M_fum_c" name="Fumarate" compartment="C_c" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
             <p>FORMULA: C4H2O4</p>
           </html>
         </notes>
       </species>
-      <species id="M_fum_e" name="Fumarate" compartment="C_e" boundaryCondition="false" constant="false">
+      <species id="M_fum_e" name="Fumarate" compartment="C_e" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
             <p>FORMULA: C4H2O4</p>
           </html>
         </notes>
       </species>
-      <species id="M_g3p_c" name="Glyceraldehyde-3-phosphate" compartment="C_c" boundaryCondition="false" constant="false">
+      <species id="M_g3p_c" name="Glyceraldehyde-3-phosphate" compartment="C_c" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
             <p>FORMULA: C3H5O6P</p>
           </html>
         </notes>
       </species>
-      <species id="M_g6p_c" name="D-Glucose-6-phosphate" compartment="C_c" boundaryCondition="false" constant="false">
+      <species id="M_g6p_c" name="D-Glucose-6-phosphate" compartment="C_c" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
             <p>FORMULA: C6H11O9P</p>
           </html>
         </notes>
       </species>
-      <species id="M_glc_D_e" name="D-Glucose" compartment="C_e" boundaryCondition="false" constant="false">
+      <species id="M_glc_D_e" name="D-Glucose" compartment="C_e" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
             <p>FORMULA: C6H12O6</p>
           </html>
         </notes>
       </species>
-      <species id="M_gln_L_c" name="L-Glutamine" compartment="C_c" boundaryCondition="false" constant="false">
+      <species id="M_gln_L_c" name="L-Glutamine" compartment="C_c" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
             <p>FORMULA: C5H10N2O3</p>
           </html>
         </notes>
       </species>
-      <species id="M_gln_L_e" name="L-Glutamine" compartment="C_e" boundaryCondition="false" constant="false">
+      <species id="M_gln_L_e" name="L-Glutamine" compartment="C_e" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
             <p>FORMULA: C5H10N2O3</p>
           </html>
         </notes>
       </species>
-      <species id="M_glu_L_c" name="L-Glutamate" compartment="C_c" boundaryCondition="false" constant="false">
+      <species id="M_glu_L_c" name="L-Glutamate" compartment="C_c" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
             <p>FORMULA: C5H8NO4</p>
           </html>
         </notes>
       </species>
-      <species id="M_glu_L_e" name="L-Glutamate" compartment="C_e" boundaryCondition="false" constant="false">
+      <species id="M_glu_L_e" name="L-Glutamate" compartment="C_e" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
             <p>FORMULA: C5H8NO4</p>
           </html>
         </notes>
       </species>
-      <species id="M_glx_c" name="Glyoxylate" compartment="C_c" boundaryCondition="false" constant="false">
+      <species id="M_glx_c" name="Glyoxylate" compartment="C_c" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
             <p>FORMULA: C2H1O3</p>
           </html>
         </notes>
       </species>
-      <species id="M_h2o_c" name="H2O" compartment="C_c" boundaryCondition="false" constant="false">
+      <species id="M_h2o_c" name="H2O" compartment="C_c" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
             <p>FORMULA: H2O</p>
           </html>
         </notes>
       </species>
-      <species id="M_h2o_e" name="H2O" compartment="C_e" boundaryCondition="false" constant="false">
+      <species id="M_h2o_e" name="H2O" compartment="C_e" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
             <p>FORMULA: H2O</p>
           </html>
         </notes>
       </species>
-      <species id="M_h_c" name="H" compartment="C_c" boundaryCondition="false" constant="false">
+      <species id="M_h_c" name="H" compartment="C_c" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
             <p>FORMULA: H</p>
           </html>
         </notes>
       </species>
-      <species id="M_h_e" name="H" compartment="C_e" boundaryCondition="false" constant="false">
+      <species id="M_h_e" name="H" compartment="C_e" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
             <p>FORMULA: H</p>
           </html>
         </notes>
       </species>
-      <species id="M_icit_c" name="Isocitrate" compartment="C_c" boundaryCondition="false" constant="false">
+      <species id="M_icit_c" name="Isocitrate" compartment="C_c" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
             <p>FORMULA: C6H5O7</p>
           </html>
         </notes>
       </species>
-      <species id="M_lac_D_c" name="D-Lactate" compartment="C_c" boundaryCondition="false" constant="false">
+      <species id="M_lac_D_c" name="D-Lactate" compartment="C_c" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
             <p>FORMULA: C3H5O3</p>
           </html>
         </notes>
       </species>
-      <species id="M_lac_D_e" name="D-Lactate" compartment="C_e" boundaryCondition="false" constant="false">
+      <species id="M_lac_D_e" name="D-Lactate" compartment="C_e" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
             <p>FORMULA: C3H5O3</p>
           </html>
         </notes>
       </species>
-      <species id="M_mal_L_c" name="L-Malate" compartment="C_c" boundaryCondition="false" constant="false">
+      <species id="M_mal_L_c" name="L-Malate" compartment="C_c" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
             <p>FORMULA: C4H4O5</p>
           </html>
         </notes>
       </species>
-      <species id="M_mal_L_e" name="L-Malate" compartment="C_e" boundaryCondition="false" constant="false">
+      <species id="M_mal_L_e" name="L-Malate" compartment="C_e" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
             <p>FORMULA: C4H4O5</p>
           </html>
         </notes>
       </species>
-      <species id="M_nad_c" name="Nicotinamide-adenine-dinucleotide" compartment="C_c" boundaryCondition="false" constant="false">
+      <species id="M_nad_c" name="Nicotinamide-adenine-dinucleotide" compartment="C_c" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
             <p>FORMULA: C21H26N7O14P2</p>
           </html>
         </notes>
       </species>
-      <species id="M_nadh_c" name="Nicotinamide-adenine-dinucleotide-reduced" compartment="C_c" boundaryCondition="false" constant="false">
+      <species id="M_nadh_c" name="Nicotinamide-adenine-dinucleotide-reduced" compartment="C_c" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
             <p>FORMULA: C21H27N7O14P2</p>
           </html>
         </notes>
       </species>
-      <species id="M_nadp_c" name="Nicotinamide-adenine-dinucleotide-phosphate" compartment="C_c" boundaryCondition="false" constant="false">
+      <species id="M_nadp_c" name="Nicotinamide-adenine-dinucleotide-phosphate" compartment="C_c" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
             <p>FORMULA: C21H25N7O17P3</p>
           </html>
         </notes>
       </species>
-      <species id="M_nadph_c" name="Nicotinamide-adenine-dinucleotide-phosphate-reduced" compartment="C_c" boundaryCondition="false" constant="false">
+      <species id="M_nadph_c" name="Nicotinamide-adenine-dinucleotide-phosphate-reduced" compartment="C_c" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
             <p>FORMULA: C21H26N7O17P3</p>
           </html>
         </notes>
       </species>
-      <species id="M_nh4_c" name="Ammonium" compartment="C_c" boundaryCondition="false" constant="false">
+      <species id="M_nh4_c" name="Ammonium" compartment="C_c" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
             <p>FORMULA: H4N</p>
           </html>
         </notes>
       </species>
-      <species id="M_nh4_e" name="Ammonium" compartment="C_e" boundaryCondition="false" constant="false">
+      <species id="M_nh4_e" name="Ammonium" compartment="C_e" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
             <p>FORMULA: H4N</p>
           </html>
         </notes>
       </species>
-      <species id="M_o2_c" name="O2" compartment="C_c" boundaryCondition="false" constant="false">
+      <species id="M_o2_c" name="O2" compartment="C_c" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
             <p>FORMULA: O2</p>
           </html>
         </notes>
       </species>
-      <species id="M_o2_e" name="O2" compartment="C_e" boundaryCondition="false" constant="false">
+      <species id="M_o2_e" name="O2" compartment="C_e" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
             <p>FORMULA: O2</p>
           </html>
         </notes>
       </species>
-      <species id="M_oaa_c" name="Oxaloacetate" compartment="C_c" boundaryCondition="false" constant="false">
+      <species id="M_oaa_c" name="Oxaloacetate" compartment="C_c" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
             <p>FORMULA: C4H2O5</p>
           </html>
         </notes>
       </species>
-      <species id="M_pep_c" name="Phosphoenolpyruvate" compartment="C_c" boundaryCondition="false" constant="false">
+      <species id="M_pep_c" name="Phosphoenolpyruvate" compartment="C_c" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
             <p>FORMULA: C3H2O6P</p>
           </html>
         </notes>
       </species>
-      <species id="M_pi_c" name="Phosphate" compartment="C_c" boundaryCondition="false" constant="false">
+      <species id="M_pi_c" name="Phosphate" compartment="C_c" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
             <p>FORMULA: HO4P</p>
           </html>
         </notes>
       </species>
-      <species id="M_pi_e" name="Phosphate" compartment="C_e" boundaryCondition="false" constant="false">
+      <species id="M_pi_e" name="Phosphate" compartment="C_e" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
             <p>FORMULA: HO4P</p>
           </html>
         </notes>
       </species>
-      <species id="M_pyr_c" name="Pyruvate" compartment="C_c" boundaryCondition="false" constant="false">
+      <species id="M_pyr_c" name="Pyruvate" compartment="C_c" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
             <p>FORMULA: C3H3O3</p>
           </html>
         </notes>
       </species>
-      <species id="M_pyr_e" name="Pyruvate" compartment="C_e" boundaryCondition="false" constant="false">
+      <species id="M_pyr_e" name="Pyruvate" compartment="C_e" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
             <p>FORMULA: C3H3O3</p>
           </html>
         </notes>
       </species>
-      <species id="M_q8_c" name="Ubiquinone-8" compartment="C_c" boundaryCondition="false" constant="false">
+      <species id="M_q8_c" name="Ubiquinone-8" compartment="C_c" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
             <p>FORMULA: C49H74O4</p>
           </html>
         </notes>
       </species>
-      <species id="M_q8h2_c" name="Ubiquinol-8" compartment="C_c" boundaryCondition="false" constant="false">
+      <species id="M_q8h2_c" name="Ubiquinol-8" compartment="C_c" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
             <p>FORMULA: C49H76O4</p>
           </html>
         </notes>
       </species>
-      <species id="M_r5p_c" name="alpha-D-Ribose-5-phosphate" compartment="C_c" boundaryCondition="false" constant="false">
+      <species id="M_r5p_c" name="alpha-D-Ribose-5-phosphate" compartment="C_c" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
             <p>FORMULA: C5H9O8P</p>
           </html>
         </notes>
       </species>
-      <species id="M_ru5p_D_c" name="D-Ribulose-5-phosphate" compartment="C_c" boundaryCondition="false" constant="false">
+      <species id="M_ru5p_D_c" name="D-Ribulose-5-phosphate" compartment="C_c" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
             <p>FORMULA: C5H9O8P</p>
           </html>
         </notes>
       </species>
-      <species id="M_s7p_c" name="Sedoheptulose-7-phosphate" compartment="C_c" boundaryCondition="false" constant="false">
+      <species id="M_s7p_c" name="Sedoheptulose-7-phosphate" compartment="C_c" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
             <p>FORMULA: C7H13O10P</p>
           </html>
         </notes>
       </species>
-      <species id="M_succ_c" name="Succinate" compartment="C_c" boundaryCondition="false" constant="false">
+      <species id="M_succ_c" name="Succinate" compartment="C_c" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
             <p>FORMULA: C4H4O4</p>
           </html>
         </notes>
       </species>
-      <species id="M_succ_e" name="Succinate" compartment="C_e" boundaryCondition="false" constant="false">
+      <species id="M_succ_e" name="Succinate" compartment="C_e" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
             <p>FORMULA: C4H4O4</p>
           </html>
         </notes>
       </species>
-      <species id="M_succoa_c" name="Succinyl-CoA" compartment="C_c" boundaryCondition="false" constant="false">
+      <species id="M_succoa_c" name="Succinyl-CoA" compartment="C_c" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
             <p>FORMULA: C25H35N7O19P3S</p>
           </html>
         </notes>
       </species>
-      <species id="M_xu5p_D_c" name="D-Xylulose-5-phosphate" compartment="C_c" boundaryCondition="false" constant="false">
+      <species id="M_xu5p_D_c" name="D-Xylulose-5-phosphate" compartment="C_c" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
             <p>FORMULA: C5H9O8P</p>
@@ -512,7 +512,7 @@
       </species>
     </listOfSpecies>
     <listOfReactions>
-      <reaction id="R_ACALD" name="acetaldehyde dehydrogenase (acetylating)" reversible="true">
+      <reaction id="R_ACALD" name="acetaldehyde dehydrogenase (acetylating)" reversible="true" fast="false">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
             <p>GENE_LIST: b0351 b1241</p>
@@ -521,14 +521,14 @@
           </html>
         </notes>
         <listOfReactants>
-          <speciesReference species="M_acald_c" stoichiometry="1"/>
-          <speciesReference species="M_coa_c" stoichiometry="1"/>
-          <speciesReference species="M_nad_c" stoichiometry="1"/>
+          <speciesReference species="M_acald_c" stoichiometry="1" constant="true"/>
+          <speciesReference species="M_coa_c" stoichiometry="1" constant="true"/>
+          <speciesReference species="M_nad_c" stoichiometry="1" constant="true"/>
         </listOfReactants>
         <listOfProducts>
-          <speciesReference species="M_accoa_c" stoichiometry="1"/>
-          <speciesReference species="M_h_c" stoichiometry="1"/>
-          <speciesReference species="M_nadh_c" stoichiometry="1"/>
+          <speciesReference species="M_accoa_c" stoichiometry="1" constant="true"/>
+          <speciesReference species="M_h_c" stoichiometry="1" constant="true"/>
+          <speciesReference species="M_nadh_c" stoichiometry="1" constant="true"/>
         </listOfProducts>
         <kineticLaw>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
@@ -541,7 +541,7 @@
           </listOfLocalParameters>
         </kineticLaw>
       </reaction>
-      <reaction id="R_ACALDt" name="acetaldehyde reversible transport" reversible="true">
+      <reaction id="R_ACALDt" name="acetaldehyde reversible transport" reversible="true" fast="false">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
             <p>GENE_LIST: s0001</p>
@@ -550,10 +550,10 @@
           </html>
         </notes>
         <listOfReactants>
-          <speciesReference species="M_acald_e" stoichiometry="1"/>
+          <speciesReference species="M_acald_e" stoichiometry="1" constant="true"/>
         </listOfReactants>
         <listOfProducts>
-          <speciesReference species="M_acald_c" stoichiometry="1"/>
+          <speciesReference species="M_acald_c" stoichiometry="1" constant="true"/>
         </listOfProducts>
         <kineticLaw>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
@@ -566,7 +566,7 @@
           </listOfLocalParameters>
         </kineticLaw>
       </reaction>
-      <reaction id="R_ACKr" name="acetate kinase" reversible="true">
+      <reaction id="R_ACKr" name="acetate kinase" reversible="true" fast="false">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
             <p>GENE_LIST: b1849 b2296 b3115</p>
@@ -575,12 +575,12 @@
           </html>
         </notes>
         <listOfReactants>
-          <speciesReference species="M_ac_c" stoichiometry="1"/>
-          <speciesReference species="M_atp_c" stoichiometry="1"/>
+          <speciesReference species="M_ac_c" stoichiometry="1" constant="true"/>
+          <speciesReference species="M_atp_c" stoichiometry="1" constant="true"/>
         </listOfReactants>
         <listOfProducts>
-          <speciesReference species="M_actp_c" stoichiometry="1"/>
-          <speciesReference species="M_adp_c" stoichiometry="1"/>
+          <speciesReference species="M_actp_c" stoichiometry="1" constant="true"/>
+          <speciesReference species="M_adp_c" stoichiometry="1" constant="true"/>
         </listOfProducts>
         <kineticLaw>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
@@ -593,7 +593,7 @@
           </listOfLocalParameters>
         </kineticLaw>
       </reaction>
-      <reaction id="R_ACONTa" name="aconitase (half-reaction A, Citrate hydro-lyase)" reversible="true">
+      <reaction id="R_ACONTa" name="aconitase (half-reaction A, Citrate hydro-lyase)" reversible="true" fast="false">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
             <p>GENE_LIST: b0118 b1276</p>
@@ -602,11 +602,11 @@
           </html>
         </notes>
         <listOfReactants>
-          <speciesReference species="M_cit_c" stoichiometry="1"/>
+          <speciesReference species="M_cit_c" stoichiometry="1" constant="true"/>
         </listOfReactants>
         <listOfProducts>
-          <speciesReference species="M_acon_C_c" stoichiometry="1"/>
-          <speciesReference species="M_h2o_c" stoichiometry="1"/>
+          <speciesReference species="M_acon_C_c" stoichiometry="1" constant="true"/>
+          <speciesReference species="M_h2o_c" stoichiometry="1" constant="true"/>
         </listOfProducts>
         <kineticLaw>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
@@ -619,7 +619,7 @@
           </listOfLocalParameters>
         </kineticLaw>
       </reaction>
-      <reaction id="R_ACONTb" name="aconitase (half-reaction B, Isocitrate hydro-lyase)" reversible="true">
+      <reaction id="R_ACONTb" name="aconitase (half-reaction B, Isocitrate hydro-lyase)" reversible="true" fast="false">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
             <p>GENE_LIST: b0118 b1276</p>
@@ -628,11 +628,11 @@
           </html>
         </notes>
         <listOfReactants>
-          <speciesReference species="M_acon_C_c" stoichiometry="1"/>
-          <speciesReference species="M_h2o_c" stoichiometry="1"/>
+          <speciesReference species="M_acon_C_c" stoichiometry="1" constant="true"/>
+          <speciesReference species="M_h2o_c" stoichiometry="1" constant="true"/>
         </listOfReactants>
         <listOfProducts>
-          <speciesReference species="M_icit_c" stoichiometry="1"/>
+          <speciesReference species="M_icit_c" stoichiometry="1" constant="true"/>
         </listOfProducts>
         <kineticLaw>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
@@ -645,19 +645,19 @@
           </listOfLocalParameters>
         </kineticLaw>
       </reaction>
-      <reaction id="R_ACt2r" name="acetate reversible transport via proton symport" reversible="true">
+      <reaction id="R_ACt2r" name="acetate reversible transport via proton symport" reversible="true" fast="false">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
             <p>SUBSYSTEM: Transport, Extracellular</p>
           </html>
         </notes>
         <listOfReactants>
-          <speciesReference species="M_ac_e" stoichiometry="1"/>
-          <speciesReference species="M_h_e" stoichiometry="1"/>
+          <speciesReference species="M_ac_e" stoichiometry="1" constant="true"/>
+          <speciesReference species="M_h_e" stoichiometry="1" constant="true"/>
         </listOfReactants>
         <listOfProducts>
-          <speciesReference species="M_ac_c" stoichiometry="1"/>
-          <speciesReference species="M_h_c" stoichiometry="1"/>
+          <speciesReference species="M_ac_c" stoichiometry="1" constant="true"/>
+          <speciesReference species="M_h_c" stoichiometry="1" constant="true"/>
         </listOfProducts>
         <kineticLaw>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
@@ -670,7 +670,7 @@
           </listOfLocalParameters>
         </kineticLaw>
       </reaction>
-      <reaction id="R_ADK1" name="adenylate kinase" reversible="true">
+      <reaction id="R_ADK1" name="adenylate kinase" reversible="true" fast="false">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
             <p>GENE_LIST: b0474</p>
@@ -679,11 +679,11 @@
           </html>
         </notes>
         <listOfReactants>
-          <speciesReference species="M_amp_c" stoichiometry="1"/>
-          <speciesReference species="M_atp_c" stoichiometry="1"/>
+          <speciesReference species="M_amp_c" stoichiometry="1" constant="true"/>
+          <speciesReference species="M_atp_c" stoichiometry="1" constant="true"/>
         </listOfReactants>
         <listOfProducts>
-          <speciesReference species="M_adp_c" stoichiometry="2"/>
+          <speciesReference species="M_adp_c" stoichiometry="2" constant="true"/>
         </listOfProducts>
         <kineticLaw>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
@@ -696,7 +696,7 @@
           </listOfLocalParameters>
         </kineticLaw>
       </reaction>
-      <reaction id="R_AKGDH" name="2-Oxoglutarate dehydrogenase" reversible="false">
+      <reaction id="R_AKGDH" name="2-Oxoglutarate dehydrogenase" reversible="false" fast="false">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
             <p>GENE_LIST: b0116 b0726 b0727</p>
@@ -705,14 +705,14 @@
           </html>
         </notes>
         <listOfReactants>
-          <speciesReference species="M_akg_c" stoichiometry="1"/>
-          <speciesReference species="M_coa_c" stoichiometry="1"/>
-          <speciesReference species="M_nad_c" stoichiometry="1"/>
+          <speciesReference species="M_akg_c" stoichiometry="1" constant="true"/>
+          <speciesReference species="M_coa_c" stoichiometry="1" constant="true"/>
+          <speciesReference species="M_nad_c" stoichiometry="1" constant="true"/>
         </listOfReactants>
         <listOfProducts>
-          <speciesReference species="M_co2_c" stoichiometry="1"/>
-          <speciesReference species="M_nadh_c" stoichiometry="1"/>
-          <speciesReference species="M_succoa_c" stoichiometry="1"/>
+          <speciesReference species="M_co2_c" stoichiometry="1" constant="true"/>
+          <speciesReference species="M_nadh_c" stoichiometry="1" constant="true"/>
+          <speciesReference species="M_succoa_c" stoichiometry="1" constant="true"/>
         </listOfProducts>
         <kineticLaw>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
@@ -725,7 +725,7 @@
           </listOfLocalParameters>
         </kineticLaw>
       </reaction>
-      <reaction id="R_AKGt2r" name="2-oxoglutarate reversible transport via symport" reversible="true">
+      <reaction id="R_AKGt2r" name="2-oxoglutarate reversible transport via symport" reversible="true" fast="false">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
             <p>GENE_LIST: b2587</p>
@@ -734,12 +734,12 @@
           </html>
         </notes>
         <listOfReactants>
-          <speciesReference species="M_akg_e" stoichiometry="1"/>
-          <speciesReference species="M_h_e" stoichiometry="1"/>
+          <speciesReference species="M_akg_e" stoichiometry="1" constant="true"/>
+          <speciesReference species="M_h_e" stoichiometry="1" constant="true"/>
         </listOfReactants>
         <listOfProducts>
-          <speciesReference species="M_akg_c" stoichiometry="1"/>
-          <speciesReference species="M_h_c" stoichiometry="1"/>
+          <speciesReference species="M_akg_c" stoichiometry="1" constant="true"/>
+          <speciesReference species="M_h_c" stoichiometry="1" constant="true"/>
         </listOfProducts>
         <kineticLaw>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
@@ -752,7 +752,7 @@
           </listOfLocalParameters>
         </kineticLaw>
       </reaction>
-      <reaction id="R_ALCD2x" name="alcohol dehydrogenase (ethanol)" reversible="true">
+      <reaction id="R_ALCD2x" name="alcohol dehydrogenase (ethanol)" reversible="true" fast="false">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
             <p>GENE_LIST: b0356 b1241 b1478</p>
@@ -761,13 +761,13 @@
           </html>
         </notes>
         <listOfReactants>
-          <speciesReference species="M_etoh_c" stoichiometry="1"/>
-          <speciesReference species="M_nad_c" stoichiometry="1"/>
+          <speciesReference species="M_etoh_c" stoichiometry="1" constant="true"/>
+          <speciesReference species="M_nad_c" stoichiometry="1" constant="true"/>
         </listOfReactants>
         <listOfProducts>
-          <speciesReference species="M_acald_c" stoichiometry="1"/>
-          <speciesReference species="M_h_c" stoichiometry="1"/>
-          <speciesReference species="M_nadh_c" stoichiometry="1"/>
+          <speciesReference species="M_acald_c" stoichiometry="1" constant="true"/>
+          <speciesReference species="M_h_c" stoichiometry="1" constant="true"/>
+          <speciesReference species="M_nadh_c" stoichiometry="1" constant="true"/>
         </listOfProducts>
         <kineticLaw>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
@@ -780,20 +780,20 @@
           </listOfLocalParameters>
         </kineticLaw>
       </reaction>
-      <reaction id="R_ATPM" name="ATP maintenance requirement" reversible="false">
+      <reaction id="R_ATPM" name="ATP maintenance requirement" reversible="false" fast="false">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
             <p>SUBSYSTEM: Oxidative Phosphorylation</p>
           </html>
         </notes>
         <listOfReactants>
-          <speciesReference species="M_atp_c" stoichiometry="1"/>
-          <speciesReference species="M_h2o_c" stoichiometry="1"/>
+          <speciesReference species="M_atp_c" stoichiometry="1" constant="true"/>
+          <speciesReference species="M_h2o_c" stoichiometry="1" constant="true"/>
         </listOfReactants>
         <listOfProducts>
-          <speciesReference species="M_adp_c" stoichiometry="1"/>
-          <speciesReference species="M_h_c" stoichiometry="1"/>
-          <speciesReference species="M_pi_c" stoichiometry="1"/>
+          <speciesReference species="M_adp_c" stoichiometry="1" constant="true"/>
+          <speciesReference species="M_h_c" stoichiometry="1" constant="true"/>
+          <speciesReference species="M_pi_c" stoichiometry="1" constant="true"/>
         </listOfProducts>
         <kineticLaw>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
@@ -806,7 +806,7 @@
           </listOfLocalParameters>
         </kineticLaw>
       </reaction>
-      <reaction id="R_ATPS4r" name="ATP synthase (four protons for one ATP)" reversible="true">
+      <reaction id="R_ATPS4r" name="ATP synthase (four protons for one ATP)" reversible="true" fast="false">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
             <p>GENE_LIST: b3731 b3732 b3733 b3734 b3735 b3736 b3737 b3738 b3739</p>
@@ -815,14 +815,14 @@
           </html>
         </notes>
         <listOfReactants>
-          <speciesReference species="M_adp_c" stoichiometry="1"/>
-          <speciesReference species="M_h_e" stoichiometry="4"/>
-          <speciesReference species="M_pi_c" stoichiometry="1"/>
+          <speciesReference species="M_adp_c" stoichiometry="1" constant="true"/>
+          <speciesReference species="M_h_e" stoichiometry="4" constant="true"/>
+          <speciesReference species="M_pi_c" stoichiometry="1" constant="true"/>
         </listOfReactants>
         <listOfProducts>
-          <speciesReference species="M_atp_c" stoichiometry="1"/>
-          <speciesReference species="M_h2o_c" stoichiometry="1"/>
-          <speciesReference species="M_h_c" stoichiometry="3"/>
+          <speciesReference species="M_atp_c" stoichiometry="1" constant="true"/>
+          <speciesReference species="M_h2o_c" stoichiometry="1" constant="true"/>
+          <speciesReference species="M_h_c" stoichiometry="3" constant="true"/>
         </listOfProducts>
         <kineticLaw>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
@@ -835,33 +835,33 @@
           </listOfLocalParameters>
         </kineticLaw>
       </reaction>
-      <reaction id="R_Biomass_Ecoli_core_w_GAM" name="Biomass Objective Function with GAM" reversible="false">
+      <reaction id="R_Biomass_Ecoli_core_w_GAM" name="Biomass Objective Function with GAM" reversible="false" fast="false">
         <listOfReactants>
-          <speciesReference species="M_3pg_c" stoichiometry="1.496"/>
-          <speciesReference species="M_accoa_c" stoichiometry="3.7478"/>
-          <speciesReference species="M_atp_c" stoichiometry="59.81"/>
-          <speciesReference species="M_e4p_c" stoichiometry="0.361"/>
-          <speciesReference species="M_f6p_c" stoichiometry="0.0709"/>
-          <speciesReference species="M_g3p_c" stoichiometry="0.129"/>
-          <speciesReference species="M_g6p_c" stoichiometry="0.205"/>
-          <speciesReference species="M_gln_L_c" stoichiometry="0.2557"/>
-          <speciesReference species="M_glu_L_c" stoichiometry="4.9414"/>
-          <speciesReference species="M_h2o_c" stoichiometry="59.81"/>
-          <speciesReference species="M_nad_c" stoichiometry="3.547"/>
-          <speciesReference species="M_nadph_c" stoichiometry="13.0279"/>
-          <speciesReference species="M_oaa_c" stoichiometry="1.7867"/>
-          <speciesReference species="M_pep_c" stoichiometry="0.5191"/>
-          <speciesReference species="M_pyr_c" stoichiometry="2.8328"/>
-          <speciesReference species="M_r5p_c" stoichiometry="0.8977"/>
+          <speciesReference species="M_3pg_c" stoichiometry="1.496" constant="true"/>
+          <speciesReference species="M_accoa_c" stoichiometry="3.7478" constant="true"/>
+          <speciesReference species="M_atp_c" stoichiometry="59.81" constant="true"/>
+          <speciesReference species="M_e4p_c" stoichiometry="0.361" constant="true"/>
+          <speciesReference species="M_f6p_c" stoichiometry="0.0709" constant="true"/>
+          <speciesReference species="M_g3p_c" stoichiometry="0.129" constant="true"/>
+          <speciesReference species="M_g6p_c" stoichiometry="0.205" constant="true"/>
+          <speciesReference species="M_gln_L_c" stoichiometry="0.2557" constant="true"/>
+          <speciesReference species="M_glu_L_c" stoichiometry="4.9414" constant="true"/>
+          <speciesReference species="M_h2o_c" stoichiometry="59.81" constant="true"/>
+          <speciesReference species="M_nad_c" stoichiometry="3.547" constant="true"/>
+          <speciesReference species="M_nadph_c" stoichiometry="13.0279" constant="true"/>
+          <speciesReference species="M_oaa_c" stoichiometry="1.7867" constant="true"/>
+          <speciesReference species="M_pep_c" stoichiometry="0.5191" constant="true"/>
+          <speciesReference species="M_pyr_c" stoichiometry="2.8328" constant="true"/>
+          <speciesReference species="M_r5p_c" stoichiometry="0.8977" constant="true"/>
         </listOfReactants>
         <listOfProducts>
-          <speciesReference species="M_adp_c" stoichiometry="59.81"/>
-          <speciesReference species="M_akg_c" stoichiometry="4.1182"/>
-          <speciesReference species="M_coa_c" stoichiometry="3.7478"/>
-          <speciesReference species="M_h_c" stoichiometry="59.81"/>
-          <speciesReference species="M_nadh_c" stoichiometry="3.547"/>
-          <speciesReference species="M_nadp_c" stoichiometry="13.0279"/>
-          <speciesReference species="M_pi_c" stoichiometry="59.81"/>
+          <speciesReference species="M_adp_c" stoichiometry="59.81" constant="true"/>
+          <speciesReference species="M_akg_c" stoichiometry="4.1182" constant="true"/>
+          <speciesReference species="M_coa_c" stoichiometry="3.7478" constant="true"/>
+          <speciesReference species="M_h_c" stoichiometry="59.81" constant="true"/>
+          <speciesReference species="M_nadh_c" stoichiometry="3.547" constant="true"/>
+          <speciesReference species="M_nadp_c" stoichiometry="13.0279" constant="true"/>
+          <speciesReference species="M_pi_c" stoichiometry="59.81" constant="true"/>
         </listOfProducts>
         <kineticLaw>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
@@ -874,7 +874,7 @@
           </listOfLocalParameters>
         </kineticLaw>
       </reaction>
-      <reaction id="R_CO2t" name="CO2 transporter via diffusion" reversible="true">
+      <reaction id="R_CO2t" name="CO2 transporter via diffusion" reversible="true" fast="false">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
             <p>GENE_LIST: s0001</p>
@@ -883,10 +883,10 @@
           </html>
         </notes>
         <listOfReactants>
-          <speciesReference species="M_co2_e" stoichiometry="1"/>
+          <speciesReference species="M_co2_e" stoichiometry="1" constant="true"/>
         </listOfReactants>
         <listOfProducts>
-          <speciesReference species="M_co2_c" stoichiometry="1"/>
+          <speciesReference species="M_co2_c" stoichiometry="1" constant="true"/>
         </listOfProducts>
         <kineticLaw>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
@@ -899,7 +899,7 @@
           </listOfLocalParameters>
         </kineticLaw>
       </reaction>
-      <reaction id="R_CS" name="citrate synthase" reversible="false">
+      <reaction id="R_CS" name="citrate synthase" reversible="false" fast="false">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
             <p>GENE_LIST: b0720</p>
@@ -908,14 +908,14 @@
           </html>
         </notes>
         <listOfReactants>
-          <speciesReference species="M_accoa_c" stoichiometry="1"/>
-          <speciesReference species="M_h2o_c" stoichiometry="1"/>
-          <speciesReference species="M_oaa_c" stoichiometry="1"/>
+          <speciesReference species="M_accoa_c" stoichiometry="1" constant="true"/>
+          <speciesReference species="M_h2o_c" stoichiometry="1" constant="true"/>
+          <speciesReference species="M_oaa_c" stoichiometry="1" constant="true"/>
         </listOfReactants>
         <listOfProducts>
-          <speciesReference species="M_cit_c" stoichiometry="1"/>
-          <speciesReference species="M_coa_c" stoichiometry="1"/>
-          <speciesReference species="M_h_c" stoichiometry="1"/>
+          <speciesReference species="M_cit_c" stoichiometry="1" constant="true"/>
+          <speciesReference species="M_coa_c" stoichiometry="1" constant="true"/>
+          <speciesReference species="M_h_c" stoichiometry="1" constant="true"/>
         </listOfProducts>
         <kineticLaw>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
@@ -928,7 +928,7 @@
           </listOfLocalParameters>
         </kineticLaw>
       </reaction>
-      <reaction id="R_CYTBD" name="cytochrome oxidase bd (ubiquinol-8: 2 protons)" reversible="false">
+      <reaction id="R_CYTBD" name="cytochrome oxidase bd (ubiquinol-8: 2 protons)" reversible="false" fast="false">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
             <p>GENE_LIST: b0733 b0734 b0978 b0979</p>
@@ -937,14 +937,14 @@
           </html>
         </notes>
         <listOfReactants>
-          <speciesReference species="M_h_c" stoichiometry="2"/>
-          <speciesReference species="M_o2_c" stoichiometry="0.5"/>
-          <speciesReference species="M_q8h2_c" stoichiometry="1"/>
+          <speciesReference species="M_h_c" stoichiometry="2" constant="true"/>
+          <speciesReference species="M_o2_c" stoichiometry="0.5" constant="true"/>
+          <speciesReference species="M_q8h2_c" stoichiometry="1" constant="true"/>
         </listOfReactants>
         <listOfProducts>
-          <speciesReference species="M_h2o_c" stoichiometry="1"/>
-          <speciesReference species="M_h_e" stoichiometry="2"/>
-          <speciesReference species="M_q8_c" stoichiometry="1"/>
+          <speciesReference species="M_h2o_c" stoichiometry="1" constant="true"/>
+          <speciesReference species="M_h_e" stoichiometry="2" constant="true"/>
+          <speciesReference species="M_q8_c" stoichiometry="1" constant="true"/>
         </listOfProducts>
         <kineticLaw>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
@@ -957,7 +957,7 @@
           </listOfLocalParameters>
         </kineticLaw>
       </reaction>
-      <reaction id="R_D_LACt2" name="D-lactate transport via proton symport" reversible="true">
+      <reaction id="R_D_LACt2" name="D-lactate transport via proton symport" reversible="true" fast="false">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
             <p>GENE_LIST: b2975 b3603</p>
@@ -966,12 +966,12 @@
           </html>
         </notes>
         <listOfReactants>
-          <speciesReference species="M_h_e" stoichiometry="1"/>
-          <speciesReference species="M_lac_D_e" stoichiometry="1"/>
+          <speciesReference species="M_h_e" stoichiometry="1" constant="true"/>
+          <speciesReference species="M_lac_D_e" stoichiometry="1" constant="true"/>
         </listOfReactants>
         <listOfProducts>
-          <speciesReference species="M_h_c" stoichiometry="1"/>
-          <speciesReference species="M_lac_D_c" stoichiometry="1"/>
+          <speciesReference species="M_h_c" stoichiometry="1" constant="true"/>
+          <speciesReference species="M_lac_D_c" stoichiometry="1" constant="true"/>
         </listOfProducts>
         <kineticLaw>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
@@ -984,7 +984,7 @@
           </listOfLocalParameters>
         </kineticLaw>
       </reaction>
-      <reaction id="R_ENO" name="enolase" reversible="true">
+      <reaction id="R_ENO" name="enolase" reversible="true" fast="false">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
             <p>GENE_LIST: b2779</p>
@@ -993,11 +993,11 @@
           </html>
         </notes>
         <listOfReactants>
-          <speciesReference species="M_2pg_c" stoichiometry="1"/>
+          <speciesReference species="M_2pg_c" stoichiometry="1" constant="true"/>
         </listOfReactants>
         <listOfProducts>
-          <speciesReference species="M_h2o_c" stoichiometry="1"/>
-          <speciesReference species="M_pep_c" stoichiometry="1"/>
+          <speciesReference species="M_h2o_c" stoichiometry="1" constant="true"/>
+          <speciesReference species="M_pep_c" stoichiometry="1" constant="true"/>
         </listOfProducts>
         <kineticLaw>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
@@ -1010,19 +1010,19 @@
           </listOfLocalParameters>
         </kineticLaw>
       </reaction>
-      <reaction id="R_ETOHt2r" name="ethanol reversible transport via proton symport" reversible="true">
+      <reaction id="R_ETOHt2r" name="ethanol reversible transport via proton symport" reversible="true" fast="false">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
             <p>SUBSYSTEM: Transport, Extracellular</p>
           </html>
         </notes>
         <listOfReactants>
-          <speciesReference species="M_etoh_e" stoichiometry="1"/>
-          <speciesReference species="M_h_e" stoichiometry="1"/>
+          <speciesReference species="M_etoh_e" stoichiometry="1" constant="true"/>
+          <speciesReference species="M_h_e" stoichiometry="1" constant="true"/>
         </listOfReactants>
         <listOfProducts>
-          <speciesReference species="M_etoh_c" stoichiometry="1"/>
-          <speciesReference species="M_h_c" stoichiometry="1"/>
+          <speciesReference species="M_etoh_c" stoichiometry="1" constant="true"/>
+          <speciesReference species="M_h_c" stoichiometry="1" constant="true"/>
         </listOfProducts>
         <kineticLaw>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
@@ -1035,14 +1035,14 @@
           </listOfLocalParameters>
         </kineticLaw>
       </reaction>
-      <reaction id="R_EX_ac_e" name="Acetate exchange" reversible="false">
+      <reaction id="R_EX_ac_e" name="Acetate exchange" reversible="false" fast="false">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
             <p>SUBSYSTEM: Exchange</p>
           </html>
         </notes>
         <listOfReactants>
-          <speciesReference species="M_ac_e" stoichiometry="1"/>
+          <speciesReference species="M_ac_e" stoichiometry="1" constant="true"/>
         </listOfReactants>
         <kineticLaw>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
@@ -1055,14 +1055,14 @@
           </listOfLocalParameters>
         </kineticLaw>
       </reaction>
-      <reaction id="R_EX_acald_e" name="Acetaldehyde exchange" reversible="false">
+      <reaction id="R_EX_acald_e" name="Acetaldehyde exchange" reversible="false" fast="false">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
             <p>SUBSYSTEM: Exchange</p>
           </html>
         </notes>
         <listOfReactants>
-          <speciesReference species="M_acald_e" stoichiometry="1"/>
+          <speciesReference species="M_acald_e" stoichiometry="1" constant="true"/>
         </listOfReactants>
         <kineticLaw>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
@@ -1075,14 +1075,14 @@
           </listOfLocalParameters>
         </kineticLaw>
       </reaction>
-      <reaction id="R_EX_akg_e" name="2-Oxoglutarate exchange" reversible="false">
+      <reaction id="R_EX_akg_e" name="2-Oxoglutarate exchange" reversible="false" fast="false">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
             <p>SUBSYSTEM: Exchange</p>
           </html>
         </notes>
         <listOfReactants>
-          <speciesReference species="M_akg_e" stoichiometry="1"/>
+          <speciesReference species="M_akg_e" stoichiometry="1" constant="true"/>
         </listOfReactants>
         <kineticLaw>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
@@ -1095,14 +1095,14 @@
           </listOfLocalParameters>
         </kineticLaw>
       </reaction>
-      <reaction id="R_EX_co2_e" name="CO2 exchange" reversible="true">
+      <reaction id="R_EX_co2_e" name="CO2 exchange" reversible="true" fast="false">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
             <p>SUBSYSTEM: Exchange</p>
           </html>
         </notes>
         <listOfReactants>
-          <speciesReference species="M_co2_e" stoichiometry="1"/>
+          <speciesReference species="M_co2_e" stoichiometry="1" constant="true"/>
         </listOfReactants>
         <kineticLaw>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
@@ -1115,14 +1115,14 @@
           </listOfLocalParameters>
         </kineticLaw>
       </reaction>
-      <reaction id="R_EX_etoh_e" name="Ethanol exchange" reversible="false">
+      <reaction id="R_EX_etoh_e" name="Ethanol exchange" reversible="false" fast="false">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
             <p>SUBSYSTEM: Exchange</p>
           </html>
         </notes>
         <listOfReactants>
-          <speciesReference species="M_etoh_e" stoichiometry="1"/>
+          <speciesReference species="M_etoh_e" stoichiometry="1" constant="true"/>
         </listOfReactants>
         <kineticLaw>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
@@ -1135,14 +1135,14 @@
           </listOfLocalParameters>
         </kineticLaw>
       </reaction>
-      <reaction id="R_EX_for_e" name="Formate exchange" reversible="false">
+      <reaction id="R_EX_for_e" name="Formate exchange" reversible="false" fast="false">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
             <p>SUBSYSTEM: Exchange</p>
           </html>
         </notes>
         <listOfReactants>
-          <speciesReference species="M_for_e" stoichiometry="1"/>
+          <speciesReference species="M_for_e" stoichiometry="1" constant="true"/>
         </listOfReactants>
         <kineticLaw>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
@@ -1155,14 +1155,14 @@
           </listOfLocalParameters>
         </kineticLaw>
       </reaction>
-      <reaction id="R_EX_fru_e" name="D-Fructose exchange" reversible="false">
+      <reaction id="R_EX_fru_e" name="D-Fructose exchange" reversible="false" fast="false">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
             <p>SUBSYSTEM: Exchange</p>
           </html>
         </notes>
         <listOfReactants>
-          <speciesReference species="M_fru_e" stoichiometry="1"/>
+          <speciesReference species="M_fru_e" stoichiometry="1" constant="true"/>
         </listOfReactants>
         <kineticLaw>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
@@ -1175,14 +1175,14 @@
           </listOfLocalParameters>
         </kineticLaw>
       </reaction>
-      <reaction id="R_EX_fum_e" name="Fumarate exchange" reversible="false">
+      <reaction id="R_EX_fum_e" name="Fumarate exchange" reversible="false" fast="false">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
             <p>SUBSYSTEM: Exchange</p>
           </html>
         </notes>
         <listOfReactants>
-          <speciesReference species="M_fum_e" stoichiometry="1"/>
+          <speciesReference species="M_fum_e" stoichiometry="1" constant="true"/>
         </listOfReactants>
         <kineticLaw>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
@@ -1195,14 +1195,14 @@
           </listOfLocalParameters>
         </kineticLaw>
       </reaction>
-      <reaction id="R_EX_glc_e" name="D-Glucose exchange" reversible="true">
+      <reaction id="R_EX_glc_e" name="D-Glucose exchange" reversible="true" fast="false">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
             <p>SUBSYSTEM: Exchange</p>
           </html>
         </notes>
         <listOfReactants>
-          <speciesReference species="M_glc_D_e" stoichiometry="1"/>
+          <speciesReference species="M_glc_D_e" stoichiometry="1" constant="true"/>
         </listOfReactants>
         <kineticLaw>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
@@ -1215,14 +1215,14 @@
           </listOfLocalParameters>
         </kineticLaw>
       </reaction>
-      <reaction id="R_EX_gln_L_e" name="L-Glutamine exchange" reversible="false">
+      <reaction id="R_EX_gln_L_e" name="L-Glutamine exchange" reversible="false" fast="false">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
             <p>SUBSYSTEM: Exchange</p>
           </html>
         </notes>
         <listOfReactants>
-          <speciesReference species="M_gln_L_e" stoichiometry="1"/>
+          <speciesReference species="M_gln_L_e" stoichiometry="1" constant="true"/>
         </listOfReactants>
         <kineticLaw>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
@@ -1235,14 +1235,14 @@
           </listOfLocalParameters>
         </kineticLaw>
       </reaction>
-      <reaction id="R_EX_glu_L_e" name="L-Glutamate exchange" reversible="false">
+      <reaction id="R_EX_glu_L_e" name="L-Glutamate exchange" reversible="false" fast="false">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
             <p>SUBSYSTEM: Exchange</p>
           </html>
         </notes>
         <listOfReactants>
-          <speciesReference species="M_glu_L_e" stoichiometry="1"/>
+          <speciesReference species="M_glu_L_e" stoichiometry="1" constant="true"/>
         </listOfReactants>
         <kineticLaw>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
@@ -1255,14 +1255,14 @@
           </listOfLocalParameters>
         </kineticLaw>
       </reaction>
-      <reaction id="R_EX_h_e" name="H+ exchange" reversible="true">
+      <reaction id="R_EX_h_e" name="H+ exchange" reversible="true" fast="false">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
             <p>SUBSYSTEM: Exchange</p>
           </html>
         </notes>
         <listOfReactants>
-          <speciesReference species="M_h_e" stoichiometry="1"/>
+          <speciesReference species="M_h_e" stoichiometry="1" constant="true"/>
         </listOfReactants>
         <kineticLaw>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
@@ -1275,14 +1275,14 @@
           </listOfLocalParameters>
         </kineticLaw>
       </reaction>
-      <reaction id="R_EX_h2o_e" name="H2O exchange" reversible="true">
+      <reaction id="R_EX_h2o_e" name="H2O exchange" reversible="true" fast="false">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
             <p>SUBSYSTEM: Exchange</p>
           </html>
         </notes>
         <listOfReactants>
-          <speciesReference species="M_h2o_e" stoichiometry="1"/>
+          <speciesReference species="M_h2o_e" stoichiometry="1" constant="true"/>
         </listOfReactants>
         <kineticLaw>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
@@ -1295,14 +1295,14 @@
           </listOfLocalParameters>
         </kineticLaw>
       </reaction>
-      <reaction id="R_EX_lac_D_e" name="D-Lactate exchange" reversible="false">
+      <reaction id="R_EX_lac_D_e" name="D-Lactate exchange" reversible="false" fast="false">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
             <p>SUBSYSTEM: Exchange</p>
           </html>
         </notes>
         <listOfReactants>
-          <speciesReference species="M_lac_D_e" stoichiometry="1"/>
+          <speciesReference species="M_lac_D_e" stoichiometry="1" constant="true"/>
         </listOfReactants>
         <kineticLaw>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
@@ -1315,14 +1315,14 @@
           </listOfLocalParameters>
         </kineticLaw>
       </reaction>
-      <reaction id="R_EX_mal_L_e" name="L-Malate exchange" reversible="false">
+      <reaction id="R_EX_mal_L_e" name="L-Malate exchange" reversible="false" fast="false">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
             <p>SUBSYSTEM: Exchange</p>
           </html>
         </notes>
         <listOfReactants>
-          <speciesReference species="M_mal_L_e" stoichiometry="1"/>
+          <speciesReference species="M_mal_L_e" stoichiometry="1" constant="true"/>
         </listOfReactants>
         <kineticLaw>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
@@ -1335,14 +1335,14 @@
           </listOfLocalParameters>
         </kineticLaw>
       </reaction>
-      <reaction id="R_EX_nh4_e" name="Ammonium exchange" reversible="true">
+      <reaction id="R_EX_nh4_e" name="Ammonium exchange" reversible="true" fast="false">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
             <p>SUBSYSTEM: Exchange</p>
           </html>
         </notes>
         <listOfReactants>
-          <speciesReference species="M_nh4_e" stoichiometry="1"/>
+          <speciesReference species="M_nh4_e" stoichiometry="1" constant="true"/>
         </listOfReactants>
         <kineticLaw>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
@@ -1355,14 +1355,14 @@
           </listOfLocalParameters>
         </kineticLaw>
       </reaction>
-      <reaction id="R_EX_o2_e" name="O2 exchange" reversible="true">
+      <reaction id="R_EX_o2_e" name="O2 exchange" reversible="true" fast="false">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
             <p>SUBSYSTEM: Exchange</p>
           </html>
         </notes>
         <listOfReactants>
-          <speciesReference species="M_o2_e" stoichiometry="1"/>
+          <speciesReference species="M_o2_e" stoichiometry="1" constant="true"/>
         </listOfReactants>
         <kineticLaw>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
@@ -1375,14 +1375,14 @@
           </listOfLocalParameters>
         </kineticLaw>
       </reaction>
-      <reaction id="R_EX_pi_e" name="Phosphate exchange" reversible="true">
+      <reaction id="R_EX_pi_e" name="Phosphate exchange" reversible="true" fast="false">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
             <p>SUBSYSTEM: Exchange</p>
           </html>
         </notes>
         <listOfReactants>
-          <speciesReference species="M_pi_e" stoichiometry="1"/>
+          <speciesReference species="M_pi_e" stoichiometry="1" constant="true"/>
         </listOfReactants>
         <kineticLaw>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
@@ -1395,14 +1395,14 @@
           </listOfLocalParameters>
         </kineticLaw>
       </reaction>
-      <reaction id="R_EX_pyr_e" name="Pyruvate exchange" reversible="false">
+      <reaction id="R_EX_pyr_e" name="Pyruvate exchange" reversible="false" fast="false">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
             <p>SUBSYSTEM: Exchange</p>
           </html>
         </notes>
         <listOfReactants>
-          <speciesReference species="M_pyr_e" stoichiometry="1"/>
+          <speciesReference species="M_pyr_e" stoichiometry="1" constant="true"/>
         </listOfReactants>
         <kineticLaw>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
@@ -1415,14 +1415,14 @@
           </listOfLocalParameters>
         </kineticLaw>
       </reaction>
-      <reaction id="R_EX_succ_e" name="Succinate exchange" reversible="false">
+      <reaction id="R_EX_succ_e" name="Succinate exchange" reversible="false" fast="false">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
             <p>SUBSYSTEM: Exchange</p>
           </html>
         </notes>
         <listOfReactants>
-          <speciesReference species="M_succ_e" stoichiometry="1"/>
+          <speciesReference species="M_succ_e" stoichiometry="1" constant="true"/>
         </listOfReactants>
         <kineticLaw>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
@@ -1435,7 +1435,7 @@
           </listOfLocalParameters>
         </kineticLaw>
       </reaction>
-      <reaction id="R_FBA" name="fructose-bisphosphate aldolase" reversible="true">
+      <reaction id="R_FBA" name="fructose-bisphosphate aldolase" reversible="true" fast="false">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
             <p>GENE_LIST: b1773 b2097 b2925</p>
@@ -1444,11 +1444,11 @@
           </html>
         </notes>
         <listOfReactants>
-          <speciesReference species="M_fdp_c" stoichiometry="1"/>
+          <speciesReference species="M_fdp_c" stoichiometry="1" constant="true"/>
         </listOfReactants>
         <listOfProducts>
-          <speciesReference species="M_dhap_c" stoichiometry="1"/>
-          <speciesReference species="M_g3p_c" stoichiometry="1"/>
+          <speciesReference species="M_dhap_c" stoichiometry="1" constant="true"/>
+          <speciesReference species="M_g3p_c" stoichiometry="1" constant="true"/>
         </listOfProducts>
         <kineticLaw>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
@@ -1461,7 +1461,7 @@
           </listOfLocalParameters>
         </kineticLaw>
       </reaction>
-      <reaction id="R_FBP" name="fructose-bisphosphatase" reversible="false">
+      <reaction id="R_FBP" name="fructose-bisphosphatase" reversible="false" fast="false">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
             <p>GENE_LIST: b3925 b4232</p>
@@ -1470,12 +1470,12 @@
           </html>
         </notes>
         <listOfReactants>
-          <speciesReference species="M_fdp_c" stoichiometry="1"/>
-          <speciesReference species="M_h2o_c" stoichiometry="1"/>
+          <speciesReference species="M_fdp_c" stoichiometry="1" constant="true"/>
+          <speciesReference species="M_h2o_c" stoichiometry="1" constant="true"/>
         </listOfReactants>
         <listOfProducts>
-          <speciesReference species="M_f6p_c" stoichiometry="1"/>
-          <speciesReference species="M_pi_c" stoichiometry="1"/>
+          <speciesReference species="M_f6p_c" stoichiometry="1" constant="true"/>
+          <speciesReference species="M_pi_c" stoichiometry="1" constant="true"/>
         </listOfProducts>
         <kineticLaw>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
@@ -1488,7 +1488,7 @@
           </listOfLocalParameters>
         </kineticLaw>
       </reaction>
-      <reaction id="R_FORt2" name="formate transport via proton symport (uptake only)" reversible="false">
+      <reaction id="R_FORt2" name="formate transport via proton symport (uptake only)" reversible="false" fast="false">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
             <p>GENE_LIST: b0904 b2492</p>
@@ -1497,12 +1497,12 @@
           </html>
         </notes>
         <listOfReactants>
-          <speciesReference species="M_for_e" stoichiometry="1"/>
-          <speciesReference species="M_h_e" stoichiometry="1"/>
+          <speciesReference species="M_for_e" stoichiometry="1" constant="true"/>
+          <speciesReference species="M_h_e" stoichiometry="1" constant="true"/>
         </listOfReactants>
         <listOfProducts>
-          <speciesReference species="M_for_c" stoichiometry="1"/>
-          <speciesReference species="M_h_c" stoichiometry="1"/>
+          <speciesReference species="M_for_c" stoichiometry="1" constant="true"/>
+          <speciesReference species="M_h_c" stoichiometry="1" constant="true"/>
         </listOfProducts>
         <kineticLaw>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
@@ -1515,7 +1515,7 @@
           </listOfLocalParameters>
         </kineticLaw>
       </reaction>
-      <reaction id="R_FORti" name="formate transport via diffusion" reversible="false">
+      <reaction id="R_FORti" name="formate transport via diffusion" reversible="false" fast="false">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
             <p>GENE_LIST: b0904 b2492</p>
@@ -1524,10 +1524,10 @@
           </html>
         </notes>
         <listOfReactants>
-          <speciesReference species="M_for_c" stoichiometry="1"/>
+          <speciesReference species="M_for_c" stoichiometry="1" constant="true"/>
         </listOfReactants>
         <listOfProducts>
-          <speciesReference species="M_for_e" stoichiometry="1"/>
+          <speciesReference species="M_for_e" stoichiometry="1" constant="true"/>
         </listOfProducts>
         <kineticLaw>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
@@ -1540,7 +1540,7 @@
           </listOfLocalParameters>
         </kineticLaw>
       </reaction>
-      <reaction id="R_FRD7" name="fumarate reductase" reversible="false">
+      <reaction id="R_FRD7" name="fumarate reductase" reversible="false" fast="false">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
             <p>GENE_LIST: b4151 b4152 b4153 b4154</p>
@@ -1549,12 +1549,12 @@
           </html>
         </notes>
         <listOfReactants>
-          <speciesReference species="M_fum_c" stoichiometry="1"/>
-          <speciesReference species="M_q8h2_c" stoichiometry="1"/>
+          <speciesReference species="M_fum_c" stoichiometry="1" constant="true"/>
+          <speciesReference species="M_q8h2_c" stoichiometry="1" constant="true"/>
         </listOfReactants>
         <listOfProducts>
-          <speciesReference species="M_q8_c" stoichiometry="1"/>
-          <speciesReference species="M_succ_c" stoichiometry="1"/>
+          <speciesReference species="M_q8_c" stoichiometry="1" constant="true"/>
+          <speciesReference species="M_succ_c" stoichiometry="1" constant="true"/>
         </listOfProducts>
         <kineticLaw>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
@@ -1567,7 +1567,7 @@
           </listOfLocalParameters>
         </kineticLaw>
       </reaction>
-      <reaction id="R_FRUpts2" name="Fructose transport via PEP:Pyr PTS (f6p generating)" reversible="false">
+      <reaction id="R_FRUpts2" name="Fructose transport via PEP:Pyr PTS (f6p generating)" reversible="false" fast="false">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
             <p>GENE_LIST: b1817 b1818 b1819 b2415 b2416</p>
@@ -1576,12 +1576,12 @@
           </html>
         </notes>
         <listOfReactants>
-          <speciesReference species="M_fru_e" stoichiometry="1"/>
-          <speciesReference species="M_pep_c" stoichiometry="1"/>
+          <speciesReference species="M_fru_e" stoichiometry="1" constant="true"/>
+          <speciesReference species="M_pep_c" stoichiometry="1" constant="true"/>
         </listOfReactants>
         <listOfProducts>
-          <speciesReference species="M_f6p_c" stoichiometry="1"/>
-          <speciesReference species="M_pyr_c" stoichiometry="1"/>
+          <speciesReference species="M_f6p_c" stoichiometry="1" constant="true"/>
+          <speciesReference species="M_pyr_c" stoichiometry="1" constant="true"/>
         </listOfProducts>
         <kineticLaw>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
@@ -1594,7 +1594,7 @@
           </listOfLocalParameters>
         </kineticLaw>
       </reaction>
-      <reaction id="R_FUM" name="fumarase" reversible="true">
+      <reaction id="R_FUM" name="fumarase" reversible="true" fast="false">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
             <p>GENE_LIST: b1611 b1612 b4122</p>
@@ -1603,11 +1603,11 @@
           </html>
         </notes>
         <listOfReactants>
-          <speciesReference species="M_fum_c" stoichiometry="1"/>
-          <speciesReference species="M_h2o_c" stoichiometry="1"/>
+          <speciesReference species="M_fum_c" stoichiometry="1" constant="true"/>
+          <speciesReference species="M_h2o_c" stoichiometry="1" constant="true"/>
         </listOfReactants>
         <listOfProducts>
-          <speciesReference species="M_mal_L_c" stoichiometry="1"/>
+          <speciesReference species="M_mal_L_c" stoichiometry="1" constant="true"/>
         </listOfProducts>
         <kineticLaw>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
@@ -1620,7 +1620,7 @@
           </listOfLocalParameters>
         </kineticLaw>
       </reaction>
-      <reaction id="R_FUMt2_2" name="Fumarate transport via proton symport (2 H)" reversible="false">
+      <reaction id="R_FUMt2_2" name="Fumarate transport via proton symport (2 H)" reversible="false" fast="false">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
             <p>GENE_LIST: b3528</p>
@@ -1629,12 +1629,12 @@
           </html>
         </notes>
         <listOfReactants>
-          <speciesReference species="M_fum_e" stoichiometry="1"/>
-          <speciesReference species="M_h_e" stoichiometry="2"/>
+          <speciesReference species="M_fum_e" stoichiometry="1" constant="true"/>
+          <speciesReference species="M_h_e" stoichiometry="2" constant="true"/>
         </listOfReactants>
         <listOfProducts>
-          <speciesReference species="M_fum_c" stoichiometry="1"/>
-          <speciesReference species="M_h_c" stoichiometry="2"/>
+          <speciesReference species="M_fum_c" stoichiometry="1" constant="true"/>
+          <speciesReference species="M_h_c" stoichiometry="2" constant="true"/>
         </listOfProducts>
         <kineticLaw>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
@@ -1647,7 +1647,7 @@
           </listOfLocalParameters>
         </kineticLaw>
       </reaction>
-      <reaction id="R_G6PDH2r" name="glucose 6-phosphate dehydrogenase" reversible="true">
+      <reaction id="R_G6PDH2r" name="glucose 6-phosphate dehydrogenase" reversible="true" fast="false">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
             <p>GENE_LIST: b1852</p>
@@ -1656,13 +1656,13 @@
           </html>
         </notes>
         <listOfReactants>
-          <speciesReference species="M_g6p_c" stoichiometry="1"/>
-          <speciesReference species="M_nadp_c" stoichiometry="1"/>
+          <speciesReference species="M_g6p_c" stoichiometry="1" constant="true"/>
+          <speciesReference species="M_nadp_c" stoichiometry="1" constant="true"/>
         </listOfReactants>
         <listOfProducts>
-          <speciesReference species="M_6pgl_c" stoichiometry="1"/>
-          <speciesReference species="M_h_c" stoichiometry="1"/>
-          <speciesReference species="M_nadph_c" stoichiometry="1"/>
+          <speciesReference species="M_6pgl_c" stoichiometry="1" constant="true"/>
+          <speciesReference species="M_h_c" stoichiometry="1" constant="true"/>
+          <speciesReference species="M_nadph_c" stoichiometry="1" constant="true"/>
         </listOfProducts>
         <kineticLaw>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
@@ -1675,7 +1675,7 @@
           </listOfLocalParameters>
         </kineticLaw>
       </reaction>
-      <reaction id="R_GAPD" name="glyceraldehyde-3-phosphate dehydrogenase" reversible="true">
+      <reaction id="R_GAPD" name="glyceraldehyde-3-phosphate dehydrogenase" reversible="true" fast="false">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
             <p>GENE_LIST: b1779</p>
@@ -1684,14 +1684,14 @@
           </html>
         </notes>
         <listOfReactants>
-          <speciesReference species="M_g3p_c" stoichiometry="1"/>
-          <speciesReference species="M_nad_c" stoichiometry="1"/>
-          <speciesReference species="M_pi_c" stoichiometry="1"/>
+          <speciesReference species="M_g3p_c" stoichiometry="1" constant="true"/>
+          <speciesReference species="M_nad_c" stoichiometry="1" constant="true"/>
+          <speciesReference species="M_pi_c" stoichiometry="1" constant="true"/>
         </listOfReactants>
         <listOfProducts>
-          <speciesReference species="M_13dpg_c" stoichiometry="1"/>
-          <speciesReference species="M_h_c" stoichiometry="1"/>
-          <speciesReference species="M_nadh_c" stoichiometry="1"/>
+          <speciesReference species="M_13dpg_c" stoichiometry="1" constant="true"/>
+          <speciesReference species="M_h_c" stoichiometry="1" constant="true"/>
+          <speciesReference species="M_nadh_c" stoichiometry="1" constant="true"/>
         </listOfProducts>
         <kineticLaw>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
@@ -1704,7 +1704,7 @@
           </listOfLocalParameters>
         </kineticLaw>
       </reaction>
-      <reaction id="R_GLCpts" name="D-glucose transport via PEP:Pyr PTS" reversible="false">
+      <reaction id="R_GLCpts" name="D-glucose transport via PEP:Pyr PTS" reversible="false" fast="false">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
             <p>GENE_LIST: b1101 b1621 b1817 b1818 b1819 b2415 b2416 b2417</p>
@@ -1713,12 +1713,12 @@
           </html>
         </notes>
         <listOfReactants>
-          <speciesReference species="M_glc_D_e" stoichiometry="1"/>
-          <speciesReference species="M_pep_c" stoichiometry="1"/>
+          <speciesReference species="M_glc_D_e" stoichiometry="1" constant="true"/>
+          <speciesReference species="M_pep_c" stoichiometry="1" constant="true"/>
         </listOfReactants>
         <listOfProducts>
-          <speciesReference species="M_g6p_c" stoichiometry="1"/>
-          <speciesReference species="M_pyr_c" stoichiometry="1"/>
+          <speciesReference species="M_g6p_c" stoichiometry="1" constant="true"/>
+          <speciesReference species="M_pyr_c" stoichiometry="1" constant="true"/>
         </listOfProducts>
         <kineticLaw>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
@@ -1731,7 +1731,7 @@
           </listOfLocalParameters>
         </kineticLaw>
       </reaction>
-      <reaction id="R_GLNS" name="glutamine synthetase" reversible="false">
+      <reaction id="R_GLNS" name="glutamine synthetase" reversible="false" fast="false">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
             <p>GENE_LIST: b1297 b3870</p>
@@ -1740,15 +1740,15 @@
           </html>
         </notes>
         <listOfReactants>
-          <speciesReference species="M_atp_c" stoichiometry="1"/>
-          <speciesReference species="M_glu_L_c" stoichiometry="1"/>
-          <speciesReference species="M_nh4_c" stoichiometry="1"/>
+          <speciesReference species="M_atp_c" stoichiometry="1" constant="true"/>
+          <speciesReference species="M_glu_L_c" stoichiometry="1" constant="true"/>
+          <speciesReference species="M_nh4_c" stoichiometry="1" constant="true"/>
         </listOfReactants>
         <listOfProducts>
-          <speciesReference species="M_adp_c" stoichiometry="1"/>
-          <speciesReference species="M_gln_L_c" stoichiometry="1"/>
-          <speciesReference species="M_h_c" stoichiometry="1"/>
-          <speciesReference species="M_pi_c" stoichiometry="1"/>
+          <speciesReference species="M_adp_c" stoichiometry="1" constant="true"/>
+          <speciesReference species="M_gln_L_c" stoichiometry="1" constant="true"/>
+          <speciesReference species="M_h_c" stoichiometry="1" constant="true"/>
+          <speciesReference species="M_pi_c" stoichiometry="1" constant="true"/>
         </listOfProducts>
         <kineticLaw>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
@@ -1761,7 +1761,7 @@
           </listOfLocalParameters>
         </kineticLaw>
       </reaction>
-      <reaction id="R_GLNabc" name="L-glutamine transport via ABC system" reversible="false">
+      <reaction id="R_GLNabc" name="L-glutamine transport via ABC system" reversible="false" fast="false">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
             <p>GENE_LIST: b0809 b0810 b0811</p>
@@ -1770,15 +1770,15 @@
           </html>
         </notes>
         <listOfReactants>
-          <speciesReference species="M_atp_c" stoichiometry="1"/>
-          <speciesReference species="M_gln_L_e" stoichiometry="1"/>
-          <speciesReference species="M_h2o_c" stoichiometry="1"/>
+          <speciesReference species="M_atp_c" stoichiometry="1" constant="true"/>
+          <speciesReference species="M_gln_L_e" stoichiometry="1" constant="true"/>
+          <speciesReference species="M_h2o_c" stoichiometry="1" constant="true"/>
         </listOfReactants>
         <listOfProducts>
-          <speciesReference species="M_adp_c" stoichiometry="1"/>
-          <speciesReference species="M_gln_L_c" stoichiometry="1"/>
-          <speciesReference species="M_h_c" stoichiometry="1"/>
-          <speciesReference species="M_pi_c" stoichiometry="1"/>
+          <speciesReference species="M_adp_c" stoichiometry="1" constant="true"/>
+          <speciesReference species="M_gln_L_c" stoichiometry="1" constant="true"/>
+          <speciesReference species="M_h_c" stoichiometry="1" constant="true"/>
+          <speciesReference species="M_pi_c" stoichiometry="1" constant="true"/>
         </listOfProducts>
         <kineticLaw>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
@@ -1791,7 +1791,7 @@
           </listOfLocalParameters>
         </kineticLaw>
       </reaction>
-      <reaction id="R_GLUDy" name="glutamate dehydrogenase (NADP)" reversible="true">
+      <reaction id="R_GLUDy" name="glutamate dehydrogenase (NADP)" reversible="true" fast="false">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
             <p>GENE_LIST: b1761</p>
@@ -1800,15 +1800,15 @@
           </html>
         </notes>
         <listOfReactants>
-          <speciesReference species="M_glu_L_c" stoichiometry="1"/>
-          <speciesReference species="M_h2o_c" stoichiometry="1"/>
-          <speciesReference species="M_nadp_c" stoichiometry="1"/>
+          <speciesReference species="M_glu_L_c" stoichiometry="1" constant="true"/>
+          <speciesReference species="M_h2o_c" stoichiometry="1" constant="true"/>
+          <speciesReference species="M_nadp_c" stoichiometry="1" constant="true"/>
         </listOfReactants>
         <listOfProducts>
-          <speciesReference species="M_akg_c" stoichiometry="1"/>
-          <speciesReference species="M_h_c" stoichiometry="1"/>
-          <speciesReference species="M_nadph_c" stoichiometry="1"/>
-          <speciesReference species="M_nh4_c" stoichiometry="1"/>
+          <speciesReference species="M_akg_c" stoichiometry="1" constant="true"/>
+          <speciesReference species="M_h_c" stoichiometry="1" constant="true"/>
+          <speciesReference species="M_nadph_c" stoichiometry="1" constant="true"/>
+          <speciesReference species="M_nh4_c" stoichiometry="1" constant="true"/>
         </listOfProducts>
         <kineticLaw>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
@@ -1821,7 +1821,7 @@
           </listOfLocalParameters>
         </kineticLaw>
       </reaction>
-      <reaction id="R_GLUN" name="glutaminase" reversible="false">
+      <reaction id="R_GLUN" name="glutaminase" reversible="false" fast="false">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
             <p>GENE_LIST: b0485 b1524 b1812</p>
@@ -1830,12 +1830,12 @@
           </html>
         </notes>
         <listOfReactants>
-          <speciesReference species="M_gln_L_c" stoichiometry="1"/>
-          <speciesReference species="M_h2o_c" stoichiometry="1"/>
+          <speciesReference species="M_gln_L_c" stoichiometry="1" constant="true"/>
+          <speciesReference species="M_h2o_c" stoichiometry="1" constant="true"/>
         </listOfReactants>
         <listOfProducts>
-          <speciesReference species="M_glu_L_c" stoichiometry="1"/>
-          <speciesReference species="M_nh4_c" stoichiometry="1"/>
+          <speciesReference species="M_glu_L_c" stoichiometry="1" constant="true"/>
+          <speciesReference species="M_nh4_c" stoichiometry="1" constant="true"/>
         </listOfProducts>
         <kineticLaw>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
@@ -1848,7 +1848,7 @@
           </listOfLocalParameters>
         </kineticLaw>
       </reaction>
-      <reaction id="R_GLUSy" name="glutamate synthase (NADPH)" reversible="false">
+      <reaction id="R_GLUSy" name="glutamate synthase (NADPH)" reversible="false" fast="false">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
             <p>GENE_LIST: b3212 b3213</p>
@@ -1857,14 +1857,14 @@
           </html>
         </notes>
         <listOfReactants>
-          <speciesReference species="M_akg_c" stoichiometry="1"/>
-          <speciesReference species="M_gln_L_c" stoichiometry="1"/>
-          <speciesReference species="M_h_c" stoichiometry="1"/>
-          <speciesReference species="M_nadph_c" stoichiometry="1"/>
+          <speciesReference species="M_akg_c" stoichiometry="1" constant="true"/>
+          <speciesReference species="M_gln_L_c" stoichiometry="1" constant="true"/>
+          <speciesReference species="M_h_c" stoichiometry="1" constant="true"/>
+          <speciesReference species="M_nadph_c" stoichiometry="1" constant="true"/>
         </listOfReactants>
         <listOfProducts>
-          <speciesReference species="M_glu_L_c" stoichiometry="2"/>
-          <speciesReference species="M_nadp_c" stoichiometry="1"/>
+          <speciesReference species="M_glu_L_c" stoichiometry="2" constant="true"/>
+          <speciesReference species="M_nadp_c" stoichiometry="1" constant="true"/>
         </listOfProducts>
         <kineticLaw>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
@@ -1877,7 +1877,7 @@
           </listOfLocalParameters>
         </kineticLaw>
       </reaction>
-      <reaction id="R_GLUt2r" name="L-glutamate transport via proton symport, reversible (periplasm)" reversible="true">
+      <reaction id="R_GLUt2r" name="L-glutamate transport via proton symport, reversible (periplasm)" reversible="true" fast="false">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
             <p>GENE_LIST: b4077</p>
@@ -1886,12 +1886,12 @@
           </html>
         </notes>
         <listOfReactants>
-          <speciesReference species="M_glu_L_e" stoichiometry="1"/>
-          <speciesReference species="M_h_e" stoichiometry="1"/>
+          <speciesReference species="M_glu_L_e" stoichiometry="1" constant="true"/>
+          <speciesReference species="M_h_e" stoichiometry="1" constant="true"/>
         </listOfReactants>
         <listOfProducts>
-          <speciesReference species="M_glu_L_c" stoichiometry="1"/>
-          <speciesReference species="M_h_c" stoichiometry="1"/>
+          <speciesReference species="M_glu_L_c" stoichiometry="1" constant="true"/>
+          <speciesReference species="M_h_c" stoichiometry="1" constant="true"/>
         </listOfProducts>
         <kineticLaw>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
@@ -1904,7 +1904,7 @@
           </listOfLocalParameters>
         </kineticLaw>
       </reaction>
-      <reaction id="R_GND" name="phosphogluconate dehydrogenase" reversible="false">
+      <reaction id="R_GND" name="phosphogluconate dehydrogenase" reversible="false" fast="false">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
             <p>GENE_LIST: b2029</p>
@@ -1913,13 +1913,13 @@
           </html>
         </notes>
         <listOfReactants>
-          <speciesReference species="M_6pgc_c" stoichiometry="1"/>
-          <speciesReference species="M_nadp_c" stoichiometry="1"/>
+          <speciesReference species="M_6pgc_c" stoichiometry="1" constant="true"/>
+          <speciesReference species="M_nadp_c" stoichiometry="1" constant="true"/>
         </listOfReactants>
         <listOfProducts>
-          <speciesReference species="M_co2_c" stoichiometry="1"/>
-          <speciesReference species="M_nadph_c" stoichiometry="1"/>
-          <speciesReference species="M_ru5p_D_c" stoichiometry="1"/>
+          <speciesReference species="M_co2_c" stoichiometry="1" constant="true"/>
+          <speciesReference species="M_nadph_c" stoichiometry="1" constant="true"/>
+          <speciesReference species="M_ru5p_D_c" stoichiometry="1" constant="true"/>
         </listOfProducts>
         <kineticLaw>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
@@ -1932,7 +1932,7 @@
           </listOfLocalParameters>
         </kineticLaw>
       </reaction>
-      <reaction id="R_H2Ot" name="H2O transport via diffusion" reversible="true">
+      <reaction id="R_H2Ot" name="H2O transport via diffusion" reversible="true" fast="false">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
             <p>GENE_LIST: b0875 s0001</p>
@@ -1941,10 +1941,10 @@
           </html>
         </notes>
         <listOfReactants>
-          <speciesReference species="M_h2o_e" stoichiometry="1"/>
+          <speciesReference species="M_h2o_e" stoichiometry="1" constant="true"/>
         </listOfReactants>
         <listOfProducts>
-          <speciesReference species="M_h2o_c" stoichiometry="1"/>
+          <speciesReference species="M_h2o_c" stoichiometry="1" constant="true"/>
         </listOfProducts>
         <kineticLaw>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
@@ -1957,7 +1957,7 @@
           </listOfLocalParameters>
         </kineticLaw>
       </reaction>
-      <reaction id="R_ICDHyr" name="isocitrate dehydrogenase (NADP)" reversible="true">
+      <reaction id="R_ICDHyr" name="isocitrate dehydrogenase (NADP)" reversible="true" fast="false">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
             <p>GENE_LIST: b1136</p>
@@ -1966,13 +1966,13 @@
           </html>
         </notes>
         <listOfReactants>
-          <speciesReference species="M_icit_c" stoichiometry="1"/>
-          <speciesReference species="M_nadp_c" stoichiometry="1"/>
+          <speciesReference species="M_icit_c" stoichiometry="1" constant="true"/>
+          <speciesReference species="M_nadp_c" stoichiometry="1" constant="true"/>
         </listOfReactants>
         <listOfProducts>
-          <speciesReference species="M_akg_c" stoichiometry="1"/>
-          <speciesReference species="M_co2_c" stoichiometry="1"/>
-          <speciesReference species="M_nadph_c" stoichiometry="1"/>
+          <speciesReference species="M_akg_c" stoichiometry="1" constant="true"/>
+          <speciesReference species="M_co2_c" stoichiometry="1" constant="true"/>
+          <speciesReference species="M_nadph_c" stoichiometry="1" constant="true"/>
         </listOfProducts>
         <kineticLaw>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
@@ -1985,7 +1985,7 @@
           </listOfLocalParameters>
         </kineticLaw>
       </reaction>
-      <reaction id="R_ICL" name="Isocitrate lyase" reversible="false">
+      <reaction id="R_ICL" name="Isocitrate lyase" reversible="false" fast="false">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
             <p>GENE_LIST: b4015</p>
@@ -1994,11 +1994,11 @@
           </html>
         </notes>
         <listOfReactants>
-          <speciesReference species="M_icit_c" stoichiometry="1"/>
+          <speciesReference species="M_icit_c" stoichiometry="1" constant="true"/>
         </listOfReactants>
         <listOfProducts>
-          <speciesReference species="M_glx_c" stoichiometry="1"/>
-          <speciesReference species="M_succ_c" stoichiometry="1"/>
+          <speciesReference species="M_glx_c" stoichiometry="1" constant="true"/>
+          <speciesReference species="M_succ_c" stoichiometry="1" constant="true"/>
         </listOfProducts>
         <kineticLaw>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
@@ -2011,7 +2011,7 @@
           </listOfLocalParameters>
         </kineticLaw>
       </reaction>
-      <reaction id="R_LDH_D" name="D lactate dehydrogenase" reversible="true">
+      <reaction id="R_LDH_D" name="D lactate dehydrogenase" reversible="true" fast="false">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
             <p>GENE_LIST: b1380 b2133</p>
@@ -2020,13 +2020,13 @@
           </html>
         </notes>
         <listOfReactants>
-          <speciesReference species="M_lac_D_c" stoichiometry="1"/>
-          <speciesReference species="M_nad_c" stoichiometry="1"/>
+          <speciesReference species="M_lac_D_c" stoichiometry="1" constant="true"/>
+          <speciesReference species="M_nad_c" stoichiometry="1" constant="true"/>
         </listOfReactants>
         <listOfProducts>
-          <speciesReference species="M_h_c" stoichiometry="1"/>
-          <speciesReference species="M_nadh_c" stoichiometry="1"/>
-          <speciesReference species="M_pyr_c" stoichiometry="1"/>
+          <speciesReference species="M_h_c" stoichiometry="1" constant="true"/>
+          <speciesReference species="M_nadh_c" stoichiometry="1" constant="true"/>
+          <speciesReference species="M_pyr_c" stoichiometry="1" constant="true"/>
         </listOfProducts>
         <kineticLaw>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
@@ -2039,7 +2039,7 @@
           </listOfLocalParameters>
         </kineticLaw>
       </reaction>
-      <reaction id="R_MALS" name="malate synthase" reversible="false">
+      <reaction id="R_MALS" name="malate synthase" reversible="false" fast="false">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
             <p>GENE_LIST: b2976 b4014</p>
@@ -2048,14 +2048,14 @@
           </html>
         </notes>
         <listOfReactants>
-          <speciesReference species="M_accoa_c" stoichiometry="1"/>
-          <speciesReference species="M_glx_c" stoichiometry="1"/>
-          <speciesReference species="M_h2o_c" stoichiometry="1"/>
+          <speciesReference species="M_accoa_c" stoichiometry="1" constant="true"/>
+          <speciesReference species="M_glx_c" stoichiometry="1" constant="true"/>
+          <speciesReference species="M_h2o_c" stoichiometry="1" constant="true"/>
         </listOfReactants>
         <listOfProducts>
-          <speciesReference species="M_coa_c" stoichiometry="1"/>
-          <speciesReference species="M_h_c" stoichiometry="1"/>
-          <speciesReference species="M_mal_L_c" stoichiometry="1"/>
+          <speciesReference species="M_coa_c" stoichiometry="1" constant="true"/>
+          <speciesReference species="M_h_c" stoichiometry="1" constant="true"/>
+          <speciesReference species="M_mal_L_c" stoichiometry="1" constant="true"/>
         </listOfProducts>
         <kineticLaw>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
@@ -2068,7 +2068,7 @@
           </listOfLocalParameters>
         </kineticLaw>
       </reaction>
-      <reaction id="R_MALt2_2" name="Malate transport via proton symport (2 H)" reversible="false">
+      <reaction id="R_MALt2_2" name="Malate transport via proton symport (2 H)" reversible="false" fast="false">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
             <p>GENE_LIST: b3528</p>
@@ -2077,12 +2077,12 @@
           </html>
         </notes>
         <listOfReactants>
-          <speciesReference species="M_h_e" stoichiometry="2"/>
-          <speciesReference species="M_mal_L_e" stoichiometry="1"/>
+          <speciesReference species="M_h_e" stoichiometry="2" constant="true"/>
+          <speciesReference species="M_mal_L_e" stoichiometry="1" constant="true"/>
         </listOfReactants>
         <listOfProducts>
-          <speciesReference species="M_h_c" stoichiometry="2"/>
-          <speciesReference species="M_mal_L_c" stoichiometry="1"/>
+          <speciesReference species="M_h_c" stoichiometry="2" constant="true"/>
+          <speciesReference species="M_mal_L_c" stoichiometry="1" constant="true"/>
         </listOfProducts>
         <kineticLaw>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
@@ -2095,7 +2095,7 @@
           </listOfLocalParameters>
         </kineticLaw>
       </reaction>
-      <reaction id="R_MDH" name="malate dehydrogenase" reversible="true">
+      <reaction id="R_MDH" name="malate dehydrogenase" reversible="true" fast="false">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
             <p>GENE_LIST: b3236</p>
@@ -2104,13 +2104,13 @@
           </html>
         </notes>
         <listOfReactants>
-          <speciesReference species="M_mal_L_c" stoichiometry="1"/>
-          <speciesReference species="M_nad_c" stoichiometry="1"/>
+          <speciesReference species="M_mal_L_c" stoichiometry="1" constant="true"/>
+          <speciesReference species="M_nad_c" stoichiometry="1" constant="true"/>
         </listOfReactants>
         <listOfProducts>
-          <speciesReference species="M_h_c" stoichiometry="1"/>
-          <speciesReference species="M_nadh_c" stoichiometry="1"/>
-          <speciesReference species="M_oaa_c" stoichiometry="1"/>
+          <speciesReference species="M_h_c" stoichiometry="1" constant="true"/>
+          <speciesReference species="M_nadh_c" stoichiometry="1" constant="true"/>
+          <speciesReference species="M_oaa_c" stoichiometry="1" constant="true"/>
         </listOfProducts>
         <kineticLaw>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
@@ -2123,7 +2123,7 @@
           </listOfLocalParameters>
         </kineticLaw>
       </reaction>
-      <reaction id="R_ME1" name="malic enzyme (NAD)" reversible="false">
+      <reaction id="R_ME1" name="malic enzyme (NAD)" reversible="false" fast="false">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
             <p>GENE_LIST: b1479</p>
@@ -2132,13 +2132,13 @@
           </html>
         </notes>
         <listOfReactants>
-          <speciesReference species="M_mal_L_c" stoichiometry="1"/>
-          <speciesReference species="M_nad_c" stoichiometry="1"/>
+          <speciesReference species="M_mal_L_c" stoichiometry="1" constant="true"/>
+          <speciesReference species="M_nad_c" stoichiometry="1" constant="true"/>
         </listOfReactants>
         <listOfProducts>
-          <speciesReference species="M_co2_c" stoichiometry="1"/>
-          <speciesReference species="M_nadh_c" stoichiometry="1"/>
-          <speciesReference species="M_pyr_c" stoichiometry="1"/>
+          <speciesReference species="M_co2_c" stoichiometry="1" constant="true"/>
+          <speciesReference species="M_nadh_c" stoichiometry="1" constant="true"/>
+          <speciesReference species="M_pyr_c" stoichiometry="1" constant="true"/>
         </listOfProducts>
         <kineticLaw>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
@@ -2151,7 +2151,7 @@
           </listOfLocalParameters>
         </kineticLaw>
       </reaction>
-      <reaction id="R_ME2" name="malic enzyme (NADP)" reversible="false">
+      <reaction id="R_ME2" name="malic enzyme (NADP)" reversible="false" fast="false">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
             <p>GENE_LIST: b2463</p>
@@ -2160,13 +2160,13 @@
           </html>
         </notes>
         <listOfReactants>
-          <speciesReference species="M_mal_L_c" stoichiometry="1"/>
-          <speciesReference species="M_nadp_c" stoichiometry="1"/>
+          <speciesReference species="M_mal_L_c" stoichiometry="1" constant="true"/>
+          <speciesReference species="M_nadp_c" stoichiometry="1" constant="true"/>
         </listOfReactants>
         <listOfProducts>
-          <speciesReference species="M_co2_c" stoichiometry="1"/>
-          <speciesReference species="M_nadph_c" stoichiometry="1"/>
-          <speciesReference species="M_pyr_c" stoichiometry="1"/>
+          <speciesReference species="M_co2_c" stoichiometry="1" constant="true"/>
+          <speciesReference species="M_nadph_c" stoichiometry="1" constant="true"/>
+          <speciesReference species="M_pyr_c" stoichiometry="1" constant="true"/>
         </listOfProducts>
         <kineticLaw>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
@@ -2179,7 +2179,7 @@
           </listOfLocalParameters>
         </kineticLaw>
       </reaction>
-      <reaction id="R_NADH16" name="NADH dehydrogenase (ubiquinone-8 &amp; 3 protons)" reversible="false">
+      <reaction id="R_NADH16" name="NADH dehydrogenase (ubiquinone-8 &amp; 3 protons)" reversible="false" fast="false">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
             <p>GENE_LIST: b2276 b2277 b2278 b2279 b2280 b2281 b2282 b2283 b2284 b2285 b2286 b2287 b2288</p>
@@ -2188,14 +2188,14 @@
           </html>
         </notes>
         <listOfReactants>
-          <speciesReference species="M_h_c" stoichiometry="4"/>
-          <speciesReference species="M_nadh_c" stoichiometry="1"/>
-          <speciesReference species="M_q8_c" stoichiometry="1"/>
+          <speciesReference species="M_h_c" stoichiometry="4" constant="true"/>
+          <speciesReference species="M_nadh_c" stoichiometry="1" constant="true"/>
+          <speciesReference species="M_q8_c" stoichiometry="1" constant="true"/>
         </listOfReactants>
         <listOfProducts>
-          <speciesReference species="M_h_e" stoichiometry="3"/>
-          <speciesReference species="M_nad_c" stoichiometry="1"/>
-          <speciesReference species="M_q8h2_c" stoichiometry="1"/>
+          <speciesReference species="M_h_e" stoichiometry="3" constant="true"/>
+          <speciesReference species="M_nad_c" stoichiometry="1" constant="true"/>
+          <speciesReference species="M_q8h2_c" stoichiometry="1" constant="true"/>
         </listOfProducts>
         <kineticLaw>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
@@ -2208,7 +2208,7 @@
           </listOfLocalParameters>
         </kineticLaw>
       </reaction>
-      <reaction id="R_NADTRHD" name="NAD transhydrogenase" reversible="false">
+      <reaction id="R_NADTRHD" name="NAD transhydrogenase" reversible="false" fast="false">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
             <p>GENE_LIST: b1602 b1603 b3962</p>
@@ -2217,12 +2217,12 @@
           </html>
         </notes>
         <listOfReactants>
-          <speciesReference species="M_nad_c" stoichiometry="1"/>
-          <speciesReference species="M_nadph_c" stoichiometry="1"/>
+          <speciesReference species="M_nad_c" stoichiometry="1" constant="true"/>
+          <speciesReference species="M_nadph_c" stoichiometry="1" constant="true"/>
         </listOfReactants>
         <listOfProducts>
-          <speciesReference species="M_nadh_c" stoichiometry="1"/>
-          <speciesReference species="M_nadp_c" stoichiometry="1"/>
+          <speciesReference species="M_nadh_c" stoichiometry="1" constant="true"/>
+          <speciesReference species="M_nadp_c" stoichiometry="1" constant="true"/>
         </listOfProducts>
         <kineticLaw>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
@@ -2235,7 +2235,7 @@
           </listOfLocalParameters>
         </kineticLaw>
       </reaction>
-      <reaction id="R_NH4t" name="ammonia reversible transport" reversible="true">
+      <reaction id="R_NH4t" name="ammonia reversible transport" reversible="true" fast="false">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
             <p>GENE_LIST: b0451 s0001</p>
@@ -2244,10 +2244,10 @@
           </html>
         </notes>
         <listOfReactants>
-          <speciesReference species="M_nh4_e" stoichiometry="1"/>
+          <speciesReference species="M_nh4_e" stoichiometry="1" constant="true"/>
         </listOfReactants>
         <listOfProducts>
-          <speciesReference species="M_nh4_c" stoichiometry="1"/>
+          <speciesReference species="M_nh4_c" stoichiometry="1" constant="true"/>
         </listOfProducts>
         <kineticLaw>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
@@ -2260,7 +2260,7 @@
           </listOfLocalParameters>
         </kineticLaw>
       </reaction>
-      <reaction id="R_O2t" name="o2 transport via diffusion" reversible="true">
+      <reaction id="R_O2t" name="o2 transport via diffusion" reversible="true" fast="false">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
             <p>GENE_LIST: s0001</p>
@@ -2269,10 +2269,10 @@
           </html>
         </notes>
         <listOfReactants>
-          <speciesReference species="M_o2_e" stoichiometry="1"/>
+          <speciesReference species="M_o2_e" stoichiometry="1" constant="true"/>
         </listOfReactants>
         <listOfProducts>
-          <speciesReference species="M_o2_c" stoichiometry="1"/>
+          <speciesReference species="M_o2_c" stoichiometry="1" constant="true"/>
         </listOfProducts>
         <kineticLaw>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
@@ -2285,7 +2285,7 @@
           </listOfLocalParameters>
         </kineticLaw>
       </reaction>
-      <reaction id="R_PDH" name="pyruvate dehydrogenase" reversible="false">
+      <reaction id="R_PDH" name="pyruvate dehydrogenase" reversible="false" fast="false">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
             <p>GENE_LIST: b0114 b0115 b0116</p>
@@ -2294,14 +2294,14 @@
           </html>
         </notes>
         <listOfReactants>
-          <speciesReference species="M_coa_c" stoichiometry="1"/>
-          <speciesReference species="M_nad_c" stoichiometry="1"/>
-          <speciesReference species="M_pyr_c" stoichiometry="1"/>
+          <speciesReference species="M_coa_c" stoichiometry="1" constant="true"/>
+          <speciesReference species="M_nad_c" stoichiometry="1" constant="true"/>
+          <speciesReference species="M_pyr_c" stoichiometry="1" constant="true"/>
         </listOfReactants>
         <listOfProducts>
-          <speciesReference species="M_accoa_c" stoichiometry="1"/>
-          <speciesReference species="M_co2_c" stoichiometry="1"/>
-          <speciesReference species="M_nadh_c" stoichiometry="1"/>
+          <speciesReference species="M_accoa_c" stoichiometry="1" constant="true"/>
+          <speciesReference species="M_co2_c" stoichiometry="1" constant="true"/>
+          <speciesReference species="M_nadh_c" stoichiometry="1" constant="true"/>
         </listOfProducts>
         <kineticLaw>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
@@ -2314,7 +2314,7 @@
           </listOfLocalParameters>
         </kineticLaw>
       </reaction>
-      <reaction id="R_PFK" name="phosphofructokinase" reversible="false">
+      <reaction id="R_PFK" name="phosphofructokinase" reversible="false" fast="false">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
             <p>GENE_LIST: b1723 b3916</p>
@@ -2323,13 +2323,13 @@
           </html>
         </notes>
         <listOfReactants>
-          <speciesReference species="M_atp_c" stoichiometry="1"/>
-          <speciesReference species="M_f6p_c" stoichiometry="1"/>
+          <speciesReference species="M_atp_c" stoichiometry="1" constant="true"/>
+          <speciesReference species="M_f6p_c" stoichiometry="1" constant="true"/>
         </listOfReactants>
         <listOfProducts>
-          <speciesReference species="M_adp_c" stoichiometry="1"/>
-          <speciesReference species="M_fdp_c" stoichiometry="1"/>
-          <speciesReference species="M_h_c" stoichiometry="1"/>
+          <speciesReference species="M_adp_c" stoichiometry="1" constant="true"/>
+          <speciesReference species="M_fdp_c" stoichiometry="1" constant="true"/>
+          <speciesReference species="M_h_c" stoichiometry="1" constant="true"/>
         </listOfProducts>
         <kineticLaw>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
@@ -2342,7 +2342,7 @@
           </listOfLocalParameters>
         </kineticLaw>
       </reaction>
-      <reaction id="R_PFL" name="pyruvate formate lyase" reversible="false">
+      <reaction id="R_PFL" name="pyruvate formate lyase" reversible="false" fast="false">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
             <p>GENE_LIST: b0902 b0903 b2579 b3114 b3951 b3952</p>
@@ -2351,12 +2351,12 @@
           </html>
         </notes>
         <listOfReactants>
-          <speciesReference species="M_coa_c" stoichiometry="1"/>
-          <speciesReference species="M_pyr_c" stoichiometry="1"/>
+          <speciesReference species="M_coa_c" stoichiometry="1" constant="true"/>
+          <speciesReference species="M_pyr_c" stoichiometry="1" constant="true"/>
         </listOfReactants>
         <listOfProducts>
-          <speciesReference species="M_accoa_c" stoichiometry="1"/>
-          <speciesReference species="M_for_c" stoichiometry="1"/>
+          <speciesReference species="M_accoa_c" stoichiometry="1" constant="true"/>
+          <speciesReference species="M_for_c" stoichiometry="1" constant="true"/>
         </listOfProducts>
         <kineticLaw>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
@@ -2369,7 +2369,7 @@
           </listOfLocalParameters>
         </kineticLaw>
       </reaction>
-      <reaction id="R_PGI" name="glucose-6-phosphate isomerase" reversible="true">
+      <reaction id="R_PGI" name="glucose-6-phosphate isomerase" reversible="true" fast="false">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
             <p>GENE_LIST: b4025</p>
@@ -2378,10 +2378,10 @@
           </html>
         </notes>
         <listOfReactants>
-          <speciesReference species="M_g6p_c" stoichiometry="1"/>
+          <speciesReference species="M_g6p_c" stoichiometry="1" constant="true"/>
         </listOfReactants>
         <listOfProducts>
-          <speciesReference species="M_f6p_c" stoichiometry="1"/>
+          <speciesReference species="M_f6p_c" stoichiometry="1" constant="true"/>
         </listOfProducts>
         <kineticLaw>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
@@ -2394,7 +2394,7 @@
           </listOfLocalParameters>
         </kineticLaw>
       </reaction>
-      <reaction id="R_PGK" name="phosphoglycerate kinase" reversible="true">
+      <reaction id="R_PGK" name="phosphoglycerate kinase" reversible="true" fast="false">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
             <p>GENE_LIST: b2926</p>
@@ -2403,12 +2403,12 @@
           </html>
         </notes>
         <listOfReactants>
-          <speciesReference species="M_3pg_c" stoichiometry="1"/>
-          <speciesReference species="M_atp_c" stoichiometry="1"/>
+          <speciesReference species="M_3pg_c" stoichiometry="1" constant="true"/>
+          <speciesReference species="M_atp_c" stoichiometry="1" constant="true"/>
         </listOfReactants>
         <listOfProducts>
-          <speciesReference species="M_13dpg_c" stoichiometry="1"/>
-          <speciesReference species="M_adp_c" stoichiometry="1"/>
+          <speciesReference species="M_13dpg_c" stoichiometry="1" constant="true"/>
+          <speciesReference species="M_adp_c" stoichiometry="1" constant="true"/>
         </listOfProducts>
         <kineticLaw>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
@@ -2421,7 +2421,7 @@
           </listOfLocalParameters>
         </kineticLaw>
       </reaction>
-      <reaction id="R_PGL" name="6-phosphogluconolactonase" reversible="false">
+      <reaction id="R_PGL" name="6-phosphogluconolactonase" reversible="false" fast="false">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
             <p>GENE_LIST: b0767</p>
@@ -2430,12 +2430,12 @@
           </html>
         </notes>
         <listOfReactants>
-          <speciesReference species="M_6pgl_c" stoichiometry="1"/>
-          <speciesReference species="M_h2o_c" stoichiometry="1"/>
+          <speciesReference species="M_6pgl_c" stoichiometry="1" constant="true"/>
+          <speciesReference species="M_h2o_c" stoichiometry="1" constant="true"/>
         </listOfReactants>
         <listOfProducts>
-          <speciesReference species="M_6pgc_c" stoichiometry="1"/>
-          <speciesReference species="M_h_c" stoichiometry="1"/>
+          <speciesReference species="M_6pgc_c" stoichiometry="1" constant="true"/>
+          <speciesReference species="M_h_c" stoichiometry="1" constant="true"/>
         </listOfProducts>
         <kineticLaw>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
@@ -2448,7 +2448,7 @@
           </listOfLocalParameters>
         </kineticLaw>
       </reaction>
-      <reaction id="R_PGM" name="phosphoglycerate mutase" reversible="true">
+      <reaction id="R_PGM" name="phosphoglycerate mutase" reversible="true" fast="false">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
             <p>GENE_LIST: b0755 b3612 b4395</p>
@@ -2457,10 +2457,10 @@
           </html>
         </notes>
         <listOfReactants>
-          <speciesReference species="M_2pg_c" stoichiometry="1"/>
+          <speciesReference species="M_2pg_c" stoichiometry="1" constant="true"/>
         </listOfReactants>
         <listOfProducts>
-          <speciesReference species="M_3pg_c" stoichiometry="1"/>
+          <speciesReference species="M_3pg_c" stoichiometry="1" constant="true"/>
         </listOfProducts>
         <kineticLaw>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
@@ -2473,7 +2473,7 @@
           </listOfLocalParameters>
         </kineticLaw>
       </reaction>
-      <reaction id="R_PIt2r" name="phosphate reversible transport via proton symport" reversible="true">
+      <reaction id="R_PIt2r" name="phosphate reversible transport via proton symport" reversible="true" fast="false">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
             <p>GENE_LIST: b2987 b3493</p>
@@ -2482,12 +2482,12 @@
           </html>
         </notes>
         <listOfReactants>
-          <speciesReference species="M_h_e" stoichiometry="1"/>
-          <speciesReference species="M_pi_e" stoichiometry="1"/>
+          <speciesReference species="M_h_e" stoichiometry="1" constant="true"/>
+          <speciesReference species="M_pi_e" stoichiometry="1" constant="true"/>
         </listOfReactants>
         <listOfProducts>
-          <speciesReference species="M_h_c" stoichiometry="1"/>
-          <speciesReference species="M_pi_c" stoichiometry="1"/>
+          <speciesReference species="M_h_c" stoichiometry="1" constant="true"/>
+          <speciesReference species="M_pi_c" stoichiometry="1" constant="true"/>
         </listOfProducts>
         <kineticLaw>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
@@ -2500,7 +2500,7 @@
           </listOfLocalParameters>
         </kineticLaw>
       </reaction>
-      <reaction id="R_PPC" name="phosphoenolpyruvate carboxylase" reversible="false">
+      <reaction id="R_PPC" name="phosphoenolpyruvate carboxylase" reversible="false" fast="false">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
             <p>GENE_LIST: b3956</p>
@@ -2509,14 +2509,14 @@
           </html>
         </notes>
         <listOfReactants>
-          <speciesReference species="M_co2_c" stoichiometry="1"/>
-          <speciesReference species="M_h2o_c" stoichiometry="1"/>
-          <speciesReference species="M_pep_c" stoichiometry="1"/>
+          <speciesReference species="M_co2_c" stoichiometry="1" constant="true"/>
+          <speciesReference species="M_h2o_c" stoichiometry="1" constant="true"/>
+          <speciesReference species="M_pep_c" stoichiometry="1" constant="true"/>
         </listOfReactants>
         <listOfProducts>
-          <speciesReference species="M_h_c" stoichiometry="1"/>
-          <speciesReference species="M_oaa_c" stoichiometry="1"/>
-          <speciesReference species="M_pi_c" stoichiometry="1"/>
+          <speciesReference species="M_h_c" stoichiometry="1" constant="true"/>
+          <speciesReference species="M_oaa_c" stoichiometry="1" constant="true"/>
+          <speciesReference species="M_pi_c" stoichiometry="1" constant="true"/>
         </listOfProducts>
         <kineticLaw>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
@@ -2529,7 +2529,7 @@
           </listOfLocalParameters>
         </kineticLaw>
       </reaction>
-      <reaction id="R_PPCK" name="phosphoenolpyruvate carboxykinase" reversible="false">
+      <reaction id="R_PPCK" name="phosphoenolpyruvate carboxykinase" reversible="false" fast="false">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
             <p>GENE_LIST: b3403</p>
@@ -2538,13 +2538,13 @@
           </html>
         </notes>
         <listOfReactants>
-          <speciesReference species="M_atp_c" stoichiometry="1"/>
-          <speciesReference species="M_oaa_c" stoichiometry="1"/>
+          <speciesReference species="M_atp_c" stoichiometry="1" constant="true"/>
+          <speciesReference species="M_oaa_c" stoichiometry="1" constant="true"/>
         </listOfReactants>
         <listOfProducts>
-          <speciesReference species="M_adp_c" stoichiometry="1"/>
-          <speciesReference species="M_co2_c" stoichiometry="1"/>
-          <speciesReference species="M_pep_c" stoichiometry="1"/>
+          <speciesReference species="M_adp_c" stoichiometry="1" constant="true"/>
+          <speciesReference species="M_co2_c" stoichiometry="1" constant="true"/>
+          <speciesReference species="M_pep_c" stoichiometry="1" constant="true"/>
         </listOfProducts>
         <kineticLaw>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
@@ -2557,7 +2557,7 @@
           </listOfLocalParameters>
         </kineticLaw>
       </reaction>
-      <reaction id="R_PPS" name="phosphoenolpyruvate synthase" reversible="false">
+      <reaction id="R_PPS" name="phosphoenolpyruvate synthase" reversible="false" fast="false">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
             <p>GENE_LIST: b1702</p>
@@ -2566,15 +2566,15 @@
           </html>
         </notes>
         <listOfReactants>
-          <speciesReference species="M_atp_c" stoichiometry="1"/>
-          <speciesReference species="M_h2o_c" stoichiometry="1"/>
-          <speciesReference species="M_pyr_c" stoichiometry="1"/>
+          <speciesReference species="M_atp_c" stoichiometry="1" constant="true"/>
+          <speciesReference species="M_h2o_c" stoichiometry="1" constant="true"/>
+          <speciesReference species="M_pyr_c" stoichiometry="1" constant="true"/>
         </listOfReactants>
         <listOfProducts>
-          <speciesReference species="M_amp_c" stoichiometry="1"/>
-          <speciesReference species="M_h_c" stoichiometry="2"/>
-          <speciesReference species="M_pep_c" stoichiometry="1"/>
-          <speciesReference species="M_pi_c" stoichiometry="1"/>
+          <speciesReference species="M_amp_c" stoichiometry="1" constant="true"/>
+          <speciesReference species="M_h_c" stoichiometry="2" constant="true"/>
+          <speciesReference species="M_pep_c" stoichiometry="1" constant="true"/>
+          <speciesReference species="M_pi_c" stoichiometry="1" constant="true"/>
         </listOfProducts>
         <kineticLaw>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
@@ -2587,7 +2587,7 @@
           </listOfLocalParameters>
         </kineticLaw>
       </reaction>
-      <reaction id="R_PTAr" name="phosphotransacetylase" reversible="true">
+      <reaction id="R_PTAr" name="phosphotransacetylase" reversible="true" fast="false">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
             <p>GENE_LIST: b2297 b2458</p>
@@ -2596,12 +2596,12 @@
           </html>
         </notes>
         <listOfReactants>
-          <speciesReference species="M_accoa_c" stoichiometry="1"/>
-          <speciesReference species="M_pi_c" stoichiometry="1"/>
+          <speciesReference species="M_accoa_c" stoichiometry="1" constant="true"/>
+          <speciesReference species="M_pi_c" stoichiometry="1" constant="true"/>
         </listOfReactants>
         <listOfProducts>
-          <speciesReference species="M_actp_c" stoichiometry="1"/>
-          <speciesReference species="M_coa_c" stoichiometry="1"/>
+          <speciesReference species="M_actp_c" stoichiometry="1" constant="true"/>
+          <speciesReference species="M_coa_c" stoichiometry="1" constant="true"/>
         </listOfProducts>
         <kineticLaw>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
@@ -2614,7 +2614,7 @@
           </listOfLocalParameters>
         </kineticLaw>
       </reaction>
-      <reaction id="R_PYK" name="pyruvate kinase" reversible="false">
+      <reaction id="R_PYK" name="pyruvate kinase" reversible="false" fast="false">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
             <p>GENE_LIST: b1676 b1854</p>
@@ -2623,13 +2623,13 @@
           </html>
         </notes>
         <listOfReactants>
-          <speciesReference species="M_adp_c" stoichiometry="1"/>
-          <speciesReference species="M_h_c" stoichiometry="1"/>
-          <speciesReference species="M_pep_c" stoichiometry="1"/>
+          <speciesReference species="M_adp_c" stoichiometry="1" constant="true"/>
+          <speciesReference species="M_h_c" stoichiometry="1" constant="true"/>
+          <speciesReference species="M_pep_c" stoichiometry="1" constant="true"/>
         </listOfReactants>
         <listOfProducts>
-          <speciesReference species="M_atp_c" stoichiometry="1"/>
-          <speciesReference species="M_pyr_c" stoichiometry="1"/>
+          <speciesReference species="M_atp_c" stoichiometry="1" constant="true"/>
+          <speciesReference species="M_pyr_c" stoichiometry="1" constant="true"/>
         </listOfProducts>
         <kineticLaw>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
@@ -2642,19 +2642,19 @@
           </listOfLocalParameters>
         </kineticLaw>
       </reaction>
-      <reaction id="R_PYRt2r" name="pyruvate reversible transport via proton symport" reversible="true">
+      <reaction id="R_PYRt2r" name="pyruvate reversible transport via proton symport" reversible="true" fast="false">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
             <p>SUBSYSTEM: Transport, Extracellular</p>
           </html>
         </notes>
         <listOfReactants>
-          <speciesReference species="M_h_e" stoichiometry="1"/>
-          <speciesReference species="M_pyr_e" stoichiometry="1"/>
+          <speciesReference species="M_h_e" stoichiometry="1" constant="true"/>
+          <speciesReference species="M_pyr_e" stoichiometry="1" constant="true"/>
         </listOfReactants>
         <listOfProducts>
-          <speciesReference species="M_h_c" stoichiometry="1"/>
-          <speciesReference species="M_pyr_c" stoichiometry="1"/>
+          <speciesReference species="M_h_c" stoichiometry="1" constant="true"/>
+          <speciesReference species="M_pyr_c" stoichiometry="1" constant="true"/>
         </listOfProducts>
         <kineticLaw>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
@@ -2667,7 +2667,7 @@
           </listOfLocalParameters>
         </kineticLaw>
       </reaction>
-      <reaction id="R_RPE" name="ribulose 5-phosphate 3-epimerase" reversible="true">
+      <reaction id="R_RPE" name="ribulose 5-phosphate 3-epimerase" reversible="true" fast="false">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
             <p>GENE_LIST: b3386 b4301</p>
@@ -2676,10 +2676,10 @@
           </html>
         </notes>
         <listOfReactants>
-          <speciesReference species="M_ru5p_D_c" stoichiometry="1"/>
+          <speciesReference species="M_ru5p_D_c" stoichiometry="1" constant="true"/>
         </listOfReactants>
         <listOfProducts>
-          <speciesReference species="M_xu5p_D_c" stoichiometry="1"/>
+          <speciesReference species="M_xu5p_D_c" stoichiometry="1" constant="true"/>
         </listOfProducts>
         <kineticLaw>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
@@ -2692,7 +2692,7 @@
           </listOfLocalParameters>
         </kineticLaw>
       </reaction>
-      <reaction id="R_RPI" name="ribose-5-phosphate isomerase" reversible="true">
+      <reaction id="R_RPI" name="ribose-5-phosphate isomerase" reversible="true" fast="false">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
             <p>GENE_LIST: b2914 b4090</p>
@@ -2701,10 +2701,10 @@
           </html>
         </notes>
         <listOfReactants>
-          <speciesReference species="M_r5p_c" stoichiometry="1"/>
+          <speciesReference species="M_r5p_c" stoichiometry="1" constant="true"/>
         </listOfReactants>
         <listOfProducts>
-          <speciesReference species="M_ru5p_D_c" stoichiometry="1"/>
+          <speciesReference species="M_ru5p_D_c" stoichiometry="1" constant="true"/>
         </listOfProducts>
         <kineticLaw>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
@@ -2717,7 +2717,7 @@
           </listOfLocalParameters>
         </kineticLaw>
       </reaction>
-      <reaction id="R_SUCCt2_2" name="succinate transport via proton symport (2 H)" reversible="false">
+      <reaction id="R_SUCCt2_2" name="succinate transport via proton symport (2 H)" reversible="false" fast="false">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
             <p>GENE_LIST: b3528</p>
@@ -2726,12 +2726,12 @@
           </html>
         </notes>
         <listOfReactants>
-          <speciesReference species="M_h_e" stoichiometry="2"/>
-          <speciesReference species="M_succ_e" stoichiometry="1"/>
+          <speciesReference species="M_h_e" stoichiometry="2" constant="true"/>
+          <speciesReference species="M_succ_e" stoichiometry="1" constant="true"/>
         </listOfReactants>
         <listOfProducts>
-          <speciesReference species="M_h_c" stoichiometry="2"/>
-          <speciesReference species="M_succ_c" stoichiometry="1"/>
+          <speciesReference species="M_h_c" stoichiometry="2" constant="true"/>
+          <speciesReference species="M_succ_c" stoichiometry="1" constant="true"/>
         </listOfProducts>
         <kineticLaw>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
@@ -2744,19 +2744,19 @@
           </listOfLocalParameters>
         </kineticLaw>
       </reaction>
-      <reaction id="R_SUCCt3" name="succinate transport out via proton antiport" reversible="false">
+      <reaction id="R_SUCCt3" name="succinate transport out via proton antiport" reversible="false" fast="false">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
             <p>SUBSYSTEM: Transport, Extracellular</p>
           </html>
         </notes>
         <listOfReactants>
-          <speciesReference species="M_h_e" stoichiometry="1"/>
-          <speciesReference species="M_succ_c" stoichiometry="1"/>
+          <speciesReference species="M_h_e" stoichiometry="1" constant="true"/>
+          <speciesReference species="M_succ_c" stoichiometry="1" constant="true"/>
         </listOfReactants>
         <listOfProducts>
-          <speciesReference species="M_h_c" stoichiometry="1"/>
-          <speciesReference species="M_succ_e" stoichiometry="1"/>
+          <speciesReference species="M_h_c" stoichiometry="1" constant="true"/>
+          <speciesReference species="M_succ_e" stoichiometry="1" constant="true"/>
         </listOfProducts>
         <kineticLaw>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
@@ -2769,7 +2769,7 @@
           </listOfLocalParameters>
         </kineticLaw>
       </reaction>
-      <reaction id="R_SUCDi" name="succinate dehydrogenase (irreversible)" reversible="false">
+      <reaction id="R_SUCDi" name="succinate dehydrogenase (irreversible)" reversible="false" fast="false">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
             <p>GENE_LIST: b0721 b0722 b0723 b0724</p>
@@ -2778,12 +2778,12 @@
           </html>
         </notes>
         <listOfReactants>
-          <speciesReference species="M_q8_c" stoichiometry="1"/>
-          <speciesReference species="M_succ_c" stoichiometry="1"/>
+          <speciesReference species="M_q8_c" stoichiometry="1" constant="true"/>
+          <speciesReference species="M_succ_c" stoichiometry="1" constant="true"/>
         </listOfReactants>
         <listOfProducts>
-          <speciesReference species="M_fum_c" stoichiometry="1"/>
-          <speciesReference species="M_q8h2_c" stoichiometry="1"/>
+          <speciesReference species="M_fum_c" stoichiometry="1" constant="true"/>
+          <speciesReference species="M_q8h2_c" stoichiometry="1" constant="true"/>
         </listOfProducts>
         <kineticLaw>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
@@ -2796,7 +2796,7 @@
           </listOfLocalParameters>
         </kineticLaw>
       </reaction>
-      <reaction id="R_SUCOAS" name="succinyl-CoA synthetase (ADP-forming)" reversible="true">
+      <reaction id="R_SUCOAS" name="succinyl-CoA synthetase (ADP-forming)" reversible="true" fast="false">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
             <p>GENE_LIST: b0728 b0729</p>
@@ -2805,14 +2805,14 @@
           </html>
         </notes>
         <listOfReactants>
-          <speciesReference species="M_atp_c" stoichiometry="1"/>
-          <speciesReference species="M_coa_c" stoichiometry="1"/>
-          <speciesReference species="M_succ_c" stoichiometry="1"/>
+          <speciesReference species="M_atp_c" stoichiometry="1" constant="true"/>
+          <speciesReference species="M_coa_c" stoichiometry="1" constant="true"/>
+          <speciesReference species="M_succ_c" stoichiometry="1" constant="true"/>
         </listOfReactants>
         <listOfProducts>
-          <speciesReference species="M_adp_c" stoichiometry="1"/>
-          <speciesReference species="M_pi_c" stoichiometry="1"/>
-          <speciesReference species="M_succoa_c" stoichiometry="1"/>
+          <speciesReference species="M_adp_c" stoichiometry="1" constant="true"/>
+          <speciesReference species="M_pi_c" stoichiometry="1" constant="true"/>
+          <speciesReference species="M_succoa_c" stoichiometry="1" constant="true"/>
         </listOfProducts>
         <kineticLaw>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
@@ -2825,7 +2825,7 @@
           </listOfLocalParameters>
         </kineticLaw>
       </reaction>
-      <reaction id="R_TALA" name="transaldolase" reversible="true">
+      <reaction id="R_TALA" name="transaldolase" reversible="true" fast="false">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
             <p>GENE_LIST: b0008 b2464</p>
@@ -2834,12 +2834,12 @@
           </html>
         </notes>
         <listOfReactants>
-          <speciesReference species="M_g3p_c" stoichiometry="1"/>
-          <speciesReference species="M_s7p_c" stoichiometry="1"/>
+          <speciesReference species="M_g3p_c" stoichiometry="1" constant="true"/>
+          <speciesReference species="M_s7p_c" stoichiometry="1" constant="true"/>
         </listOfReactants>
         <listOfProducts>
-          <speciesReference species="M_e4p_c" stoichiometry="1"/>
-          <speciesReference species="M_f6p_c" stoichiometry="1"/>
+          <speciesReference species="M_e4p_c" stoichiometry="1" constant="true"/>
+          <speciesReference species="M_f6p_c" stoichiometry="1" constant="true"/>
         </listOfProducts>
         <kineticLaw>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
@@ -2852,7 +2852,7 @@
           </listOfLocalParameters>
         </kineticLaw>
       </reaction>
-      <reaction id="R_THD2" name="NAD(P) transhydrogenase" reversible="false">
+      <reaction id="R_THD2" name="NAD(P) transhydrogenase" reversible="false" fast="false">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
             <p>GENE_LIST: b1602 b1603</p>
@@ -2861,14 +2861,14 @@
           </html>
         </notes>
         <listOfReactants>
-          <speciesReference species="M_h_e" stoichiometry="2"/>
-          <speciesReference species="M_nadh_c" stoichiometry="1"/>
-          <speciesReference species="M_nadp_c" stoichiometry="1"/>
+          <speciesReference species="M_h_e" stoichiometry="2" constant="true"/>
+          <speciesReference species="M_nadh_c" stoichiometry="1" constant="true"/>
+          <speciesReference species="M_nadp_c" stoichiometry="1" constant="true"/>
         </listOfReactants>
         <listOfProducts>
-          <speciesReference species="M_h_c" stoichiometry="2"/>
-          <speciesReference species="M_nad_c" stoichiometry="1"/>
-          <speciesReference species="M_nadph_c" stoichiometry="1"/>
+          <speciesReference species="M_h_c" stoichiometry="2" constant="true"/>
+          <speciesReference species="M_nad_c" stoichiometry="1" constant="true"/>
+          <speciesReference species="M_nadph_c" stoichiometry="1" constant="true"/>
         </listOfProducts>
         <kineticLaw>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
@@ -2881,7 +2881,7 @@
           </listOfLocalParameters>
         </kineticLaw>
       </reaction>
-      <reaction id="R_TKT1" name="transketolase" reversible="true">
+      <reaction id="R_TKT1" name="transketolase" reversible="true" fast="false">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
             <p>GENE_LIST: b2465 b2935</p>
@@ -2890,12 +2890,12 @@
           </html>
         </notes>
         <listOfReactants>
-          <speciesReference species="M_r5p_c" stoichiometry="1"/>
-          <speciesReference species="M_xu5p_D_c" stoichiometry="1"/>
+          <speciesReference species="M_r5p_c" stoichiometry="1" constant="true"/>
+          <speciesReference species="M_xu5p_D_c" stoichiometry="1" constant="true"/>
         </listOfReactants>
         <listOfProducts>
-          <speciesReference species="M_g3p_c" stoichiometry="1"/>
-          <speciesReference species="M_s7p_c" stoichiometry="1"/>
+          <speciesReference species="M_g3p_c" stoichiometry="1" constant="true"/>
+          <speciesReference species="M_s7p_c" stoichiometry="1" constant="true"/>
         </listOfProducts>
         <kineticLaw>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
@@ -2908,7 +2908,7 @@
           </listOfLocalParameters>
         </kineticLaw>
       </reaction>
-      <reaction id="R_TKT2" name="transketolase" reversible="true">
+      <reaction id="R_TKT2" name="transketolase" reversible="true" fast="false">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
             <p>GENE_LIST: b2465 b2935</p>
@@ -2917,12 +2917,12 @@
           </html>
         </notes>
         <listOfReactants>
-          <speciesReference species="M_e4p_c" stoichiometry="1"/>
-          <speciesReference species="M_xu5p_D_c" stoichiometry="1"/>
+          <speciesReference species="M_e4p_c" stoichiometry="1" constant="true"/>
+          <speciesReference species="M_xu5p_D_c" stoichiometry="1" constant="true"/>
         </listOfReactants>
         <listOfProducts>
-          <speciesReference species="M_f6p_c" stoichiometry="1"/>
-          <speciesReference species="M_g3p_c" stoichiometry="1"/>
+          <speciesReference species="M_f6p_c" stoichiometry="1" constant="true"/>
+          <speciesReference species="M_g3p_c" stoichiometry="1" constant="true"/>
         </listOfProducts>
         <kineticLaw>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
@@ -2935,7 +2935,7 @@
           </listOfLocalParameters>
         </kineticLaw>
       </reaction>
-      <reaction id="R_TPI" name="triose-phosphate isomerase" reversible="true">
+      <reaction id="R_TPI" name="triose-phosphate isomerase" reversible="true" fast="false">
         <notes>
           <html xmlns="http://www.w3.org/1999/xhtml">
             <p>GENE_LIST: b3919</p>
@@ -2944,10 +2944,10 @@
           </html>
         </notes>
         <listOfReactants>
-          <speciesReference species="M_dhap_c" stoichiometry="1"/>
+          <speciesReference species="M_dhap_c" stoichiometry="1" constant="true"/>
         </listOfReactants>
         <listOfProducts>
-          <speciesReference species="M_g3p_c" stoichiometry="1"/>
+          <speciesReference species="M_g3p_c" stoichiometry="1" constant="true"/>
         </listOfProducts>
         <kineticLaw>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
