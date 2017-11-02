@@ -338,7 +338,7 @@ def _load_cobra_gpr(sbml_model, model):
     for reaction in sbml_model.getListOfReactions():
         rule = model.reactions[reaction.getId()].metadata.pop(GPR_TAG, None)
         if rule:
-            gpr = parse_gpr_rule(rule)
+            gpr = parse_gpr_rule(rule, prefix='G_')
             for protein in gpr.proteins:
                 genes |= set(protein.genes)
             gprs[reaction.getId()] = gpr
@@ -356,14 +356,12 @@ def sanitize_id(identifier):
     return non_alphanum.sub('_', identifier)
 
 
-def parse_gpr_rule(rule):
+def parse_gpr_rule(rule, prefix=None):
 
     if not rule:
         return None
 
     rule = rule.replace('(', '( ').replace(')', ' )')
-
-    non_alphanum = re.compile('\W')
 
     def replacement(token):
         if token.lower() == 'and':
@@ -372,10 +370,10 @@ def parse_gpr_rule(rule):
             return '|'
         elif token == '(' or token == ')':
             return token
-        elif token.startswith('G_'):
-            return sanitize_id(token)
+        elif prefix is not None and not token.startswith(prefix):
+            return prefix + sanitize_id(token)
         else:
-            return 'G_' + sanitize_id(token)
+            return sanitize_id(token)
 
     rule = ' '.join(map(replacement, rule.split()))
 
@@ -628,7 +626,6 @@ def _save_reactions(model, sbml_model):
         for m_id, kind in reaction.regulators.items():
             speciesReference = sbml_reaction.createModifier()
             speciesReference.setSpecies(m_id)
-            speciesReference.setConstant(True)
             if kind == '+':
                 speciesReference.setSBOTerm(ACTIVATOR_TAG)
             if kind == '-':
