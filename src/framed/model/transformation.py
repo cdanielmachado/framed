@@ -137,7 +137,7 @@ def split_isozymes(model):
     return mapping
 
 
-def genes_to_species(model, pseudo_genes=None):
+def genes_to_species(model, gene_prefix='G_', usage_prefix='u_', pseudo_genes=None):
 
     if pseudo_genes is None:
         pseudo_genes = {'G_s0001', 'G_S0001', 'G_s_0001', 'G_S_0001'}
@@ -150,7 +150,7 @@ def genes_to_species(model, pseudo_genes=None):
         if gene.id in pseudo_genes:
             continue
         model.add_metabolite(Metabolite(gene.id, gene.id, 'genes'))
-        r_id = 'u_{}'.format(gene.id)
+        r_id = usage_prefix + gene.id[len(gene_prefix):]
         reaction = CBReaction(r_id, r_id, False, {gene.id: 1})
         model.add_reaction(reaction)
         new_reactions.append(r_id)
@@ -215,13 +215,33 @@ def convert_constraints(constraints, mapping_rev, mapping_iso):
     return constraints
 
 
-def gpr_transform(model, inplace=True):
+def gpr_transform(model, inplace=True, gene_prefix='G_', usage_prefix='u_', pseudo_genes=None):
+    """ Transformation method that integrates GPR associations directly into the stoichiometric matrix.
+
+    Notes:
+        This method extends the stoichiometric matrix where genes become pseudo-metabolites (rows)
+        and enzyme usage variables become pseudo-reactions columns.
+
+        See http://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1005140 for details.
+
+    Args:
+        model (CBModel): original model
+        inplace (bool): change model in place (default), otherwise create a copy first
+        gene_prefix (str): prefix used for gene ids (default: 'G_')
+        usage_prefix (str): prefix to create enzyme usage variables (default: 'u_')
+        pseudo_genes (list): ignore pseudo/fake genes in the model (default: 's0001')
+
+    Returns:
+        CBModel: only when inplace=False
+        list: list of newly created enzyme usage variables
+    """
+
     if not inplace:
         model = model.copy()
 
     mapping_rev = make_irreversible(model)
     mapping_iso = split_isozymes(model)
-    u_reactions = genes_to_species(model)
+    u_reactions = genes_to_species(model, gene_prefix=gene_prefix, usage_prefix=usage_prefix, pseudo_genes=pseudo_genes)
     model.convert_fluxes = lambda x, net=True: merge_fluxes(x, mapping_rev, mapping_iso, net)
     model.convert_constraints = lambda x: convert_constraints(x, mapping_rev, mapping_iso)
     if inplace:

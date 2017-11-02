@@ -1,7 +1,24 @@
 """ This module implements gene-wise reformulations of some commonly used constraint-based methods.
 
 Notes:
+
     See http://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1005140 for details.
+
+    Essentially, all methods use gene-level objective functions (rather than reaction-level). For each gene (e.g: b0001)
+    a new variable (u_b0001) is introduced that represents the amount of flux carried by the respective enzyme.
+    Constraints can also be specified at gene level as a dictionary with the format {'b0001': (lb, ub)}.
+
+    For instance, to simulate the metabolic adjustment of E. coli after knockout of pfkA (b3916) but not pfkB
+    (i.e. reaction PFK is still active) using gene-wise MOMA:
+
+    ::
+
+        sol = gene_MOMA(model, constraints={'u_b3916': (0,0)})
+
+        print sol.show_values(pattern='R_')  # look at reaction fluxes
+        print sol.show_values(pattern='u_')  # look at enzyme usage values
+
+
 
 Author: Daniel Machado
 
@@ -30,7 +47,7 @@ def gene_wise(method):
             if not set(reference.keys()).issubset(model.reactions):
                 raise RuntimeError('Reference fluxes must be calculated for extended model.')
 
-        sol = method(model, constraints=constraints, reactions=reactions,  **kwargs)
+        sol = method(model, constraints=constraints, reactions=reactions, **kwargs)
 
         sol.extended = sol.values
         sol.values = model.convert_fluxes(sol.values)
@@ -40,7 +57,7 @@ def gene_wise(method):
 
 
 @gene_wise
-def gene_pFBA(model, objective=None, minimize=False, constraints=None, solver=None):
+def gene_pFBA(model, objective=None, minimize=False, constraints=None, reactions=None, solver=None):
     """ Perform a gene-wise version of parsimonious FBA.
 
     This method minimizes the total enzyme usage by re-formulating the pFBA objective function at gene level.
@@ -59,7 +76,7 @@ def gene_pFBA(model, objective=None, minimize=False, constraints=None, solver=No
         Solution: solution
 
     """
-    return pFBA(model, objective=objective, minimize=minimize, constraints=constraints, solver=solver)
+    return pFBA(model, objective=objective, minimize=minimize, constraints=constraints, reactions=reactions, solver=solver)
 
 
 @gene_wise
