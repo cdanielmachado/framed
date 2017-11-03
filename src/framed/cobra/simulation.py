@@ -144,6 +144,8 @@ def MOMA(model, reference=None, constraints=None, reactions=None, solver=None):
 
     solution = solver.solve(lin_obj, quadratic=quad_obj, minimize=True, constraints=constraints)
 
+    solution.reference = reference
+
     return solution
 
 
@@ -193,6 +195,8 @@ def lMOMA(model, reference=None, constraints=None, reactions=None, solver=None):
         objective[d_neg] = 1
 
     solution = solver.solve(objective, minimize=True, constraints=constraints)
+
+    solution.reference = reference
 
     return solution
 
@@ -248,5 +252,7 @@ def ROOM(model, reference=None, constraints=None, reactions=None, solver=None, d
         solver.update()
 
     solution = solver.solve(objective, minimize=True, constraints=constraints)
+
+    solution.reference = reference
 
     return solution

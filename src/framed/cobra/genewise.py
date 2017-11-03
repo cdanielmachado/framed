@@ -41,7 +41,7 @@ def gene_wise(method):
         if constraints:
             constraints = model.convert_constraints(constraints)
 
-        if 'reference' in kwargs:
+        if kwargs.get('reference') is not None:
             reference = kwargs['reference']
             if not set(reference.keys()).issubset(model.reactions):
                 raise RuntimeError('Reference fluxes must be calculated for extended model.')
