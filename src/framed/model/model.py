@@ -181,7 +181,7 @@ class Compartment:
 class AttrOrderedDict(OrderedDict):
 
     def __init__(self, *args, **nargs):
-        self._immutable = "immutable" in nargs and nargs["immutable"]
+#        self._immutable = "immutable" in nargs and nargs["immutable"]  # this is breaking jupyter somehow
         super(AttrOrderedDict, self).__init__(*args)
 
     def __getattr__(self, name):
@@ -217,15 +217,15 @@ class AttrOrderedDict(OrderedDict):
     def __setstate__(self, state):
         self.__dict__.update(state)
 
-    def __setitem__(self, key, value, force=False):
-        if self._immutable and not force:
-            raise KeyError("This dictionary is immutable")
-        super(AttrOrderedDict, self).__setitem__(key, value)
-
-    def __delitem__(self, key, force=False):
-        if self._immutable and not force:
-            raise KeyError("This dictionary is immutable")
-        super(AttrOrderedDict, self).__delitem__(key)
+    # def __setitem__(self, key, value, force=False):
+    #     if self._immutable and not force:
+    #         raise KeyError("This dictionary is immutable")
+    #     super(AttrOrderedDict, self).__setitem__(key, value)
+    #
+    # def __delitem__(self, key, force=False):
+    #     if self._immutable and not force:
+    #         raise KeyError("This dictionary is immutable")
+    #     super(AttrOrderedDict, self).__delitem__(key)
 
 
 class Model(object):
@@ -243,16 +243,12 @@ class Model(object):
         self.reactions = AttrOrderedDict()
         self.compartments = AttrOrderedDict()
         self.metadata = OrderedDict()
-        self._exchange_reactions = None
-        self._sink_reactions = None
         self._m_r_lookup = None
         self._reg_lookup = None
         self._s_matrix = None
         self._parser = None
 
     def _clear_temp(self):
-        self._exchange_reactions = None
-        self._sink_reactions = None
         self._m_r_lookup = None
         self._reg_lookup = None
         self._s_matrix = None
@@ -277,46 +273,23 @@ class Model(object):
 
     def get_exchange_reactions(self, include_sink=False):
         """
-        Get dict of exchange reactions where keys are reaction ids and values are list of exchanged
-        metabolites
+        Get list of exchange reactions
         
         Args:
             include_sink: Include sink reactions in the list
         
-        Returns: dict
+        Returns: list
         """
-        if not self._exchange_reactions:
-            self._exchange_reactions = OrderedDict()
-            for r in self.reactions.itervalues():
-                if not r.is_exchange:
-                    continue
 
-                self._exchange_reactions[r.id] = [k for k, v in r.stoichiometry.iteritems() if v < 0]
-
-        if include_sink:
-            plus_sink = self._exchange_reactions.copy()
-            for s_id, mets in  self.get_sink_reactions().iteritems():
-                plus_sink[s_id] = mets
-            return plus_sink
-        else:
-            return self._exchange_reactions
+        return [rxn.id for rxn in self.reactions.values() if rxn.is_exchange or include_sink and rxn.is_sink]
 
     def get_sink_reactions(self):
         """
-        Get dict of sink reactions where keys are reaction ids and values are list of exchanged
-        metabolites
+        Get list of sink reactions
 
-        Returns: dict
+        Returns: list
         """
-        if not self._sink_reactions:
-            self._sink_reactions = OrderedDict()
-            for r in self.reactions.itervalues():
-                if not r.is_sink:
-                    continue
-
-                self._sink_reactions[r.id] = [k for k, v in r.stoichiometry.iteritems() if v < 0]
-
-        return self._sink_reactions
+        return [rxn.id for rxn in self.reactions.values() if rxn.is_sink]
 
     def add_metabolite(self, metabolite, clear_tmp=True):
         """ Add a single metabolite to the model.

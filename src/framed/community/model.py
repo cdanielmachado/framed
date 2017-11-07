@@ -64,7 +64,7 @@ class Community(object):
             raise RuntimeError("Non-interacting models are not supported when merging extracellular compartment")
 
         self.id = community_id
-        self._organisms = AttrOrderedDict(immutable=True)
+        self._organisms = AttrOrderedDict()#immutable=True)
         self._extracellular_compartment = extracellular_compartment_id # TODO: maybe merge and compartment id arguments should be merged?
         self._merge_extracellular_compartments = merge_extracellular_compartments
         self._create_biomass = create_biomass
@@ -238,7 +238,9 @@ class Community(object):
             if copy:
                 model = model.copy()
 
-            self._organisms.__setitem__(model.id, model, force=True)
+            self._organisms[model.id] = model
+
+#            self._organisms.__setitem__(model.id, model, force=True)
 
     def remove_organism(self, organism):
         """ Remove an organism from this community
@@ -252,7 +254,9 @@ class Community(object):
         if organism not in self._organisms:
             warn('Organism {} is not in this community'.format(organism))
         else:
-            self._organisms.__delitem__(organism, force=True)
+            del self._organisms[organism]
+
+#            self._organisms.__delitem__(organism, force=True)
 
     def generate_merged_model(self):
         def _id_pattern(object_id, organism_id):
@@ -286,8 +290,9 @@ class Community(object):
             self._organisms_reactions[org_id] = set()
             self._organisms_exchange_reactions[org_id] = {}
             self._organisms_biomass_reactions[org_id] = {}
-            exchanged_metabolites = set(m for m_ex in model.get_exchange_reactions().itervalues() for m in m_ex)
-
+#            exchanged_metabolites = set(m for m_ex in model.get_exchange_reactions().itervalues() for m in m_ex)
+            exchanged_metabolites = {m_id for r_id in model.get_exchange_reactions()
+                                     for m_id in model.reactions[r_id].stoichiometry}
             #
             # Create additional extracellular compartment
             #
