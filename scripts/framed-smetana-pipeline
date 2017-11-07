@@ -154,27 +154,27 @@ def framed_smetana_pipeline():
     models_dir = config.get("communities", "models_dir")
     if config.has_option("communities", "models_locations"):
         models_locations = {r['id']: r['path'] for _, r in
-                            pandas.read_table(config.get("communities", "models_locations")).iterrows()}
+                            pandas.read_table(config.get("communities", "models_locations"), comment="#").iterrows()}
     else:
         models_locations = {}
 
-    compounds_exchanged = {r['id']: r['name'] for _, r in pandas.read_table(config.get("communities", "compounds_exchanged")).iterrows()}
+    compounds_exchanged = {r['id']: r['name'] for _, r in pandas.read_table(config.get("communities", "compounds_exchanged"), comment="#").iterrows()}
     compounds_exchanged = OrderedDict(sorted(compounds_exchanged.iteritems(), key=lambda x: x[0]))
-    compounds_external = {r['id']: r['name'] for _, r in pandas.read_table(config.get("communities", "compounds_external")).iterrows()}
+    compounds_external = {r['id']: r['name'] for _, r in pandas.read_table(config.get("communities", "compounds_external"), comment="#").iterrows()}
     compounds_external = OrderedDict(sorted(compounds_external.iteritems(), key=lambda x: x[0]))
     env_external = framed.Environment.from_compounds(compounds_external.keys(), exchange_format=exch_met_to_rxn_format, max_uptake=max_uptake)
     rxn_external = set(env_external)
 
-    compounds_inorganic = {r['id']: r['name'] for _, r in pandas.read_table(config.get("communities", "compounds_inorganic")).iterrows()}
+    compounds_inorganic = {r['id']: r['name'] for _, r in pandas.read_table(config.get("communities", "compounds_inorganic"), comment="#").iterrows()}
     compounds_inorganic = OrderedDict(sorted(compounds_inorganic.iteritems(), key=lambda x: x[0]))
     env_inorganic = framed.Environment.from_compounds(compounds_inorganic.keys(), exchange_format=exch_met_to_rxn_format, max_uptake=max_uptake)
     rxn_inorganic = set(env_inorganic)
 
-    compounds_exchange_blacklist = set()
-    if config.has_option("communities", "compounds_exchange_blacklist"):
-        compounds_exchange_blacklist = {r['id'] for _, r in pandas.read_table(config.get("communities", "compounds_exchange_blacklist")).iterrows()}
+    compounds_exchanged_blacklist = set()
+    if config.has_option("communities", "compounds_exchanged_blacklist"):
+        compounds_exchanged_blacklist = {r['id'] for _, r in pandas.read_table(config.get("communities", "compounds_exchanged_blacklist"), comment="#").iterrows()}
 
-    for met in compounds_exchange_blacklist:
+    for met in compounds_exchanged_blacklist:
         del compounds_exchanged[met]
 
     #
@@ -296,9 +296,11 @@ def framed_smetana_pipeline():
                 #
                 # Print community description
                 #
+                community_exchange_compounds = set(m for ml in models for m_ex in ml.get_exchange_reactions().itervalues() for m in m_ex)
+                community_exchange_blacklist = community_exchange_compounds - set(compounds_exchanged)
                 community_interacting = framed.Community(community_data['id'], models, extracellular_compartment_id=extracellular_comp_id,
                                       create_biomass=True, interacting=True,
-                                      exchanged_metabolites_blacklist=compounds_exchange_blacklist)
+                                      exchanged_metabolites_blacklist=community_exchange_blacklist)
 
                 rxn_com_inorganic = set(community_interacting.merged.get_exchange_reactions()) & rxn_inorganic
                 rxn_com_external = set(community_interacting.merged.get_exchange_reactions()) & rxn_external
@@ -334,7 +336,7 @@ def framed_smetana_pipeline():
                 logger.log("\nInteracting community media ({}'inorganic + {}'minimal + {}'external):\n{}",
                            len(rxn_com_inorganic),
                            len(rxn_com_minimal - rxn_com_inorganic),
-                           len(rxn_com_external - rxn_com_minimal - rxn_com_inorganic), "-"*30)
+                           len(rxn_com_external - rxn_com_minimal - rxn_com_inorganic), "-"*60)
 
                 for r_i, r in enumerate(rxn_com_minimal, start=1):
                     m = community_interacting.merged.get_exchange_reactions()[r][0]
@@ -352,7 +354,7 @@ def framed_smetana_pipeline():
                         raise KeyError("Column '{}' was not found in row".format(row_id))
                     row[row_id] = 1 if orig_m in compounds_inorganic else 2
 
-                    logger.log("    {}{}", " " if r in rxn_com_inorganic else "+", compounds_external[orig_m])
+                    logger.log("    {}{}", compounds_external[orig_m], "" if r in rxn_com_inorganic else " (not inorganic)")
 
                 #
                 # Calculate MIP and MRO
@@ -400,7 +402,7 @@ def framed_smetana_pipeline():
                     scscores, scextras = smetana.species_coupling_score(community_interacting, environment=env_com_minimal,
                                                                 min_growth=min_growth,
                                                                 max_uptake=max_uptake, n_solutions=n_solutions)
-                    logger.log("Species Coupling Scores:\n{}", "-"*30)
+                    logger.log("Species Coupling Scores:\n{}", "-"*60)
                     for m_receiver, donors in scscores.iteritems():
                         if len(donors):
                             donors_str = ["{}'{:.0f}%".format(m_donor, 100*freq) for m_donor, freq in donors.iteritems()]
@@ -413,7 +415,7 @@ def framed_smetana_pipeline():
 
                 if "mpscore" in algorithms:
                     mpscores, mpextras = smetana.metabolite_production_score(community_interacting, env_com_minimal)
-                    logger.log("\nMetabolite Production Scores:\n{}", "-"*30)
+                    logger.log("\nMetabolite Production Scores:\n{}", "-"*60)
                     for model_id, metabolites in mpscores.iteritems():
                         if len(metabolites):
                             logger.log("    {} => {}".format(model_id, ",".join([compounds_exchanged.get(m, m) for m in metabolites])))
@@ -424,7 +426,7 @@ def framed_smetana_pipeline():
                             row[row_id] = 1
 
                 if "muscore" in algorithms:
-                    logger.log("\nMetabolite Uptake Scores:\n{}", "-"*30)
+                    logger.log("\nMetabolite Uptake Scores:\n{}", "-"*60)
                     muscores, muextras = smetana.metabolite_uptake_score(community_interacting, env_com_minimal,
                                                                  min_mass_weight=min_mass_weight, min_growth=min_growth,
                                                                  max_uptake=max_uptake,
@@ -440,7 +442,7 @@ def framed_smetana_pipeline():
 
                 if "scscore" in algorithms and "mpscore" in algorithms and "muscore" in algorithms:
                     smetana_score = smetana.calculate_smetana_score(community=community_interacting, scscores=scscores, mpscores=mpscores, muscores=muscores, report_zero_scores=False)
-                    logger.log("\nSmetana Scores (sum={}):\n{}", sum(s.score for s in smetana_score), "-"*30)
+                    logger.log("\nSmetana Scores (sum={}):\n{}", sum(s.score for s in smetana_score), "-"*60)
                     if smetana_score:
                         for s in smetana_score:
                             logger.log("    {}/{}/{} => {:.0f}%", s.donor_organism, compounds_exchanged.get(s.metabolite, s.metabolite),
