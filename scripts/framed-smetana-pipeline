@@ -354,7 +354,7 @@ def framed_smetana_pipeline():
                         raise KeyError("Column '{}' was not found in row".format(row_id))
                     row[row_id] = 1 if orig_m in compounds_inorganic else 2
 
-                    logger.log("    {}{}", compounds_external[orig_m], "" if r in rxn_com_inorganic else " (not inorganic)")
+                    logger.log("    {}{}", compounds_external[orig_m], "" if r in rxn_com_inorganic else " (added to minimal media)")
 
                 #
                 # Calculate MIP and MRO
@@ -414,7 +414,7 @@ def framed_smetana_pipeline():
                             row[row_id] = scscore
 
                 if "mpscore" in algorithms:
-                    mpscores, mpextras = smetana.metabolite_production_score(community_interacting, env_com_minimal)
+                    mpscores, mpextras = smetana.metabolite_production_score(community_interacting, env_com_minimal, min_growth=min_growth)
                     logger.log("\nMetabolite Production Scores:\n{}", "-"*60)
                     for model_id, metabolites in mpscores.iteritems():
                         if len(metabolites):

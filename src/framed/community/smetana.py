@@ -100,7 +100,7 @@ def smetana_score(community, environment, report_zero_scores=False, min_mass_wei
     return scores, extras
 
 
-def species_coupling_score(community, environment, min_growth=1, max_uptake=100, n_solutions=100):
+def species_coupling_score(community, environment, min_growth=1.0, max_uptake=100, n_solutions=100):
     """
     Calculate frequency of community species dependency on each other
 
@@ -305,7 +305,6 @@ def metabolite_production_score(community, environment=None, max_uptake=100, min
 
             objective = {r_id: 1.0 for r_id in exchange_rxns}
             solution = solver.solve(objective, minimize=False)
-
             if solution.status != Status.OPTIMAL:
                 if i == 0: org_products = None
                 break
