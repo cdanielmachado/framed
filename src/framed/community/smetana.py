@@ -33,6 +33,7 @@ class SmetanaScore(object):
     def __repr__(self):
         return "<{}/{}/{}:{}>".format(self.donor_organism, self.metabolite, self.receiver_organism, self.score)
 
+
 def calculate_smetana_score(community, scscores, mpscores, muscores, report_zero_scores=False):
     metabolites = {met for mets in mpscores.itervalues() if mets for met in mets}
 
@@ -57,6 +58,7 @@ def calculate_smetana_score(community, scscores, mpscores, muscores, report_zero
                 scores.append(s)
 
     return scores
+
 
 def smetana_score(community, environment, report_zero_scores=False, min_mass_weight=False, min_growth=1, max_uptake=100, abstol=1e-6, validate=False, n_solutions=100):
     """
@@ -176,6 +178,7 @@ def species_coupling_score(community, environment, min_growth=1.0, max_uptake=10
 
     return scores, extras
 
+
 def metabolite_uptake_score(community, environment, min_mass_weight=True, min_growth=1.0, max_uptake=100.0, abstol=1e-6, validate=False, n_solutions=100):
     """
     Calculate frequency of metabolite requirement for species growth
@@ -206,8 +209,8 @@ def metabolite_uptake_score(community, environment, min_mass_weight=True, min_gr
 
     m_rxns = interacting_community.merged.reactions
     media_metabolites = {met
-           for exch_id, exch_mets in interacting_community.merged.get_exchange_reactions().iteritems()
-           for met in exch_mets
+           for exch_id in interacting_community.merged.get_exchange_reactions()
+           for met in interacting_community.merged.reactions[exch_id].stoichiometry
            if exch_id in m_rxns and m_rxns[exch_id].lb < 0}
 
     solutions = []
@@ -268,8 +271,8 @@ def metabolite_production_score(community, environment=None, max_uptake=100, min
            for org_exchanges in interacting_community.organisms_exchange_reactions.itervalues()
            for ex in org_exchanges.itervalues()}
     media_metabolites = {met
-           for exch_id, exch_mets in interacting_community.merged.get_exchange_reactions().iteritems()
-           for met in exch_mets
+           for exch_id in interacting_community.merged.get_exchange_reactions()
+           for met in interacting_community.merged.reactions[exch_id].stoichiometry
            if exch_id in reactions and reactions[exch_id].lb < 0}
 
     solver = solver_instance(interacting_community.merged)
@@ -342,16 +345,18 @@ def mip_score(community, environment=None, min_mass_weight=False, min_growth=1, 
     Returns:
         float: MIP score
     """
-    interacting_community = community.copy(interacting=True, merge_extracellular_compartments=False, create_biomass=True)
-    noninteracting_community = community.copy(interacting=False)
+#    interacting_community = community.copy(interacting=True, merge_extracellular_compartments=False, create_biomass=True)
+    noninteracting = community.copy(interacting=False)
 
-    exch_reactions = set(interacting_community.merged.get_exchange_reactions()) - set([interacting_community.merged.biomass_reaction])
+#    exch_reactions = set(interacting_community.merged.get_exchange_reactions()) - set([interacting_community.merged.biomass_reaction])
+    exch_reactions = community.merged.get_exchange_reactions()
+
     if environment:
-        environment.apply(interacting_community.merged, inplace=True)
-        environment.apply(noninteracting_community.merged, inplace=True)
+        environment.apply(community.merged, inplace=True)
+        environment.apply(noninteracting.merged, inplace=True)
         exch_reactions = exch_reactions - set(environment)
         
-    interacting_medium, sol1 = minimal_medium(interacting_community.merged, direction=direction,
+    interacting_medium, sol1 = minimal_medium(community.merged, direction=direction,
                                              exchange_reactions=exch_reactions,
                                              min_mass_weight=min_mass_weight,
                                              min_growth=min_growth,
@@ -360,13 +365,12 @@ def mip_score(community, environment=None, min_mass_weight=False, min_growth=1, 
     #
     # Calculate minimal media for non-interacting community
     #
-    noninteracting_medium, sol2 = minimal_medium(noninteracting_community.merged,
+    noninteracting_medium, sol2 = minimal_medium(noninteracting.merged,
                                                  exchange_reactions=exch_reactions,
                                                  direction=direction,
                                                  min_mass_weight=min_mass_weight,
                                                  min_growth=min_growth,
                                                  max_uptake=max_uptake, validate=validate)
-
 
     if noninteracting_medium is None:
         score = None
@@ -454,6 +458,7 @@ def mro_score(community, environment=None, direction=-1, min_mass_weight=False, 
               'pairwise': pairwise, 'solutions': solutions}
 
     return score, extras
+
 
 def score_subcommunities(models, metric, n=None, k=2,  **kwargs):
     """ Apply a given score to subcommunities generated from a list of organisms.

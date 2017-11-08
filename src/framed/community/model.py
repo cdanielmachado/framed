@@ -15,7 +15,7 @@ class CommunityNameMapping(object):
 
         Args:
             original_reaction (str): Name of reaction in original model
-            organism_reaction (str): Name of reaction in merged community model
+            organism_reaction (str): Name of reaction in merged community model 
             original_metabolite (str): Name of metabolite in original model
             organism_metabolite (str): Name of metabolite in merged community model
             extracellular_metabolite (str): Name of "common environment" metabolite in merged community model
@@ -29,11 +29,11 @@ class CommunityNameMapping(object):
 
     def __repr__(self):
         return "<orig_m: {}, org_m: {}, ex_m: {}, orig_r: {}, org_r: {}, exch_r: {}>".format(self.original_metabolite,
-                                                                                             self.organism_metabolite,
-                                                                                             self.extracellular_metabolite,
-                                                                                             self.original_reaction,
-                                                                                             self.organism_reaction,
-                                                                                             self.community_exchange_reaction)
+                                                                           self.organism_metabolite,
+                                                                           self.extracellular_metabolite,
+                                                                           self.original_reaction,
+                                                                           self.organism_reaction,
+                                                                           self.community_exchange_reaction)
 
 
 class Community(object):
@@ -65,8 +65,8 @@ class Community(object):
             raise RuntimeError("Non-interacting models are not supported when merging extracellular compartment")
 
         self.id = community_id
-        self._organisms = AttrOrderedDict(immutable=True)
-        self._extracellular_compartment = extracellular_compartment_id
+        self._organisms = AttrOrderedDict()#immutable=True)
+        self._extracellular_compartment = extracellular_compartment_id # TODO: maybe merge and compartment id arguments should be merged?
         self._merge_extracellular_compartments = merge_extracellular_compartments
         self._create_biomass = create_biomass
         self._merged_model = None
@@ -84,7 +84,7 @@ class Community(object):
     def copy_models(self):
         """
         If true copies for merged models  are created
-
+        
         Returns: bool
         """
         return self._copy_models
@@ -93,7 +93,7 @@ class Community(object):
     def create_biomass_reaction(self):
         """
         Create biomass reaction with biomass metabolites as reactants
-
+        
         Returns: bool
         """
         return self._create_biomass
@@ -102,7 +102,7 @@ class Community(object):
     def create_biomass_reaction(self, value):
         """
         Create biomass reaction with biomass metabolites as reactants
-
+        
         Args:
             value: bool
         """
@@ -117,7 +117,7 @@ class Community(object):
     def interacting(self):
         """
         If true models will be able to exchange metabolites. Otherwise all produced metabolites will go to sink
-
+        
         Returns: bool
         """
         return self._interacting
@@ -126,7 +126,7 @@ class Community(object):
     def interacting(self, value):
         """
         If true models will be able to exchange metabolites. Otherwise all produced metabolites will go to sink
-
+        
         Args:
             value: bool
         """
@@ -136,10 +136,10 @@ class Community(object):
     @property
     def organisms_exchange_reactions(self):
         """
-        Returns dictionary containing list of reactions exchanging model metabolites with common environment.
+        Returns dictionary containing list of reactions exchanging model metabolites with common environment. 
         Dictionary keys are model ids. Values are dictionaries with keys containing exchange reaction ids and values
         containing various information about these reactions.
-
+        
         Returns: dict
         """
         if not self._merged_model:
@@ -159,12 +159,14 @@ class Community(object):
 
         return self._organisms_reactions
 
+
+
     @property
     def organisms_biomass_reactions(self):
         """
         Returns dictionary containing reaction exporting biomass to common environment. Keys are model ids, and values
         are reaction ids
-
+        
         Returns: dict
         """
         if not self._merged_model:
@@ -176,7 +178,7 @@ class Community(object):
     def merge_extracellular_compartments(self):
         """
         Do not create organism specific extracellular compartment
-
+        
         Returns: bool
         """
         return self._merge_extracellular_compartments
@@ -185,7 +187,7 @@ class Community(object):
     def merge_extracellular_compartments(self, value):
         """
         Do not create organism specific extracellular compartment
-
+        
         Args:
             value: bool
         """
@@ -196,7 +198,7 @@ class Community(object):
     def merged(self):
         """
         Merged models containing every organism as separate compartment
-
+        
         Returns: CBModel
         """
         if not self._merged_model:
@@ -211,6 +213,7 @@ class Community(object):
         Returns: dict
         """
         return self._organisms
+
 
     def __str__(self):
         return '\n'.join(self._organisms.keys())
@@ -236,7 +239,9 @@ class Community(object):
             if copy:
                 model = model.copy()
 
-            self._organisms.__setitem__(model.id, model, force=True)
+            self._organisms[model.id] = model
+
+#            self._organisms.__setitem__(model.id, model, force=True)
 
     def remove_organism(self, organism):
         """ Remove an organism from this community
@@ -250,12 +255,14 @@ class Community(object):
         if organism not in self._organisms:
             warn('Organism {} is not in this community'.format(organism))
         else:
-            self._organisms.__delitem__(organism, force=True)
+            del self._organisms[organism]
+
+#            self._organisms.__delitem__(organism, force=True)
 
     def generate_merged_model(self):
         def _id_pattern(object_id, organism_id):
             return "{}_{}".format(object_id, organism_id)
-
+    
         def _name_pattern(object_name, organism_name):
             return "{} ({})".format(object_name, organism_name)
 
@@ -267,7 +274,7 @@ class Community(object):
                 new_obj.compartment = compartment
 
             return new_obj
-
+        
         models_missing_extracelullar_compartment = [m.id for m in self._organisms.itervalues()
                                                     if self._extracellular_compartment not in m.compartments]
         if models_missing_extracelullar_compartment:
@@ -283,13 +290,14 @@ class Community(object):
 
         organisms_biomass_metabolites = {}
         community_metabolite_exchange_lookup = {}
-
+        
         for org_id, model in self._organisms.items():
             self._organisms_reactions[org_id] = set()
             self._organisms_exchange_reactions[org_id] = {}
             self._organisms_biomass_reactions[org_id] = {}
-            exchanged_metabolites = set(m for m_ex in model.get_exchange_reactions().itervalues() for m in m_ex)
-
+#            exchanged_metabolites = set(m for m_ex in model.get_exchange_reactions().itervalues() for m in m_ex)
+            exchanged_metabolites = {m_id for r_id in model.get_exchange_reactions()
+                                     for m_id in model.reactions[r_id].stoichiometry}
             #
             # Create additional extracellular compartment
             #
@@ -373,8 +381,7 @@ class Community(object):
                                 self._organisms_exchange_reactions[org_id][new_rxn.id] = cnm
 
                                 if not self.interacting:
-                                    sink_rxn = CBReaction('Sink_{}'.format(new_id), is_exchange=False, is_sink=True,
-                                                          reversible=False)
+                                    sink_rxn = CBReaction('Sink_{}'.format(new_id), is_exchange=False, is_sink=True, reversible=False)
                                     sink_rxn.stoichiometry = {new_id: -1}
                                     sink_rxn.lb = 0.0
                                     merged_model.add_reaction(sink_rxn)
@@ -436,7 +443,7 @@ class Community(object):
                         merged_model.add_metabolite(biomass_met, clear_tmp=False)
                         new_rxn.stoichiometry[m_id] = 1
                         organisms_biomass_metabolites[org_id] = m_id
-
+                        
                     merged_model.add_reaction(new_rxn)
 
                 if r_id == model.biomass_reaction:
@@ -501,7 +508,7 @@ class Community(object):
         comm_fluxes = OrderedDict()
 
         for org_id, model in self._organisms.iteritems():
-            org_fluxes = [(r_id[:-(1 + len(org_id))], val) for r_id, val in fluxes.items() if r_id.endswith(org_id)]
+            org_fluxes = [(r_id[:-(1+len(org_id))], val) for r_id, val in fluxes.items() if r_id.endswith(org_id)]
             comm_fluxes[org_id] = OrderedDict(org_fluxes)
 
         return comm_fluxes
