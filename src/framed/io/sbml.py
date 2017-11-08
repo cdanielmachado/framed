@@ -349,7 +349,7 @@ def _load_cobra_gpr(sbml_model, model):
         model.add_gene(Gene(gene, gene[2:]))
 
     for r_id, gpr in gprs.items():
-        model.set_gpr_association(r_id, gpr)
+        model.set_gpr_association(r_id, gpr, add_genes=False)
 
 
 def sanitize_id(identifier):
@@ -438,7 +438,7 @@ def _load_fbc2_gpr(sbml_model, model):
         gpr_assoc = fbcrxn.getGeneProductAssociation()
         if gpr_assoc:
             gpr = _parse_fbc_association(gpr_assoc.getAssociation(), reaction.id)
-            model.set_gpr_association(reaction.getId(), gpr)
+            model.set_gpr_association(reaction.getId(), gpr, add_genes=False)
         else:
             model.set_gpr_association(reaction.getId(), None)
 
