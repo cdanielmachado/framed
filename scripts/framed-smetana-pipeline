@@ -238,6 +238,9 @@ def framed_smetana_pipeline():
 
     communities_sample = [communities[i::args.parts_total] for i in xrange(args.parts_total)][args.part - 1]
 
+    # 3_program_validate.prof
+    validate = False # validate MILP solutions
+
     #
     # Main loop
     #
@@ -301,8 +304,9 @@ def framed_smetana_pipeline():
                                                 for m in ml.reactions[exch_id].stoichiometry}
 
                 community_exchange_blacklist = community_exchange_compounds - set(compounds_exchanged)
+                # TODO: 4_program_initCopy.prof
                 community_interacting = framed.Community(community_data['id'], models, extracellular_compartment_id=extracellular_comp_id,
-                                      create_biomass=True, interacting=True,
+                                      create_biomass=True, interacting=True, copy_models=False,
                                       exchanged_metabolites_blacklist=community_exchange_blacklist)
 
                 rxn_com_inorganic = set(community_interacting.merged.get_exchange_reactions()) & rxn_inorganic
@@ -319,7 +323,7 @@ def framed_smetana_pipeline():
                 env_inorganic.apply(community_interacting.merged, inplace=True)
 
                 rxn_com_minimal_candidates = rxn_com_external - rxn_com_inorganic
-                rxn_com_minimal, sol = minimal_medium(community_interacting.merged, exchange_reactions=rxn_com_minimal_candidates, validate=True, min_mass_weight=min_mass_weight)
+                rxn_com_minimal, sol = minimal_medium(community_interacting.merged, exchange_reactions=rxn_com_minimal_candidates, validate=validate, min_mass_weight=min_mass_weight)
                 rxn_com_minimal = rxn_com_minimal | rxn_com_inorganic
                 env_com_minimal = framed.Environment.from_reactions(rxn_com_minimal, max_uptake=max_uptake)
                 met_com_minimal = {m.original_metabolite for ee in
@@ -364,13 +368,13 @@ def framed_smetana_pipeline():
                 # Calculate MIP and MRO
                 #
                 if "mip" in algorithms:
-                    mip, mip_extras = smetana.mip_score(community_interacting, env_inorganic, validate=True)
+                    mip, mip_extras = smetana.mip_score(community_interacting, env_inorganic, validate=validate)
                     row["mip"] = mip
                     logger.log("MIP: {}", mip)
 
 
                 if "mro" in algorithms:
-                    mro, mro_extras = smetana.mro_score(community_interacting, env_inorganic, validate=True)
+                    mro, mro_extras = smetana.mro_score(community_interacting, env_inorganic, validate=validate)
                     row["mro"] = mro
                     logger.log("MRO: {}", mro)
 

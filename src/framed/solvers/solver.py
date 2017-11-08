@@ -443,6 +443,36 @@ class Solver:
 
         raise Exception('Not implemented for this solver.')
 
+    #TODO: 2_program_MMsolver.prof
+    def set_lower_bounds(self, bounds_dict):
+        """ Set lower bounds from dictionary
+
+        Arguments:
+            bounds_dict (dict): lower bounds
+        """
+
+        raise Exception('Not implemented for this solver.')
+
+    #TODO: 2_program_MMsolver.prof
+    def set_upper_bounds(self, bounds_dict):
+        """ Set upper bounds from dictionary
+
+        Arguments:
+            bounds_dict (dict): upper bounds
+        """
+
+        raise Exception('Not implemented for this solver.')
+
+    #TODO: 2_program_MMsolver.prof
+    def set_bounds(self, bounds_dict):
+        """ Set lower and upper bounds from tuple dictionary
+
+        Arguments:
+            bounds_dict (dict): lower and upper bounds
+        """
+
+        raise Exception('Not implemented for this solver.')
+
 
 class OptimizationWarning(UserWarning):
     pass

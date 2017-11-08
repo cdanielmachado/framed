@@ -344,8 +344,9 @@ def mip_score(community, environment=None, min_mass_weight=False, min_growth=1, 
     Returns:
         float: MIP score
     """
-    interacting_community = community.copy(interacting=True, merge_extracellular_compartments=False, create_biomass=True)
-    noninteracting = community.copy(interacting=False)
+    # TODO: 1_program_cloneModels.prof
+    interacting_community = community.copy(copy_models=False, interacting=True, merge_extracellular_compartments=False, create_biomass=True)
+    noninteracting = community.copy(copy_models=False, interacting=False)
 
     exch_reactions = interacting_community.merged.get_exchange_reactions()
 
@@ -397,8 +398,9 @@ def mro_score(community, environment=None, direction=-1, min_mass_weight=False, 
     Returns:
         float: MRO score
     """
-    inter_community = community.copy(interacting=True, merge_extracellular_compartments=False, create_biomass=False)
-    indep_community = inter_community.copy(interacting=False, create_biomass=True)
+    # TODO: 1_program_cloneModels.prof
+    inter_community = community.copy(copy_models=False, interacting=True, merge_extracellular_compartments=False, create_biomass=False)
+    indep_community = inter_community.copy(copy_models=False, interacting=False, create_biomass=True)
 
     exch_reactions = set(inter_community.merged.get_exchange_reactions()) - set([inter_community.merged.biomass_reaction])
     if environment:

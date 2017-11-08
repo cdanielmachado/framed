@@ -316,6 +316,19 @@ class CplexSolver(Solver):
             ub_old = [(r_id, self._cached_upper_bounds[r_id]) for r_id, _ in updated_ub]
             self.problem.variables.set_upper_bounds(ub_old)
 
+    #TODO: 2_program_MMsolver.prof
+    def set_lower_bounds(self, bounds_dict):
+        self.problem.variables.set_lower_bounds([(var_id, lb if lb is not None else -infinity) for var_id, lb in bounds_dict.iteritems()])
+
+    #TODO: 2_program_MMsolver.prof
+    def set_upper_bounds(self, bounds_dict):
+        self.problem.variables.set_lower_bounds([(var_id, ub if ub is not None else infinity) for var_id, ub in bounds_dict.iteritems()])
+
+    #TODO: 2_program_MMsolver.prof
+    def set_bounds(self, bounds_dict):
+        self.problem.variables.set_lower_bounds([(var_id, bounds[0] if bounds[0] is not None else -infinity) for var_id, bounds in bounds_dict.iteritems()])
+        self.problem.variables.set_upper_bounds([(var_id, bounds[1] if bounds[1] is not None else infinity) for var_id, bounds in bounds_dict.iteritems()])
+
     def set_parameter(self, parameter, value):
         """ Set a parameter value for this optimization problem
 

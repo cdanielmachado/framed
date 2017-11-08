@@ -31,21 +31,19 @@ def minimal_medium(model, exchange_reactions=None, direction=-1, min_mass_weight
         Solution: solution from solver
     """
 
-    model = model.copy()
+    # TODO: 2_program_MMsolverClone.prof
     if exchange_reactions is None:
         exchange_reactions = list(model.get_exchange_reactions())
 
-    for r_id in exchange_reactions:
-        if direction < 0:
-            model.reactions[r_id].lb = -max_uptake
-        else:
-            model.reactions[r_id].ub = max_uptake
-
-    biomass = model.biomass_reaction
-
-    model.reactions[biomass].lb = min_growth
-
     solver = solver_instance(model)
+
+    # TODO: 2_program_MMsolver.prof
+    if direction < 0:
+        solver.set_lower_bounds({r_id: -max_uptake for r_id in exchange_reactions})
+    else:
+        solver.set_upper_bounds({r_id: max_uptake for r_id in exchange_reactions})
+
+    solver.set_lower_bounds({model.biomass_reaction: min_growth})
 
     for r_id in exchange_reactions:
         solver.add_variable('y_' + r_id, 0, 1, vartype=VarType.BINARY, update_problem=False)

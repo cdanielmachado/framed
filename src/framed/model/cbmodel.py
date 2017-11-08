@@ -22,6 +22,14 @@ class Gene:
     def __str__(self):
         return self.name
 
+    # TODO: 5_program_deepcopy.prof
+    def copy(self):
+        g = Gene(elem_id=self.id, name=self.name)
+        if len(self.metadata):
+            g.metadata.update(self.metadata)
+
+        return g
+
 
 class Protein:
     """ Base class for modeling proteins. 
@@ -45,6 +53,15 @@ class Protein:
                 return '(' + ' and '.join(self.genes) + ')'
         else:
             return str(self.genes[0])
+
+    # TODO: 5_program_deepcopy.prof
+    def copy(self):
+        p = Protein()
+        p.genes = self.genes
+        if len(self.metadata):
+            p.metadata.update(self.metadata)
+
+        return p
 
 
 class GPRAssociation:
@@ -81,6 +98,15 @@ class GPRAssociation:
         for protein in self.proteins:
             genes |= set(protein.genes)
         return genes
+
+    # TODO: 5_program_deepcopy.prof
+    def copy(self):
+        gpr = GPRAssociation()
+        gpr.proteins = [p.copy() for p in self.proteins]
+        if len(self.metadata):
+            gpr.metadata.update(self.metadata)
+
+        return gpr
 
 
 class CBReaction(Reaction):
@@ -175,6 +201,18 @@ class CBReaction(Reaction):
             res += ' @{}'.format(self.objective)
 
         return res
+
+    # TODO: 5_program_deepcopy.prof
+    def copy(self):
+        r = CBReaction(elem_id=self.id, name=self.name, reversible=self.reversible,
+                        stoichiometry=self.stoichiometry, regulators=self.regulators,
+                        is_exchange=self.is_exchange, is_sink=self.is_sink, lb=self.lb, ub=self.ub,
+                        objective=self.objective, gpr_association=self.gpr.copy() if self.gpr else self.gpr)
+        r._bool_function = self._bool_function
+        if len(self.metadata):
+            r.metadata.update(self.metadata)
+
+        return r
 
 
 class CBModel(Model):

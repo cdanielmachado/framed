@@ -261,7 +261,8 @@ class Community(object):
             return "{} ({})".format(object_name, organism_name)
 
         def _copy_object(obj, org_id, compartment=None):
-            new_obj = deepcopy(obj)
+            # 5_program_deepcopy.prof
+            new_obj = obj.copy()
             new_obj.id = _id_pattern(obj.id, org_id)
             new_obj.name = _name_pattern(obj.name, org_id)
             if compartment:

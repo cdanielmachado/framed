@@ -40,6 +40,14 @@ class Metabolite:
     def __setstate__(self, state):
         self.__dict__.update(state)
 
+    # TODO: 5_program_deepcopy.prof
+    def copy(self):
+        met = Metabolite(elem_id=self.id, name=self.name, compartment=self.compartment, boundary=self.boundary, constant=self.constant)
+        if len(self.metadata):
+            met.metadata = OrderedDict(self.metadata)
+
+        return met
+
 
 class Reaction:
     """ Base class for modeling reactions. """
@@ -151,6 +159,16 @@ class Reaction:
         res = self.id + ': ' + self.to_equation_string(metabolite_names=metabolite_names)
         return res
 
+    # TODO: 5_program_deepcopy.prof
+    def copy(self):
+        r = Reaction(elem_id=self.id, name=self.name, reversible=self.reversible, is_exchange=self.is_exchange,
+                     is_sink=self.is_sink, stoichiometry=self.stoichiometry,
+                     regulators=self.regulators)
+        if len(self.metadata):
+            r.metadata = OrderedDict(self.metadata)
+
+        return r
+
 
 class Compartment:
     """ Base class for modeling compartments. """
@@ -177,6 +195,13 @@ class Compartment:
     def __setstate__(self, state):
         self.__dict__.update(state)
 
+    # TODO: 5_program_deepcopy.prof
+    def copy(self):
+        cp = Compartment(elem_id=self.id, name=self.name, size=self.size)
+        if len(self.metadata):
+            cp.metadata = OrderedDict(self.metadata)
+
+        return cp
 
 class AttrOrderedDict(OrderedDict):
 
