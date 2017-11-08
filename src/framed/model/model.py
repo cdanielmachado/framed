@@ -181,7 +181,6 @@ class Compartment:
 class AttrOrderedDict(OrderedDict):
 
     def __init__(self, *args, **nargs):
-#        self._immutable = "immutable" in nargs and nargs["immutable"]  # this is breaking jupyter somehow
         super(AttrOrderedDict, self).__init__(*args)
 
     def __getattr__(self, name):
@@ -216,16 +215,6 @@ class AttrOrderedDict(OrderedDict):
 
     def __setstate__(self, state):
         self.__dict__.update(state)
-
-    # def __setitem__(self, key, value, force=False):
-    #     if self._immutable and not force:
-    #         raise KeyError("This dictionary is immutable")
-    #     super(AttrOrderedDict, self).__setitem__(key, value)
-    #
-    # def __delitem__(self, key, force=False):
-    #     if self._immutable and not force:
-    #         raise KeyError("This dictionary is immutable")
-    #     super(AttrOrderedDict, self).__delitem__(key)
 
 
 class Model(object):

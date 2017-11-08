@@ -65,7 +65,7 @@ class Community(object):
             raise RuntimeError("Non-interacting models are not supported when merging extracellular compartment")
 
         self.id = community_id
-        self._organisms = AttrOrderedDict()#immutable=True)
+        self._organisms = AttrOrderedDict()
         self._extracellular_compartment = extracellular_compartment_id # TODO: maybe merge and compartment id arguments should be merged?
         self._merge_extracellular_compartments = merge_extracellular_compartments
         self._create_biomass = create_biomass
@@ -159,14 +159,12 @@ class Community(object):
 
         return self._organisms_reactions
 
-
-
     @property
     def organisms_biomass_reactions(self):
         """
         Returns dictionary containing reaction exporting biomass to common environment. Keys are model ids, and values
         are reaction ids
-        
+
         Returns: dict
         """
         if not self._merged_model:
@@ -241,8 +239,6 @@ class Community(object):
 
             self._organisms[model.id] = model
 
-#            self._organisms.__setitem__(model.id, model, force=True)
-
     def remove_organism(self, organism):
         """ Remove an organism from this community
 
@@ -257,12 +253,10 @@ class Community(object):
         else:
             del self._organisms[organism]
 
-#            self._organisms.__delitem__(organism, force=True)
-
     def generate_merged_model(self):
         def _id_pattern(object_id, organism_id):
             return "{}_{}".format(object_id, organism_id)
-    
+
         def _name_pattern(object_name, organism_name):
             return "{} ({})".format(object_name, organism_name)
 
@@ -274,7 +268,7 @@ class Community(object):
                 new_obj.compartment = compartment
 
             return new_obj
-        
+
         models_missing_extracelullar_compartment = [m.id for m in self._organisms.itervalues()
                                                     if self._extracellular_compartment not in m.compartments]
         if models_missing_extracelullar_compartment:
@@ -290,12 +284,11 @@ class Community(object):
 
         organisms_biomass_metabolites = {}
         community_metabolite_exchange_lookup = {}
-        
+
         for org_id, model in self._organisms.items():
             self._organisms_reactions[org_id] = set()
             self._organisms_exchange_reactions[org_id] = {}
             self._organisms_biomass_reactions[org_id] = {}
-#            exchanged_metabolites = set(m for m_ex in model.get_exchange_reactions().itervalues() for m in m_ex)
             exchanged_metabolites = {m_id for r_id in model.get_exchange_reactions()
                                      for m_id in model.reactions[r_id].stoichiometry}
             #
@@ -443,7 +436,7 @@ class Community(object):
                         merged_model.add_metabolite(biomass_met, clear_tmp=False)
                         new_rxn.stoichiometry[m_id] = 1
                         organisms_biomass_metabolites[org_id] = m_id
-                        
+
                     merged_model.add_reaction(new_rxn)
 
                 if r_id == model.biomass_reaction:

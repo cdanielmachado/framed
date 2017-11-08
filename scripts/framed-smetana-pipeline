@@ -296,7 +296,10 @@ def framed_smetana_pipeline():
                 #
                 # Print community description
                 #
-                community_exchange_compounds = set(m for ml in models for m_ex in ml.get_exchange_reactions().itervalues() for m in m_ex)
+                community_exchange_compounds = {m for ml in models
+                                                for exch_id in ml.get_exchange_reactions()
+                                                for m in ml.reactions[exch_id].stoichiometry}
+
                 community_exchange_blacklist = community_exchange_compounds - set(compounds_exchanged)
                 community_interacting = framed.Community(community_data['id'], models, extracellular_compartment_id=extracellular_comp_id,
                                       create_biomass=True, interacting=True,
@@ -339,7 +342,8 @@ def framed_smetana_pipeline():
                            len(rxn_com_external - rxn_com_minimal - rxn_com_inorganic), "-"*60)
 
                 for r_i, r in enumerate(rxn_com_minimal, start=1):
-                    m = community_interacting.merged.get_exchange_reactions()[r][0]
+                    m = next(m for m in community_interacting.merged.reactions[r].stoichiometry)
+
                     orig_m = list({org_m.original_metabolite
                                    for org_exch in community_interacting.organisms_exchange_reactions.itervalues()
                                    for org_m in org_exch.itervalues()

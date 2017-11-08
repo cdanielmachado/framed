@@ -59,7 +59,6 @@ def calculate_smetana_score(community, scscores, mpscores, muscores, report_zero
 
     return scores
 
-
 def smetana_score(community, environment, report_zero_scores=False, min_mass_weight=False, min_growth=1, max_uptake=100, abstol=1e-6, validate=False, n_solutions=100):
     """
     SMETANA value scores likelyhood of metabolite exchange from species A to species B
@@ -345,18 +344,17 @@ def mip_score(community, environment=None, min_mass_weight=False, min_growth=1, 
     Returns:
         float: MIP score
     """
-#    interacting_community = community.copy(interacting=True, merge_extracellular_compartments=False, create_biomass=True)
+    interacting_community = community.copy(interacting=True, merge_extracellular_compartments=False, create_biomass=True)
     noninteracting = community.copy(interacting=False)
 
-#    exch_reactions = set(interacting_community.merged.get_exchange_reactions()) - set([interacting_community.merged.biomass_reaction])
-    exch_reactions = community.merged.get_exchange_reactions()
+    exch_reactions = interacting_community.merged.get_exchange_reactions()
 
     if environment:
-        environment.apply(community.merged, inplace=True)
+        environment.apply(interacting_community.merged, inplace=True)
         environment.apply(noninteracting.merged, inplace=True)
-        exch_reactions = exch_reactions - set(environment)
+        exch_reactions = set(exch_reactions) - set(environment)
         
-    interacting_medium, sol1 = minimal_medium(community.merged, direction=direction,
+    interacting_medium, sol1 = minimal_medium(interacting_community.merged, direction=direction,
                                              exchange_reactions=exch_reactions,
                                              min_mass_weight=min_mass_weight,
                                              min_growth=min_growth,
