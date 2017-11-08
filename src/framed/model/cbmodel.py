@@ -361,16 +361,22 @@ class CBModel(Model):
             else:
                 warnings.warn("No such gene '{}'".format(gene_id), RuntimeWarning)
 
-    def set_gpr_association(self, r_id, gpr):
+    def set_gpr_association(self, r_id, gpr, add_genes=True):
         """ Set GPR association for a given reaction:
 
         Arguments:
             r_id (str): reaction id
             gpr (GPRAssociation): GPR association
+            add_genes (bool): check if associated genes need to be added to the model
         """
 
         if r_id in self.reactions:
             self.reactions[r_id].gpr = gpr
+
+            if add_genes and gpr is not None:
+                for gene_id in gpr.get_genes():
+                    if gene_id not in self.genes:
+                        self.add_gene(Gene(gene_id))
         else:
             warnings.warn("No such reaction '{}'".format(r_id), RuntimeWarning)
 
