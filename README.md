@@ -7,33 +7,38 @@ FRAMED
 *framed* is a python package for analysis and simulation of metabolic models. The main focus is to provide support for different modeling approaches. 
 
 * Modeling: Constraint-based models, Kinetic models, Bioprocess models
-* I/O: Import/Export from SBML and/or plain text formats
+* I/O: Import/Export from SBML and other plain text formats (including BioOpt)
 * Solver support: Gurobi, CPLEX
 * COBRA tools:
     * Simulation: FBA, pFBA, loopless-FBA, MOMA, linearMOMA, ROOM
+    * Gene-wise simulation: gene-pFBA, gene-MOMA, gene-lMOMA, gene-ROOM
     * Analysis: FVA, gene essentiality, PhPP, flux envelope plots
+    * Ensemble-based simulation (and SBML import/export of ensemble models)
     * Omics integration: GIMME, E-Flux
     * Strain design: brute force, hill climbing
 * Kinetic tools:
     * Time-course and steady-state simulation
-    * Parameter and flux sampling
+    * Steady-state flux sampling
     * Calibration from metabolomics data
-* Bioprocess modeling: Dynamic FBA (single and multi-species)
+* Bioprocess modeling:
+    * Dynamic FBA (single and multi-species)
+* Microbial community modeling:
+	* SMETANA
 
 ### Documentation
 
 For documentation and API please check: http://framed.readthedocs.io/
 
-### Instalation
+### Instalation from PyPI (stable releases)
 
 ```
 pip install framed
 ```
 
-### Instalation from github
+### Instalation from github (latest development release)
 
 ```
-pip install git+https://github.com/cdanielmachado/framed.git@master
+pip install https://github.com/cdanielmachado/framed/archive/master.zip
 ```
 
 
