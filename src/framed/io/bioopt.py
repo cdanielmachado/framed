@@ -349,3 +349,53 @@ class BiooptParser(object):
 
 
         return model
+
+def write_model_to_file(model, filename, inf=1000):
+    """ Writes a model to a file in bioopt format.
+
+    Arguments:
+        model (CBModel): model
+        filename (str): The name or full pathname of the file where the BioOpt model is to be written.
+        inf (float): Number which would be used for constraints with infinite bounds
+    """
+    ret = "-REACTIONS\n"
+    for r in model.reactions.itervalues():
+        reactants = " + ".join("{}{}".format("" if abs(coef) == 1 else "{0:.5g} ".format(coef), m_id) for m_id, coef in r.stoichiometry.iteritems() if coef < 0)
+        products = " + ".join("{}{}".format("" if abs(coef) == 1 else "{0:.5g} ".format(coef), m_id) for m_id, coef in r.stoichiometry.iteritems() if coef < 0)
+        dir = "<->" if r.reversible else "->"
+        ret += "{name}\t:\t{lhs} {dir} {rhs}".format(name=r.name, lhs=reactants, dir=dir, rhs=products) + "\n"
+    ret += "\n"
+
+    ret += "-CONSTRAINTS\n"
+
+    for r in model.reactions.itervalues():
+        lb = -inf if r.lb is None else r.lb
+        ub = inf if r.ub is None else r.ub
+        if r.reversible:
+            if not (r.lb is None and r.ub is None):
+                ret += "{0}\t[{1:.5g}, {2:.5g}]".format(r.name, lb, ub) + "\n"
+        else:
+            if not (r.lb == 0 and r.ub is None):
+                ret += "{0}\t[{1:.5g}, {2:.5g}]".format(r.name, lb, ub) + "\n"
+
+    ret += "\n"
+    ret += "-EXTERNAL METABOLITES\n"
+
+    b_reactions = model.get_exchange_reactions(include_sink=True)
+    for r_id in b_reactions:
+        for m_id in model.reactions[r_id].stoichiometry:
+            ret += m_id + "\n"
+    ret += "\n"
+
+    obj = model.get_objective()
+    if obj:
+        ret += "-OBJECTIVE\n"
+        ret += " ".join("{} {}".format(r_id, coef) for r_id, coef in obj.iteritems())
+        ret += "\n\n"
+
+    if filename:
+        f = open(filename, 'w')
+        f.write(ret)
+        return f.close()
+    else:
+        return ret
