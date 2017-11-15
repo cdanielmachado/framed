@@ -357,6 +357,7 @@ def write_model_to_file(model, filename, inf=1000):
         model (CBModel): model
         filename (str): The name or full pathname of the file where the BioOpt model is to be written.
         inf (float): Number which would be used for constraints with infinite bounds
+
     """
     ret = "-REACTIONS\n"
     for r in model.reactions.itervalues():

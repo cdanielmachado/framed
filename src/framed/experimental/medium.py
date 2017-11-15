@@ -38,12 +38,14 @@ def minimal_medium(model, exchange_reactions=None, direction=-1, min_mass_weight
     solver = solver_instance(model)
 
     # TODO: 2_program_MMsolver.prof
+    #bck_bounds = {r_id: (model.reactions[r_id].lb, model.reactions[r_id].ub) for r_id in exchange_reactions}
     if direction < 0:
         solver.set_lower_bounds({r_id: -max_uptake for r_id in exchange_reactions})
     else:
         solver.set_upper_bounds({r_id: max_uptake for r_id in exchange_reactions})
 
     solver.set_lower_bounds({model.biomass_reaction: min_growth})
+    #bck_bounds[model.biomass_reaction] = (model.reactions[model.biomass_reaction].lb, model.reactions[model.biomass_reaction].ub)
 
     for r_id in exchange_reactions:
         solver.add_variable('y_' + r_id, 0, 1, vartype=VarType.BINARY, update_problem=False)
