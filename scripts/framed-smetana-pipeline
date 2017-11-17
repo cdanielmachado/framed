@@ -323,13 +323,7 @@ def framed_smetana_pipeline():
                 env_inorganic.apply(community_interacting.merged, inplace=True)
 
                 rxn_com_minimal_candidates = rxn_com_external - rxn_com_inorganic
-                rxn_com_minimal, sol = minimal_medium(community_interacting.merged, exchange_reactions=rxn_com_minimal_candidates, validate=validate, min_mass_weight=min_mass_weight)
-                rxn_com_minimal = rxn_com_minimal | rxn_com_inorganic
-                env_com_minimal = framed.Environment.from_reactions(rxn_com_minimal, max_uptake=max_uptake)
-                met_com_minimal = {m.original_metabolite for ee in
-                                   community_interacting.organisms_exchange_reactions.itervalues() for m in
-                                   ee.itervalues() if m.community_exchange_reaction in rxn_com_minimal}
-
+                rxn_com_minimal, sol = minimal_medium(community_interacting.merged, max_compounds=1, exchange_reactions=rxn_com_minimal_candidates, validate=validate, min_mass_weight=min_mass_weight)
                 row["mmedia_status"] = status_codes[sol.status]
                 if sol.status != Status.OPTIMAL:
                     logger.log("Failed to find media for community")
@@ -337,6 +331,12 @@ def framed_smetana_pipeline():
                     output.write(row_string(row))
                     output.flush()
                     continue
+
+                rxn_com_minimal = rxn_com_minimal | rxn_com_inorganic
+                env_com_minimal = framed.Environment.from_reactions(rxn_com_minimal, max_uptake=max_uptake)
+                met_com_minimal = {m.original_metabolite for ee in
+                                   community_interacting.organisms_exchange_reactions.itervalues() for m in
+                                   ee.itervalues() if m.community_exchange_reaction in rxn_com_minimal}
 
                 env_com_minimal.apply(community_interacting.merged, inplace=True)
 

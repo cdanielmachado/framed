@@ -141,7 +141,7 @@ class Environment(MutableMapping):
 
         env = Environment()
 
-        for r_id, mets in model.get_exchange_reactions().iteritems():
+        for r_id in model.get_exchange_reactions():
             rxn = model.reactions[r_id]
             env[r_id] = rxn.lb, rxn.ub
 
