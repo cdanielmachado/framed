@@ -24,7 +24,7 @@ def nullspace(M, eps=1e-12):
 
 
 def looplessFBA(model, objective=None, minimize=False, constraints=None, internal=None, solver=None, get_values=True):
-    """ Run a loopless FBA simulation (aka Energy Balance Analysis (EBA) as defined in Beard et al, 2002):
+    """ Run a loopless FBA simulation (as defined in Schellenberger et al, 2011):
 
     Arguments:
         model (CBModel): a constraint-based model
