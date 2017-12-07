@@ -94,13 +94,13 @@ class Solution:
         values = self.values.items()
 
         if sort:
-            values.sort(key= lambda (_, val): abs(val), reverse=True)
+            values.sort(key= lambda r_id_val: abs(r_id_val[1]), reverse=True)
 
         if not zeros:
-            values = filter(lambda (r_id, val): abs(val) > abstol, values)
+            values = filter(lambda r_id_val: abs(r_id_val[1]) > abstol, values)
 
         if pattern:
-            values = filter(lambda (r_id, val): pattern in r_id, values)
+            values = filter(lambda r_id_val: pattern in r_id_val[0], values)
 
         entries = ['{:<12} {: .6g}'.format(r_id, val) for (r_id, val) in values]
 
@@ -123,10 +123,10 @@ class Solution:
         values = self.shadow_prices.items()
 
         if not zeros:
-            values = filter(lambda (m_id, val): abs(val) > abstol, values)
+            values = filter(lambda m_id_val: abs(m_id_val[1]) > abstol, values)
 
         if pattern:
-            values = filter(lambda (m_id, val): pattern in m_id, values)
+            values = filter(lambda m_id_val: pattern in m_id_val[0], values)
 
         entries = ['{:<12} {: .6g}'.format(m_id, val) for (m_id, val) in values]
 
@@ -150,10 +150,10 @@ class Solution:
         values = self.reduced_costs.items()
 
         if not zeros:
-            values = filter(lambda (r_id, val): abs(val) > abstol, values)
+            values = filter(lambda r_id_val: abs(r_id_val[1]) > abstol, values)
 
         if pattern:
-            values = filter(lambda (r_id, val): pattern in r_id, values)
+            values = filter(lambda r_id_val: pattern in r_id_val[0], values)
 
         entries = ['{:<12} {: .6g}'.format(r_id, val) for (r_id, val) in values]
 
@@ -198,17 +198,17 @@ class Solution:
         
         if percentage:
             turnover = sum(map(lambda x: x[1], flux_in))
-            flux_in = map(lambda (a, b, c): (a, b / turnover, c), flux_in)
-            flux_out = map(lambda (a, b, c): (a, b / turnover, c), flux_out)
+            flux_in = map(lambda a_b_c: (a_b_c[0], a_b_c[1] / turnover, a_b_c[2]), flux_in)
+            flux_out = map(lambda a_b_c: (a_b_c[0], a_b_c[1] / turnover, a_b_c[2]), flux_out)
             print_format = '[ {} ] {:<12} {:< 10.2%}'
         else:
             print_format = '[ {} ] {:<12} {:< 10.6g}'
 
         if equations:
             print_format += '\t{}'
-            lines = map(lambda (a, b, c): print_format.format(c, a, b, model.print_reaction(a, metabolite_names=True)[len(a)+1:]), flux_in + flux_out)
+            lines = map(lambda a_b_c: print_format.format(a_b_c[2], a_b_c[0], a_b_c[1], model.print_reaction(a_b_c[0], metabolite_names=True)[len(a_b_c[0])+1:]), flux_in + flux_out)
         else:
-            lines = map(lambda (a, b, c): print_format.format(c, a, b), flux_in + flux_out)           
+            lines = map(lambda a_b_c: print_format.format(a_b_c[2], a_b_c[0], a_b_c[1]), flux_in + flux_out)
         
         return '\n'.join(lines)
 
@@ -249,13 +249,13 @@ class Solution:
         values = self.get_metabolites_turnover(model).items()
 
         if sort:
-            values.sort(key=lambda (_, val): abs(val), reverse=True)
+            values.sort(key=lambda key_val: abs(key_val[1]), reverse=True)
 
         if not zeros:
-            values = filter(lambda (_, val): abs(val) > abstol, values)
+            values = filter(lambda key_val: abs(key_val[1]) > abstol, values)
 
         if pattern:
-            values = filter(lambda (key, val): pattern in key, values)
+            values = filter(lambda key_val: pattern in key_val[0], values)
 
         entries = ['{:<12} {: .6g}'.format(key, val) for (key, val) in values]
 

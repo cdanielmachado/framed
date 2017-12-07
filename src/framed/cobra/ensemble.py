@@ -61,7 +61,7 @@ def simulate_ensemble(ensemble, method='FBA', constraints=None, solver=None, get
     """
 
     if method not in ['FBA', 'pFBA']:
-        print 'Method not available:', method
+        print ('Method not available:', method)
         return
 
     if not solver:
@@ -138,7 +138,7 @@ def load_ensemble(inputfile, **kwargs):
     sizes = map(len, reaction_states.values())
 
     if len(set(sizes)) > 1:
-        print 'Error: reactions have different ensemble size'
+        print ('Error: reactions have different ensemble size')
         return
 
     return EnsembleModel(model, sizes[0], reaction_states)

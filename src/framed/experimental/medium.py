@@ -146,5 +146,5 @@ def validate_solution(model, medium, exchange_reactions, direction, min_growth, 
     sol = FBA(model, constraints=constraints)
 
     if sol.fobj < min_growth:
-        print 'Solution appears to be invalid.'
+        print ('Solution appears to be invalid.')
         warn('Solution appears to be invalid.')

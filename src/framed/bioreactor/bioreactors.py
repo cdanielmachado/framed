@@ -5,7 +5,7 @@
 """
 __author__ = 'kaizhuang'
 
-from base import Bioreactor
+from .base import Bioreactor
 from ..solvers.solver import Status
 
 # value definition for oxygen_availability flag

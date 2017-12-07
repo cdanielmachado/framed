@@ -4,7 +4,7 @@ Author: Daniel Machado
    
 """
 
-from simulation import FBA, pFBA, MOMA, lMOMA, ROOM
+from .simulation import FBA, pFBA, MOMA, lMOMA, ROOM
 
 
 def gene_deletion(model, genes, method='FBA', reference=None, constraints=None, solver=None, compute_silent_deletions=False):

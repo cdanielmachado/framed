@@ -42,7 +42,7 @@ def sample_kinetic_model(model, size, parameters=None, distribution='normal', di
         _, v = find_steady_state(model, parameters=new_params)
         if v:
             p_sample.append(p)
-            v_sample.append(v.values())
+            v_sample.append(list(v.values()))
 
     fail_rate = 100 * (size - len(v_sample))/float(size)
 

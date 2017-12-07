@@ -7,8 +7,8 @@ This module implements methods to compute gene and reaction essentiality.
 
 from ..solvers import solver_instance
 from ..solvers.solver import Status
-from simulation import FBA
-from deletion import gene_deletion, reaction_deletion
+from .simulation import FBA
+from .deletion import gene_deletion, reaction_deletion
 
 
 def essential_genes(model, min_growth=0.01, constraints=None, solver=None):

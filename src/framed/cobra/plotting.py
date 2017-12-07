@@ -4,8 +4,8 @@ Author: Daniel Machado
    
 """
 
-from variability import flux_envelope
-from simulation import FBA
+from .variability import flux_envelope
+from .simulation import FBA
 import matplotlib.pyplot as plt
 import numpy as np
 

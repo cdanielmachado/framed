@@ -42,8 +42,8 @@ def run_calibration():
 
 
 def main():
-#    run_simulation_and_plot()
-    run_sampling()
+    run_simulation_and_plot()
+#    run_sampling()
 #    run_calibration()
 
 

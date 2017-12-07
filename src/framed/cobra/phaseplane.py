@@ -6,7 +6,7 @@ Author: Kai Zhuang
 
 """
 
-from simulation import FBA
+from .simulation import FBA
 from ..solvers import solver_instance
 from ..solvers.solver import Status
 import numpy

@@ -10,7 +10,7 @@ titer, and productivity.
 
 import numpy
 
-from base import *
+from .base import *
 from framed.bioreactor.dfba import dFBA
 from ..cobra.variability import production_envelope
 
@@ -124,7 +124,7 @@ def calculate_performance(strain, bioreactor, r_substrate, r_target, t0, tf, dt,
 
     # perform FBA simulation
     if verbose:
-        print 'Performing FBA simulation.'
+        print ('Performing FBA simulation.')
     if hasattr(strain, 'solver'):
         fba_solution = strain.solver.solve(strain.fba_objective, minimize=False, constraints=strain.fba_constraints)
     else:
@@ -150,7 +150,7 @@ def calculate_performance(strain, bioreactor, r_substrate, r_target, t0, tf, dt,
         dfba_solution = None
 
         if verbose:
-            print 'none growing'
+            print ('none growing')
 
     # if the strain grows but does not produce, set yield, titer, productivity to zero, and calculate growth from FBA
     elif v_target <= 10**-6:
@@ -166,7 +166,7 @@ def calculate_performance(strain, bioreactor, r_substrate, r_target, t0, tf, dt,
         dfba_solution = None
 
         if verbose:
-            print 'none producing'
+            print ('none producing')
 
     # if the strain both grows and produces, perform dFBA simulation, and calculate yield, titer, productivity
     else:
@@ -174,7 +174,7 @@ def calculate_performance(strain, bioreactor, r_substrate, r_target, t0, tf, dt,
         bioreactor.set_organisms([strain])
 
         if verbose:
-            print 'Performing dFBA simulation.'
+            print ('Performing dFBA simulation.')
         dfba_solution = dFBA(bioreactor, t0, tf, dt, initial_conditions, solver=dfba_solver, verbose=verbose)
 
         # calculate yield using dFBA solution if the method is known,

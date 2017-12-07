@@ -82,7 +82,7 @@ def remove_boundary_metabolites(model, tag=None):
         boundary = filter(lambda m_id: m_id.endswith(tag), model.metabolites)
     else:
         boundary = [m_id for m_id, met in model.metabolites.items() if met.boundary]
-
+    print(boundary)
     model.remove_metabolites(boundary)
 
 

@@ -47,9 +47,9 @@ def compare_fluxes(original, other, tolerance=1e-6, abstol=1e-9, sort=False, pat
     flux_right = [(r_id, other[r_id]) for r_id in only_right]
 
     if pattern is not None:
-        difference = filter(lambda (a, b): pattern in a, difference)
-        flux_left = filter(lambda (a, b): pattern in a, flux_left)
-        flux_right = filter(lambda (a, b): pattern in a, flux_right)
+        difference = filter(lambda x: pattern in x[0], difference)
+        flux_left = filter(lambda x: pattern in x[0], flux_left)
+        flux_right = filter(lambda x: pattern in x[0], flux_right)
 
     if sort:
         difference.sort(key=lambda x: x[1], reverse=True)
@@ -60,17 +60,17 @@ def compare_fluxes(original, other, tolerance=1e-6, abstol=1e-9, sort=False, pat
         if val > tolerance:
             x1 = original[r_id] if abs(original[r_id]) > abstol else 0
             x2 = other[r_id] if abs(other[r_id]) > abstol else 0
-            print '{: <16} {: < 10.3g} {: < 10.3g}'.format(r_id, x1, x2)
+            print ('{: <16} {: < 10.3g} {: < 10.3g}'.format(r_id, x1, x2))
 
     for r_id, val in flux_left:
         if abs(val) > tolerance:
             x = original[r_id] if abs(original[r_id]) > abstol else 0
-            print '{: <16} {: < 10.3g}   --'.format(r_id, x)
+            print ('{: <16} {: < 10.3g}   --'.format(r_id, x))
 
     for r_id, val in flux_right:
         if abs(val) > tolerance:
             x = other[r_id] if abs(other[r_id]) > abstol else 0
-            print '{: <16}   --       {: < 10.3g}'.format(r_id, x)
+            print ('{: <16}   --       {: < 10.3g}'.format(r_id, x))
 
 
 def compute_turnover(model, v):

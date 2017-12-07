@@ -146,7 +146,7 @@ def species_coupling_score(community, environment, min_growth=1.0, max_uptake=10
 
         previous_constraints = []
         donors_list = []
-        for i in xrange(n_solutions):
+        for i in range(n_solutions):
             sol = solver.solve(objective, minimize=True, get_values=True)
 
             if sol.status != Status.OPTIMAL:
@@ -301,7 +301,7 @@ def metabolite_production_score(community, environment=None, max_uptake=100, min
         solver.update()
 
         org_products = set()
-        for i in xrange(30000):
+        for i in range(30000):
             if not exchange_rxns:
                 break
 

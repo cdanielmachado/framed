@@ -164,7 +164,7 @@ class DynamicSystem(object):
             y.append(MdFBA_ode.y)
 
             if verbose:
-                print MdFBA_ode.t
+                print (MdFBA_ode.t)
 
         t = numpy.array(t)
         y = numpy.array(y)
@@ -177,7 +177,6 @@ class DynamicSystem(object):
         ** this is an abstract method, must be implemented for specific dynamic systems **
         """
         raise NotImplementedError
-
 
 class Bioreactor(Environment, DynamicSystem):
     """
