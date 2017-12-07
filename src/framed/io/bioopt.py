@@ -336,7 +336,7 @@ class BiooptParser(object):
                         del model.reactions[external_r_id].stoichiometry[m_external.id]
                 elif react_text:
                     warnings.warn_explicit(
-                        "Metabolite '{0}' from '{1}' section is not present in any reaction from '{2}' section".format(m.id, ext_m_name, react_name),
+                        "Metabolite '{0}' from '{1}' section is not present in any reaction from '{2}' section".format(m_external.id, ext_m_name, react_name),
                         BiooptParseWarning, filename=filename, lineno=ext_m_line+i+1)
         else:
             warnings.warn("Could not find '-EXTERNAL METABOLITES' section", BiooptParseWarning)
