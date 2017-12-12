@@ -82,10 +82,16 @@ kind = None
 ko_elements = None
 if args.ko_reactions != "unset":
     kind = "reactions"
-    ko_elements = args.ko_reactions if args.ko_reactions else [{r} for r in model.reactions]
+    if args.ko_reactions:
+        ko_elements = [set(x.strip() for x in re.split(",", ko_line) if x.strip()) for ko_line in open(args.ko_reactions)]
+    else:
+        ko_elements = [{r} for r in model.reactions]
 elif args.ko_genes != "unset":
     kind = "genes"
-    ko_elements = args.ko_genes if args.ko_genes else [{g} for g in model.genes]
+    if args.ko_genes:
+        ko_elements = [set(x.strip() for x in re.split(",", ko_line) if x.strip()) for ko_line in open(args.ko_genes)]
+    else:
+        ko_elements = [{g} for g in model.genes]
 
 #
 # Caclulate solution for wild-type
