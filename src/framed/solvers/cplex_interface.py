@@ -129,7 +129,7 @@ class CplexSolver(Solver):
                      '<': 'L',
                      '>': 'G'}
 
-        exprs = [SparsePair(ind=constr.keys(), val=constr.values()) for constr in lhs]
+        exprs = [SparsePair(ind=list(constr.keys()), val=list(constr.values())) for constr in lhs]
         senses = [map_sense[sense] for sense in senses]
 
         self.problem.linear_constraints.add(lin_expr=exprs,
@@ -207,13 +207,13 @@ class CplexSolver(Solver):
             model : CBModel
         """
 
-        var_ids = model.reactions.keys()
+        var_ids = list(model.reactions.keys())
         lbs = [rxn.lb for rxn in model.reactions.values()]
         ubs = [rxn.ub for rxn in model.reactions.values()]
         var_types = [VarType.CONTINUOUS] * len(var_ids)
         self.add_variables(var_ids, lbs, ubs, var_types)
 
-        constr_ids = model.metabolites.keys()
+        constr_ids = list(model.metabolites.keys())
         table = model.metabolite_reaction_lookup(force_recalculate=True)
         lhs = table.values()
         senses = ['='] * len(constr_ids)
