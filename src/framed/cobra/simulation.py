@@ -103,12 +103,12 @@ def pFBA(model, objective=None, minimize=False, constraints=None, reactions=None
     solver.remove_constraint('obj')
     solution.pre_solution = pre_solution
 
-    # if solution.status == Status.OPTIMAL:
-    #     for r_id in reactions:
-    #         if model.reactions[r_id].reversible:
-    #             pos, neg = r_id + '+', r_id + '-'
-    #             del solution.values[pos]
-    #             del solution.values[neg]
+    if solution.status == Status.OPTIMAL:
+        for r_id in reactions:
+            if model.reactions[r_id].reversible:
+                pos, neg = r_id + '+', r_id + '-'
+                del solution.values[pos]
+                del solution.values[neg]
 
     return solution
 
