@@ -178,7 +178,7 @@ def species_coupling_score(community, environment, min_growth=1.0, max_uptake=10
     return scores, extras
 
 
-def metabolite_uptake_score(community, environment, min_mass_weight=True, min_growth=1.0, max_uptake=100.0, abstol=1e-6, validate=False, n_solutions=100):
+def metabolite_uptake_score(community, environment=None, min_mass_weight=True, min_growth=1.0, max_uptake=100.0, abstol=1e-6, validate=False, n_solutions=100):
     """
     Calculate frequency of metabolite requirement for species growth
 
@@ -201,7 +201,9 @@ def metabolite_uptake_score(community, environment, min_mass_weight=True, min_gr
     interacting_community = community.copy(copy_models=False, interacting=True, create_biomass=False,
                                            merge_extracellular_compartments=False)
 
-    environment.apply(interacting_community.merged, inplace=True)
+    if environment:
+        environment.apply(interacting_community.merged, inplace=True)
+
     rxn2met = {ex.organism_reaction: ex.original_metabolite
                for org_exchanges in interacting_community.organisms_exchange_reactions.itervalues()
                for ex in org_exchanges.itervalues()}

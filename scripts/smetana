@@ -1,0 +1,212 @@
+#!/usr/bin/env python
+
+import argparse
+import textwrap
+import os
+import glob
+from framed import load_cbmodel, Community
+import pandas as pd
+from collections import OrderedDict
+from framed.community.smetana import mip_score, mro_score
+from framed.community.smetana import species_coupling_score, metabolite_production_score, metabolite_uptake_score
+
+
+SCORES = {
+    'mip',
+    'mop',
+    'scs',
+    'mus',
+    'mps',
+    'smetana'
+}
+
+
+def extract_id_from_filepath(filepath):
+    filename = os.path.basename(filepath)
+
+    if filename.endswith('.xml'):
+        organism_id = filename[:-4]
+    elif filename.endswith('.xml.gz'):
+        organism_id = filename[:-7]
+    else:
+        raise IOError('Unrecognized extension in file {}. Valid extensions are .xml and .xml.gz'.format(filename))
+
+    return organism_id
+
+
+def load_communities(filepath):
+    df = pd.read_csv(filepath, sep='\t', header=None)
+    comm_dict = OrderedDict((name, group[1].tolist()) for name, group in df.groupby(0))
+    return comm_dict
+
+
+def main(models, communities=None, scores=None, output=None, flavor=None, media=None, mediadb=None, verbose=False):
+
+    # load models
+
+    if len(models) == 1 and '*' in models[0]:
+        pattern = models[0]
+        models = glob.glob(pattern)
+        if len(models) == 0:
+            print "No files found: {}".format(pattern)
+            return
+
+    model_dict = OrderedDict()
+
+    if verbose:
+        print "Loading {} models...".format(len(models))
+
+    for filepath in models:
+        organism_id = extract_id_from_filepath(filepath)
+        model_dict[organism_id] = load_cbmodel(filepath, flavor=flavor)
+
+    # load communities
+
+    if communities is not None:
+        comm_dict = load_communities(communities)
+        print comm_dict
+    else:
+        comm_dict = {'community': model_dict.keys()}
+
+    # compute scores
+
+    if scores is None:
+        scores = SCORES
+    elif 'smetana' in scores:
+        scores.update({'scs', 'mps', 'mus'})
+
+    mip_data = []
+    mro_data = []
+    scs_data = []
+    mps_data = []
+    mus_data = []
+    smt_data = []
+
+    for comm_id, organisms in communities.items():
+
+        comm_models = [models[organism_id] for organism_id in organisms]
+        community = Community(comm_id, comm_models, copy_models=False) #TODO check if other parameters must be set
+        metabolites = {}
+
+        if 'mip' in scores:
+            mip = mip_score(community, environment=None)  # use media here!
+            mip_data.append((comm_id, mip))
+
+        if 'mro' in scores:
+            mro = mro_score(community, environment=None)  # use media here!
+            mro_data.append((comm_id, mro))
+
+        if 'scs' in scores:
+            scs, _ = species_coupling_score(community, environment=None)  # use media here!
+            for org1, values in scs.items():
+                for org2, value in values.items():
+                    scs_data.append((comm_id, org1, org2, value))
+
+        if 'mus' in scores:
+            mus, _ = metabolite_uptake_score(community, environment=None)  # use media here!
+            for org, values in mus.items():
+                metabolites.update(value.keys())
+                for met, value in values.items():
+                    mus_data.append((comm_id, org, met, value))
+
+        if 'mps' in scores:
+            mps, _ = metabolite_production_score(community, environment=None)  # use media here!
+            for org, values in mps.items():
+                for met, value in values.items():
+                    mps_data.append((comm_id, org, met, value))
+
+        if 'smetana' in scores:
+            for org1 in organisms:
+                for org2 in organisms:
+                    for met in sorted(metabolites):
+                        smt = scs[org1][org2] * mus[org1][met] * mps[org2][met]
+                        smt_data.append((comm_id, org1, org2, met, smt))
+
+    # export results
+
+    if output:
+        prefix = output + '_'
+    else:
+        prefix = ''
+
+    if 'mip' in scores:
+        df = pd.DataFrame(mip_data, columns=['community', 'score'])
+        df.to_csv(prefix + 'mip.tsv', sep='\t', index=False)
+
+    if 'mro' in scores:
+        df = pd.DataFrame(mro_data, columns=['community', 'score'])
+        df.to_csv(prefix + 'mro.tsv', sep='\t', index=False)
+
+    if 'scs' in scores:
+        df = pd.DataFrame(scs_data, columns=['community', 'receiver', 'donor', 'score'])
+        df.to_csv(prefix + 'scs.tsv', sep='\t', index=False)
+
+    if 'mus' in scores:
+        df = pd.DataFrame(mus_data, columns=['community', 'organism', 'compound', 'score'])
+        df.to_csv(prefix + 'mus.tsv', sep='\t', index=False)
+
+    if 'mps' in scores:
+        df = pd.DataFrame(mps_data, columns=['community', 'organism', 'compound', 'score'])
+        df.to_csv(prefix + 'mps.tsv', sep='\t', index=False)
+
+    if 'smetana' in scores:
+        df = pd.DataFrame(smt_data, columns=['community', 'receiver', 'donor', 'compound', 'score'])
+        df.to_csv(prefix + 'smetana.tsv', sep='\t', index=False)
+
+    if verbose:
+        print 'Done.'
+
+
+if __name__ == '__main__':
+
+    parser = argparse.ArgumentParser(description="Calculate SMETANA scores for one or multiple microbial communities.",
+                                     formatter_class=argparse.RawTextHelpFormatter)
+
+    parser.add_argument('models', metavar='MODELS', nargs='+',
+                        help="Multiple single-species models (can use wild-cards, for example: models/*.xml).")
+
+    parser.add_argument('-c', '--communities', metavar='COMMUNITIES.TSV', dest='communities',
+                        help=textwrap.dedent(
+        """
+        Run SMETANA for multiple (sub)communities.
+        The communities must be specified in a two-column tab-separated file with community and organism identifiers.
+        The organism identifiers should match the file names in the SBML files (without extension).
+        
+        Example:
+            community1\torganism1
+            community1\torganism2
+            community2\torganism1
+            community2\torganism3
+            
+        """
+    ))
+
+    parser.add_argument('-o', '--output', dest='output', help="Prefix for output file(s).")
+    parser.add_argument('--flavor', help="Expected SBML flavor of the input files.")
+    parser.add_argument('-m', '--media', dest='media', help="Run SMETANA for given media (one or more, comma-separated).")
+    parser.add_argument('--mediadb', help="Media database file")
+    parser.add_argument('-s', '--scores', dest='scores', help="Only run specified scores (one or more, comma-separated).")
+    parser.add_argument('-v', '--verbose', action='store_true', dest='verbose', help="Switch to verbose mode")
+
+    args = parser.parse_args()
+
+    if not args.scores:
+        scores = SCORES
+    else:
+        scores = set(args.algorithms.lower().split(','))
+        unknown = scores - SCORES
+        if unknown:
+            parser.error("Invalid algorithms {}. Valid values are: {}.".format(unknown, SCORES))
+
+    main(
+        models=args.models,
+        communities=args.communities,
+        scores=scores,
+        output=args.output,
+        flavor=args.flavor,
+        media=args.media,
+        mediadb=args.mediadb,
+        verbose=args.verbose,
+    )
+
+
