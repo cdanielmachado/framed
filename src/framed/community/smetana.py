@@ -101,7 +101,7 @@ def smetana_score(community, environment, report_zero_scores=False, min_mass_wei
     return scores, extras
 
 
-def species_coupling_score(community, environment, min_growth=1.0, max_uptake=100, n_solutions=100):
+def species_coupling_score(community, environment=None, min_growth=1.0, max_uptake=100, n_solutions=100):
     """
     Calculate frequency of community species dependency on each other
 
@@ -121,21 +121,30 @@ def species_coupling_score(community, environment, min_growth=1.0, max_uptake=10
     """
     interacting_community = community.copy(copy_models=False, interacting=True, create_biomass=False,
                                            merge_extracellular_compartments=False)
-    environment.apply(interacting_community.merged, inplace=True) # other values are copied from previous copy
+
+    if environment:
+        environment.apply(interacting_community.merged, inplace=True) # other values are copied from previous copy
 
     for b in interacting_community.organisms_biomass_reactions.itervalues():
         interacting_community.merged.reactions[b].lb = 0
 
     solver = solver_instance(interacting_community.merged)
+
     for org_id, rxns in interacting_community.organisms_reactions.iteritems():
         org_var = 'y_{}'.format(org_id)
         solver.add_variable(org_var, 0, 1, vartype=VarType.BINARY, update_problem=False)
-        for r_id in rxns:
+
+    solver.update()
+
+    for org_id, rxns in interacting_community.organisms_reactions.iteritems():
+        org_var = 'y_{}'.format(org_id)
+        for r_id in rxns:  # TODO: this applies to all reactions, so it should not use max_uptake as constraint
             lb = min_growth if r_id == interacting_community.organisms_biomass_reactions[org_id] else -max_uptake
             solver.add_constraint('c_{}_lb'.format(r_id), {r_id: 1, org_var: -lb}, '>', 0, update_problem=False)
             solver.add_constraint('c_{}_ub'.format(r_id), {r_id: 1, org_var: -max_uptake}, '<', 0, update_problem=False)
 
     solver.update()
+
     scores = {}
     extras = {'dependencies': {}}
 
@@ -178,7 +187,7 @@ def species_coupling_score(community, environment, min_growth=1.0, max_uptake=10
     return scores, extras
 
 
-def metabolite_uptake_score(community, environment=None, min_mass_weight=True, min_growth=1.0, max_uptake=100.0, abstol=1e-6, validate=False, n_solutions=100):
+def metabolite_uptake_score(community, environment=None, min_mass_weight=False, min_growth=1.0, max_uptake=100.0, abstol=1e-6, validate=False, n_solutions=100):
     """
     Calculate frequency of metabolite requirement for species growth
 
@@ -282,6 +291,11 @@ def metabolite_production_score(community, environment=None, max_uptake=100, min
     for org_id, exchanges in interacting_community.organisms_exchange_reactions.iteritems():
         org_var = 'y_{}'.format(org_id)
         solver.add_variable(org_var, 0, 1, vartype=VarType.BINARY, update_problem=False)
+
+    solver.update()
+
+    for org_id, exchanges in interacting_community.organisms_exchange_reactions.iteritems():
+        org_var = 'y_{}'.format(org_id)
         for r_id in exchanges:
             if r_id == interacting_community.organisms_biomass_reactions[org_id]:
                 lb = min_growth
@@ -291,6 +305,8 @@ def metabolite_production_score(community, environment=None, max_uptake=100, min
             ub = max_uptake if reactions[r_id].ub is None else reactions[r_id].ub
             solver.add_constraint('c_{}_lb'.format(r_id), {r_id: 1, org_var: -lb}, '>', 0, update_problem=False)
             solver.add_constraint('c_{}_ub'.format(r_id), {r_id: 1, org_var: -ub}, '<', 0, update_problem=False)
+
+    solver.update()
 
     scores = {}
     for org_id, exchange_rxns in community.organisms_exchange_reactions.iteritems():
@@ -303,27 +319,25 @@ def metabolite_production_score(community, environment=None, max_uptake=100, min
         solver.update()
 
         org_products = set()
-        for i in xrange(30000):
-            if not exchange_rxns:
-                break
+
+        while len(exchange_rxns) > 0:
 
             objective = {r_id: 1.0 for r_id in exchange_rxns}
             solution = solver.solve(objective, minimize=False)
+
             if solution.status != Status.OPTIMAL:
-                if i == 0: org_products = None
                 break
 
-            i_products = {r_id for r_id in exchange_rxns if solution.values[r_id] > abstol}
-            org_products = org_products.union(i_products)
-            exchange_rxns = exchange_rxns - i_products
+            products = {r_id for r_id in exchange_rxns if solution.values[r_id] > abstol}
 
-            if not i_products:
+            if not products:
                 break
 
-        if org_products is not None:
-            scores[org_id] = {rxn2met[r_id] for r_id in org_products}
-        else:
-            scores[org_id] = None
+            org_products = org_products.union(products)
+            exchange_rxns = exchange_rxns - products
+
+        scores[org_id] = {met: 1 if r_id in org_products else 0 for r_id, met in rxn2met.items()}
+
         solver.remove_constraint('SMETANA_Biomass')
 
     return scores, {}
@@ -448,7 +462,6 @@ def mro_score(community, environment=None, direction=-1, min_mass_weight=False, 
             raise RuntimeError('Failed to find a valid solution')
 
         individual_media[org_id] = {org_noninteracting_exch[r].original_metabolite for r in medium}
-
 
     pairwise = {(o1, o2): individual_media[o1] & individual_media[o2] for o1, o2 in combinations(community.organisms, 2)}
 
