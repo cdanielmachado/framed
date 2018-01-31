@@ -1,6 +1,6 @@
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.1048261.svg)](https://doi.org/10.5281/zenodo.1048261) [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0) [![PyPI version](https://badge.fury.io/py/framed.svg)](https://badge.fury.io/py/framed) [![Documentation Status](http://readthedocs.org/projects/framed/badge/?version=latest)](http://framed.readthedocs.io/en/latest/?badge=latest)
 
-![FRAMED](logo.png)
+![FRAMED](logo_300px.png)
 
 ## A python FRAmework for Metabolic ENgineering and Design
 
