@@ -243,15 +243,15 @@ def _load_reaction(reaction, sbml_model, exchange_detection_mode=None):
     if exchange_detection_mode == "unbalanced":
         sign = None
         is_exchange = True
-        for m_id, c in stoichiometry.iteritems():
+        for m_id, c in stoichiometry.items():
             if sign is None:
                 sign = c > 0
             else:
                 if sign != c > 0:
                     is_exchange = False
     elif exchange_detection_mode == "boundary":
-        products = {m_id for m_id, c in stoichiometry.iteritems() if c > 0}
-        reactants = {m_id for m_id, c in stoichiometry.iteritems() if c < 0}
+        products = {m_id for m_id, c in stoichiometry.items() if c > 0}
+        reactants = {m_id for m_id, c in stoichiometry.items() if c < 0}
         boundary_products = {m_id for m_id in products if sbml_model.getSpecies(m_id).getBoundaryCondition()}
         is_exchange = (boundary_products and not (products - boundary_products))
         if not is_exchange:

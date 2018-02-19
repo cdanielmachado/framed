@@ -220,17 +220,17 @@ class AttrOrderedDict(OrderedDict):
             super(AttrOrderedDict, self).__setattr__(name, value)
 
     def __dir__(self):
-        return dir(OrderedDict) + self.keys()
+        return dir(OrderedDict) + list(self.keys())
 
     def __copy__(self):
         my_copy = AttrOrderedDict()
-        for key, val in self.items():
+        for key, val in list(self.items()):
             my_copy[key] = copy(val)
         return my_copy
 
     def __deepcopy__(self, memo):
         my_copy = AttrOrderedDict()
-        for key, val in self.items():
+        for key, val in list(self.items()):
             my_copy[key] = deepcopy(val)
         return my_copy
 
@@ -351,7 +351,7 @@ class Model(object):
         if safe_delete:
             m_r_lookup = self.metabolite_reaction_lookup()
 
-        for m_id in id_list:
+        for m_id in list(id_list):
             if m_id in self.metabolites:
                 del self.metabolites[m_id]
             else:
