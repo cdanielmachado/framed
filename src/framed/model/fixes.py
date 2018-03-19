@@ -54,7 +54,7 @@ def fix_cobra_model(model, remove_boundary=True, set_reversibilty=True, use_infi
 # TODO: this approach doesn't work when a model has multiple external compartments
 def fix_sink_reactions(model):
     exchange_compartments = {}
-    for r in model.reactions.itervalues():
+    for r in list(model.reactions.values()):
 
         if not r.is_exchange: continue
 
@@ -66,8 +66,8 @@ def fix_sink_reactions(model):
             exchange_compartments[met.compartment].append(r.id)
 
     if exchange_compartments:
-        extracellular = max(exchange_compartments.iteritems(), key=lambda x: len(x[1]))[0]
-        for compartment, reactions in exchange_compartments.iteritems():
+        extracellular = max(exchange_compartments.item(), key=lambda x: len(x[1]))[0]
+        for compartment, reactions in exchange_compartments.items():
             if compartment == extracellular:
                 continue
 
