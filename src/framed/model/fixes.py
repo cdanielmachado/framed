@@ -95,12 +95,13 @@ def fix_reversibility(model):
         reaction.reversible = (reaction.lb is None or reaction.lb < 0)
 
 
+
 def clean_bounds(model, threshold=1000):
     """ Remove artificially large bounds (unbounded = no bounds). """
 
-    for reaction in model.reactions.values():
-        reaction.lb = reaction.lb if reaction.lb > -threshold else None
-        reaction.ub = reaction.ub if reaction.ub < threshold else None
+    for reaction in list(model.reactions.values()):
+        reaction.lb = reaction.lb if (reaction.lb is not None and reaction.lb > -threshold) else None
+        reaction.ub = reaction.ub if (reaction.ub is not None and reaction.ub < threshold) else None
 
 
 def clean_bigg_ids(model):
