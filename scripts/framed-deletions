@@ -25,7 +25,8 @@ parser.add_argument('model', help='Path to model. Type (framed, sbml, bioopt) of
 parser.add_argument('reference', nargs='?', help="Tab separated file with reference fluxes. If pFBA or FBA is entered the reference fluxes are calculated automatically")
 parser.add_argument('-r', action='store', nargs='?', default="unset", dest='ko_reactions', help="Comma separated file with reaction knock-out mutants. If this argument is used as a flag all the single reaction knock-out mutants are simulated")
 parser.add_argument('-g', action='store', nargs='?', default="unset", dest='ko_genes', help="Comma separated file with gene knock-out mutants. If this argument is used as a flag all the single gene knock-out mutants are simulated")
-parser.add_argument('-o', dest='output', help="Path to output file")
+parser.add_argument('-o|--output', dest='output', help="Path to output file")
+parser.add_argument('--objective', nargs='?', dest='objective', help="Name of the objective to optimize")
 parser.add_argument("--gpr", dest="gene_reaction_associations")
 parser.add_argument('--no-warnings', dest='no_warnings', action="store_true", help="Suppress warnings")
 args = parser.parse_args()
@@ -34,7 +35,7 @@ if args.no_warnings:
     warnings.simplefilter("ignore", UserWarning)
 
 if args.method not in {'FBA', 'pFBA', 'MOMA', 'lMOMA', 'ROOM'}:
-    raise RuntimeError("Not supported method '{}'".format(args.metod))
+    raise RuntimeError("Not supported method '{}'".format(args.method))
 #
 # Read model
 #
@@ -49,6 +50,13 @@ else:
     raise RuntimeError("Unrecognized model file format")
 solver = solver_instance(model)
 
+if args.objective:
+    if args.objective not in model.reactions:
+        raise RuntimeError("Objective '{}' could not be found in the model".format(args.objective))
+    objective = args.objective
+else:
+    objective = model.get_objective()
+
 #
 # Read reference fluxes
 #
@@ -56,12 +64,12 @@ reference_fluxes = None
 if args.method in {"lMOMA", "MOMA"}:
     if hasattr(args, "reference"):
         if args.reference == 'FBA':
-            sol = FBA(model, solver=solver)
+            sol = FBA(model, objective={objective: 1}, solver=solver)
             if sol.status != Status.OPTIMAL:
                 raise Exception("Failed to find optimal solution when calculating reference fluxes")
             reference_fluxes = sol.values
         elif args.reference == 'pFBA':
-            sol = pFBA(model, solver=solver)
+            sol = pFBA(model, objective={objective: 1}, solver=solver)
             reference_fluxes = sol.values
             if sol.status != Status.OPTIMAL:
                 raise Exception("Failed to find optimal solution when calculating reference fluxes")
@@ -82,19 +90,25 @@ kind = None
 ko_elements = None
 if args.ko_reactions != "unset":
     kind = "reactions"
-    ko_elements = args.ko_reactions if args.ko_reactions else [{r} for r in model.reactions]
+    if args.ko_reactions:
+        ko_elements = [set(x.strip() for x in re.split(",", ko_line) if x.strip()) for ko_line in open(args.ko_reactions)]
+    else:
+        ko_elements = [{r} for r in model.reactions]
 elif args.ko_genes != "unset":
     kind = "genes"
-    ko_elements = args.ko_genes if args.ko_genes else [{g} for g in model.genes]
+    if args.ko_genes:
+        ko_elements = [set(x.strip() for x in re.split(",", ko_line) if x.strip()) for ko_line in open(args.ko_genes)]
+    else:
+        ko_elements = [{g} for g in model.genes]
 
 #
 # Caclulate solution for wild-type
 #
 wt_sol = None
 if args.method == 'FBA':
-    wt_sol = FBA(model, solver=solver)
+    wt_sol = FBA(model, objective={objective: 1}, solver=solver)
 elif args.method == 'pFBA':
-    wt_sol = pFBA(model, solver=solver)
+    wt_sol = pFBA(model, objective={objective: 1}, solver=solver)
 elif args.method == 'MOMA':
     wt_sol = MOMA(model, reference_fluxes, solver=solver)
 elif args.method == 'lMOMA':

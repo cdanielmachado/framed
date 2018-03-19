@@ -34,10 +34,10 @@ def default_fixes(model):
     remove_boundary_metabolites(model)
     fix_reversibility(model)
     clean_bounds(model)
-    fix_sink_reactions(model)
+#    fix_sink_reactions(model)
 
 
-def fix_cobra_model(model, remove_boundary=True, set_reversibilty=True, use_infinity=True, clean_ids=True, fix_sinks=True):
+def fix_cobra_model(model, remove_boundary=True, set_reversibilty=True, use_infinity=True, clean_ids=True, fix_sinks=False):
 
     if remove_boundary:
         remove_boundary_metabolites(model, tag='_b')
@@ -51,9 +51,11 @@ def fix_cobra_model(model, remove_boundary=True, set_reversibilty=True, use_infi
         fix_sink_reactions(model)
 
 
+# TODO: this approach doesn't work when a model has multiple external compartments
 def fix_sink_reactions(model):
     exchange_compartments = {}
-    for r in iter(model.reactions.values()):
+    for r in model.reactions.itervalues():
+
         if not r.is_exchange: continue
 
         for m_id in r.stoichiometry:
@@ -64,8 +66,8 @@ def fix_sink_reactions(model):
             exchange_compartments[met.compartment].append(r.id)
 
     if exchange_compartments:
-        extracellular = max(exchange_compartments.items(), key=lambda x: len(x[1]))[0]
-        for compartment, reactions in exchange_compartments.items():
+        extracellular = max(exchange_compartments.iteritems(), key=lambda x: len(x[1]))[0]
+        for compartment, reactions in exchange_compartments.iteritems():
             if compartment == extracellular:
                 continue
 
@@ -82,23 +84,23 @@ def remove_boundary_metabolites(model, tag=None):
         boundary = filter(lambda m_id: m_id.endswith(tag), model.metabolites)
     else:
         boundary = [m_id for m_id, met in model.metabolites.items() if met.boundary]
-    print(boundary)
+
     model.remove_metabolites(boundary)
 
 
 def fix_reversibility(model):
     """ Make reaction reversibility consistent with the bounds. """
 
-    for reaction in list(model.reactions.values()):
+    for reaction in model.reactions.values():
         reaction.reversible = (reaction.lb is None or reaction.lb < 0)
 
 
 def clean_bounds(model, threshold=1000):
     """ Remove artificially large bounds (unbounded = no bounds). """
 
-    for reaction in list(model.reactions.values()):
-        reaction.lb = reaction.lb if (reaction.lb is not None and reaction.lb > -threshold) else None
-        reaction.ub = reaction.ub if (reaction.ub is not None and reaction.ub < threshold) else None
+    for reaction in model.reactions.values():
+        reaction.lb = reaction.lb if reaction.lb > -threshold else None
+        reaction.ub = reaction.ub if reaction.ub < threshold else None
 
 
 def clean_bigg_ids(model):
@@ -111,13 +113,13 @@ def clean_bigg_ids(model):
         del ord_dict[key]
         ord_dict[new_key] = item
 
-    for m_id, metabolite in list(model.metabolites.items()):
+    for m_id, metabolite in model.metabolites.items():
         metabolite.id = clean(m_id)
         key_replace(model.metabolites, m_id, metabolite.id)
 
-    for r_id, reaction in list(model.reactions.items()):
+    for r_id, reaction in model.reactions.items():
         reaction.id = clean(r_id)
         key_replace(model.reactions, r_id, reaction.id)
 
-        for m_id in list(reaction.stoichiometry.keys()):
+        for m_id in reaction.stoichiometry.keys():
             key_replace(reaction.stoichiometry, m_id, clean(m_id))
