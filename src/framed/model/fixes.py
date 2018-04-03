@@ -34,10 +34,10 @@ def default_fixes(model):
     remove_boundary_metabolites(model)
     fix_reversibility(model)
     clean_bounds(model)
-    fix_sink_reactions(model)
+#    fix_sink_reactions(model)
 
 
-def fix_cobra_model(model, remove_boundary=True, set_reversibilty=True, use_infinity=True, clean_ids=True, fix_sinks=True):
+def fix_cobra_model(model, remove_boundary=True, set_reversibilty=True, use_infinity=True, clean_ids=True, fix_sinks=False):
 
     if remove_boundary:
         remove_boundary_metabolites(model, tag='_b')
@@ -51,9 +51,11 @@ def fix_cobra_model(model, remove_boundary=True, set_reversibilty=True, use_infi
         fix_sink_reactions(model)
 
 
+# TODO: this approach doesn't work when a model has multiple external compartments
 def fix_sink_reactions(model):
     exchange_compartments = {}
     for r in model.reactions.itervalues():
+
         if not r.is_exchange: continue
 
         for m_id in r.stoichiometry:

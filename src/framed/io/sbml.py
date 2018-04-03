@@ -290,7 +290,9 @@ def _load_cbmodel(sbml_model, flavor, exchange_detection_mode=None, load_gprs=Tr
     if exchange_detection_mode is None:
         if flavor in {Flavor.COBRA, Flavor.BIGG}:
             exchange_detection_mode = re.compile('^R_EX')
-        elif flavor in {Flavor.COBRA_OTHER, Flavor.SEED}:
+        elif flavor in {Flavor.SEED}:
+            exchange_detection_mode = re.compile('^EX_cpd')
+        elif flavor in {Flavor.COBRA_OTHER}:
             exchange_detection_mode = 'boundary'
         elif flavor in {Flavor.FBC2}:
             exchange_detection_mode = 'unbalanced'
@@ -474,7 +476,7 @@ def _parse_fbc_association(gpr_assoc, reaction_id):
                         w = "Gene association for reaction '{}' is not DNF".format(reaction_id)
                         warnings.warn(w, SyntaxWarning)
                         parsing_error = True
-            elif item.isGeneProductRef:
+            elif item.isGeneProductRef():
                 protein.genes.append(item.getGeneProduct())
             else:
                 w = "Gene association for reaction '{}' is not DNF".format(reaction_id)

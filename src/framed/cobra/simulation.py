@@ -41,12 +41,13 @@ def FBA(model, objective=None, minimize=False, constraints=None, solver=None, ge
     return solution
 
 
-def pFBA(model, objective=None, minimize=False, constraints=None, reactions=None, solver=None):
+def pFBA(model, objective=None, obj_frac=None, minimize=False, constraints=None, reactions=None, solver=None):
     """ Run a parsimonious Flux Balance Analysis (pFBA) simulation:
     
     Arguments:
         model (CBModel): a constraint-based model
         objective (dict): objective coefficients (optional)
+        obj_frac (float): require only a fraction of the main objective during the flux minimization step (optional)
         minimize (bool): sense of optimization (maximize by default)
         constraints (dict: environmental or additional constraints (optional)
         reactions (list): list of reactions to be minimized (optional, default: all)
@@ -67,7 +68,10 @@ def pFBA(model, objective=None, minimize=False, constraints=None, reactions=None
     if pre_solution.status != Status.OPTIMAL:
         return pre_solution
 
-    solver.add_constraint('obj', objective, '=', pre_solution.fobj)
+    if obj_frac is None:
+        solver.add_constraint('obj', objective, '=', pre_solution.fobj)
+    else:
+        solver.add_constraint('obj', objective, '>', obj_frac * pre_solution.fobj)
 
     if not reactions:
         reactions = model.reactions.keys()
