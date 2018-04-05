@@ -4,16 +4,16 @@ import argparse
 import textwrap
 import os
 import glob
-from framed import load_cbmodel, Community
+from framed import load_cbmodel, Community, Environment
 import pandas as pd
 from collections import OrderedDict
 from framed.community.smetana import mip_score, mro_score
 from framed.community.smetana import species_coupling_score, metabolite_production_score, metabolite_uptake_score
-
+from framed.experimental.medium import load_media_db
 
 SCORES = {
     'mip',
-    'mop',
+    'mro',
     'scs',
     'mus',
     'mps',
@@ -61,7 +61,11 @@ def main(models, communities=None, scores=None, output=None, flavor=None, media=
 
     for filepath in models:
         organism_id = extract_id_from_filepath(filepath)
-        model_dict[organism_id] = load_cbmodel(filepath, flavor=flavor)
+        model = load_cbmodel(filepath, flavor=flavor)
+        model_dict[organism_id] = model
+        model.id = organism_id
+        if 'R_ATPM' in model.reactions:
+            model.reactions.R_ATPM.lb = 0
 
     # load communities
 
@@ -69,7 +73,15 @@ def main(models, communities=None, scores=None, output=None, flavor=None, media=
         comm_dict = load_communities(communities)
         print comm_dict
     else:
-        comm_dict = {'community': model_dict.keys()}
+        comm_dict = {'all': model_dict.keys()}
+
+    # load media
+
+    if media:
+        media = media.split(',')
+        media_db = load_media_db(mediadb)
+    else:
+        media = [None]
 
     # compute scores
 
@@ -89,41 +101,75 @@ def main(models, communities=None, scores=None, output=None, flavor=None, media=
 
         comm_models = [model_dict[organism_id] for organism_id in organisms]
         community = Community(comm_id, comm_models, copy_models=False) #TODO check if other parameters must be set
-        metabolites = {}
 
-        if 'mip' in scores:
-            mip, _ = mip_score(community, environment=None)  # use media here!
-            mip_data.append((comm_id, mip))
+        for medium in media:
 
-        if 'mro' in scores:
-            mro, _ = mro_score(community, environment=None)  # use media here!
-            mro_data.append((comm_id, mro))
+            if medium:
+                env = Environment.from_compounds(media_db[medium], exchange_format="'R_EX_M_{}_e_pool'")
+                medium_id = medium
+            else:
+                env = Environment.complete(community.merged)
+                medium_id = 'complete'
 
-        if 'scs' in scores:
-            scs, _ = species_coupling_score(community, environment=None)  # use media here!
-            for org1, values in scs.items():
-                for org2, value in values.items():
-                    scs_data.append((comm_id, org1, org2, value))
+            metabolites = set()
 
-        if 'mus' in scores:
-            mus, _ = metabolite_uptake_score(community, environment=None)  # use media here!
-            for org, values in mus.items():
-                metabolites.update(values.keys())
-                for met, value in values.items():
-                    mus_data.append((comm_id, org, met, value))
+            if 'mip' in scores:
+                mip, _ = mip_score(community, environment=env)
+                if mip is None:
+                    mip_data.append((comm_id, medium_id, 'Failed'))
+                else:
+                    mip_data.append((comm_id, medium_id, mip))
 
-        if 'mps' in scores:
-            mps, _ = metabolite_production_score(community, environment=None)  # use media here!
-            for org, values in mps.items():
-                for met, value in values.items():
-                    mps_data.append((comm_id, org, met, value))
+            if 'mro' in scores:
+                mro, _ = mro_score(community, environment=env)
+                if mro is None:
+                    mro_data.append((comm_id, medium_id, 'Failed'))
+                else:
+                    mro_data.append((comm_id, medium_id, mro))
 
-        if 'smetana' in scores:
-            for org1 in organisms:
-                for org2 in organisms:
-                    for met in sorted(metabolites):
-                        smt = scs[org1][org2] * mus[org1][met] * mps[org2][met]
-                        smt_data.append((comm_id, org1, org2, met, smt))
+            if 'scs' in scores:
+                scs, _ = species_coupling_score(community, environment=env)
+
+                for org1, values in scs.items():
+                    if values is None:
+                        scs_data.append((comm_id, medium_id, org1, 'Failed', 'Failed'))
+                    else:
+                        for org2, value in values.items():
+                            scs_data.append((comm_id, medium_id, org1, org2, value))
+
+            if 'mus' in scores:
+                mus, _ = metabolite_uptake_score(community, environment=env)
+
+                for org, values in mus.items():
+                    if values is None:
+                        mus_data.append((comm_id, medium_id, org, 'Failed', 'Failed'))
+                    else:
+                        metabolites.update(values.keys())
+                        for met, value in values.items():
+                            mus_data.append((comm_id, medium_id, org, met, value))
+
+            if 'mps' in scores:
+                mps, _ = metabolite_production_score(community, environment=env)
+
+                for org, values in mps.items():
+                    if values is None:
+                        mps_data.append((comm_id, medium_id, org, 'Failed', 'Failed'))
+                    else:
+                        for met, value in values.items():
+                            mps_data.append((comm_id, medium_id, org, met, value))
+
+            if 'smetana' in scores:
+                for org1 in organisms:
+                    for org2 in organisms:
+                        if org1 == org2:
+                            continue
+                        if scs[org1] is None or mus[org1] is None or mps[org2] is None:
+                            smt_data.append((comm_id, medium_id, org1, org2, 'Failed', 'Failed'))
+                        else:
+                            for met in sorted(metabolites):
+                                smt = scs[org1][org2] * mus[org1][met] * mps[org2][met]
+                                if smt > 0:
+                                    smt_data.append((comm_id, medium_id, org1, org2, met, smt))
 
     # export results
 
@@ -133,27 +179,27 @@ def main(models, communities=None, scores=None, output=None, flavor=None, media=
         prefix = ''
 
     if 'mip' in scores:
-        df = pd.DataFrame(mip_data, columns=['community', 'score'])
+        df = pd.DataFrame(mip_data, columns=['community', 'medium', 'score'])
         df.to_csv(prefix + 'mip.tsv', sep='\t', index=False)
 
     if 'mro' in scores:
-        df = pd.DataFrame(mro_data, columns=['community', 'score'])
+        df = pd.DataFrame(mro_data, columns=['community', 'medium', 'score'])
         df.to_csv(prefix + 'mro.tsv', sep='\t', index=False)
 
     if 'scs' in scores:
-        df = pd.DataFrame(scs_data, columns=['community', 'receiver', 'donor', 'score'])
+        df = pd.DataFrame(scs_data, columns=['community', 'medium', 'receiver', 'donor', 'score'])
         df.to_csv(prefix + 'scs.tsv', sep='\t', index=False)
 
     if 'mus' in scores:
-        df = pd.DataFrame(mus_data, columns=['community', 'organism', 'compound', 'score'])
+        df = pd.DataFrame(mus_data, columns=['community', 'medium', 'organism', 'compound', 'score'])
         df.to_csv(prefix + 'mus.tsv', sep='\t', index=False)
 
     if 'mps' in scores:
-        df = pd.DataFrame(mps_data, columns=['community', 'organism', 'compound', 'score'])
+        df = pd.DataFrame(mps_data, columns=['community', 'medium', 'organism', 'compound', 'score'])
         df.to_csv(prefix + 'mps.tsv', sep='\t', index=False)
 
     if 'smetana' in scores:
-        df = pd.DataFrame(smt_data, columns=['community', 'receiver', 'donor', 'compound', 'score'])
+        df = pd.DataFrame(smt_data, columns=['community', 'medium', 'receiver', 'donor', 'compound', 'score'])
         df.to_csv(prefix + 'smetana.tsv', sep='\t', index=False)
 
     if verbose:
@@ -186,12 +232,15 @@ if __name__ == '__main__':
 
     parser.add_argument('-o', '--output', dest='output', help="Prefix for output file(s).")
     parser.add_argument('--flavor', help="Expected SBML flavor of the input files.")
-#    parser.add_argument('-m', '--media', dest='media', help="Run SMETANA for given media (one or more, comma-separated).")
-#    parser.add_argument('--mediadb', help="Media database file")
+    parser.add_argument('-m', '--media', dest='media', help="Run SMETANA for given media (one or more, comma-separated).")
+    parser.add_argument('--mediadb', help="Media database file")
     parser.add_argument('-s', '--scores', dest='scores', help="Only run specified scores (one or more, comma-separated).")
     parser.add_argument('-v', '--verbose', action='store_true', dest='verbose', help="Switch to verbose mode")
 
     args = parser.parse_args()
+
+    if args.media and not args.mediadb:
+        parser.error('Please provide media library file with --mediadb')
 
     if not args.scores:
         scores = SCORES
@@ -207,8 +256,8 @@ if __name__ == '__main__':
         scores=scores,
         output=args.output,
         flavor=args.flavor,
-#        media=args.media,
-#        mediadb=args.mediadb,
+        media=args.media,
+        mediadb=args.mediadb,
         verbose=args.verbose,
     )
 

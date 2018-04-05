@@ -3,6 +3,16 @@ from framed.solvers import solver_instance
 from framed.solvers.solver import VarType, Status
 from warnings import warn
 from framed.experimental.elements import molecular_weight
+import pandas as pd
+
+
+def load_media_db(filename, sep='\t', medium_col='medium', compound_col='compound'):
+    """ Load media library file. """
+
+    data = pd.read_csv(filename, sep=sep)
+    media_db = data[[medium_col, compound_col]].groupby(medium_col).agg(lambda x: list(x))
+
+    return media_db[compound_col].to_dict()
 
 
 def minimal_medium(model, exchange_reactions=None, direction=-1, min_mass_weight=False, min_growth=1,

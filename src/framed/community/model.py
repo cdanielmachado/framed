@@ -11,11 +11,11 @@ class CommunityNameMapping(object):
     def __init__(self, original_reaction=None, organism_reaction=None, original_metabolite=None,
                  organism_metabolite=None, extracellular_metabolite=None, community_exchange_reaction=None):
         """
-        This class is used to represent mapping between original and merged community model metabolites andreactions
+        This class is used to represent mapping between original and merged community model metabolites and reactions
 
         Args:
             original_reaction (str): Name of reaction in original model
-            organism_reaction (str): Name of reaction in merged community model 
+            organism_reaction (str): Name of reaction in merged community model
             original_metabolite (str): Name of metabolite in original model
             organism_metabolite (str): Name of metabolite in merged community model
             extracellular_metabolite (str): Name of "common environment" metabolite in merged community model
