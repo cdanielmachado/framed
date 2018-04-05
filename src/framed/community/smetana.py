@@ -9,7 +9,7 @@ from itertools import combinations, chain
 from warnings import warn
 
 
-def species_coupling_score(community, environment=None, min_growth=0.1, n_solutions=100):
+def species_coupling_score(community, environment=None, min_growth=0.1, n_solutions=100, verbose=True):
     """
     Calculate frequency of community species dependency on each other
 
@@ -91,6 +91,8 @@ def species_coupling_score(community, environment=None, min_growth=0.1, n_soluti
             scores[org_id] = {o: donors_counter[o]/donors_list_n for o in other_biomasses}
             extras['dependencies'][org_id] = donors_list
         else:
+            if verbose:
+                warn('SCS: Failed to find a solution for growth of ' + org_id)
             scores[org_id] = None
             extras['dependencies'][org_id] = None
 
@@ -98,7 +100,7 @@ def species_coupling_score(community, environment=None, min_growth=0.1, n_soluti
 
 
 def metabolite_uptake_score(community, environment=None, min_mass_weight=False, min_growth=0.1,
-                            max_uptake=10.0, abstol=1e-6, validate=False, n_solutions=100):
+                            max_uptake=10.0, abstol=1e-6, validate=False, n_solutions=100, verbose=True):
     """
     Calculate frequency of metabolite requirement for species growth
 
@@ -146,6 +148,8 @@ def metabolite_uptake_score(community, environment=None, min_mass_weight=False, 
                               for ex, cnm in exchange_rxns.items()}
             extras['dependencies'][org_id] = medium_list
         else:
+            if verbose:
+                warn('MUS: Failed to find a minimal growth medium for ' + org_id)
             scores[org_id] = None
             extras['dependencies'][org_id] = None
 
@@ -181,7 +185,7 @@ def metabolite_production_score(community, environment=None):
     extras = {}
     for org_id, exchange_rxns in community.organisms_exchange_reactions.items():
         scores[org_id] = {}
-        scores[org_id] = {}
+        extras[org_id] = {}
 
         for r_id, cnm in exchange_rxns.items():
             sol = solver.solve(linear={r_id: 1}, minimize=False, get_values=False)
@@ -191,7 +195,8 @@ def metabolite_production_score(community, environment=None):
     return scores, extras
 
 
-def mip_score(community, environment=None, min_mass_weight=False, min_growth=1, direction=-1, max_uptake=100, validate=False):
+def mip_score(community, environment=None, min_mass_weight=False, min_growth=0.1, direction=-1, max_uptake=10,
+              validate=False, verbose=True):
     """
     Implements the metabolic interaction potential (MIP) score as defined in (Zelezniak et al, 2015).
 
@@ -201,8 +206,8 @@ def mip_score(community, environment=None, min_mass_weight=False, min_growth=1, 
         direction (int): direction of uptake reactions (negative or positive, default: -1)
         extracellular_id (str): extracellular compartment id
         min_mass_weight (bool): minimize by molecular weight of nutrients (default: False)
-        min_growth (float): minimum growth rate (default: 1)
-        max_uptake (float): maximum uptake rate (default: 100)
+        min_growth (float): minimum growth rate (default: 0.1)
+        max_uptake (float): maximum uptake rate (default: 10)
         validate (bool): validate solution using FBA (for debugging purposes, default: False)
 
     Returns:
@@ -232,7 +237,8 @@ def mip_score(community, environment=None, min_mass_weight=False, min_growth=1, 
                                                  max_uptake=max_uptake, validate=validate)
 
     if noninteracting_medium is None:
-        warn('MIP: Failed to find a valid solution for non-interacting community')
+        if verbose:
+            warn('MIP: Failed to find a valid solution for non-interacting community')
         return None, None
     else:
         score = len(noninteracting_medium) - len(interacting_medium)
@@ -243,7 +249,8 @@ def mip_score(community, environment=None, min_mass_weight=False, min_growth=1, 
     return score, extras
 
 
-def mro_score(community, environment=None, direction=-1, min_mass_weight=False, min_growth=1, max_uptake=100, validate=False):
+def mro_score(community, environment=None, direction=-1, min_mass_weight=False, min_growth=0.1, max_uptake=10,
+              validate=False, verbose=True):
     """
     Implements the metabolic resource overlap (MRO) score as defined in (Zelezniak et al, 2015).
 
@@ -253,8 +260,8 @@ def mro_score(community, environment=None, direction=-1, min_mass_weight=False, 
         direction (int): direction of uptake reactions (negative or positive, default: -1)
         extracellular_id (str): extracellular compartment id
         min_mass_weight (bool): minimize by molecular weight of nutrients (default: False)
-        min_growth (float): minimum growth rate (default: 1)
-        max_uptake (float): maximum uptake rate (default: 100)
+        min_growth (float): minimum growth rate (default: 0.1)
+        max_uptake (float): maximum uptake rate (default: 10)
 
     Returns:
         float: MRO score
@@ -279,7 +286,8 @@ def mro_score(community, environment=None, direction=-1, min_mass_weight=False, 
     solutions = [sol]
 
     if sol.status != Status.OPTIMAL:
-        warn('MRO: Failed to find a valid solution for non-interacting community')
+        if verbose:
+            warn('MRO: Failed to find a valid solution for non-interacting community')
         return None, None
 
     # anabiotic environment is limited to non-interacting community minimal media
