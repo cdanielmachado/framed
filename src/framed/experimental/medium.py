@@ -16,7 +16,8 @@ def load_media_db(filename, sep='\t', medium_col='medium', compound_col='compoun
 
 
 def minimal_medium(model, exchange_reactions=None, direction=-1, min_mass_weight=False, min_growth=1,
-                   max_uptake=100, max_compounds=None, n_solutions=1, validate=True, abstol=1e-6):
+                   max_uptake=100, max_compounds=None, n_solutions=1, validate=True, abstol=1e-6,
+                   warnings=True, use_pool=False, pool_gap=None, solver=None):
     """ Minimal medium calculator. Determines the minimum number of medium components for the organism to grow.
 
     Notes:
@@ -41,36 +42,37 @@ def minimal_medium(model, exchange_reactions=None, direction=-1, min_mass_weight
         Solution: solution from solver
     """
 
-    # TODO: 2_program_MMsolverClone.prof
+    def warn_wrapper(message):
+        if warnings:
+            warn(message)
+
     if exchange_reactions is None:
         exchange_reactions = list(model.get_exchange_reactions())
 
-    solver = solver_instance(model)
-
-    # TODO: 2_program_MMsolver.prof
-    #bck_bounds = {r_id: (model.reactions[r_id].lb, model.reactions[r_id].ub) for r_id in exchange_reactions}
-    if direction < 0:
-        solver.set_lower_bounds({r_id: -max_uptake for r_id in exchange_reactions})
+    if not solver:
+        solver = solver_instance(model)
+        persistent = True
     else:
-        solver.set_upper_bounds({r_id: max_uptake for r_id in exchange_reactions})
+        persistent = False
 
     solver.set_lower_bounds({model.biomass_reaction: min_growth})
-    #bck_bounds[model.biomass_reaction] = (model.reactions[model.biomass_reaction].lb, model.reactions[model.biomass_reaction].ub)
 
     for r_id in exchange_reactions:
-        solver.add_variable('y_' + r_id, 0, 1, vartype=VarType.BINARY, update_problem=False)
+        solver.add_variable('y_' + r_id, 0, 1, vartype=VarType.BINARY, update_problem=False, persistent=persistent)
 
     solver.update()
 
     for r_id in exchange_reactions:
         if direction < 0:
-            solver.add_constraint('c_' + r_id, {r_id: 1, 'y_' + r_id: max_uptake}, '>', 0, update_problem=False)
+            solver.add_constraint('c_' + r_id, {r_id: 1, 'y_' + r_id: max_uptake}, '>', 0,
+                                  update_problem=False, persistent=persistent)
         else:
-            solver.add_constraint('c_' + r_id, {r_id: 1, 'y_' + r_id: -max_uptake}, '<', 0, update_problem=False)
+            solver.add_constraint('c_' + r_id, {r_id: 1, 'y_' + r_id: -max_uptake}, '<', 0,
+                                  update_problem=False, persistent=persistent)
 
     if max_compounds:
         lhs = {'y_' + r_id: 1 for r_id in exchange_reactions}
-        solver.add_constraint('max_cmpds', lhs, '<', max_compounds, update_problem=False)
+        solver.add_constraint('max_cmpds', lhs, '<', max_compounds, update_problem=False, persistent=persistent)
 
     solver.update()
 
@@ -85,23 +87,23 @@ def minimal_medium(model, exchange_reactions=None, direction=-1, min_mass_weight
                 compounds = model.reactions[r_id].get_products()
 
             if len(compounds) > 1:
-                warn('Multiple compounds in exchange reaction (ignored)')
+                warn_wrapper('Multiple compounds in exchange reaction (ignored)')
                 continue
 
             if len(compounds) == 0:
-                warn('No compounds in exchange reaction (ignored)')
+                warn_wrapper('No compounds in exchange reaction (ignored)')
                 continue
 
             metabolite = model.metabolites[compounds[0]]
 
             if 'FORMULA' not in metabolite.metadata:
-                warn('No formula for compound (ignored)')
+                warn_wrapper('No formula for compound (ignored)')
                 continue
 
             formulas = metabolite.metadata['FORMULA'].split(';')
 
             if len(formulas) > 1:
-                warn('Multiple formulas for compound')
+                warn_wrapper('Multiple formulas for compound')
 
             weight = molecular_weight(formulas[0])
 
@@ -110,41 +112,70 @@ def minimal_medium(model, exchange_reactions=None, direction=-1, min_mass_weight
     else:
         objective = {'y_' + r_id: 1 for r_id in exchange_reactions}
 
-    solution = solver.solve(objective, minimize=True)
+    result, ret_sols = None, None
 
-    if solution.status != Status.OPTIMAL:
-#        warn('No solution found')
-        return None, solution
-
-    medium = set(r_id for r_id in exchange_reactions
-              if (direction < 0 and solution.values[r_id] < -abstol
-                  or direction > 0 and solution.values[r_id] > abstol))
-
-    if validate:
-        validate_solution(model, medium, exchange_reactions, direction, min_growth, max_uptake)
+    if direction < 0:
+        constraints = {r_id: (-max_uptake, model.reactions[r_id].ub) for r_id in exchange_reactions}
+    else:
+        constraints = {r_id: (model.reactions[r_id].lb, max_uptake) for r_id in exchange_reactions}
 
     if n_solutions == 1:
-        return medium, solution
-    else:
-        medium_list = [medium]
-        solutions = [solution]
 
-        for i in range(1, n_solutions):
-            constr_id = 'iteration_{}'.format(i)
-            previous_sol = {'y_' + r_id: 1 for r_id in medium}
-            solver.add_constraint(constr_id, previous_sol, '<', len(previous_sol) - 1)
-            solution = solver.solve(objective, minimize=True)
+        solution = solver.solve(objective, minimize=True, constraints=constraints, get_values=exchange_reactions)
+
+        if solution.status != Status.OPTIMAL:
+            warn_wrapper('No solution found')
+            result, ret_sols = None, solution
+        else:
+            medium = get_medium(solution, exchange_reactions, direction, abstol)
+
+            if validate:
+                validate_solution(model, medium, exchange_reactions, direction, min_growth, max_uptake)
+
+            result, ret_sols = medium, solution
+
+    elif use_pool:
+        solutions = solver.solve(objective, minimize=True, constraints=constraints, get_values=exchange_reactions,
+                                 pool_size=n_solutions, pool_gap=pool_gap)
+
+        if solutions is None:
+            result, ret_sols = [], []
+        else:
+            media = [get_medium(solution, exchange_reactions, direction, abstol)
+                       for solution in solutions]
+            result, ret_sols = media, solutions
+
+    else:
+        media = []
+        solutions = []
+
+        for i in range(0, n_solutions):
+            if i > 0:
+                constr_id = 'iteration_{}'.format(i)
+                previous_sol = {'y_' + r_id: 1 for r_id in medium}
+                solver.add_constraint(constr_id, previous_sol, '<', len(previous_sol) - 1)
+
+            solution = solver.solve(objective, minimize=True, constraints=constraints, get_values=exchange_reactions)
 
             if solution.status != Status.OPTIMAL:
                 break
 
-            medium = set(r_id for r_id in exchange_reactions
-                      if (direction < 0 and solution.values[r_id] < -abstol
-                          or direction > 0 and solution.values[r_id] > abstol))
-            medium_list.append(medium)
+            medium = get_medium(solution, exchange_reactions, direction, abstol)
+            media.append(medium)
             solutions.append(solution)
 
-        return medium_list, solutions
+            result, ret_sols = media, solutions
+
+    if not persistent:
+        solver.clean_up()
+
+    return result, ret_sols
+
+
+def get_medium(solution, exchange, direction, abstol):
+    return set(r_id for r_id in exchange
+                 if (direction < 0 and solution.values[r_id] < -abstol
+                     or direction > 0 and solution.values[r_id] > abstol))
 
 
 def validate_solution(model, medium, exchange_reactions, direction, min_growth, max_uptake):
@@ -156,5 +187,4 @@ def validate_solution(model, medium, exchange_reactions, direction, min_growth, 
     sol = FBA(model, constraints=constraints)
 
     if sol.fobj < min_growth:
-        print 'Solution appears to be invalid.'
         warn('Solution appears to be invalid.')
