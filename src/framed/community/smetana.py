@@ -180,6 +180,9 @@ def metabolite_production_score(community, environment=None, abstol=1e-3):
 
     if environment:
         environment.apply(community.merged, inplace=True, warning=False)
+        env_compounds = environment.get_compounds(format_str="\'{}\'[5:-5]")
+    else:
+        env_compounds = set()
 
     for exchange_rxns in community.organisms_exchange_reactions.values():
         for r_id in exchange_rxns.keys():
@@ -194,7 +197,7 @@ def metabolite_production_score(community, environment=None, abstol=1e-3):
     for org_id, exchange_rxns in community.organisms_exchange_reactions.items():
         scores[org_id] = {}
 
-        remaining = exchange_rxns.keys()
+        remaining = [r_id for r_id, cnm in exchange_rxns.items() if cnm.original_metabolite not in env_compounds]
 
         while len(remaining) > 0:
             sol = solver.solve(linear={r_id: 1 for r_id in remaining}, minimize=False, get_values=remaining)
