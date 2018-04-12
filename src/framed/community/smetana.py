@@ -9,7 +9,8 @@ from itertools import combinations, chain
 from warnings import warn
 
 
-def species_coupling_score(community, environment=None, min_growth=0.1, n_solutions=100, verbose=True):
+def species_coupling_score(community, environment=None, min_growth=0.1, n_solutions=100, verbose=True, abstol=1e-6,
+                           use_pool=False):
     """
     Calculate frequency of community species dependency on each other
 
@@ -24,30 +25,29 @@ def species_coupling_score(community, environment=None, min_growth=0.1, n_soluti
 
     Returns:
         dict: Keys are dependent organisms, values are dictionaries with required organism frequencies
-        dict: Extra information
     """
-    interacting_community = community.copy(copy_models=False, interacting=True, create_biomass=False,
-                                           merge_extracellular_compartments=False)
+
+    community = community.copy(copy_models=False, interacting=True, create_biomass=False, merge_extracellular_compartments=False)
 
     if environment:
-        environment.apply(interacting_community.merged, inplace=True, warning=False)
+        environment.apply(community.merged, inplace=True, warning=False)
 
-    for b in interacting_community.organisms_biomass_reactions.values():
-        interacting_community.merged.reactions[b].lb = 0
+    for b in community.organisms_biomass_reactions.values():
+        community.merged.reactions[b].lb = 0
 
-    solver = solver_instance(interacting_community.merged)
+    solver = solver_instance(community.merged)
 
-    for org_id, rxns in interacting_community.organisms_reactions.items():
+    for org_id, rxns in community.organisms_reactions.items():
         org_var = 'y_{}'.format(org_id)
         solver.add_variable(org_var, 0, 1, vartype=VarType.BINARY, update_problem=False)
 
     solver.update()
 
     bigM = 100
-    for org_id, rxns in interacting_community.organisms_reactions.items():
+    for org_id, rxns in community.organisms_reactions.items():
         org_var = 'y_{}'.format(org_id)
         for r_id in rxns:
-            if r_id == interacting_community.organisms_biomass_reactions[org_id]:
+            if r_id == community.organisms_biomass_reactions[org_id]:
                 continue
             solver.add_constraint('c_{}_lb'.format(r_id), {r_id: 1, org_var: bigM}, '>', 0, update_problem=False)
             solver.add_constraint('c_{}_ub'.format(r_id), {r_id: 1, org_var: -bigM}, '<', 0, update_problem=False)
@@ -55,52 +55,61 @@ def species_coupling_score(community, environment=None, min_growth=0.1, n_soluti
     solver.update()
 
     scores = {}
-    extras = {'dependencies': {}}
 
-    for org_id, biomass_id in interacting_community.organisms_biomass_reactions.items():
-        other_biomasses = {o for o in interacting_community.organisms if o != org_id}
-        solver.add_constraint('SMETANA_Biomass', {interacting_community.organisms_biomass_reactions[org_id]: 1}, '>', min_growth)
-        objective = {"y_{}".format(o): 1.0 for o in other_biomasses}
+    for org_id, biomass_id in community.organisms_biomass_reactions.items():
+        other = {o for o in community.organisms if o != org_id}
+        solver.add_constraint('SMETANA_Biomass', {community.organisms_biomass_reactions[org_id]: 1}, '>', min_growth)
+        objective = {"y_{}".format(o): 1.0 for o in other}
 
-        previous_constraints = []
-        donors_list = []
-        failed = False
+        if not use_pool:
+            previous_constraints = []
+            donors_list = []
+            failed = False
 
-        for i in range(n_solutions):
-            sol = solver.solve(objective, minimize=True, get_values=True)
+            for i in range(n_solutions):
+                sol = solver.solve(objective, minimize=True, get_values=objective.keys())
 
-            if sol.status != Status.OPTIMAL:
-                failed = i == 0
-                break
+                if sol.status != Status.OPTIMAL:
+                    failed = i == 0
+                    break
 
-            donors = [o for o in other_biomasses if sol.values["y_{}".format(o)]]
-            donors_list.append(donors)
+                donors = [o for o in other if sol.values["y_{}".format(o)] > abstol]
+                donors_list.append(donors)
 
-            previous_con = 'iteration_{}'.format(i)
-            previous_constraints.append(previous_con)
-            previous_sol = {"y_{}".format(o): 1 for o in donors}
-            solver.add_constraint(previous_con, previous_sol, '<', len(previous_sol) - 1)
+                previous_con = 'iteration_{}'.format(i)
+                previous_constraints.append(previous_con)
+                previous_sol = {"y_{}".format(o): 1 for o in donors}
+                solver.add_constraint(previous_con, previous_sol, '<', len(previous_sol) - 1)
 
-        solver.remove_constraint('SMETANA_Biomass')
-        for con in previous_constraints:
-            solver.remove_constraint(con)
+            solver.remove_constraints(['SMETANA_Biomass'] + previous_constraints)
 
-        if not failed:
-            donors_list_n = float(len(donors_list))
-            donors_counter = Counter(chain(*donors_list))
-            scores[org_id] = {o: donors_counter[o]/donors_list_n for o in other_biomasses}
-            extras['dependencies'][org_id] = donors_list
+            if not failed:
+                donors_list_n = float(len(donors_list))
+                donors_counter = Counter(chain(*donors_list))
+                scores[org_id] = {o: donors_counter[o]/donors_list_n for o in other}
+            else:
+                if verbose:
+                    warn('SCS: Failed to find a solution for growth of ' + org_id)
+                scores[org_id] = None
+
         else:
-            if verbose:
-                warn('SCS: Failed to find a solution for growth of ' + org_id)
-            scores[org_id] = None
-            extras['dependencies'][org_id] = None
+            sols = solver.solve(objective, minimize=True, get_values=objective.keys(), pool_size=n_solutions, pool_gap=0.1)
+            solver.remove_constraint('SMETANA_Biomass')
 
-    return scores, extras
+            if len(sols) == 0:
+                scores[org_id] = None
+                if verbose:
+                    warn('SCS: Failed to find a solution for growth of ' + org_id)
+            else:
+                donor_count = [o for sol in sols for o in other if sol.values["y_{}".format(o)] > abstol]
+                donor_count = Counter(donor_count)
+                scores[org_id] = {o: donor_count[o] / float(len(sols)) for o in other}
+
+    return scores
 
 
 def metabolite_uptake_score(community, environment=None, min_mass_weight=False, min_growth=0.1,
-                            max_uptake=10.0, abstol=1e-6, validate=False, n_solutions=100, verbose=True):
+                            max_uptake=10.0, abstol=1e-6, validate=False, n_solutions=100, pool_gap=0.5, verbose=True):
     """
     Calculate frequency of metabolite requirement for species growth
 
@@ -120,43 +129,42 @@ def metabolite_uptake_score(community, environment=None, min_mass_weight=False, 
         dict: Keys are organism names, values are dictionaries with metabolite frequencies 
         dict: Extra information
     """
-    interacting_community = community.copy(copy_models=False, interacting=True, create_biomass=False,
-                                           merge_extracellular_compartments=False)
 
     if environment:
-        environment.apply(interacting_community.merged, inplace=True, warning=False)
+        environment.apply(community.merged, inplace=True, warning=False)
 
-    solutions = []
     scores = {}
-    extras = {'dependencies': {}}
-    
-    for org_id, exchange_rxns in community.organisms_exchange_reactions.items():
-        biomass_reaction = interacting_community.organisms_biomass_reactions[org_id]
-        interacting_community.merged.biomass_reaction = biomass_reaction
 
-        medium_list, sol = minimal_medium(interacting_community.merged,
-                                   exchange_reactions=exchange_rxns.keys(),
-                                   min_mass_weight=min_mass_weight,
-                                   min_growth=min_growth,
-                                   n_solutions=n_solutions,
-                                   max_uptake=max_uptake, validate=validate, abstol=abstol)
-        solutions.append(sol)
+    solver = solver_instance(community.merged)
+
+    for org_id, exchange_rxns in community.organisms_exchange_reactions.items():
+        biomass_reaction = community.organisms_biomass_reactions[org_id]
+        community.merged.biomass_reaction = biomass_reaction
+
+        medium_list, sols = minimal_medium(
+            community.merged,
+            exchange_reactions=exchange_rxns.keys(),
+            min_mass_weight=min_mass_weight,
+            min_growth=min_growth,
+            n_solutions=n_solutions,
+            max_uptake=max_uptake, validate=validate, abstol=abstol,
+            use_pool=True,
+            pool_gap=pool_gap,
+            solver=solver)
 
         if medium_list:
             counter = Counter(chain(*medium_list))
             scores[org_id] = {cnm.original_metabolite: counter[ex] / float(len(medium_list))
                               for ex, cnm in exchange_rxns.items()}
-            extras['dependencies'][org_id] = medium_list
         else:
             if verbose:
                 warn('MUS: Failed to find a minimal growth medium for ' + org_id)
             scores[org_id] = None
-            extras['dependencies'][org_id] = None
 
-    return scores, extras
+    return scores
 
 
-def metabolite_production_score(community, environment=None):
+def metabolite_production_score(community, environment=None, abstol=1e-3):
     """
     Discover metabolites which species can produce in community
 
@@ -174,25 +182,47 @@ def metabolite_production_score(community, environment=None):
         dict: Extra information
     """
 
-    interacting_community = community.copy(copy_models=False, interacting=True, create_biomass=False,
-                                           merge_extracellular_compartments=False)
     if environment:
-        environment.apply(interacting_community.merged, inplace=True, warning=False)
+        environment.apply(community.merged, inplace=True, warning=False)
 
-    solver = solver_instance(interacting_community.merged)
+    for exchange_rxns in community.organisms_exchange_reactions.values():
+        for r_id in exchange_rxns.keys():
+            rxn = community.merged.reactions[r_id]
+            if rxn.ub is None:
+                rxn.ub = 1000
+
+    solver = solver_instance(community.merged)
 
     scores = {}
-    extras = {}
+
     for org_id, exchange_rxns in community.organisms_exchange_reactions.items():
         scores[org_id] = {}
-        extras[org_id] = {}
 
-        for r_id, cnm in exchange_rxns.items():
-            sol = solver.solve(linear={r_id: 1}, minimize=False, get_values=False)
-            scores[org_id][cnm.original_metabolite] = 1 if sol.fobj > 0 else 0
-            extras[org_id][cnm.original_metabolite] = sol
+        remaining = exchange_rxns.keys()
 
-    return scores, extras
+        while len(remaining) > 0:
+            sol = solver.solve(linear={r_id: 1 for r_id in remaining}, minimize=False, get_values=remaining)
+
+            if sol.status != Status.OPTIMAL:
+                break
+
+            blocked = [r_id for r_id in remaining if sol.values[r_id] < abstol]
+
+            if len(blocked) == len(remaining):
+                break
+
+            for r_id in remaining:
+                if sol.values[r_id] >= abstol:
+                    cnm = exchange_rxns[r_id]
+                    scores[org_id][cnm.original_metabolite] = 1
+
+            remaining = blocked
+
+        for r_id in remaining:
+            cnm = exchange_rxns[r_id]
+            scores[org_id][cnm.original_metabolite] = 0
+
+    return scores
 
 
 def mip_score(community, environment=None, min_mass_weight=False, min_growth=0.1, direction=-1, max_uptake=10,
@@ -214,16 +244,15 @@ def mip_score(community, environment=None, min_mass_weight=False, min_growth=0.1
         float: MIP score
     """
 
-    interacting_community = community.copy(copy_models=False, interacting=True, merge_extracellular_compartments=False, create_biomass=True)
     noninteracting = community.copy(copy_models=False, interacting=False)
-    exch_reactions = set(interacting_community.merged.get_exchange_reactions())
+    exch_reactions = set(community.merged.get_exchange_reactions())
 
     if environment:
-        environment.apply(interacting_community.merged, inplace=True, warning=False)
+        environment.apply(community.merged, inplace=True, warning=False)
         environment.apply(noninteracting.merged, inplace=True, warning=False)
         exch_reactions &= set(environment)
 
-    interacting_medium, sol1 = minimal_medium(interacting_community.merged, direction=direction,
+    interacting_medium, sol1 = minimal_medium(community.merged, direction=direction,
                                              exchange_reactions=exch_reactions,
                                              min_mass_weight=min_mass_weight,
                                              min_growth=min_growth,
@@ -267,16 +296,15 @@ def mro_score(community, environment=None, direction=-1, min_mass_weight=False, 
         float: MRO score
     """
 
-    inter_community = community.copy(copy_models=False, interacting=True, merge_extracellular_compartments=False, create_biomass=False)
-    indep_community = inter_community.copy(copy_models=False, interacting=False, create_biomass=True)
-    exch_reactions = set(inter_community.merged.get_exchange_reactions())
+    noninteracting = community.copy(copy_models=False, interacting=False, create_biomass=True)
+    exch_reactions = set(community.merged.get_exchange_reactions())
 
     if environment:
-        environment.apply(inter_community.merged, inplace=True, warning=False)
-        environment.apply(indep_community.merged, inplace=True, warning=False)
+        environment.apply(community.merged, inplace=True, warning=False)
+        environment.apply(noninteracting.merged, inplace=True, warning=False)
         exch_reactions &= set(environment)
 
-    noninteracting_medium, sol = minimal_medium(indep_community.merged,
+    noninteracting_medium, sol = minimal_medium(noninteracting.merged,
                                                     exchange_reactions=exch_reactions,
                                                     direction=direction,
                                                     min_mass_weight=min_mass_weight,
@@ -292,25 +320,26 @@ def mro_score(community, environment=None, direction=-1, min_mass_weight=False, 
 
     # anabiotic environment is limited to non-interacting community minimal media
     noninteracting_exch = set(noninteracting_medium)
-    indep_environment = Environment.from_reactions(noninteracting_exch, max_uptake=max_uptake)
-    indep_environment.apply(inter_community.merged, inplace=True)
+    noninteracting_env = Environment.from_reactions(noninteracting_exch, max_uptake=max_uptake)
+    noninteracting_env.apply(community.merged, inplace=True)
 
     individual_media = {}
 
-    # TODO: why not optimize the individual models instead ?
+    solver = solver_instance(community.merged)
+    for org_id in community.organisms:
+        biomass_reaction = community.organisms_biomass_reactions[org_id]
+        community.merged.biomass_reaction = biomass_reaction
 
-    for org_id in inter_community.organisms:
-        biomass_reaction = inter_community.organisms_biomass_reactions[org_id]
-        inter_community.merged.biomass_reaction = biomass_reaction
+        org_noninteracting_exch = community.organisms_exchange_reactions[org_id]
 
-        org_noninteracting_exch = inter_community.organisms_exchange_reactions[org_id]
-
-        medium, sol = minimal_medium(inter_community.merged,
-                                   exchange_reactions=org_noninteracting_exch,
-                                   direction=direction,
-                                   min_mass_weight=min_mass_weight,
-                                   min_growth=min_growth,
-                                   max_uptake=max_uptake, validate=validate)
+        medium, sol = minimal_medium(community.merged,
+                                     exchange_reactions=org_noninteracting_exch,
+                                     direction=direction,
+                                     min_mass_weight=min_mass_weight,
+                                     min_growth=min_growth,
+                                     max_uptake=max_uptake,
+                                     validate=validate,
+                                     solver=solver)
         solutions.append(sol)
 
         if sol.status != Status.OPTIMAL:
