@@ -27,7 +27,8 @@ def species_coupling_score(community, environment=None, min_growth=0.1, n_soluti
         dict: Keys are dependent organisms, values are dictionaries with required organism frequencies
     """
 
-    community = community.copy(copy_models=False, interacting=True, create_biomass=False, merge_extracellular_compartments=False)
+    community = community.copy(copy_models=False, interacting=True, create_biomass=False,
+                               merge_extracellular_compartments=False)
 
     if environment:
         environment.apply(community.merged, inplace=True, warning=False)
@@ -108,8 +109,8 @@ def species_coupling_score(community, environment=None, min_growth=0.1, n_soluti
     return scores
 
 
-def metabolite_uptake_score(community, environment=None, min_mass_weight=False, min_growth=0.1,
-                            max_uptake=10.0, abstol=1e-6, validate=False, n_solutions=100, pool_gap=0.5, verbose=True):
+def metabolite_uptake_score(community, environment=None, min_mass_weight=False, min_growth=0.1, max_uptake=10.0,
+                            abstol=1e-6, validate=False, n_solutions=100, pool_gap=0.5, verbose=True):
     """
     Calculate frequency of metabolite requirement for species growth
 
@@ -141,16 +142,11 @@ def metabolite_uptake_score(community, environment=None, min_mass_weight=False, 
         biomass_reaction = community.organisms_biomass_reactions[org_id]
         community.merged.biomass_reaction = biomass_reaction
 
-        medium_list, sols = minimal_medium(
-            community.merged,
-            exchange_reactions=exchange_rxns.keys(),
-            min_mass_weight=min_mass_weight,
-            min_growth=min_growth,
-            n_solutions=n_solutions,
-            max_uptake=max_uptake, validate=validate, abstol=abstol,
-            use_pool=True,
-            pool_gap=pool_gap,
-            solver=solver)
+        medium_list, sols = minimal_medium(community.merged, exchange_reactions=exchange_rxns.keys(),
+                                           min_mass_weight=min_mass_weight, min_growth=min_growth,
+                                           n_solutions=n_solutions, max_uptake=max_uptake, validate=validate,
+                                           abstol=abstol, use_pool=True, pool_gap=pool_gap, solver=solver,
+                                           warnings=verbose)
 
         if medium_list:
             counter = Counter(chain(*medium_list))
@@ -252,18 +248,14 @@ def mip_score(community, environment=None, min_mass_weight=False, min_growth=0.1
         environment.apply(noninteracting.merged, inplace=True, warning=False)
         exch_reactions &= set(environment)
 
-    interacting_medium, sol1 = minimal_medium(community.merged, direction=direction,
-                                             exchange_reactions=exch_reactions,
-                                             min_mass_weight=min_mass_weight,
-                                             min_growth=min_growth,
-                                             max_uptake=max_uptake, validate=validate)
+    interacting_medium, sol1 = minimal_medium(community.merged, direction=direction, exchange_reactions=exch_reactions,
+                                              min_mass_weight=min_mass_weight, min_growth=min_growth,
+                                              max_uptake=max_uptake, validate=validate, warnings=verbose)
 
-    noninteracting_medium, sol2 = minimal_medium(noninteracting.merged,
-                                                 exchange_reactions=exch_reactions,
-                                                 direction=direction,
-                                                 min_mass_weight=min_mass_weight,
-                                                 min_growth=min_growth,
-                                                 max_uptake=max_uptake, validate=validate)
+    noninteracting_medium, sol2 = minimal_medium(noninteracting.merged, exchange_reactions=exch_reactions,
+                                                 direction=direction, min_mass_weight=min_mass_weight,
+                                                 min_growth=min_growth, max_uptake=max_uptake, validate=validate,
+                                                 warnings=verbose)
 
     if noninteracting_medium is None:
         if verbose:
@@ -304,12 +296,10 @@ def mro_score(community, environment=None, direction=-1, min_mass_weight=False, 
         environment.apply(noninteracting.merged, inplace=True, warning=False)
         exch_reactions &= set(environment)
 
-    noninteracting_medium, sol = minimal_medium(noninteracting.merged,
-                                                    exchange_reactions=exch_reactions,
-                                                    direction=direction,
-                                                    min_mass_weight=min_mass_weight,
-                                                    min_growth=min_growth,
-                                                    max_uptake=max_uptake, validate=validate)
+    noninteracting_medium, sol = minimal_medium(noninteracting.merged, exchange_reactions=exch_reactions,
+                                                direction=direction, min_mass_weight=min_mass_weight,
+                                                min_growth=min_growth, max_uptake=max_uptake, validate=validate,
+                                                warnings=verbose)
 
     solutions = [sol]
 
@@ -332,14 +322,9 @@ def mro_score(community, environment=None, direction=-1, min_mass_weight=False, 
 
         org_noninteracting_exch = community.organisms_exchange_reactions[org_id]
 
-        medium, sol = minimal_medium(community.merged,
-                                     exchange_reactions=org_noninteracting_exch,
-                                     direction=direction,
-                                     min_mass_weight=min_mass_weight,
-                                     min_growth=min_growth,
-                                     max_uptake=max_uptake,
-                                     validate=validate,
-                                     solver=solver)
+        medium, sol = minimal_medium(community.merged, exchange_reactions=org_noninteracting_exch, direction=direction,
+                                     min_mass_weight=min_mass_weight, min_growth=min_growth, max_uptake=max_uptake,
+                                     validate=validate, solver=solver, warnings=verbose)
         solutions.append(sol)
 
         if sol.status != Status.OPTIMAL:

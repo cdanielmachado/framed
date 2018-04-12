@@ -40,6 +40,21 @@ def load_communities(filepath):
     return comm_dict
 
 
+def load_models(models, flavor):
+    model_dict = OrderedDict()
+
+    for filepath in models:
+        organism_id = extract_id_from_filepath(filepath)
+        model = load_cbmodel(filepath, flavor=flavor)
+        model_dict[organism_id] = model
+        model.id = organism_id
+
+        if 'R_ATPM' in model.reactions:
+            model.reactions.R_ATPM.lb = 0
+
+    return model_dict
+
+
 def main(models, communities=None, scores=None, output=None, flavor=None, media=None, mediadb=None, zeros=False,
          ext_comp_id=None, verbose=False):
 
@@ -52,21 +67,15 @@ def main(models, communities=None, scores=None, output=None, flavor=None, media=
             print "No files found: {}".format(pattern)
             return
 
-    model_dict = OrderedDict()
-
     if verbose:
         print "Loading {} models...".format(len(models))
 
     if not flavor:
         flavor = 'cobra'
 
-    for filepath in models:
-        organism_id = extract_id_from_filepath(filepath)
-        model = load_cbmodel(filepath, flavor=flavor)
-        model_dict[organism_id] = model
-        model.id = organism_id
-        if 'R_ATPM' in model.reactions:
-            model.reactions.R_ATPM.lb = 0
+    # load models
+
+    model_dict = load_models(models, flavor)
 
     # load communities
 
@@ -124,11 +133,12 @@ def main(models, communities=None, scores=None, output=None, flavor=None, media=
                 if verbose:
                     print 'Running MIP for community {} on medium {}...'.format(comm_id, medium_id)
 
-                mip, _ = mip_score(community, environment=env, verbose=verbose)
+                mip, extras = mip_score(community, environment=env, verbose=verbose)
                 if mip is None:
-                    mip_data.append((comm_id, medium_id, 'Failed'))
+                    mip_data.append((comm_id, medium_id, 'Failed', 'Failed'))
                 else:
-                    mip_data.append((comm_id, medium_id, mip))
+                    nip = mip / float(len(extras['noninteracting_medium']))
+                    mip_data.append((comm_id, medium_id, mip, nip))
 
             if 'mro' in scores:
 
@@ -211,7 +221,7 @@ def main(models, communities=None, scores=None, output=None, flavor=None, media=
     detailed_df = pd.DataFrame(detailed_data, columns=['community', 'medium'])
 
     if 'mip' in scores:
-        mip_df = pd.DataFrame(mip_data, columns=['community', 'medium', 'mip'])
+        mip_df = pd.DataFrame(mip_data, columns=['community', 'medium', 'mip', 'nip'])
         global_df = pd.merge(global_df, mip_df)
 
     if 'mro' in scores:
@@ -239,11 +249,11 @@ def main(models, communities=None, scores=None, output=None, flavor=None, media=
 
     prefix = output + '_' if output else ''
 
-    if len(global_df) > 0:
+    if len(global_df.columns) > 3:
         global_df.sort_values(['community', 'medium'], inplace=True)
         global_df.to_csv(prefix + 'global.tsv', sep='\t', index=False)
 
-    if len(detailed_df) > 0:
+    if len(detailed_df.columns) > 2:
         if 'smetana' in detailed_df.columns and not zeros:
             detailed_df = detailed_df.query('smetana > 0')
         col_order = ['community', 'medium', 'receiver', 'donor', 'compound', 'scs', 'mus', 'mps', 'smetana']
