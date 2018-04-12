@@ -34,17 +34,15 @@ def extract_id_from_filepath(filepath):
     return organism_id
 
 
-def load_communities(filepath):
-    df = pd.read_csv(filepath, sep='\t', header=None)
-    comm_dict = OrderedDict((name, group[1].tolist()) for name, group in df.groupby(0))
-    return comm_dict
-
-
-def load_models(models, flavor):
+def load_models(models, flavor, pre_filter=None):
     model_dict = OrderedDict()
 
     for filepath in models:
         organism_id = extract_id_from_filepath(filepath)
+
+        if pre_filter is not None and organism_id not in pre_filter:
+            continue  # do not load models that will not be used
+
         model = load_cbmodel(filepath, flavor=flavor)
         model_dict[organism_id] = model
         model.id = organism_id
@@ -53,6 +51,12 @@ def load_models(models, flavor):
             model.reactions.R_ATPM.lb = 0
 
     return model_dict
+
+
+def load_communities(filepath):
+    df = pd.read_csv(filepath, sep='\t', header=None)
+    comm_dict = OrderedDict((name, group[1].tolist()) for name, group in df.groupby(0))
+    return comm_dict
 
 
 def main(models, communities=None, scores=None, output=None, flavor=None, media=None, mediadb=None, zeros=False,
@@ -73,15 +77,14 @@ def main(models, communities=None, scores=None, output=None, flavor=None, media=
     if not flavor:
         flavor = 'cobra'
 
-    # load models
-
-    model_dict = load_models(models, flavor)
-
-    # load communities
+    # load models and communities
 
     if communities is not None:
         comm_dict = load_communities(communities)
+        pre_filter = {org_id for organisms in comm_dict.values() for org_id in organisms}
+        model_dict = load_models(models, flavor, pre_filter)
     else:
+        model_dict = load_models(models, flavor)
         comm_dict = {'all': model_dict.keys()}
 
     # load media
