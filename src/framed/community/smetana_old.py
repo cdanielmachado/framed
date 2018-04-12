@@ -1,4 +1,4 @@
-from framed.community.model_old import Community
+from framed.community.model import Community
 from framed.experimental.medium import minimal_medium
 from framed.solvers import solver_instance
 from framed.solvers.solver import VarType, Status

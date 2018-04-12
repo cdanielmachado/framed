@@ -44,7 +44,7 @@ class Community(object):
     into a single multi-species model (CBModel) which is compatible with most types of constraint-based methods.
     """
 
-    def __init__(self, community_id, models=None, copy_models=True, extracellular_compartment_id="e",
+    def __init__(self, community_id, models=None, copy_models=True, extracellular_compartment_id="C_e",
                  merge_extracellular_compartments=False, create_biomass=True, interacting=True,
                  exchanged_metabolites_blacklist=set()):
         """
