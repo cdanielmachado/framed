@@ -261,7 +261,6 @@ class Community(object):
             return "{} ({})".format(object_name, organism_name)
 
         def _copy_object(obj, org_id, compartment=None):
-            # 5_program_deepcopy.prof
             new_obj = obj.copy()
             new_obj.id = _id_pattern(obj.id, org_id)
             new_obj.name = _name_pattern(obj.name, org_id)
@@ -347,6 +346,7 @@ class Community(object):
                         merged_model.add_reaction(new_rxn)
 
             for r_id, rxn in model.reactions.items():
+
                 is_exchange = rxn.is_exchange
 
                 if not is_exchange or not self._merge_extracellular_compartments:

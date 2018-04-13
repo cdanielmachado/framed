@@ -71,9 +71,6 @@ def main(models, communities=None, scores=None, output=None, flavor=None, media=
             print "No files found: {}".format(pattern)
             return
 
-    if verbose:
-        print "Loading {} models...".format(len(models))
-
     if not flavor:
         flavor = 'cobra'
 
@@ -82,8 +79,15 @@ def main(models, communities=None, scores=None, output=None, flavor=None, media=
     if communities is not None:
         comm_dict = load_communities(communities)
         pre_filter = {org_id for organisms in comm_dict.values() for org_id in organisms}
+
+        if verbose:
+            print "Loading models...".format(len(pre_filter))
+
         model_dict = load_models(models, flavor, pre_filter)
     else:
+        if verbose:
+            print "Loading models...".format(len(models))
+
         model_dict = load_models(models, flavor)
         comm_dict = {'all': model_dict.keys()}
 
@@ -274,7 +278,14 @@ if __name__ == '__main__':
                                      formatter_class=argparse.RawTextHelpFormatter)
 
     parser.add_argument('models', metavar='MODELS', nargs='+',
-                        help="Multiple single-species models (can use wild-cards, for example: models/*.xml).")
+                        help=textwrap.dedent(
+        """
+        Multiple single-species models (one or more files).
+        
+        You can use wild-cards, for example: models/*.xml, and optionally protect with quotes to avoid automatic bash
+        expansion (this will be faster for long lists): "models/*.xml". 
+        """
+        ))
 
     parser.add_argument('-c', '--communities', metavar='COMMUNITIES.TSV', dest='communities',
                         help=textwrap.dedent(
