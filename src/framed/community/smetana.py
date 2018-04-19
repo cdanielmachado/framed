@@ -110,7 +110,8 @@ def species_coupling_score(community, environment=None, min_growth=0.1, n_soluti
 
 
 def metabolite_uptake_score(community, environment=None, min_mass_weight=False, min_growth=0.1, max_uptake=10.0,
-                            abstol=1e-6, validate=False, n_solutions=100, pool_gap=0.5, verbose=True):
+                            abstol=1e-6, validate=False, n_solutions=100, pool_gap=0.5, verbose=True,
+                            exclude=None):  #TODO: implement excluded
     """
     Calculate frequency of metabolite requirement for species growth
 
@@ -160,7 +161,7 @@ def metabolite_uptake_score(community, environment=None, min_mass_weight=False, 
     return scores
 
 
-def metabolite_production_score(community, environment=None, abstol=1e-3):
+def metabolite_production_score(community, environment=None, abstol=1e-3, exclude=None): #TODO: implement excluded
     """
     Discover metabolites which species can produce in community
 
@@ -225,7 +226,7 @@ def metabolite_production_score(community, environment=None, abstol=1e-3):
 
 
 def mip_score(community, environment=None, min_mass_weight=False, min_growth=0.1, direction=-1, max_uptake=10,
-              validate=False, verbose=True):
+              validate=False, verbose=True, exclude=None):
     """
     Implements the metabolic interaction potential (MIP) score as defined in (Zelezniak et al, 2015).
 
@@ -265,6 +266,12 @@ def mip_score(community, environment=None, min_mass_weight=False, min_growth=0.1
             warn('MIP: Failed to find a valid solution for non-interacting community')
         return None, None
     else:
+
+        if exclude is not None:
+            exclude_rxns = {'R_EX_M_{}_e_pool'.format(x) for x in exclude}
+            interacting_medium = set(interacting_medium) - exclude_rxns
+            noninteracting_medium = set(noninteracting_medium) - exclude_rxns
+
         score = len(noninteracting_medium) - len(interacting_medium)
 
     extras = {'noninteracting_medium': noninteracting_medium, 'interacting_medium': interacting_medium,
@@ -274,7 +281,7 @@ def mip_score(community, environment=None, min_mass_weight=False, min_growth=0.1
 
 
 def mro_score(community, environment=None, direction=-1, min_mass_weight=False, min_growth=0.1, max_uptake=10,
-              validate=False, verbose=True):
+              validate=False, verbose=True, exclude=None):
     """
     Implements the metabolic resource overlap (MRO) score as defined in (Zelezniak et al, 2015).
 
@@ -318,6 +325,11 @@ def mro_score(community, environment=None, direction=-1, min_mass_weight=False, 
 
     individual_media = {}
 
+    if exclude is not None:
+        exclude = {'M_{}_e'.format(x) for x in exclude}
+    else:
+        exclude = {}
+
     solver = solver_instance(community.merged)
     for org_id in community.organisms:
         biomass_reaction = community.organisms_biomass_reactions[org_id]
@@ -334,7 +346,7 @@ def mro_score(community, environment=None, direction=-1, min_mass_weight=False, 
             warn('MRO: Failed to find a valid solution for: ' + org_id)
             return None, None
 
-        individual_media[org_id] = {org_noninteracting_exch[r].original_metabolite for r in medium}
+        individual_media[org_id] = {org_noninteracting_exch[r].original_metabolite for r in medium} - exclude
 
     pairwise = {(o1, o2): individual_media[o1] & individual_media[o2] for o1, o2 in combinations(community.organisms, 2)}
 

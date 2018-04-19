@@ -60,7 +60,7 @@ def load_communities(filepath):
 
 
 def main(models, communities=None, scores=None, output=None, flavor=None, media=None, mediadb=None, zeros=False,
-         ext_comp_id=None, verbose=False, min_mass_weight=False):
+         ext_comp_id=None, verbose=False, min_mass_weight=False, exclude=None):
 
     # load models
 
@@ -98,6 +98,12 @@ def main(models, communities=None, scores=None, output=None, flavor=None, media=
         media_db = load_media_db(mediadb)
     else:
         media = [None]
+
+    if exclude:
+        df = pd.read_csv(exclude, header=None)
+        excluded_mets = set(df[0])
+    else:
+        excluded_mets = set()
 
     # compute scores
 
@@ -140,7 +146,8 @@ def main(models, communities=None, scores=None, output=None, flavor=None, media=
                 if verbose:
                     print 'Running MIP for community {} on medium {}...'.format(comm_id, medium_id)
 
-                mip, extras = mip_score(community, environment=env, verbose=verbose, min_mass_weight=min_mass_weight)
+                mip, extras = mip_score(community, environment=env, verbose=verbose,
+                                        min_mass_weight=min_mass_weight, exclude=excluded_mets)
                 if mip is None:
                     mip_data.append((comm_id, medium_id, 'Failed', 'Failed'))
                 else:
@@ -152,7 +159,8 @@ def main(models, communities=None, scores=None, output=None, flavor=None, media=
                 if verbose:
                     print 'Running MRO for community {} on medium {}...'.format(comm_id, medium_id)
 
-                mro, _ = mro_score(community, environment=env, verbose=verbose, min_mass_weight=min_mass_weight)
+                mro, _ = mro_score(community, environment=env, verbose=verbose,
+                                   min_mass_weight=min_mass_weight, exclude=excluded_mets)
                 if mro is None:
                     mro_data.append((comm_id, medium_id, 'Failed'))
                 else:
@@ -177,7 +185,8 @@ def main(models, communities=None, scores=None, output=None, flavor=None, media=
                 if verbose:
                     print 'Running MUS for community {} on medium {}...'.format(comm_id, medium_id)
 
-                mus = metabolite_uptake_score(community, environment=env, verbose=verbose, min_mass_weight=min_mass_weight)
+                mus = metabolite_uptake_score(community, environment=env, verbose=verbose,
+                                              min_mass_weight=min_mass_weight, exclude=excluded_mets)
 
                 for org, values in mus.items():
                     if values is None:
@@ -192,7 +201,7 @@ def main(models, communities=None, scores=None, output=None, flavor=None, media=
                 if verbose:
                     print 'Running MPS for community {} on medium {}...'.format(comm_id, medium_id)
 
-                mps = metabolite_production_score(community, environment=env)
+                mps = metabolite_production_score(community, environment=env, exclude=excluded_mets)
 
                 for org, values in mps.items():
                     if values is None:
@@ -312,7 +321,8 @@ if __name__ == '__main__':
     parser.add_argument('-z', '--zeros', action='store_true', dest='zeros', help="Include entries with zero score.")
     parser.add_argument('--solver', help="Change default solver (current options: 'gurobi', 'cplex').")
     parser.add_argument('--ext', help="Extracellular compartment identifier in the models (default 'C_e').")
-    parser.add_argument('--minmassweight', action='store_true', help=argparse.SUPPRESS)
+    parser.add_argument('--massweight', action='store_true', help=argparse.SUPPRESS)
+    parser.add_argument('--exclude', help=argparse.SUPPRESS)
 
     args = parser.parse_args()
 
@@ -343,7 +353,8 @@ if __name__ == '__main__':
         zeros=args.zeros,
         ext_comp_id=ext_comp_id,
         verbose=args.verbose,
-        min_mass_weight=args.minmassweight
+        min_mass_weight=args.massweight,
+        exclude=args.exclude
     )
 
 
