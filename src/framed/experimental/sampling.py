@@ -33,7 +33,7 @@ def lp_sampler(model, n_samples=1000, weights=None, constraints=None, select_pro
             samples.append(sol.values)
 
     if verbose:
-        print('Sampling success rate: {} (of {})'.format(len(samples), n_samples))
+        print ('Sampling success rate: {} (of {})'.format(len(samples), n_samples))
 
     if merge_keys:
         merged = OrderedDict()

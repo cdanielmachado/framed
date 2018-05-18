@@ -160,7 +160,7 @@ def genes_to_species(model, gene_prefix='G_', usage_prefix='u_', pseudo_genes=No
 
         if reaction.gpr is not None:
             if len(reaction.gpr.proteins) > 1:
-                print('error: isozymes not split:', r_id)
+                print ('error: isozymes not split:', r_id)
                 return
             elif len(reaction.gpr.proteins) == 1:
                 for g_id in reaction.gpr.proteins[0].genes:

@@ -367,7 +367,7 @@ def NET(model, deltaG0, sdeltaG0=None, measured_concentrations=None, concentrati
         for r_i, r_id in enumerate(model.reactions):
 
             if r_i % 10 == 0 and verbose:
-                print("{}/{}".format(r_i, len(model.reactions)))
+                print ("{}/{}".format(r_i, len(model.reactions)))
 
             if r_id in deltaG0:
                 sol_min = solver.solve({'dG_' + r_id: 1}, minimize=True)

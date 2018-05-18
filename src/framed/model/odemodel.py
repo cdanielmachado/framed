@@ -235,7 +235,7 @@ def _get_oder_rules(trees):
     for tree in trees:
         new_elems = _get_order_nodes(tree)
         [res.append(item) for item in new_elems if item not in res]
-    print(res)
+    print (res)
     return res
 
 

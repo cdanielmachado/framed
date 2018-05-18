@@ -71,7 +71,7 @@ def main(models, communities=None, scores=None, output=None, flavor=None, media=
         pattern = models[0]
         models = glob.glob(pattern)
         if len(models) == 0:
-            print("No files found: {}".format(pattern))
+            print ("No files found: {}".format(pattern))
             return
 
     if not flavor:
@@ -84,12 +84,12 @@ def main(models, communities=None, scores=None, output=None, flavor=None, media=
         pre_filter = {org_id for organisms in list(comm_dict.values()) for org_id in organisms}
 
         if verbose:
-            print("Loading models...".format(len(pre_filter)))
+            print ("Loading models...".format(len(pre_filter)))
 
         model_dict = load_models(models, flavor, pre_filter)
     else:
         if verbose:
-            print("Loading models...".format(len(models)))
+            print ("Loading models...".format(len(models)))
 
         model_dict = load_models(models, flavor)
         comm_dict = {'all': list(model_dict.keys())}
@@ -147,7 +147,7 @@ def main(models, communities=None, scores=None, output=None, flavor=None, media=
             if 'mip' in scores:
 
                 if verbose:
-                    print('Running MIP for community {} on medium {}...'.format(comm_id, medium_id))
+                    print ('Running MIP for community {} on medium {}...'.format(comm_id, medium_id))
 
                 mip, extras = mip_score(community, environment=env, verbose=verbose,
                                         min_mass_weight=min_mass_weight, exclude=excluded_mets)
@@ -160,7 +160,7 @@ def main(models, communities=None, scores=None, output=None, flavor=None, media=
             if 'mro' in scores:
 
                 if verbose:
-                    print('Running MRO for community {} on medium {}...'.format(comm_id, medium_id))
+                    print ('Running MRO for community {} on medium {}...'.format(comm_id, medium_id))
 
                 mro, _ = mro_score(community, environment=env, verbose=verbose,
                                    min_mass_weight=min_mass_weight, exclude=excluded_mets)
@@ -172,7 +172,7 @@ def main(models, communities=None, scores=None, output=None, flavor=None, media=
             if 'scs' in scores:
 
                 if verbose:
-                    print('Running SCS for community {} on medium {}...'.format(comm_id, medium_id))
+                    print ('Running SCS for community {} on medium {}...'.format(comm_id, medium_id))
 
                 scs = species_coupling_score(community, environment=env, verbose=verbose)
 
@@ -186,7 +186,7 @@ def main(models, communities=None, scores=None, output=None, flavor=None, media=
             if 'mus' in scores:
 
                 if verbose:
-                    print('Running MUS for community {} on medium {}...'.format(comm_id, medium_id))
+                    print ('Running MUS for community {} on medium {}...'.format(comm_id, medium_id))
 
                 mus = metabolite_uptake_score(community, environment=env, verbose=verbose,
                                               min_mass_weight=min_mass_weight, exclude=excluded_mets)
@@ -202,7 +202,7 @@ def main(models, communities=None, scores=None, output=None, flavor=None, media=
             if 'mps' in scores:
 
                 if verbose:
-                    print('Running MPS for community {} on medium {}...'.format(comm_id, medium_id))
+                    print ('Running MPS for community {} on medium {}...'.format(comm_id, medium_id))
 
                 mps = metabolite_production_score(community, environment=env, exclude=excluded_mets)
 
@@ -281,7 +281,7 @@ def main(models, communities=None, scores=None, output=None, flavor=None, media=
         detailed_df.to_csv(prefix + 'detailed.tsv', sep='\t', index=False)
 
     if verbose:
-        print('Done.')
+        print ('Done.')
 
 
 if __name__ == '__main__':
