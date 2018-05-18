@@ -1,3 +1,4 @@
+from builtins import range
 from framed import FBA
 from framed.solvers import solver_instance
 from framed.solvers.solver import VarType, Status

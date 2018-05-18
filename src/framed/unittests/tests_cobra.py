@@ -3,7 +3,11 @@ Unit testing module for core features.
 
 @author: Daniel Machado
 """
+from __future__ import division
 
+from builtins import zip
+from builtins import str
+from past.utils import old_div
 import unittest
 
 from framed.io.sbml import load_cbmodel
@@ -66,7 +70,7 @@ class FBAwithRatioTest(unittest.TestCase):
         model.add_ratio_constraint(r_id1, r_id2, ratio)
         solution = FBA(model, get_shadow_prices=True, get_reduced_costs=True)
         self.assertEqual(solution.status, Status.OPTIMAL)
-        self.assertEqual(solution.values[r_id1] / solution.values[r_id2], ratio)
+        self.assertEqual(old_div(solution.values[r_id1], solution.values[r_id2]), ratio)
 
 class pFBATest(unittest.TestCase):
     """ Test pFBA simulation. """
@@ -102,7 +106,7 @@ class IrreversibleModelFBATest(unittest.TestCase):
     def testRun(self):
         model = load_cbmodel(SMALL_TEST_MODEL, flavor='cobra')
         make_irreversible(model)
-        self.assertTrue(all([not reaction.reversible for reaction in model.reactions.values()]))
+        self.assertTrue(all([not reaction.reversible for reaction in list(model.reactions.values())]))
         solution = FBA(model)
         self.assertEqual(solution.status, Status.OPTIMAL)
         self.assertAlmostEqual(solution.fobj, GROWTH_RATE, places=2)
@@ -133,10 +137,10 @@ class TransformationCommutativityTest(unittest.TestCase):
         simplify(model2)
 
         self.assertEqual(model.id, model2.id)
-        self.assertListEqual(model.metabolites.keys(), model2.metabolites.keys())
-        self.assertListEqual(model.reactions.keys(), model2.reactions.keys())
-        self.assertListEqual(model.genes.keys(), model2.genes.keys())
-        for r1, r2 in zip(model.reactions.values(), model2.reactions.values()):
+        self.assertListEqual(list(model.metabolites.keys()), list(model2.metabolites.keys()))
+        self.assertListEqual(list(model.reactions.keys()), list(model2.reactions.keys()))
+        self.assertListEqual(list(model.genes.keys()), list(model2.genes.keys()))
+        for r1, r2 in zip(list(model.reactions.values()), list(model2.reactions.values())):
             self.assertEqual(r1.name, r2.name)
             self.assertEqual(r1.reversible, r2.reversible)
             self.assertDictEqual(r1.stoichiometry, r2.stoichiometry)
@@ -152,7 +156,7 @@ class FVATest(unittest.TestCase):
         model = load_cbmodel(SMALL_TEST_MODEL, flavor='cobra')
         variability = FVA(model)
         self.assertTrue(all([lb <= ub if lb is not None and ub is not None else True
-                             for lb, ub in variability.values()]))
+                             for lb, ub in list(variability.values())]))
 
 
 class GeneDeletionpFBATest(unittest.TestCase):

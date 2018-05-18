@@ -1,3 +1,5 @@
+from builtins import next
+from builtins import zip
 import errno
 import os
 import warnings
@@ -34,7 +36,7 @@ class Environment(MutableMapping):
         return len(self.bounds)
 
     def __str__(self):
-        lines = ['{}\t{}\t{}'.format(r_id, lb, ub) for r_id, (lb, ub) in self.bounds.items()]
+        lines = ['{}\t{}\t{}'.format(r_id, lb, ub) for r_id, (lb, ub) in list(self.bounds.items())]
         return '\n'.join(lines)
 
     def copy(self):
@@ -116,7 +118,7 @@ class Environment(MutableMapping):
 
         compounds = []
 
-        for r_id, (lb, _) in self.bounds.items():
+        for r_id, (lb, _) in list(self.bounds.items()):
             if lb is None or lb < 0:
                 met = eval(format_str.format(r_id))
                 compounds.append(met)
@@ -175,7 +177,7 @@ class Environment(MutableMapping):
         if not inplace:
             constraints = {}
 
-        for r_id, (lb, ub) in env.items():
+        for r_id, (lb, ub) in list(env.items()):
             if r_id in model.reactions:
                 if inplace:
                     model.set_flux_bounds(r_id, lb, ub)
@@ -285,7 +287,7 @@ class Environment(MutableMapping):
 
                 row = row.split("#", 1)[0]
                 row = [c.strip() for c in row.split(sep)]
-                row = dict(zip(header, row))
+                row = dict(list(zip(header, row)))
 
                 env[row[reaction_col]] = (float(row[lower_bound_col]), float(row[upper_bound_col]))
 
@@ -293,15 +295,15 @@ class Environment(MutableMapping):
 
     @staticmethod
     def from_community_models(community):
-        community_mets = {m: r_id for r_id, metabolites in community.merged.get_exchange_reactions().iteritems() for m
+        community_mets = {m: r_id for r_id, metabolites in community.merged.get_exchange_reactions().items() for m
                           in metabolites}
 
         community_exch_rxns = {map.original_reaction: community_mets[map.extracellular_metabolite]
-                               for model in community.organisms_exchange_reactions.itervalues()
-                               for map in model.itervalues()}
+                               for model in community.organisms_exchange_reactions.values()
+                               for map in model.values()}
 
         environment = Environment()
-        for k, v in Environment.from_models(community.organisms.itervalues()).iteritems():
+        for k, v in Environment.from_models(iter(community.organisms.values())).items():
             environment[community_exch_rxns[k]] = v
 
         return environment
@@ -310,7 +312,7 @@ class Environment(MutableMapping):
         if not isinstance(other, Environment):
             raise EnvironmentError("Only Environments objects can be combined together")
 
-        for k, v in other.iteritems():
+        for k, v in other.items():
             if k in self:
                 self[k] = (self[k][0] + v[0], self[k][1] + v[1])
             else:

@@ -5,6 +5,8 @@ Author: Daniel Machado
 
 """
 
+from builtins import str
+from builtins import range
 from collections import OrderedDict, Iterable
 from .solver import Solver, Solution, Status, VarType, Parameter, default_parameters
 from gurobipy import Model as GurobiModel, GRB, quicksum
@@ -98,7 +100,7 @@ class GurobiSolver(Solver):
             constr = self.problem.getConstrByName(constr_id)
             self.problem.remove(constr)
 
-        expr = quicksum(coeff * self.problem.getVarByName(r_id) for r_id, coeff in lhs.items() if coeff)
+        expr = quicksum(coeff * self.problem.getVarByName(r_id) for r_id, coeff in list(lhs.items()) if coeff)
 
         self.problem.addConstr(expr, grb_sense[sense], rhs, constr_id)
         self.constr_ids.append(constr_id)
@@ -170,11 +172,11 @@ class GurobiSolver(Solver):
         quad_obj = []
 
         if linear:
-            lin_obj = [f * self.problem.getVarByName(r_id) for r_id, f in linear.items() if f]
+            lin_obj = [f * self.problem.getVarByName(r_id) for r_id, f in list(linear.items()) if f]
 
         if quadratic:
             quad_obj = [q * self.problem.getVarByName(r_id1) * self.problem.getVarByName(r_id2)
-                        for (r_id1, r_id2), q in quadratic.items() if q]
+                        for (r_id1, r_id2), q in list(quadratic.items()) if q]
 
         obj_expr = quicksum(quad_obj + lin_obj)
         sense = GRB.MINIMIZE if minimize else GRB.MAXIMIZE
@@ -208,7 +210,7 @@ class GurobiSolver(Solver):
 
         if constraints:
             old_constraints = {}
-            for r_id, x in constraints.items():
+            for r_id, x in list(constraints.items()):
                 lb, ub = x if isinstance(x, tuple) else (x, x)
                 if r_id in self.var_ids:
                     lpvar = problem.getVarByName(r_id)
@@ -269,7 +271,7 @@ class GurobiSolver(Solver):
 
         #reset old constraints because temporary constraints should not be persistent
         if constraints:
-            for r_id, (lb, ub) in old_constraints.items():
+            for r_id, (lb, ub) in list(old_constraints.items()):
                 lpvar = problem.getVarByName(r_id)
                 lpvar.lb, lpvar.ub = lb, ub
             problem.update()
@@ -309,17 +311,17 @@ class GurobiSolver(Solver):
         return solutions
 
     def set_lower_bounds(self, bounds_dict):
-        for var_id, lb in bounds_dict.iteritems():
+        for var_id, lb in bounds_dict.items():
             lpvar = self.problem.getVarByName(var_id)
             lpvar.lb = lb if lb is not None else GRB.INFINITY
 
     def set_upper_bounds(self, bounds_dict):
-        for var_id, ub in bounds_dict.iteritems():
+        for var_id, ub in bounds_dict.items():
             lpvar = self.problem.getVarByName(var_id)
             lpvar.ub = ub if ub is not None else GRB.INFINITY
 
     def set_bounds(self, bounds_dict):
-        for var_id, bounds in bounds_dict.iteritems():
+        for var_id, bounds in bounds_dict.items():
             lpvar = self.problem.getVarByName(var_id)
             lpvar.lb = bounds[0] if bounds[0] is not None else GRB.INFINITY
             lpvar.ub = bounds[1] if bounds[1] is not None else GRB.INFINITY

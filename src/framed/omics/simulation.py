@@ -3,7 +3,9 @@
 Author: Daniel Machado
 
 """
+from __future__ import division
 
+from past.utils import old_div
 from framed.solvers import solver_instance
 from framed.cobra.simulation import FBA, pFBA
 from numpy import percentile
@@ -28,7 +30,7 @@ def gene2rxn(gpr, gene_exp, and_func=min, or_func=sum):
 
 def gene_to_reaction_expression(model, gene_exp, and_func=min, or_func=sum):
     rxn_exp = {}
-    for r_id, reaction in model.reactions.items():
+    for r_id, reaction in list(model.reactions.items()):
         if reaction.gpr is not None:
             level = gene2rxn(reaction.gpr, gene_exp, and_func, or_func)
             if level is not None:
@@ -52,8 +54,8 @@ def GIMME(model, gene_exp, cutoff=25, growth_frac=0.9, constraints=None, parsimo
     """
 
     rxn_exp = gene_to_reaction_expression(model, gene_exp, or_func=max)
-    threshold = percentile(rxn_exp.values(), cutoff)
-    coeffs = {r_id: threshold-val for r_id, val in rxn_exp.items() if val < threshold}
+    threshold = percentile(list(rxn_exp.values()), cutoff)
+    coeffs = {r_id: threshold-val for r_id, val in list(rxn_exp.items()) if val < threshold}
 
     solver = solver_instance(model)
 
@@ -80,7 +82,7 @@ def GIMME(model, gene_exp, cutoff=25, growth_frac=0.9, constraints=None, parsimo
     solver.update()
 
     objective = dict()
-    for r_id, val in coeffs.items():
+    for r_id, val in list(coeffs.items()):
         if model.reactions[r_id].reversible:
             pos, neg = r_id + '+', r_id + '-'
             objective[pos] = val
@@ -130,14 +132,14 @@ def eFlux(model, gene_exp, scale_rxn=None, scale_value=None, constraints=None, p
     max_exp = max(rxn_exp.values())
     bounds = {}
 
-    for r_id, reaction in model.reactions.items():
-        val = rxn_exp[r_id] / max_exp if r_id in rxn_exp else 1
+    for r_id, reaction in list(model.reactions.items()):
+        val = old_div(rxn_exp[r_id], max_exp) if r_id in rxn_exp else 1
         lb2 = -val if reaction.lb is None or reaction.lb < 0 else 0
         ub2 = val if reaction.ub is None or reaction.ub > 0 else 0
         bounds[r_id] = (lb2, ub2)
 
     if constraints:
-        for r_id, x in constraints.items():
+        for r_id, x in list(constraints.items()):
             lb, ub = x if isinstance(x, tuple) else (x, x)            
             lb2 = -1 if lb is None or lb < 0 else 0
             ub2 = 1 if ub is None or ub > 0 else 0
@@ -149,8 +151,8 @@ def eFlux(model, gene_exp, scale_rxn=None, scale_value=None, constraints=None, p
         sol = FBA(model, constraints=bounds)
 
     if scale_rxn is not None:
-        k = abs(scale_value / sol.values[scale_rxn])
-        for r_id, val in sol.values.items():
+        k = abs(old_div(scale_value, sol.values[scale_rxn]))
+        for r_id, val in list(sol.values.items()):
             sol.values[r_id] = val * k
 
     return sol

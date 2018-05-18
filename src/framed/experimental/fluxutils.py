@@ -1,3 +1,6 @@
+from __future__ import division
+from __future__ import print_function
+from past.utils import old_div
 from collections import OrderedDict
 from framed.cobra.simulation import MOMA, lMOMA
 from framed.solvers.solver import Status
@@ -20,7 +23,7 @@ def fit_fluxes_to_model(model, fluxes, constraints=None, quadratic=False):
 
 
 def flux_distance(original, other, normalize=False, quadratic=False):
-    x = array(original.values())
+    x = array(list(original.values()))
     y = array([other[r_id] for r_id in original])
 
     if quadratic:
@@ -31,7 +34,7 @@ def flux_distance(original, other, normalize=False, quadratic=False):
         size = sum(abs(x))
 
     if normalize:
-        return dist / size
+        return old_div(dist, size)
     else:
         return dist
 
@@ -47,9 +50,9 @@ def compare_fluxes(original, other, tolerance=1e-6, abstol=1e-9, sort=False, pat
     flux_right = [(r_id, other[r_id]) for r_id in only_right]
 
     if pattern is not None:
-        difference = filter(lambda (a, b): pattern in a, difference)
-        flux_left = filter(lambda (a, b): pattern in a, flux_left)
-        flux_right = filter(lambda (a, b): pattern in a, flux_right)
+        difference = [a_b for a_b in difference if pattern in a_b[0]]
+        flux_left = [a_b1 for a_b1 in flux_left if pattern in a_b1[0]]
+        flux_right = [a_b2 for a_b2 in flux_right if pattern in a_b2[0]]
 
     if sort:
         difference.sort(key=lambda x: x[1], reverse=True)
@@ -60,23 +63,23 @@ def compare_fluxes(original, other, tolerance=1e-6, abstol=1e-9, sort=False, pat
         if val > tolerance:
             x1 = original[r_id] if abs(original[r_id]) > abstol else 0
             x2 = other[r_id] if abs(other[r_id]) > abstol else 0
-            print '{: <16} {: < 10.3g} {: < 10.3g}'.format(r_id, x1, x2)
+            print('{: <16} {: < 10.3g} {: < 10.3g}'.format(r_id, x1, x2))
 
     for r_id, val in flux_left:
         if abs(val) > tolerance:
             x = original[r_id] if abs(original[r_id]) > abstol else 0
-            print '{: <16} {: < 10.3g}   --'.format(r_id, x)
+            print('{: <16} {: < 10.3g}   --'.format(r_id, x))
 
     for r_id, val in flux_right:
         if abs(val) > tolerance:
             x = other[r_id] if abs(other[r_id]) > abstol else 0
-            print '{: <16}   --       {: < 10.3g}'.format(r_id, x)
+            print('{: <16}   --       {: < 10.3g}'.format(r_id, x))
 
 
 def compute_turnover(model, v):
     m_r_table = model.metabolite_reaction_lookup_table()
-    t = {m_id: 0.5*sum([abs(coeff * v[r_id]) for r_id, coeff in neighbours.items()])
-         for m_id, neighbours in m_r_table.items()}
+    t = {m_id: 0.5*sum([abs(coeff * v[r_id]) for r_id, coeff in list(neighbours.items())])
+         for m_id, neighbours in list(m_r_table.items())}
     return t
 
 

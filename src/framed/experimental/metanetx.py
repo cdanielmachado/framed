@@ -1,8 +1,9 @@
+from builtins import object
 import pandas as pd
 from warnings import warn
 
 
-class MetaNetX:
+class MetaNetX(object):
     """ This class implements a resource for mapping idenfitiers based on the MetaNetX database.
 
         It must be instantiated with the path to the local directory where MNX is stored.
@@ -207,7 +208,7 @@ class MetaNetX:
                     model.metabolites[m_id].id = new_ids[0]
                     met_dict[m_id] = new_ids[0]
 
-            for m_id, new_id in met_dict.items():
+            for m_id, new_id in list(met_dict.items()):
                 key_replace(model.metabolites, m_id, new_id)
 
         for r_id in sorted(model.reactions):
@@ -226,11 +227,11 @@ class MetaNetX:
 
             if translate_metabolites:
                 reaction = model.reactions[r_id]
-                for m_id in reaction.stoichiometry.keys():
+                for m_id in list(reaction.stoichiometry.keys()):
                     if m_id in met_dict:
                         key_replace(reaction.stoichiometry, m_id, met_dict[m_id])
 
-        for r_id, new_id in rxn_dict.items():
+        for r_id, new_id in list(rxn_dict.items()):
             key_replace(model.reactions, r_id, new_id)
 
         if not inplace:

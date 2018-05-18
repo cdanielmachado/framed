@@ -54,7 +54,7 @@ def fix_cobra_model(model, remove_boundary=True, set_reversibilty=True, use_infi
 # TODO: this approach doesn't work when a model has multiple external compartments
 def fix_sink_reactions(model):
     exchange_compartments = {}
-    for r in model.reactions.itervalues():
+    for r in model.reactions.values():
 
         if not r.is_exchange: continue
 
@@ -66,8 +66,8 @@ def fix_sink_reactions(model):
             exchange_compartments[met.compartment].append(r.id)
 
     if exchange_compartments:
-        extracellular = max(exchange_compartments.iteritems(), key=lambda x: len(x[1]))[0]
-        for compartment, reactions in exchange_compartments.iteritems():
+        extracellular = max(iter(exchange_compartments.items()), key=lambda x: len(x[1]))[0]
+        for compartment, reactions in exchange_compartments.items():
             if compartment == extracellular:
                 continue
 
@@ -81,9 +81,9 @@ def remove_boundary_metabolites(model, tag=None):
     """ Remove remove boundary metabolites. """
 
     if tag:
-        boundary = filter(lambda m_id: m_id.endswith(tag), model.metabolites)
+        boundary = [m_id for m_id in model.metabolites if m_id.endswith(tag)]
     else:
-        boundary = [m_id for m_id, met in model.metabolites.items() if met.boundary]
+        boundary = [m_id for m_id, met in list(model.metabolites.items()) if met.boundary]
 
     model.remove_metabolites(boundary)
 
@@ -91,14 +91,14 @@ def remove_boundary_metabolites(model, tag=None):
 def fix_reversibility(model):
     """ Make reaction reversibility consistent with the bounds. """
 
-    for reaction in model.reactions.values():
+    for reaction in list(model.reactions.values()):
         reaction.reversible = (reaction.lb is None or reaction.lb < 0)
 
 
 def clean_bounds(model, threshold=1000):
     """ Remove artificially large bounds (unbounded = no bounds). """
 
-    for reaction in model.reactions.values():
+    for reaction in list(model.reactions.values()):
         if reaction.lb <= -threshold:
             reaction.lb = None
         if reaction.ub >= threshold:
@@ -108,7 +108,7 @@ def clean_bounds(model, threshold=1000):
 def apply_bounds(model, default_lb=-1000, default_ub=1000):
     """ Apply artificial bounds for unbounded reactions (opposite of `clean_bounds`). """
 
-    for reaction in model.reactions.values():
+    for reaction in list(model.reactions.values()):
         if reaction.lb is None:
             reaction.lb = default_lb
 
@@ -126,13 +126,13 @@ def clean_bigg_ids(model):
         del ord_dict[key]
         ord_dict[new_key] = item
 
-    for m_id, metabolite in model.metabolites.items():
+    for m_id, metabolite in list(model.metabolites.items()):
         metabolite.id = clean(m_id)
         key_replace(model.metabolites, m_id, metabolite.id)
 
-    for r_id, reaction in model.reactions.items():
+    for r_id, reaction in list(model.reactions.items()):
         reaction.id = clean(r_id)
         key_replace(model.reactions, r_id, reaction.id)
 
-        for m_id in reaction.stoichiometry.keys():
+        for m_id in list(reaction.stoichiometry.keys()):
             key_replace(reaction.stoichiometry, m_id, clean(m_id))

@@ -3,8 +3,9 @@
 Author: Daniel Machado
    
 """
+from __future__ import absolute_import
 
-from simulation import FBA, pFBA, MOMA, lMOMA, ROOM
+from .simulation import FBA, pFBA, MOMA, lMOMA, ROOM
 
 
 def gene_deletion(model, genes, method='FBA', reference=None, constraints=None, solver=None, compute_silent_deletions=False):

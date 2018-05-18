@@ -4,6 +4,7 @@ Module for model transformation operations.
 Author: Daniel Machado
    
 """
+from __future__ import print_function
 
 from .model import Reaction, Compartment, Metabolite
 from .cbmodel import CBModel, CBReaction, GPRAssociation
@@ -59,16 +60,16 @@ def make_irreversible(model, inplace=True, reactions=None):
         model = model.copy()
 
     if reactions is None:
-        reactions = model.reactions.keys()
+        reactions = list(model.reactions.keys())
 
     mapping = dict()
 
-    for r_id, reaction in model.reactions.items():
+    for r_id, reaction in list(model.reactions.items()):
         if reaction.reversible and r_id in reactions:
             fwd_id = reaction.id + '_f'
             bwd_id = reaction.id + '_b'
             mapping[r_id] = (fwd_id, bwd_id)
-            bwd_stoichiometry = [(m_id, -coeff) for m_id, coeff in reaction.stoichiometry.items()]
+            bwd_stoichiometry = [(m_id, -coeff) for m_id, coeff in list(reaction.stoichiometry.items())]
 
             if isinstance(model, CBModel):
                 lb, ub = reaction.lb, reaction.ub
@@ -96,18 +97,18 @@ def make_irreversible(model, inplace=True, reactions=None):
 
 def disconnected_metabolites(model):
     m_r_table = model.metabolite_reaction_lookup()
-    return [m_id for m_id, edges in m_r_table.items() if not edges]
+    return [m_id for m_id, edges in list(m_r_table.items()) if not edges]
 
 
 def disconnected_genes(model):
     disconnected = set(model.genes)
-    for reaction in model.reactions.values():
+    for reaction in list(model.reactions.values()):
         disconnected -= set(reaction.get_associated_genes())
     return disconnected
 
 
 def empty_compartments(model):
-    used = [met.compartment for met in model.metabolites.values()]
+    used = [met.compartment for met in list(model.metabolites.values())]
     empty = set(model.compartments) - set(used)
     return empty
 
@@ -115,7 +116,7 @@ def empty_compartments(model):
 def split_isozymes(model):
     mapping = dict()
 
-    for r_id, reaction in model.reactions.items():
+    for r_id, reaction in list(model.reactions.items()):
 
         if reaction.gpr is not None and len(reaction.gpr.proteins) > 1:
             mapping[r_id] = []
@@ -146,7 +147,7 @@ def genes_to_species(model, gene_prefix='G_', usage_prefix='u_', pseudo_genes=No
     compartment = Compartment('genes', 'gene pool')
     model.add_compartment(compartment)
 
-    for gene in model.genes.values():
+    for gene in list(model.genes.values()):
         if gene.id in pseudo_genes:
             continue
         model.add_metabolite(Metabolite(gene.id, gene.id, 'genes'))
@@ -155,11 +156,11 @@ def genes_to_species(model, gene_prefix='G_', usage_prefix='u_', pseudo_genes=No
         model.add_reaction(reaction)
         new_reactions.append(r_id)
 
-    for r_id, reaction in model.reactions.items():
+    for r_id, reaction in list(model.reactions.items()):
 
         if reaction.gpr is not None:
             if len(reaction.gpr.proteins) > 1:
-                print 'error: isozymes not split:', r_id
+                print('error: isozymes not split:', r_id)
                 return
             elif len(reaction.gpr.proteins) == 1:
                 for g_id in reaction.gpr.proteins[0].genes:
@@ -173,12 +174,12 @@ def merge_fluxes(fluxes, mapping_rev, mapping_iso, net=True):
 
     fluxes = fluxes.copy()
 
-    for r_id, r_ids in mapping_iso.items():
+    for r_id, r_ids in list(mapping_iso.items()):
         fluxes[r_id] = sum([fluxes[r_id2] for r_id2 in r_ids])
         for r_id2 in r_ids:
             del fluxes[r_id2]
 
-    for r_id, (fwd_id, bwd_id) in mapping_rev.items():
+    for r_id, (fwd_id, bwd_id) in list(mapping_rev.items()):
         if net:
             fluxes[r_id] = fluxes[fwd_id] - fluxes[bwd_id]
         else:
@@ -192,7 +193,7 @@ def merge_fluxes(fluxes, mapping_rev, mapping_iso, net=True):
 def convert_constraints(constraints, mapping_rev, mapping_iso):
     constraints = constraints.copy()
 
-    for r_id, (fwd_id, bwd_id) in mapping_rev.items():
+    for r_id, (fwd_id, bwd_id) in list(mapping_rev.items()):
         if r_id in constraints:
             x = constraints[r_id]
             lb, ub = x if isinstance(x, tuple) else (x, x)
@@ -204,7 +205,7 @@ def convert_constraints(constraints, mapping_rev, mapping_iso):
             constraints[bwd_id] = (lb_bwd, ub_bwd)
             del constraints[r_id]
 
-    for r_id, r_ids in mapping_iso.items():
+    for r_id, r_ids in list(mapping_iso.items()):
         if r_id in constraints:
             x = constraints[r_id]
             ub = x[1] if isinstance(x, tuple) else x

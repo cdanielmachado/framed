@@ -1,4 +1,8 @@
-from StringIO import StringIO
+from __future__ import division
+from future import standard_library
+standard_library.install_aliases()
+from past.utils import old_div
+from io import StringIO
 import escher
 import requests
 import xml.etree.ElementTree as xml
@@ -23,7 +27,7 @@ def build_escher_map(fluxes, map_name, abstol=1e-6):
         escher.plots.Builder: escher map object
     """
 
-    data = {r_id[2:]: abs(val) if abs(val) > abstol else 0.0 for r_id, val in fluxes.items()}
+    data = {r_id[2:]: abs(val) if abs(val) > abstol else 0.0 for r_id, val in list(fluxes.items())}
 
     colors = [{'type': 'min', 'color': '#f0f0f0', 'size': 8},
               {'type': 'mean', 'color': '#abb7ff', 'size': 20},
@@ -85,8 +89,8 @@ def highligh_enzymes_in_KEGG(pathway_id, enzymes, ax=None, color="#FF1414"):
         if graphic_element_type in ("rectangle", "circle"):
             w = int(graphic_element_node.get("width"))
             h = int(graphic_element_node.get("height"))
-            x0 = int(graphic_element_node.get("x")) - w / 2
-            y0 = int(graphic_element_node.get("y")) - h / 2
+            x0 = int(graphic_element_node.get("x")) - old_div(w, 2)
+            y0 = int(graphic_element_node.get("y")) - old_div(h, 2)
             x1, y1 = x0 + w, y0 + h
 
             orthologs_elements.append({'orthologs': set(entity_ids),

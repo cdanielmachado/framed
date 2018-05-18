@@ -1,8 +1,9 @@
+from builtins import object
 from re import compile
 from collections import OrderedDict
 
 
-class ReactionParser:
+class ReactionParser(object):
 
     def __init__(self):
         id_re = '[a-zA-Z]\w*'

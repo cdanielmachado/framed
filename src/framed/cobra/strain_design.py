@@ -4,6 +4,7 @@ Author: Daniel Machado
 
 """
 
+from builtins import range
 from itertools import combinations
 from collections import OrderedDict
 from .deletion import deletion
@@ -103,7 +104,7 @@ def combinatorial_deletion(model, objective, max_dels, kind='reactions', targets
                     del_set, fval, solutions, abstol):
                 solutions[del_set] = fval
 
-    solutions = OrderedDict(sorted(solutions.items(), key=lambda (_, fval): fval, reverse=True))
+    solutions = OrderedDict(sorted(list(solutions.items()), key=lambda __fval: __fval[1], reverse=True))
     return solutions
 
 
@@ -194,7 +195,7 @@ def greedy_deletion(model, objective, max_dels, kind='reactions', targets=None, 
                 if fval > wt_fval + abstol and solution.values[biomass] >= min_growth * wt_growth and not _redundant(
                         del_set, fval, solutions, abstol):
                     solutions.append((del_set, fval))
-        solutions.sort(key=lambda (_, fval): fval, reverse=True)
+        solutions.sort(key=lambda __fval1: __fval1[1], reverse=True)
         candidates = [del_set | {target} for del_set, _ in solutions[:pop_size] for target in targets
                       if len(del_set | {target}) <= max_dels and (del_set | {target}) not in visited]
 
@@ -204,7 +205,7 @@ def greedy_deletion(model, objective, max_dels, kind='reactions', targets=None, 
 def _redundant(del_set, fval, solutions, abstol):
     redundant = False
     del_set = set(del_set)
-    for previous, fval0 in solutions.items():
+    for previous, fval0 in list(solutions.items()):
         if del_set.issuperset(set(previous)) and fval < fval0 + abstol:
             redundant = True
             break

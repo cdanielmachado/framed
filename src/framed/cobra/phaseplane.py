@@ -5,8 +5,10 @@ This module implements the Phenotype Phase Plane Analysis.
 Author: Kai Zhuang
 
 """
+from __future__ import absolute_import
 
-from simulation import FBA
+from builtins import object
+from .simulation import FBA
 from ..solvers import solver_instance
 from ..solvers.solver import Status
 import numpy
@@ -124,8 +126,8 @@ def PhPP(model, rxn_x, rxn_y, rxn_x_range, rxn_y_range, target=None, maximize=Tr
     solver = solver_instance(model)
 
     # find metabolite ids corresponding to reactions x and y
-    met_x = model.reactions[rxn_x].stoichiometry.keys()[0]
-    met_y = model.reactions[rxn_y].stoichiometry.keys()[0]
+    met_x = list(model.reactions[rxn_x].stoichiometry.keys())[0]
+    met_y = list(model.reactions[rxn_y].stoichiometry.keys())[0]
 
     # create a PhenotypePhasePlane instance for storing results
     phase_plane = PhenotypePhasePlane(rxn_x, rxn_y, rxn_x_range, rxn_y_range)

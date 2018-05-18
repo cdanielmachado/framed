@@ -4,6 +4,7 @@ Author: Daniel Machado
 
 """
 
+from builtins import object
 import json
 import pandas as pd
 import os
@@ -19,7 +20,7 @@ MANDATORY_FIELDS = ['conditions',
                     'growth_rate']
 
 
-class DataSet:
+class DataSet(object):
     """ Represents a multi-omics dataset for multiple experimental conditions.
 
     The dataset must be loaded from a json file with an acceptable format (see examples).

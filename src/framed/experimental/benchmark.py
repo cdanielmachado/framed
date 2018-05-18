@@ -28,7 +28,7 @@ def evaluate(method, model, dataset, condition, **kwargs):
     else:
         input_fluxes = {}
 
-    constraints = {r_id: val for r_id, val in input_fluxes.items()}
+    constraints = {r_id: val for r_id, val in list(input_fluxes.items())}
 
     if fit_growth:
         constraints[biomass] = growth
