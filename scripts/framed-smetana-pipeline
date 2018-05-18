@@ -1,6 +1,12 @@
 #!/usr/bin/env python
 
-import ConfigParser
+from future import standard_library
+standard_library.install_aliases()
+from builtins import str
+from builtins import next
+from builtins import range
+from builtins import object
+import configparser
 import argparse
 import os
 import re
@@ -29,7 +35,7 @@ status_codes = {
 
 
 def row_string(row):
-    return "\t".join(("" if x is None else str(x)) for x in row.itervalues()) + "\n"
+    return "\t".join(("" if x is None else str(x)) for x in row.values()) + "\n"
 
 
 class Logger(object):
@@ -126,7 +132,7 @@ def framed_smetana_pipeline():
     # Load configuration
     #
     logger = Logger()
-    config = ConfigParser.ConfigParser()
+    config = configparser.ConfigParser()
     config.read(args.config)
     communities_sep = config.get("communities", "communities_separator").strip('"') if config.has_option("communities", "communities_separator") else ","
     flavor = config.get("framed", "flavor") if config.has_option("framed", "flavor") else "fbc2"
@@ -159,15 +165,15 @@ def framed_smetana_pipeline():
         models_locations = {}
 
     compounds_exchanged = {r['id']: r['name'] for _, r in pandas.read_table(config.get("communities", "compounds_exchanged"), comment="#").iterrows()}
-    compounds_exchanged = OrderedDict(sorted(compounds_exchanged.iteritems(), key=lambda x: x[0]))
+    compounds_exchanged = OrderedDict(sorted(iter(compounds_exchanged.items()), key=lambda x: x[0]))
     compounds_external = {r['id']: r['name'] for _, r in pandas.read_table(config.get("communities", "compounds_external"), comment="#").iterrows()}
-    compounds_external = OrderedDict(sorted(compounds_external.iteritems(), key=lambda x: x[0]))
-    env_external = framed.Environment.from_compounds(compounds_external.keys(), exchange_format=exch_met_to_rxn_format, max_uptake=max_uptake)
+    compounds_external = OrderedDict(sorted(iter(compounds_external.items()), key=lambda x: x[0]))
+    env_external = framed.Environment.from_compounds(list(compounds_external.keys()), exchange_format=exch_met_to_rxn_format, max_uptake=max_uptake)
     rxn_external = set(env_external)
 
     compounds_inorganic = {r['id']: r['name'] for _, r in pandas.read_table(config.get("communities", "compounds_inorganic"), comment="#").iterrows()}
-    compounds_inorganic = OrderedDict(sorted(compounds_inorganic.iteritems(), key=lambda x: x[0]))
-    env_inorganic = framed.Environment.from_compounds(compounds_inorganic.keys(), exchange_format=exch_met_to_rxn_format, max_uptake=max_uptake)
+    compounds_inorganic = OrderedDict(sorted(iter(compounds_inorganic.items()), key=lambda x: x[0]))
+    env_inorganic = framed.Environment.from_compounds(list(compounds_inorganic.keys()), exchange_format=exch_met_to_rxn_format, max_uptake=max_uptake)
     rxn_inorganic = set(env_inorganic)
 
     compounds_exchanged_blacklist = set()
@@ -236,7 +242,7 @@ def framed_smetana_pipeline():
             for j in range(1, max_community_size + 1):
                 row_template["scscore.org{}.org{}".format(i, j)] = 0
 
-    communities_sample = [communities[i::args.parts_total] for i in xrange(args.parts_total)][args.part - 1]
+    communities_sample = [communities[i::args.parts_total] for i in range(args.parts_total)][args.part - 1]
 
     # 3_program_validate.prof
     validate = False # validate MILP solutions
@@ -335,8 +341,8 @@ def framed_smetana_pipeline():
                 rxn_com_minimal = rxn_com_minimal | rxn_com_inorganic
                 env_com_minimal = framed.Environment.from_reactions(rxn_com_minimal, max_uptake=max_uptake)
                 met_com_minimal = {m.original_metabolite for ee in
-                                   community_interacting.organisms_exchange_reactions.itervalues() for m in
-                                   ee.itervalues() if m.community_exchange_reaction in rxn_com_minimal}
+                                   community_interacting.organisms_exchange_reactions.values() for m in
+                                   ee.values() if m.community_exchange_reaction in rxn_com_minimal}
 
                 env_com_minimal.apply(community_interacting.merged, inplace=True)
 
@@ -349,8 +355,8 @@ def framed_smetana_pipeline():
                     m = next(m for m in community_interacting.merged.reactions[r].stoichiometry)
 
                     orig_m = list({org_m.original_metabolite
-                                   for org_exch in community_interacting.organisms_exchange_reactions.itervalues()
-                                   for org_m in org_exch.itervalues()
+                                   for org_exch in community_interacting.organisms_exchange_reactions.values()
+                                   for org_m in org_exch.values()
                                    if org_m.extracellular_metabolite == m})
                     if len(orig_m):
                         orig_m = orig_m[0]
@@ -411,11 +417,11 @@ def framed_smetana_pipeline():
                                                                 min_growth=min_growth,
                                                                 max_uptake=max_uptake, n_solutions=n_solutions)
                     logger.log("Species Coupling Scores:\n{}", "-"*60)
-                    for m_receiver, donors in scscores.iteritems():
+                    for m_receiver, donors in scscores.items():
                         if len(donors):
-                            donors_str = ["{}'{:.0f}%".format(m_donor, 100*freq) for m_donor, freq in donors.iteritems()]
+                            donors_str = ["{}'{:.0f}%".format(m_donor, 100*freq) for m_donor, freq in donors.items()]
                             logger.log("    {} <= {}".format(m_receiver, ",".join(donors_str)))
-                        for m_donor, scscore in donors.iteritems():
+                        for m_donor, scscore in donors.items():
                             row_id = "scscore.org{}.org{}".format(models_i[m_receiver], models_i[m_donor])
                             if row_id not in row:
                                 raise KeyError("Column '{}' was not found in row".format(row_id))
@@ -424,7 +430,7 @@ def framed_smetana_pipeline():
                 if "mpscore" in algorithms:
                     mpscores, mpextras = smetana.metabolite_production_score(community_interacting, env_com_minimal, min_growth=min_growth)
                     logger.log("\nMetabolite Production Scores:\n{}", "-"*60)
-                    for model_id, metabolites in mpscores.iteritems():
+                    for model_id, metabolites in mpscores.items():
                         if len(metabolites):
                             logger.log("    {} => {}".format(model_id, ",".join([compounds_exchanged.get(m, m) for m in metabolites])))
                         for m_id in metabolites:
@@ -439,10 +445,10 @@ def framed_smetana_pipeline():
                                                                  min_mass_weight=min_mass_weight, min_growth=min_growth,
                                                                  max_uptake=max_uptake,
                                                                  n_solutions=n_solutions)
-                    for model_id, metabolites in muscores.iteritems():
+                    for model_id, metabolites in muscores.items():
                         if len(metabolites):
-                            logger.log("    {} <= {}".format(model_id, ", ".join(["{}'{:.0f}%".format(compounds_exchanged.get(m, m), 100*freq) for m, freq in metabolites.iteritems()])))
-                        for m_id, muscore in metabolites.iteritems():
+                            logger.log("    {} <= {}".format(model_id, ", ".join(["{}'{:.0f}%".format(compounds_exchanged.get(m, m), 100*freq) for m, freq in metabolites.items()])))
+                        for m_id, muscore in metabolites.items():
                             row_id = "muscore.org{}.{}".format(models_i[model_id], m_id)
                             if row_id not in row:
                                 raise KeyError("Column '{}' was not found in row".format(row_id))

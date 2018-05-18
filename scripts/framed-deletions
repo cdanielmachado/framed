@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+from __future__ import print_function
 from framed.io.bioopt import read_cbmodel_from_file as bioopt_read
 from framed.io.plaintext import read_cbmodel_from_file as framed_read
 from framed import solver_instance
@@ -116,19 +117,19 @@ elif args.method == 'lMOMA':
 elif args.method == 'ROOM':
     wt_sol = ROOM(model, reference_fluxes, solver=solver)
 
-print "Wild-type solution ({})".format(args.method)
-print "======================================="
-print "status: {}".format(status_codes[wt_sol.status])
-print "objective: {}".format(wt_sol.fobj if wt_sol.status == Status.OPTIMAL else "")
-print "biomass: {}".format(wt_sol.values[model.biomass_reaction] if wt_sol.status == Status.OPTIMAL else "")
+print("Wild-type solution ({})".format(args.method))
+print("=======================================")
+print("status: {}".format(status_codes[wt_sol.status]))
+print("objective: {}".format(wt_sol.fobj if wt_sol.status == Status.OPTIMAL else ""))
+print("biomass: {}".format(wt_sol.values[model.biomass_reaction] if wt_sol.status == Status.OPTIMAL else ""))
 
 
 #
 # Caclulate solutions for knock-outs
 #
 if ko_elements:
-    print "\nKnock-out ({}) solutions".format(kind)
-    print "======================================="
+    print("\nKnock-out ({}) solutions".format(kind))
+    print("=======================================")
     if isinstance(ko_elements, str):
         genes_reactions = set(chain.from_iterable(model.genes, model.reactions))
         ko_elements_list = []
@@ -139,7 +140,7 @@ if ko_elements:
 
     output = None
     header_str = "genes\treactions\tstatus\tobjective\tbiomass"
-    print header_str
+    print(header_str)
     if args.output:
         output = open(args.output, "w")
         output.write(header_str + "\n")
@@ -161,6 +162,6 @@ if ko_elements:
             objective=sol.fobj if sol.status == Status.OPTIMAL else "",
             biomass=sol.values[model.biomass_reaction] if sol.status == Status.OPTIMAL else "")
 
-        print "{}/{}: ".format(i, len(ko_elements)) + sol_str
+        print("{}/{}: ".format(i, len(ko_elements)) + sol_str)
         if args.output:
             output.write(sol_str + "\n")
