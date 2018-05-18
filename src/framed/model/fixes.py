@@ -99,8 +99,21 @@ def clean_bounds(model, threshold=1000):
     """ Remove artificially large bounds (unbounded = no bounds). """
 
     for reaction in model.reactions.values():
-        reaction.lb = reaction.lb if reaction.lb > -threshold else None
-        reaction.ub = reaction.ub if reaction.ub < threshold else None
+        if reaction.lb <= -threshold:
+            reaction.lb = None
+        if reaction.ub >= threshold:
+            reaction.ub = None
+
+
+def apply_bounds(model, default_lb=-1000, default_ub=1000):
+    """ Apply artificial bounds for unbounded reactions (opposite of `clean_bounds`). """
+
+    for reaction in model.reactions.values():
+        if reaction.lb is None:
+            reaction.lb = default_lb
+
+        if reaction.ub is None:
+            reaction.ub = default_ub
 
 
 def clean_bigg_ids(model):

@@ -33,7 +33,7 @@ def get_default_solver():
     if default_solver:
         return default_solver
 
-    solver_order = ['gurobi', 'cplex']
+    solver_order = ['cplex', 'gurobi']
 
     for solver in solver_order:
         if solver in solvers.keys():

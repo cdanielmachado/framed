@@ -55,7 +55,8 @@ class Flavor:
     FBC2 = 'fbc2'  # other models in sbml-fbc2 format
 
 
-def load_sbml_model(filename, kind=None, flavor=None, exchange_detection_mode=None):
+def load_sbml_model(filename, kind=None, flavor=None, exchange_detection_mode=None,
+                    load_gprs=True, load_metadata=True):
     """ Loads a metabolic model from a file.
     
     Arguments:
@@ -92,21 +93,23 @@ def load_sbml_model(filename, kind=None, flavor=None, exchange_detection_mode=No
 
     if sbml_model is None:
         document.printErrors()
-        raise IOError('Failed to load model.')
+        raise IOError('Failed to load model {}.'.format(filename))
 
     if kind and kind.lower() == CB_MODEL:
-        model = _load_cbmodel(sbml_model, flavor, exchange_detection_mode=exchange_detection_mode)
+        model = _load_cbmodel(sbml_model, flavor, exchange_detection_mode=exchange_detection_mode,
+                              load_gprs=load_gprs, load_metadata=load_metadata)
     elif kind and kind.lower() == ODE_MODEL:
         model = _load_odemodel(sbml_model)
     else:
         model = _load_stoichiometric_model(sbml_model)
 
-    _load_metadata(sbml_model, model)
+    if load_metadata:
+        _load_metadata(sbml_model, model)
 
     return model
 
 
-def load_cbmodel(filename, flavor=None, exchange_detection_mode=None):
+def load_cbmodel(filename, flavor=None, exchange_detection_mode=None, load_gprs=True, load_metadata=True):
     """
     Args:
         filename (str): SBML file path
@@ -135,7 +138,8 @@ def load_cbmodel(filename, flavor=None, exchange_detection_mode=None):
         CBModel: constraint-based model
     """
 
-    model = load_sbml_model(filename, kind=CB_MODEL, flavor=flavor, exchange_detection_mode=exchange_detection_mode)
+    model = load_sbml_model(filename, kind=CB_MODEL, flavor=flavor, exchange_detection_mode=exchange_detection_mode,
+                            load_gprs=load_gprs, load_metadata=load_metadata)
 
     fix_cb_model(model, flavor=flavor)
 
@@ -154,23 +158,25 @@ def _load_stoichiometric_model(sbml_model):
     return model
 
 
-def _load_compartments(sbml_model, model):
+def _load_compartments(sbml_model, model, load_metadata=True):
     for compartment in sbml_model.getListOfCompartments():
-        model.add_compartment(_load_compartment(compartment))
+        model.add_compartment(_load_compartment(compartment, load_metadata=load_metadata))
 
 
-def _load_compartment(compartment):
+def _load_compartment(compartment, load_metadata=True):
     comp = Compartment(compartment.getId(), compartment.getName(), compartment.getSize())
-    _load_metadata(compartment, comp)
+
+    if load_metadata:
+        _load_metadata(compartment, comp)
     return comp
 
 
-def _load_metabolites(sbml_model, model, flavor=None):
+def _load_metabolites(sbml_model, model, flavor=None, load_metadata=True):
     for species in sbml_model.getListOfSpecies():
-        model.add_metabolite(_load_metabolite(species, flavor), clear_tmp=False)
+        model.add_metabolite(_load_metabolite(species, flavor, load_metadata=load_metadata), clear_tmp=False)
 
 
-def _load_metabolite(species, flavor=None):
+def _load_metabolite(species, flavor=None, load_metadata=True):
     metabolite = Metabolite(species.getId(), species.getName(), species.getCompartment(),
                             species.getBoundaryCondition(), species.getConstant())
 
@@ -184,17 +190,20 @@ def _load_metabolite(species, flavor=None):
             charge = fbc_species.getCharge()
             metabolite.metadata['CHARGE'] = str(charge)
 
-    _load_metadata(species, metabolite)
+    if load_metadata:
+        _load_metadata(species, metabolite)
+
     return metabolite
 
 
-def _load_reactions(sbml_model, model, exchange_detection_mode=None):
+def _load_reactions(sbml_model, model, exchange_detection_mode=None, load_metadata=True):
     for reaction in sbml_model.getListOfReactions():
-        r = _load_reaction(reaction, sbml_model=sbml_model, exchange_detection_mode=exchange_detection_mode)
+        r = _load_reaction(reaction, sbml_model=sbml_model, exchange_detection_mode=exchange_detection_mode,
+                           load_metadata=load_metadata)
         model.add_reaction(r, clear_tmp=False)
 
 
-def _load_reaction(reaction, sbml_model, exchange_detection_mode=None):
+def _load_reaction(reaction, sbml_model, exchange_detection_mode=None, load_metadata=True):
     """
     Args:
         reaction: <SBMLReaction> object 
@@ -264,11 +273,14 @@ def _load_reaction(reaction, sbml_model, exchange_detection_mode=None):
 
     rxn = Reaction(reaction.getId(), name=reaction.getName(), reversible=reaction.getReversible(),
                    stoichiometry=stoichiometry, regulators=modifiers, is_exchange=is_exchange)
-    _load_metadata(reaction, rxn)
+
+    if load_metadata:
+        _load_metadata(reaction, rxn)
+
     return rxn
 
 
-def _load_cbmodel(sbml_model, flavor, exchange_detection_mode=None):
+def _load_cbmodel(sbml_model, flavor, exchange_detection_mode=None, load_gprs=True, load_metadata=True):
     if exchange_detection_mode and exchange_detection_mode not in {None, 'unbalanced', 'boundary'}:
         try:
             exchange_detection_mode = re.compile(exchange_detection_mode)
@@ -286,17 +298,20 @@ def _load_cbmodel(sbml_model, flavor, exchange_detection_mode=None):
             exchange_detection_mode = 'unbalanced'
 
     model = CBModel(sbml_model.getId())
-    _load_compartments(sbml_model, model)
-    _load_metabolites(sbml_model, model, flavor)
-    _load_reactions(sbml_model, model, exchange_detection_mode=exchange_detection_mode)
+    _load_compartments(sbml_model, model, load_metadata=load_metadata)
+    _load_metabolites(sbml_model, model, flavor, load_metadata=load_metadata)
+    _load_reactions(sbml_model, model, exchange_detection_mode=exchange_detection_mode, load_metadata=load_metadata)
+
     if flavor in {None, Flavor.COBRA, Flavor.COBRA_OTHER, Flavor.SEED}:
         _load_cobra_bounds(sbml_model, model)
         _load_cobra_objective(sbml_model, model)
-        _load_cobra_gpr(sbml_model, model)
+        if load_gprs:
+            _load_cobra_gpr(sbml_model, model)
     elif flavor in {Flavor.BIGG, Flavor.FBC2}:
         _load_fbc2_bounds(sbml_model, model)
         _load_fbc2_objective(sbml_model, model)
-        _load_fbc2_gpr(sbml_model, model)
+        if load_gprs:
+            _load_fbc2_gpr(sbml_model, model)
     else:
         raise TypeError("Unsupported SBML flavor: {}".format(flavor))
 

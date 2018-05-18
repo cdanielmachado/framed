@@ -11,7 +11,7 @@ import warnings
 import pandas
 from shutil import copyfile
 from collections import OrderedDict
-import framed.community.smetana as smetana
+import framed.community.smetana_old as smetana
 import framed
 from framed.experimental.medium import minimal_medium
 from framed.solvers.solver import Status

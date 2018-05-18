@@ -11,11 +11,11 @@ class CommunityNameMapping(object):
     def __init__(self, original_reaction=None, organism_reaction=None, original_metabolite=None,
                  organism_metabolite=None, extracellular_metabolite=None, community_exchange_reaction=None):
         """
-        This class is used to represent mapping between original and merged community model metabolites andreactions
+        This class is used to represent mapping between original and merged community model metabolites and reactions
 
         Args:
             original_reaction (str): Name of reaction in original model
-            organism_reaction (str): Name of reaction in merged community model 
+            organism_reaction (str): Name of reaction in merged community model
             original_metabolite (str): Name of metabolite in original model
             organism_metabolite (str): Name of metabolite in merged community model
             extracellular_metabolite (str): Name of "common environment" metabolite in merged community model
@@ -44,7 +44,7 @@ class Community(object):
     into a single multi-species model (CBModel) which is compatible with most types of constraint-based methods.
     """
 
-    def __init__(self, community_id, models=None, copy_models=True, extracellular_compartment_id="e",
+    def __init__(self, community_id, models=None, copy_models=True, extracellular_compartment_id="C_e",
                  merge_extracellular_compartments=False, create_biomass=True, interacting=True,
                  exchanged_metabolites_blacklist=set()):
         """
@@ -261,7 +261,6 @@ class Community(object):
             return "{} ({})".format(object_name, organism_name)
 
         def _copy_object(obj, org_id, compartment=None):
-            # 5_program_deepcopy.prof
             new_obj = obj.copy()
             new_obj.id = _id_pattern(obj.id, org_id)
             new_obj.name = _name_pattern(obj.name, org_id)
@@ -347,6 +346,7 @@ class Community(object):
                         merged_model.add_reaction(new_rxn)
 
             for r_id, rxn in model.reactions.items():
+
                 is_exchange = rxn.is_exchange
 
                 if not is_exchange or not self._merge_extracellular_compartments:
