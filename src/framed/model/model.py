@@ -88,7 +88,7 @@ class Reaction(object):
             list: reaction substrates
         """
 
-        return [m_id for m_id, coeff in list(self.stoichiometry.items()) if coeff < 0]
+        return [m_id for m_id, coeff in self.stoichiometry.items() if coeff < 0]
 
     def get_products(self):
         """ Get list of reaction products
@@ -97,7 +97,7 @@ class Reaction(object):
             list: reaction products
         """
         
-        return [m_id for m_id, coeff in list(self.stoichiometry.items()) if coeff > 0]
+        return [m_id for m_id, coeff in self.stoichiometry.items() if coeff > 0]
 
     def get_activators(self):
         """ Get list of reaction activators
@@ -106,7 +106,7 @@ class Reaction(object):
             list: reaction activators
         """
         
-        return [m_id for m_id, kind in list(self.regulators.items()) if kind == '+']
+        return [m_id for m_id, kind in self.regulators.items() if kind == '+']
 
     def get_inhibitors(self):
         """ Get list of reaction inhibitors
@@ -115,7 +115,7 @@ class Reaction(object):
             list: reaction inhibitors
         """
         
-        return [m_id for m_id, kind in list(self.regulators.items()) if kind == '-']
+        return [m_id for m_id, kind in self.regulators.items() if kind == '-']
 
     def to_equation_string(self, metabolite_names=None):
         """ Returns reaction equation string
@@ -136,10 +136,10 @@ class Reaction(object):
 
         res = ""
         res += ' + '.join([met_repr(m_id) if coeff == -1.0 else str(-coeff) + ' ' + met_repr(m_id)
-                           for m_id, coeff in list(self.stoichiometry.items()) if coeff < 0])
+                           for m_id, coeff in self.stoichiometry.items() if coeff < 0])
         res += ' <-> ' if self.reversible else ' --> '
         res += ' + '.join([met_repr(m_id) if coeff == 1.0 else str(coeff) + ' ' + met_repr(m_id)
-                           for m_id, coeff in list(self.stoichiometry.items()) if coeff > 0])
+                           for m_id, coeff in self.stoichiometry.items() if coeff > 0])
         return res
 
     def __getstate__(self):
@@ -226,13 +226,13 @@ class AttrOrderedDict(OrderedDict):
 
     def __copy__(self):
         my_copy = AttrOrderedDict()
-        for key, val in list(self.items()):
+        for key, val in self.items():
             my_copy[key] = copy(val)
         return my_copy
 
     def __deepcopy__(self, memo):
         my_copy = AttrOrderedDict()
-        for key, val in list(self.items()):
+        for key, val in self.items():
             my_copy[key] = deepcopy(val)
         return my_copy
 
@@ -297,7 +297,7 @@ class Model(object):
         Returns: list
         """
 
-        return [rxn.id for rxn in list(self.reactions.values()) if rxn.is_exchange or include_sink and rxn.is_sink]
+        return [rxn.id for rxn in self.reactions.values() if rxn.is_exchange or include_sink and rxn.is_sink]
 
     def get_sink_reactions(self):
         """
@@ -305,7 +305,7 @@ class Model(object):
 
         Returns: list
         """
-        return [rxn.id for rxn in list(self.reactions.values()) if rxn.is_sink]
+        return [rxn.id for rxn in self.reactions.values() if rxn.is_sink]
 
     def add_metabolite(self, metabolite, clear_tmp=True):
         """ Add a single metabolite to the model.
@@ -425,7 +425,7 @@ class Model(object):
             self.remove_reactions(target_rxns)
 
         if delete_metabolites:
-            target_mets = [m_id for m_id, met in list(self.metabolites.items()) if met.compartment in c_ids]
+            target_mets = [m_id for m_id, met in self.metabolites.items() if met.compartment in c_ids]
             self.remove_metabolites(target_mets)
 
     def get_metabolite_producers(self, m_id, reversible=False):
@@ -441,7 +441,7 @@ class Model(object):
         table = self.metabolite_reaction_lookup()
 
         producers = []
-        for r_id, coeff in list(table[m_id].items()):
+        for r_id, coeff in table[m_id].items():
             if coeff > 0 or reversible and self.reactions[r_id].reversible:
                 producers.append(r_id)
 
@@ -460,7 +460,7 @@ class Model(object):
         table = self.metabolite_reaction_lookup()
 
         consumers = []
-        for r_id, coeff in list(table[m_id].items()):
+        for r_id, coeff in table[m_id].items():
             if coeff < 0 or reversible and self.reactions[r_id].reversible:
                 consumers.append(r_id)
 
@@ -481,11 +481,11 @@ class Model(object):
 
     def get_activation_targets(self, m_id):
         table = self.regulatory_lookup()
-        return [r_id for r_id, kind in list(table[m_id].items()) if kind == '+']
+        return [r_id for r_id, kind in table[m_id].items() if kind == '+']
 
     def get_inhibition_targets(self, m_id):
         table = self.regulatory_lookup()
-        return [r_id for r_id, kind in list(table[m_id].items()) if kind == '-']
+        return [r_id for r_id, kind in table[m_id].items() if kind == '-']
 
     def get_reaction_compartments(self, r_id):
         reaction = self.reactions[r_id]
@@ -503,8 +503,8 @@ class Model(object):
         if not self._m_r_lookup or force_recalculate:
             self._m_r_lookup = OrderedDict([(m_id, OrderedDict()) for m_id in self.metabolites])
 
-            for r_id, reaction in list(self.reactions.items()):
-                for m_id, coeff in list(reaction.stoichiometry.items()):
+            for r_id, reaction in self.reactions.items():
+                for m_id, coeff in reaction.stoichiometry.items():
                     self._m_r_lookup[m_id][r_id] = coeff
 
         return self._m_r_lookup
@@ -513,8 +513,8 @@ class Model(object):
         if not self._reg_lookup:
             self._reg_lookup = OrderedDict([(m_id, OrderedDict()) for m_id in self.metabolites])
 
-            for r_id, reaction in list(self.reactions.items()):
-                for m_id, kind in list(reaction.regulators.items()):
+            for r_id, reaction in self.reactions.items():
+                for m_id, kind in reaction.regulators.items():
                     self._reg_lookup[m_id][r_id] = kind
 
         return self._reg_lookup
@@ -528,7 +528,7 @@ class Model(object):
 
         if not self._s_matrix:
             self._s_matrix = [[reaction.stoichiometry[m_id] if m_id in reaction.stoichiometry else 0
-                               for reaction in list(self.reactions.values())]
+                               for reaction in self.reactions.values()]
                               for m_id in self.metabolites]
 
         return self._s_matrix
@@ -545,7 +545,7 @@ class Model(object):
         """
 
         if use_metabolite_names:
-            metabolite_names = {m_id: met.name for m_id, met in list(self.metabolites.items())}
+            metabolite_names = {m_id: met.name for m_id, met in self.metabolites.items()}
             return self.reactions[r_id].to_string(metabolite_names)
         else:
             return self.reactions[r_id].to_string()
@@ -600,7 +600,7 @@ class Model(object):
             list: boundary metabolites
 
         """
-        return [m_id for m_id, met in list(self.metabolites.items()) if met.boundary]
+        return [m_id for m_id, met in self.metabolites.items() if met.boundary]
 
     def __getstate__(self):
         state = self.__dict__.copy()
@@ -623,4 +623,4 @@ class Model(object):
 
         assert c_id in list(self.compartments.keys()), 'No such compartment: ' + c_id
 
-        return [m_id for m_id, met in list(self.metabolites.items()) if met.compartment == c_id]
+        return [m_id for m_id, met in self.metabolites.items() if met.compartment == c_id]

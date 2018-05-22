@@ -25,7 +25,7 @@ def run_simulation_and_plot():
 def run_sampling():
     model = load_odemodel(KINETIC_MODEL)
     params = model.merge_constants()
-    vmaxs = [p_id for p_id in list(params.keys()) if 'max' in p_id]
+    vmaxs = [p_id for p_id in params.keys() if 'max' in p_id]
     p_sample, v_sample = sample_kinetic_model(model, 1e2, parameters=vmaxs, log_scale=True, distribution='normal', dist_args=(0, 0.5))
     reactions = ['vPGI', 'vPFK', 'vPK']
     plot_flux_sampling(model, v_sample, reactions)

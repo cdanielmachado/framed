@@ -23,7 +23,7 @@ class EnsembleModel(object):
         self.reaction_states = {}
 
         if reaction_states:
-            for r_id, states in list(reaction_states.items()):
+            for r_id, states in reaction_states.items():
                 assert r_id in model.reactions
                 assert len(states) == size
                 self.reaction_states[r_id] = states[:]
@@ -39,7 +39,7 @@ class EnsembleModel(object):
                 not self.reaction_states[r_id][i]}
 
     def simplify(self):
-        inactive = [r_id for r_id, states in list(self.reaction_states.items()) if not any(states)]
+        inactive = [r_id for r_id, states in self.reaction_states.items() if not any(states)]
         self.model.remove_reactions(inactive)
         del_metabolites = disconnected_metabolites(self.model)
         self.model.remove_metabolites(del_metabolites)
@@ -111,8 +111,8 @@ def save_ensemble(ensemble, outputfile, **kwargs):
 
     """
 
-    for r_id, states in list(ensemble.reaction_states.items()):
-        state_as_str = ' '.join(map(str, list(map(int, states))))
+    for r_id, states in ensemble.reaction_states.items():
+        state_as_str = ' '.join([str(int(x)) for x in states])
         ensemble.model.reactions[r_id].metadata['ENSEMBLE_STATE'] = state_as_str
 
     save_cbmodel(ensemble.model, outputfile, **kwargs)
@@ -133,13 +133,13 @@ def load_ensemble(inputfile, **kwargs):
     model = load_cbmodel(inputfile, **kwargs)
     reaction_states = {}
 
-    for r_id, rxn in list(model.reactions.items()):
+    for r_id, rxn in model.reactions.items():
         if 'ENSEMBLE_STATE' in rxn.metadata:
             state_as_str = rxn.metadata['ENSEMBLE_STATE']
-            states = list(map(bool, list(map(int, (state_as_str.split())))))
+            states = [bool(int(x)) for x in state_as_str.split()]
             reaction_states[r_id] = states
 
-    sizes = list(map(len, list(reaction_states.values())))
+    sizes = list(map(len, reaction_states.values()))
 
     if len(set(sizes)) > 1:
         print('Error: reactions have different ensemble size')

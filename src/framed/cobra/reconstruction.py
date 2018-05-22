@@ -70,7 +70,7 @@ def GapFind(model, solver, root_gaps_only=False, tol=1e-5):
         rev_reactions_inds = set()
 
         ind = 0
-        for rxn in list(model.reactions.keys()):
+        for rxn in model.reactions.keys():
             if model.reactions[rxn].reversible == True:
                 rev_reactions_inds.add(ind)
             ind += 1
@@ -110,7 +110,7 @@ def GapFind(model, solver, root_gaps_only=False, tol=1e-5):
         eps = 0.0001
 
         # add model variables (reactions) and respective bounds
-        for r_id, reaction in list(model.reactions.items()):
+        for r_id, reaction in model.reactions.items():
             solver.add_variable(r_id, reaction.lb, reaction.ub)
 
         # add binary variables for metabolites
@@ -236,7 +236,7 @@ def GapFill(model, reactions_db, solver, output_reaction, flux_ouput, DB_type, t
     # the lazy loading with glpk can be used for the whole problem.
     # If the problem is updated twice when using glpk, its content
     # from the first update is erased
-    for r_id, reaction in list(model_extended.reactions.items()):
+    for r_id, reaction in model_extended.reactions.items():
         solver.add_variable(r_id, reaction.lb, reaction.ub)
 
     table = model_extended.metabolite_reaction_lookup()
@@ -268,7 +268,7 @@ def GapFill(model, reactions_db, solver, output_reaction, flux_ouput, DB_type, t
 
     if (solution.status == Status.OPTIMAL or solution.status == Status.SUBOPTIMAL) and solution.values != None:
         # get the DB reactions added to the model
-        added_reactions_ids = [entry[0][2:] for entry in list(solution.values.items())
+        added_reactions_ids = [entry[0][2:] for entry in solution.values.items()
                                if match('z_*', entry[0]) and (entry[1] > 1 - tol and entry[1] < 1 + tol)]
 
         added_reactions = {}

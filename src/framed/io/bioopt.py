@@ -267,7 +267,7 @@ class BiooptParser(object):
             yield result, i
 
     def __find_section(self, text, sections, fun):
-        for name in list(sections.keys()):
+        for name in sections.keys():
             if fun(name):
                 start, end, line = sections[name]
                 return name, text[start:end], line

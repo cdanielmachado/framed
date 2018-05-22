@@ -317,12 +317,12 @@ class Bioreactor(Environment, DynamicSystem):
                 mu[i] = organism.fba_solution.fobj
 
                 for j, metabolite in enumerate(self.metabolites):
-                    if metabolite in list(organism.model.reactions.keys()):
+                    if metabolite in organism.model.reactions.keys():
                         vs[i, j] = organism.fba_solution.values[metabolite]
             else:
                 mu[i] = 0
                 for j, metabolite in enumerate(self.metabolites):
-                    if metabolite in list(organism.model.reactions.keys()):
+                    if metabolite in organism.model.reactions.keys():
                         vs[i, j] = 0
 
                 # updating the internal states of the bioreactor

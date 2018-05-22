@@ -215,7 +215,7 @@ class Community(object):
 
 
     def __str__(self):
-        return '\n'.join(list(self._organisms.keys()))
+        return '\n'.join(self._organisms.keys())
 
     def _clear_merged_model(self):
         self._merged_model = None
@@ -286,7 +286,7 @@ class Community(object):
         organisms_biomass_metabolites = {}
         community_metabolite_exchange_lookup = {}
 
-        for org_id, model in list(self._organisms.items()):
+        for org_id, model in self._organisms.items():
             self._organisms_reactions[org_id] = set()
             self._organisms_exchange_reactions[org_id] = {}
             self._organisms_biomass_reactions[org_id] = {}
@@ -301,14 +301,14 @@ class Community(object):
                 export_pool_compartment = Compartment('pool_blacklist', 'blacklisted metabolite pool')
                 merged_model.add_compartment(export_pool_compartment)
 
-            for c_id, comp in list(model.compartments.items()):
+            for c_id, comp in model.compartments.items():
                 if c_id != self._extracellular_compartment or not self._merge_extracellular_compartments:
                     new_comp = _copy_object(comp, org_id)
                     merged_model.add_compartment(new_comp)
                 elif c_id not in merged_model.compartments:
                     merged_model.add_compartment(deepcopy(comp))
 
-            for m_id, met in list(model.metabolites.items()):
+            for m_id, met in model.metabolites.items():
                 if met.compartment != self._extracellular_compartment or not self._merge_extracellular_compartments:
                     new_met = _copy_object(met, org_id, _id_pattern(met.compartment, org_id))
                     merged_model.add_metabolite(new_met, clear_tmp=False)
@@ -346,7 +346,7 @@ class Community(object):
                         community_metabolite_exchange_lookup[new_met.id] = exch_id
                         merged_model.add_reaction(new_rxn)
 
-            for r_id, rxn in list(model.reactions.items()):
+            for r_id, rxn in model.reactions.items():
 
                 is_exchange = rxn.is_exchange
 
@@ -354,7 +354,7 @@ class Community(object):
                     new_rxn = _copy_object(rxn, org_id)
                     new_rxn.is_exchange = False
 
-                    for m_id, coeff in list(rxn.stoichiometry.items()):
+                    for m_id, coeff in rxn.stoichiometry.items():
                         m_blacklisted = m_id in self._exchanged_metabolites_blacklist
                         if model.metabolites[m_id].compartment != self._extracellular_compartment or not self._merge_extracellular_compartments:
                             del new_rxn.stoichiometry[m_id]
@@ -503,7 +503,7 @@ class Community(object):
         comm_fluxes = OrderedDict()
 
         for org_id, model in self._organisms.items():
-            org_fluxes = [(r_id[:-(1+len(org_id))], val) for r_id, val in list(fluxes.items()) if r_id.endswith(org_id)]
+            org_fluxes = [(r_id[:-(1+len(org_id))], val) for r_id, val in fluxes.items() if r_id.endswith(org_id)]
             comm_fluxes[org_id] = OrderedDict(org_fluxes)
 
         return comm_fluxes

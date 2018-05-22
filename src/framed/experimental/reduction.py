@@ -16,7 +16,7 @@ import warnings
 def balanced_model_reduction(model, metabolites, fluxes, must_keep=None, max_degree=None, clean_null_fluxes=True,
                              clean_disconnected=True, abstol=1e-9):
     if clean_null_fluxes:
-        model.remove_reactions([r_id for r_id, val in list(fluxes.items()) if abs(val) < abstol])
+        model.remove_reactions([r_id for r_id, val in fluxes.items() if abs(val) < abstol])
 
     if max_degree:
         m_r_table = model.metabolite_reaction_lookup()
@@ -64,7 +64,7 @@ def remove_balanced_metabolite(model, m_id, fluxes, must_keep=None, abstol=1e-9)
             if not reversible and isinstance(model, CBModel):
                 model.set_lower_bound(new_id, 0)
 
-            for m_id2, coeff in list(new_coeffs.items()):
+            for m_id2, coeff in new_coeffs.items():
                 model.stoichiometry[(m_id2, new_id)] = coeff
 
                 fluxes[new_id] = turnover
@@ -91,7 +91,7 @@ def _get_neighbours(model, elements, kind):
         table = model.reaction_metabolite_lookup_table()
     neighbours = []
     for elem in elements:
-        for neighbour in list(table[elem].keys()):
+        for neighbour in table[elem].keys():
             if neighbour not in neighbours:
                 neighbours.append(neighbour)
     return neighbours
@@ -104,7 +104,7 @@ def _verify_balance(model, metabolites, fluxes, abstol=1e-9):
 
     for m_id in metabolites:
         neighbours = m_r_table[m_id]
-        balance = sum([coeff * fluxes[r_id] for r_id, coeff in list(neighbours.items())])
+        balance = sum([coeff * fluxes[r_id] for r_id, coeff in neighbours.items()])
         if abs(balance) > abstol:
             success = False
             warnings.warn('{} balance {}'.format(m_id, balance), UserWarning)
@@ -113,8 +113,8 @@ def _verify_balance(model, metabolites, fluxes, abstol=1e-9):
 
 def _disconnected_metabolites(model):
     m_r_table = model.metabolite_reaction_lookup()
-    return [m_id for m_id, edges in list(m_r_table.items()) if not edges]
+    return [m_id for m_id, edges in m_r_table.items() if not edges]
 
 
 def _disconnected_reactions(model):
-    return [r_id for r_id, rxn in list(model.reactions.items()) if len(rxn.stoichiometry) == 0]
+    return [r_id for r_id, rxn in model.reactions.items() if len(rxn.stoichiometry) == 0]

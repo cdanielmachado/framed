@@ -208,7 +208,7 @@ def greedy_deletion(model, objective, max_dels, kind='reactions', targets=None, 
 def _redundant(del_set, fval, solutions, abstol):
     redundant = False
     del_set = set(del_set)
-    for previous, fval0 in list(solutions.items()):
+    for previous, fval0 in solutions.items():
         if del_set.issuperset(set(previous)) and fval < fval0 + abstol:
             redundant = True
             break

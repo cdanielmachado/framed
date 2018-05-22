@@ -37,19 +37,19 @@ def species_coupling_score(community, environment=None, min_growth=0.1, n_soluti
     if environment:
         environment.apply(community.merged, inplace=True, warning=False)
 
-    for b in list(community.organisms_biomass_reactions.values()):
+    for b in community.organisms_biomass_reactions.values():
         community.merged.reactions[b].lb = 0
 
     solver = solver_instance(community.merged)
 
-    for org_id, rxns in list(community.organisms_reactions.items()):
+    for org_id, rxns in community.organisms_reactions.items():
         org_var = 'y_{}'.format(org_id)
         solver.add_variable(org_var, 0, 1, vartype=VarType.BINARY, update_problem=False)
 
     solver.update()
 
     bigM = 100
-    for org_id, rxns in list(community.organisms_reactions.items()):
+    for org_id, rxns in community.organisms_reactions.items():
         org_var = 'y_{}'.format(org_id)
         for r_id in rxns:
             if r_id == community.organisms_biomass_reactions[org_id]:
@@ -61,7 +61,7 @@ def species_coupling_score(community, environment=None, min_growth=0.1, n_soluti
 
     scores = {}
 
-    for org_id, biomass_id in list(community.organisms_biomass_reactions.items()):
+    for org_id, biomass_id in community.organisms_biomass_reactions.items():
         other = {o for o in community.organisms if o != org_id}
         solver.add_constraint('SMETANA_Biomass', {community.organisms_biomass_reactions[org_id]: 1}, '>', min_growth)
         objective = {"y_{}".format(o): 1.0 for o in other}
@@ -144,7 +144,7 @@ def metabolite_uptake_score(community, environment=None, min_mass_weight=False, 
 
     solver = solver_instance(community.merged)
 
-    for org_id, exchange_rxns in list(community.organisms_exchange_reactions.items()):
+    for org_id, exchange_rxns in community.organisms_exchange_reactions.items():
         biomass_reaction = community.organisms_biomass_reactions[org_id]
         community.merged.biomass_reaction = biomass_reaction
 
@@ -157,7 +157,7 @@ def metabolite_uptake_score(community, environment=None, min_mass_weight=False, 
         if medium_list:
             counter = Counter(chain(*medium_list))
             scores[org_id] = {cnm.original_metabolite: old_div(counter[ex], float(len(medium_list)))
-                              for ex, cnm in list(exchange_rxns.items())}
+                              for ex, cnm in exchange_rxns.items()}
         else:
             if verbose:
                 warn('MUS: Failed to find a minimal growth medium for ' + org_id)
@@ -190,8 +190,8 @@ def metabolite_production_score(community, environment=None, abstol=1e-3, exclud
     else:
         env_compounds = set()
 
-    for exchange_rxns in list(community.organisms_exchange_reactions.values()):
-        for r_id in list(exchange_rxns.keys()):
+    for exchange_rxns in community.organisms_exchange_reactions.values():
+        for r_id in exchange_rxns.keys():
             rxn = community.merged.reactions[r_id]
             if rxn.ub is None:
                 rxn.ub = 1000
@@ -200,10 +200,10 @@ def metabolite_production_score(community, environment=None, abstol=1e-3, exclud
 
     scores = {}
 
-    for org_id, exchange_rxns in list(community.organisms_exchange_reactions.items()):
+    for org_id, exchange_rxns in community.organisms_exchange_reactions.items():
         scores[org_id] = {}
 
-        remaining = [r_id for r_id, cnm in list(exchange_rxns.items()) if cnm.original_metabolite not in env_compounds]
+        remaining = [r_id for r_id, cnm in exchange_rxns.items() if cnm.original_metabolite not in env_compounds]
 
         while len(remaining) > 0:
             sol = solver.solve(linear={r_id: 1 for r_id in remaining}, minimize=False, get_values=remaining)
@@ -355,8 +355,8 @@ def mro_score(community, environment=None, direction=-1, min_mass_weight=False, 
 
     pairwise = {(o1, o2): individual_media[o1] & individual_media[o2] for o1, o2 in combinations(community.organisms, 2)}
 
-    numerator = len(individual_media) * sum(map(len, list(pairwise.values())))
-    denominator = float(len(pairwise) * sum(map(len, list(individual_media.values()))))
+    numerator = len(individual_media) * sum(map(len, pairwise.values()))
+    denominator = float(len(pairwise) * sum(map(len, individual_media.values())))
 
     score = old_div(numerator, denominator) if denominator != 0 else None
     extras = {'noninteracting_medium': noninteracting_medium, 'individual_media': individual_media, 

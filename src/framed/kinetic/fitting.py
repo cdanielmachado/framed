@@ -39,7 +39,7 @@ def fit_from_metabolomics(model, t_steps, data, parameters=None, bounds=None, me
     if not bounds:
         bounds = [(0, None)]*len(p0)
 
-    mets = [list(model.metabolites.keys()).index(m_id) for m_id in list(data.keys())]
+    mets = [list(model.metabolites.keys()).index(m_id) for m_id in data.keys()]
     X_exp = array(list(data.values())).T
 
     def fit_distance(p):

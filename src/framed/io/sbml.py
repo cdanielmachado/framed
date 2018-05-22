@@ -369,7 +369,7 @@ def _load_cobra_gpr(sbml_model, model):
     for gene in sorted(genes):
         model.add_gene(Gene(gene, gene[2:]))
 
-    for r_id, gpr in list(gprs.items()):
+    for r_id, gpr in gprs.items():
         model.set_gpr_association(r_id, gpr, add_genes=False)
 
 
@@ -590,7 +590,7 @@ def save_cbmodel(model, filename, flavor=Flavor.COBRA):
 
 
 def _save_compartments(model, sbml_model):
-    for compartment in list(model.compartments.values()):
+    for compartment in model.compartments.values():
         sbml_compartment = sbml_model.createCompartment()
         sbml_compartment.setId(compartment.id)
         sbml_compartment.setName(compartment.name)
@@ -600,7 +600,7 @@ def _save_compartments(model, sbml_model):
 
 
 def _save_metabolites(model, sbml_model, flavor):
-    for metabolite in list(model.metabolites.values()):
+    for metabolite in model.metabolites.values():
         species = sbml_model.createSpecies()
         species.setId(metabolite.id)
         species.setName(metabolite.name)
@@ -625,7 +625,7 @@ def _save_metabolites(model, sbml_model, flavor):
 
 
 def _save_reactions(model, sbml_model):
-    for reaction in list(model.reactions.values()):
+    for reaction in model.reactions.values():
         sbml_reaction = sbml_model.createReaction()
         sbml_reaction.setId(reaction.id)
         sbml_reaction.setName(reaction.name)
@@ -633,7 +633,7 @@ def _save_reactions(model, sbml_model):
         sbml_reaction.setFast(False)
         _save_metadata(reaction, sbml_reaction)
 
-        for m_id, coeff in list(reaction.stoichiometry.items()):
+        for m_id, coeff in reaction.stoichiometry.items():
             if coeff < 0:
                 speciesReference = sbml_reaction.createReactant()
                 speciesReference.setSpecies(m_id)
@@ -644,7 +644,7 @@ def _save_reactions(model, sbml_model):
                 speciesReference.setSpecies(m_id)
                 speciesReference.setStoichiometry(coeff)
                 speciesReference.setConstant(True)
-        for m_id, kind in list(reaction.regulators.items()):
+        for m_id, kind in reaction.regulators.items():
             speciesReference = sbml_reaction.createModifier()
             speciesReference.setSpecies(m_id)
             if kind == '+':
@@ -672,7 +672,7 @@ def _save_gpr_associations(model, sbml_model, flavor):
 
 
 def _save_cobra_parameters(model, sbml_model, set_default_bounds=False):
-    for r_id, reaction in list(model.reactions.items()):
+    for r_id, reaction in model.reactions.items():
         sbml_reaction = sbml_model.getReaction(r_id)
         kineticLaw = sbml_reaction.createKineticLaw()
         kineticLaw.setFormula('0')
@@ -694,7 +694,7 @@ def _save_cobra_parameters(model, sbml_model, set_default_bounds=False):
 
 
 def _save_cobra_gprs(model, sbml_model):
-    for r_id, reaction in list(model.reactions.items()):
+    for r_id, reaction in model.reactions.items():
         if reaction.gpr:
             reaction.metadata[GPR_TAG] = str(reaction.gpr)
             sbml_reaction = sbml_model.getReaction(r_id)
@@ -718,7 +718,7 @@ def _save_fbc_fluxbounds(model, sbml_model):
     zero_bound.setValue(0)
     zero_bound.setConstant(True)
 
-    for r_id, reaction in list(model.reactions.items()):
+    for r_id, reaction in model.reactions.items():
         fbcrxn = sbml_model.getReaction(r_id).getPlugin('fbc')
 
         if reaction.lb is None or reaction.lb <= DEFAULT_LOWER_BOUND:
@@ -752,7 +752,7 @@ def _save_fbc_objective(model, sbml_model):
     obj.setId('objective')
     fbcmodel.setActiveObjectiveId('objective')
     obj.setType('maximize')
-    for r_id, reaction in list(model.reactions.items()):
+    for r_id, reaction in model.reactions.items():
         if reaction.objective:
             r_obj = obj.createFluxObjective()
             r_obj.setReaction(r_id)
@@ -761,13 +761,13 @@ def _save_fbc_objective(model, sbml_model):
 
 def _save_fbc_gprs(model, sbml_model):
     fbcmodel = sbml_model.getPlugin('fbc')
-    for gene in list(model.genes.values()):
+    for gene in model.genes.values():
         gene_prod = fbcmodel.createGeneProduct()
         gene_prod.setId(gene.id)
         gene_prod.setName(gene.name)
         gene_prod.setLabel(gene.name)
 
-    for r_id, reaction in list(model.reactions.items()):
+    for r_id, reaction in model.reactions.items():
         if reaction.gpr:
             fbcrxn = sbml_model.getReaction(r_id).getPlugin('fbc')
             gpr_assoc = fbcrxn.createGeneProductAssociation()
@@ -787,18 +787,18 @@ def _save_fbc_gprs(model, sbml_model):
 
 
 def _save_concentrations(model, sbml_model):
-    for m_id, value in list(model.concentrations.items()):
+    for m_id, value in model.concentrations.items():
         species = sbml_model.getSpecies(m_id)
         species.setInitialConcentration(value)
 
 
 def _save_global_parameters(model, sbml_model):
-    for p_id, value in list(model.constant_params.items()):
+    for p_id, value in model.constant_params.items():
         parameter = sbml_model.createParameter()
         parameter.setId(p_id)
         parameter.setValue(value)
         parameter.setConstant(True)
-    for p_id, value in list(model.variable_params.items()):
+    for p_id, value in model.variable_params.items():
         parameter = sbml_model.createParameter()
         parameter.setId(p_id)
         parameter.setValue(value)
@@ -806,19 +806,19 @@ def _save_global_parameters(model, sbml_model):
 
 
 def _save_kineticlaws(model, sbml_model):
-    for r_id, ratelaw in list(model.ratelaws.items()):
+    for r_id, ratelaw in model.ratelaws.items():
         sbml_reaction = sbml_model.getReaction(r_id)
         kineticLaw = sbml_reaction.createKineticLaw()
         #kineticLaw.setFormula(ratelaw)
         kineticLaw.setMath(parseL3FormulaWithModel(ratelaw, sbml_model)) #avoids conversion of Pi to pi
-        for p_id, value in list(model.local_params[r_id].items()):
+        for p_id, value in model.local_params[r_id].items():
             parameter = kineticLaw.createParameter()
             parameter.setId(p_id)
             parameter.setValue(value)
 
 
 def _save_assignment_rules(model, sbml_model):
-    for p_id, formula in list(model.assignment_rules.items()):
+    for p_id, formula in model.assignment_rules.items():
         rule = sbml_model.createAssignmentRule()
         rule.setVariable(p_id)
         rule.setFormula(formula)
@@ -829,7 +829,7 @@ def _save_metadata(elem, sbml_elem):
     if elem.metadata:
         try:
             notes = ['<p>{}: {}</p>'.format(key, cgi.escape(value))
-                     for key, value in list(elem.metadata.items())]
+                     for key, value in elem.metadata.items()]
             note_string = '<html>' + ''.join(notes) + '</html>'
             note_xml = XMLNode.convertStringToXMLNode(note_string)
             note_xml.getNamespaces().add('http://www.w3.org/1999/xhtml')

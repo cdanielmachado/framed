@@ -100,7 +100,7 @@ class GurobiSolver(Solver):
             constr = self.problem.getConstrByName(constr_id)
             self.problem.remove(constr)
 
-        expr = quicksum(coeff * self.problem.getVarByName(r_id) for r_id, coeff in list(lhs.items()) if coeff)
+        expr = quicksum(coeff * self.problem.getVarByName(r_id) for r_id, coeff in lhs.items() if coeff)
 
         self.problem.addConstr(expr, grb_sense[sense], rhs, constr_id)
         self.constr_ids.append(constr_id)
@@ -172,11 +172,11 @@ class GurobiSolver(Solver):
         quad_obj = []
 
         if linear:
-            lin_obj = [f * self.problem.getVarByName(r_id) for r_id, f in list(linear.items()) if f]
+            lin_obj = [f * self.problem.getVarByName(r_id) for r_id, f in linear.items() if f]
 
         if quadratic:
             quad_obj = [q * self.problem.getVarByName(r_id1) * self.problem.getVarByName(r_id2)
-                        for (r_id1, r_id2), q in list(quadratic.items()) if q]
+                        for (r_id1, r_id2), q in quadratic.items() if q]
 
         obj_expr = quicksum(quad_obj + lin_obj)
         sense = GRB.MINIMIZE if minimize else GRB.MAXIMIZE
@@ -210,7 +210,7 @@ class GurobiSolver(Solver):
 
         if constraints:
             old_constraints = {}
-            for r_id, x in list(constraints.items()):
+            for r_id, x in constraints.items():
                 lb, ub = x if isinstance(x, tuple) else (x, x)
                 if r_id in self.var_ids:
                     lpvar = problem.getVarByName(r_id)
@@ -271,7 +271,7 @@ class GurobiSolver(Solver):
 
         #reset old constraints because temporary constraints should not be persistent
         if constraints:
-            for r_id, (lb, ub) in list(old_constraints.items()):
+            for r_id, (lb, ub) in old_constraints.items():
                 lpvar = problem.getVarByName(r_id)
                 lpvar.lb, lpvar.ub = lb, ub
             problem.update()

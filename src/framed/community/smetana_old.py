@@ -455,8 +455,8 @@ def mro_score(community, environment=None, direction=-1, min_mass_weight=False, 
 
     pairwise = {(o1, o2): individual_media[o1] & individual_media[o2] for o1, o2 in combinations(community.organisms, 2)}
 
-    numerator = len(individual_media) * sum(map(len, list(pairwise.values())))
-    denominator = float(len(pairwise) * sum(map(len, list(individual_media.values()))))
+    numerator = len(individual_media) * sum(map(len, pairwise.values()))
+    denominator = float(len(pairwise) * sum(map(len, individual_media.values())))
 
     score = old_div(numerator, denominator) if denominator != 0 else None
     extras = {'noninteracting_medium': noninteracting_medium, 'individual_media': individual_media, 
@@ -487,7 +487,7 @@ def score_subcommunities(models, metric, n=None, k=2,  **kwargs):
     }
 
     if metric not in metric_map:
-        raise RuntimeError('Unsupported metric: {}. Currently supported {}'.format(metric, ','.join(list(metric_map.keys()))))
+        raise RuntimeError('Unsupported metric: {}. Currently supported {}'.format(metric, ','.join(metric_map.keys())))
 
     subsamples = list(combinations(models, k))
 

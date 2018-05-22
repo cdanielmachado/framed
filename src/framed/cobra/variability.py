@@ -43,7 +43,7 @@ def FVA(model, obj_percentage=0, reactions=None, constraints=None, loopless=Fals
         _constraints[target] = (obj_percentage * solution.fobj, None)
 
     if not reactions:
-        reactions = list(model.reactions.keys())
+        reactions = model.reactions.keys()
 
     variability = OrderedDict([(r_id, [None, None]) for r_id in reactions])
 
@@ -101,7 +101,7 @@ def blocked_reactions(model, constraints=None, reactions=None, abstol=1e-9):
 
     variability = FVA(model, reactions=reactions, constraints=constraints)
 
-    return [r_id for r_id, (lb, ub) in list(variability.items())
+    return [r_id for r_id, (lb, ub) in variability.items()
             if lb is not None and ub is not None and abs(lb) < abstol and abs(ub) < abstol]
 
 

@@ -100,7 +100,7 @@ def _normalize_list(values, x):
 
 
 def _normalize_dict(fluxes, x):
-    for r_id, flux in list(fluxes.items()):
+    for r_id, flux in fluxes.items():
         fluxes[r_id] = old_div(flux, x) if flux is not None else None
 
 

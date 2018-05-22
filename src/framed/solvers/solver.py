@@ -233,8 +233,8 @@ class Solution(object):
             return None
 
         m_r_table = model.metabolite_reaction_lookup()
-        t = {m_id: 0.5*sum([abs(coeff * self.values[r_id]) for r_id, coeff in list(neighbours.items())])
-             for m_id, neighbours in list(m_r_table.items())}
+        t = {m_id: 0.5*sum([abs(coeff * self.values[r_id]) for r_id, coeff in neighbours.items()])
+             for m_id, neighbours in m_r_table.items()}
         return t
 
     def show_metabolite_turnover(self, model, zeros=False, pattern=None, sort=False, abstol=1e-9):
@@ -395,7 +395,7 @@ class Solver(object):
             model : CBModel
         """
 
-        for r_id, reaction in list(model.reactions.items()):
+        for r_id, reaction in model.reactions.items():
             self.add_variable(r_id, reaction.lb, reaction.ub, update_problem=False)
         self.update()
         
@@ -459,7 +459,7 @@ class Solver(object):
             parameters (dict of Parameter to value): parameter values
         """
 
-        for parameter, value in list(parameters.items()):
+        for parameter, value in parameters.items():
             self.set_parameter(parameter, value)
 
     def set_logging(self, enabled=False):

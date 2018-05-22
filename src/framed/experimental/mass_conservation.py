@@ -5,11 +5,11 @@ from framed.solvers.solver import Status, VarType
 def check_mass_conservation(model, unbalanced_reactions=None):
 
     if unbalanced_reactions is None:
-        unbalanced_reactions = [rxn.id for rxn in list(model.reactions.values())
+        unbalanced_reactions = [rxn.id for rxn in model.reactions.values()
                                 if len(rxn.get_substrates()) == 0 or len(rxn.get_products()) == 0]
         unbalanced_reactions.append(model.biomass_reaction)
 
-    reactions = [rxn for rxn in list(model.reactions.values()) if rxn.id not in unbalanced_reactions]
+    reactions = [rxn for rxn in model.reactions.values() if rxn.id not in unbalanced_reactions]
 
     solver = solver_instance()
 
@@ -33,11 +33,11 @@ def check_mass_conservation(model, unbalanced_reactions=None):
 def find_unbalanced_reactions_milp(model, unbalanced_reactions=None):
 
     if unbalanced_reactions is None:
-        unbalanced_reactions = [rxn.id for rxn in list(model.reactions.values())
+        unbalanced_reactions = [rxn.id for rxn in model.reactions.values()
                                 if len(rxn.get_substrates()) == 0 or len(rxn.get_products()) == 0]
         unbalanced_reactions.append(model.biomass_reaction)
 
-    reactions = [rxn for rxn in list(model.reactions.values()) if rxn.id not in unbalanced_reactions]
+    reactions = [rxn for rxn in model.reactions.values() if rxn.id not in unbalanced_reactions]
 
     solver = solver_instance()
 
@@ -61,7 +61,7 @@ def find_unbalanced_reactions_milp(model, unbalanced_reactions=None):
 def find_unbalanced_reactions_lp(model, unbalanced_reactions=None, abstol=1e-6):
 
     if unbalanced_reactions is None:
-        unbalanced_reactions = [rxn.id for rxn in list(model.reactions.values())
+        unbalanced_reactions = [rxn.id for rxn in model.reactions.values()
                                 if len(rxn.get_substrates()) == 0 or len(rxn.get_products()) == 0]
         unbalanced_reactions.append(model.biomass_reaction)
 

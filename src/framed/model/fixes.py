@@ -84,7 +84,7 @@ def remove_boundary_metabolites(model, tag=None):
     if tag:
         boundary = [m_id for m_id in model.metabolites if m_id.endswith(tag)]
     else:
-        boundary = [m_id for m_id, met in list(model.metabolites.items()) if met.boundary]
+        boundary = [m_id for m_id, met in model.metabolites.items() if met.boundary]
 
     model.remove_metabolites(boundary)
 
@@ -92,7 +92,7 @@ def remove_boundary_metabolites(model, tag=None):
 def fix_reversibility(model):
     """ Make reaction reversibility consistent with the bounds. """
 
-    for reaction in list(model.reactions.values()):
+    for reaction in model.reactions.values():
         reaction.reversible = (reaction.lb is None or reaction.lb < 0)
 
 
@@ -100,7 +100,7 @@ def fix_reversibility(model):
 def clean_bounds(model, threshold=1000):
     """ Remove artificially large bounds (unbounded = no bounds). """
 
-    for reaction in list(model.reactions.values()):
+    for reaction in model.reactions.values():
         if reaction.lb <= -threshold:
             reaction.lb = None
         if reaction.ub >= threshold:
@@ -110,7 +110,7 @@ def clean_bounds(model, threshold=1000):
 def apply_bounds(model, default_lb=-1000, default_ub=1000):
     """ Apply artificial bounds for unbounded reactions (opposite of `clean_bounds`). """
 
-    for reaction in list(model.reactions.values()):
+    for reaction in model.reactions.values():
         if reaction.lb is None:
             reaction.lb = default_lb
 
@@ -128,13 +128,13 @@ def clean_bigg_ids(model):
         del ord_dict[key]
         ord_dict[new_key] = item
 
-    for m_id, metabolite in list(model.metabolites.items()):
+    for m_id, metabolite in model.metabolites.items():
         metabolite.id = clean(m_id)
         key_replace(model.metabolites, m_id, metabolite.id)
 
-    for r_id, reaction in list(model.reactions.items()):
+    for r_id, reaction in model.reactions.items():
         reaction.id = clean(r_id)
         key_replace(model.reactions, r_id, reaction.id)
 
-        for m_id in list(reaction.stoichiometry.keys()):
+        for m_id in reaction.stoichiometry.keys():
             key_replace(reaction.stoichiometry, m_id, clean(m_id))

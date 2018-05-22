@@ -239,7 +239,7 @@ class CplexSolver(Solver):
 
         if quadratic:
             self.problem.objective.set_quadratic([0.0] * len(self.var_ids)) #TODO: is this really necessary ?
-            quad_coeffs = [(r_id1, r_id2, coeff) for (r_id1, r_id2), coeff in list(quadratic.items())]
+            quad_coeffs = [(r_id1, r_id2, coeff) for (r_id1, r_id2), coeff in quadratic.items()]
             self.problem.objective.set_quadratic_coefficients(quad_coeffs)
 
         if minimize != self._cached_sense:
@@ -351,7 +351,7 @@ class CplexSolver(Solver):
                 'SolnPoolReplace': 1
             }
 
-            for param, val in list(default_params.items()):
+            for param, val in default_params.items():
                 pool_pmap[param].set(val)
 
             if pool_gap:
@@ -379,7 +379,7 @@ class CplexSolver(Solver):
         def _dict_diff(dict1, dict2):
             return set(dict1.items()) - set(dict2.items())
 
-        for r_id, x in list(constraints.items()):
+        for r_id, x in constraints.items():
             if r_id in self.var_ids:
                 lb, ub = x if isinstance(x, tuple) else (x, x)
                 lower_bounds[r_id] = lb if lb is not None else -infinity

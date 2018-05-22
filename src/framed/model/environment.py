@@ -36,7 +36,7 @@ class Environment(MutableMapping):
         return len(self.bounds)
 
     def __str__(self):
-        lines = ['{}\t{}\t{}'.format(r_id, lb, ub) for r_id, (lb, ub) in list(self.bounds.items())]
+        lines = ['{}\t{}\t{}'.format(r_id, lb, ub) for r_id, (lb, ub) in self.bounds.items()]
         return '\n'.join(lines)
 
     def copy(self):
@@ -118,7 +118,7 @@ class Environment(MutableMapping):
 
         compounds = []
 
-        for r_id, (lb, _) in list(self.bounds.items()):
+        for r_id, (lb, _) in self.bounds.items():
             if lb is None or lb < 0:
                 met = eval(format_str.format(r_id))
                 compounds.append(met)
@@ -177,7 +177,7 @@ class Environment(MutableMapping):
         if not inplace:
             constraints = {}
 
-        for r_id, (lb, ub) in list(env.items()):
+        for r_id, (lb, ub) in env.items():
             if r_id in model.reactions:
                 if inplace:
                     model.set_flux_bounds(r_id, lb, ub)

@@ -27,7 +27,7 @@ def build_escher_map(fluxes, map_name, abstol=1e-6):
         escher.plots.Builder: escher map object
     """
 
-    data = {r_id[2:]: abs(val) if abs(val) > abstol else 0.0 for r_id, val in list(fluxes.items())}
+    data = {r_id[2:]: abs(val) if abs(val) > abstol else 0.0 for r_id, val in fluxes.items()}
 
     colors = [{'type': 'min', 'color': '#f0f0f0', 'size': 8},
               {'type': 'mean', 'color': '#abb7ff', 'size': 20},

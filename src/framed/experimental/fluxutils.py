@@ -78,8 +78,8 @@ def compare_fluxes(original, other, tolerance=1e-6, abstol=1e-9, sort=False, pat
 
 def compute_turnover(model, v):
     m_r_table = model.metabolite_reaction_lookup_table()
-    t = {m_id: 0.5*sum([abs(coeff * v[r_id]) for r_id, coeff in list(neighbours.items())])
-         for m_id, neighbours in list(m_r_table.items())}
+    t = {m_id: 0.5*sum([abs(coeff * v[r_id]) for r_id, coeff in neighbours.items()])
+         for m_id, neighbours in m_r_table.items()}
     return t
 
 

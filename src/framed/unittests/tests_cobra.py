@@ -99,7 +99,7 @@ class IrreversibleModelFBATest(unittest.TestCase):
     def testRun(self):
         model = load_cbmodel(SMALL_TEST_MODEL, flavor='cobra')
         make_irreversible(model)
-        self.assertTrue(all([not reaction.reversible for reaction in list(model.reactions.values())]))
+        self.assertTrue(all([not reaction.reversible for reaction in model.reactions.values()]))
         solution = FBA(model)
         self.assertEqual(solution.status, Status.OPTIMAL)
         self.assertAlmostEqual(solution.fobj, GROWTH_RATE, places=2)
@@ -149,7 +149,7 @@ class FVATest(unittest.TestCase):
         model = load_cbmodel(SMALL_TEST_MODEL, flavor='cobra')
         variability = FVA(model)
         self.assertTrue(all([lb <= ub if lb is not None and ub is not None else True
-                             for lb, ub in list(variability.values())]))
+                             for lb, ub in variability.values()]))
 
 
 class GeneDeletionpFBATest(unittest.TestCase):
