@@ -5,7 +5,7 @@ Author: Daniel Machado
 """
 
 from builtins import map
-from builtins import str
+#from builtins import str
 from builtins import range
 from builtins import object
 from ..model.model import Model, Metabolite, Reaction, Compartment
