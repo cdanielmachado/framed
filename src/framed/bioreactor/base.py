@@ -180,7 +180,6 @@ class DynamicSystem(object):
         """
         raise NotImplementedError
 
-
 class Bioreactor(Environment, DynamicSystem):
     """
     This class describes a generic bioreactor with one influent (feed) stream and one effluent stream

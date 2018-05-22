@@ -258,8 +258,9 @@ class CplexSolver(Solver):
         """
 
         var_ids = list(model.reactions.keys())
-        lbs = [rxn.lb for rxn in list(model.reactions.values())]
-        ubs = [rxn.ub for rxn in list(model.reactions.values())]
+        lbs = [rxn.lb for rxn in model.reactions.values()]
+        ubs = [rxn.ub for rxn in model.reactions.values()]
+
         var_types = [VarType.CONTINUOUS] * len(var_ids)
         self.add_variables(var_ids, lbs, ubs, var_types)
 

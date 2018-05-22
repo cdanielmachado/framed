@@ -204,6 +204,7 @@ class ODEModel(Model):
         if params:
             p.update(params)
 
+
         exec('from math import log', globals())
         exec(self.build_ode(), globals())
         ode_func = eval('ode_func')
@@ -235,7 +236,6 @@ def _get_oder_rules(trees):
     for tree in trees:
         new_elems = _get_order_nodes(tree)
         [res.append(item) for item in new_elems if item not in res]
-    print (res)
     return res
 
 

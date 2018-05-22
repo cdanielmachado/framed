@@ -66,6 +66,7 @@ def species_coupling_score(community, environment=None, min_growth=0.1, n_soluti
         solver.add_constraint('SMETANA_Biomass', {community.organisms_biomass_reactions[org_id]: 1}, '>', min_growth)
         objective = {"y_{}".format(o): 1.0 for o in other}
 
+
         if not use_pool:
             previous_constraints = []
             donors_list = []

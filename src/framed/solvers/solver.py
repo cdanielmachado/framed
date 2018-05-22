@@ -99,13 +99,13 @@ class Solution(object):
         values = list(self.values.items())
 
         if sort:
-            values.sort(key= lambda __val: abs(__val[1]), reverse=True)
+            values.sort(key= lambda x: abs(x[1]), reverse=True)
 
         if not zeros:
-            values = [r_id_val for r_id_val in values if abs(r_id_val[1]) > abstol]
+            values = [x for x in values if abs(x[1]) > abstol]
 
         if pattern:
-            values = [r_id_val1 for r_id_val1 in values if pattern in r_id_val1[0]]
+            values = [x for x in values if pattern in x[0]]
 
         entries = ['{:<12} {: .6g}'.format(r_id, val) for (r_id, val) in values]
 
@@ -128,10 +128,10 @@ class Solution(object):
         values = list(self.shadow_prices.items())
 
         if not zeros:
-            values = [m_id_val for m_id_val in values if abs(m_id_val[1]) > abstol]
+            values = [x for x in values if abs(x[1]) > abstol]
 
         if pattern:
-            values = [m_id_val2 for m_id_val2 in values if pattern in m_id_val2[0]]
+            values = [x for x in values if pattern in x[0]]
 
         entries = ['{:<12} {: .6g}'.format(m_id, val) for (m_id, val) in values]
 
@@ -155,10 +155,10 @@ class Solution(object):
         values = list(self.reduced_costs.items())
 
         if not zeros:
-            values = [r_id_val3 for r_id_val3 in values if abs(r_id_val3[1]) > abstol]
+            values = [x for x in values if abs(x[1]) > abstol]
 
         if pattern:
-            values = [r_id_val4 for r_id_val4 in values if pattern in r_id_val4[0]]
+            values = [x for x in values if pattern in x[0]]
 
         entries = ['{:<12} {: .6g}'.format(r_id, val) for (r_id, val) in values]
 
@@ -203,17 +203,19 @@ class Solution(object):
         
         if percentage:
             turnover = sum([x[1] for x in flux_in])
-            flux_in = [(a_b_c[0], old_div(a_b_c[1], turnover), a_b_c[2]) for a_b_c in flux_in]
-            flux_out = [(a_b_c5[0], old_div(a_b_c5[1], turnover), a_b_c5[2]) for a_b_c5 in flux_out]
+            flux_in = [(x[0], old_div(x[1], turnover), x[2]) for x in flux_in]
+            flux_out = [(x[0], old_div(x[1], turnover), x[2]) for x in flux_out]
             print_format = '[ {} ] {:<12} {:< 10.2%}'
         else:
             print_format = '[ {} ] {:<12} {:< 10.6g}'
 
         if equations:
             print_format += '\t{}'
-            lines = [print_format.format(a_b_c6[2], a_b_c6[0], a_b_c6[1], model.print_reaction(a_b_c6[0], metabolite_names=True)[len(a_b_c6[0])+1:]) for a_b_c6 in flux_in + flux_out]
+            lines = [print_format.format(x[2], x[0], x[1], 
+                                         model.print_reaction(x[0], metabolite_names=True)[len(x[0])+1:]) 
+                     for x in flux_in + flux_out]
         else:
-            lines = [print_format.format(a_b_c7[2], a_b_c7[0], a_b_c7[1]) for a_b_c7 in flux_in + flux_out]           
+            lines = [print_format.format(x[2], x[0], x[1]) for x in flux_in + flux_out]           
         
         return '\n'.join(lines)
 
@@ -254,10 +256,10 @@ class Solution(object):
         values = list(self.get_metabolites_turnover(model).items())
 
         if sort:
-            values.sort(key=lambda __val8: abs(__val8[1]), reverse=True)
+            values.sort(key=lambda x: abs(x[1]), reverse=True)
 
         if not zeros:
-            values = [__val9 for __val9 in values if abs(__val9[1]) > abstol]
+            values = [x for x in values if abs(x[1]) > abstol]
 
         if pattern:
             values = [key_val for key_val in values if pattern in key_val[0]]

@@ -54,6 +54,7 @@ def fix_cobra_model(model, remove_boundary=True, set_reversibilty=True, use_infi
 # TODO: this approach doesn't work when a model has multiple external compartments
 def fix_sink_reactions(model):
     exchange_compartments = {}
+
     for r in model.reactions.values():
 
         if not r.is_exchange: continue
@@ -93,6 +94,7 @@ def fix_reversibility(model):
 
     for reaction in list(model.reactions.values()):
         reaction.reversible = (reaction.lb is None or reaction.lb < 0)
+
 
 
 def clean_bounds(model, threshold=1000):

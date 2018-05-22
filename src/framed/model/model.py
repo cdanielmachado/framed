@@ -353,7 +353,7 @@ class Model(object):
         if safe_delete:
             m_r_lookup = self.metabolite_reaction_lookup()
 
-        for m_id in id_list:
+        for m_id in list(id_list):
             if m_id in self.metabolites:
                 del self.metabolites[m_id]
             else:

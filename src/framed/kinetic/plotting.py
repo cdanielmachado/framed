@@ -80,6 +80,7 @@ def plot_flux_sampling(model, sample, reactions=None):
     for i, rxn_y in enumerate(reactions):
         for j, rxn_x in enumerate(reactions):
             ax = subplot2grid((n, n), (n-1-i, j))
+
             x_data = sample[:, list(model.reactions.keys()).index(rxn_x)]
             y_data = sample[:, list(model.reactions.keys()).index(rxn_y)]
 

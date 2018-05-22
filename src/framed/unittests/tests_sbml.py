@@ -101,11 +101,13 @@ class SBMLTestODE(unittest.TestCase):
         model_copy = load_odemodel(KINETIC_MODEL_COPY)
         self.assertEqual(model.id, model_copy.id)
         self.assertListEqual(list(model.compartments.keys()), list(model_copy.compartments.keys()))
-        for c1, c2 in zip(list(model.compartments.values()), list(model_copy.compartments.values())):
+
+        for c1, c2 in zip(model.compartments.values(), model_copy.compartments.values()):
             self.assertEqual(c1.size, c2.size)
         self.assertListEqual(list(model.metabolites.keys()), list(model_copy.metabolites.keys()))
         self.assertListEqual(list(model.reactions.keys()), list(model_copy.reactions.keys()))
-        for r1, r2 in zip(list(model.reactions.values()), list(model_copy.reactions.values())):
+
+        for r1, r2 in zip(model.reactions.values(), model_copy.reactions.values()):
             self.assertEqual(r1.name, r2.name)
             self.assertEqual(r1.reversible, r2.reversible)
             self.assertDictEqual(r1.stoichiometry, r2.stoichiometry)
