@@ -50,9 +50,9 @@ def compare_fluxes(original, other, tolerance=1e-6, abstol=1e-9, sort=False, pat
     flux_right = [(r_id, other[r_id]) for r_id in only_right]
 
     if pattern is not None:
-        difference = filter(lambda x: pattern in x[0], difference)
-        flux_left = filter(lambda x: pattern in x[0], flux_left)
-        flux_right = filter(lambda x: pattern in x[0], flux_right)
+        difference = [x for x in difference if pattern in x[0]]
+        flux_left = [x for x in flux_left if pattern in x[0]]
+        flux_right = [x for x in flux_right if pattern in x[0]]
 
     if sort:
         difference.sort(key=lambda x: x[1], reverse=True)
