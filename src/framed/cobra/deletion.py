@@ -3,6 +3,7 @@
 Author: Daniel Machado
    
 """
+from __future__ import absolute_import
 
 from .simulation import FBA, pFBA, MOMA, lMOMA, ROOM
 

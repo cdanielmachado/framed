@@ -1,3 +1,6 @@
+from __future__ import division
+from __future__ import print_function
+from past.utils import old_div
 from collections import OrderedDict
 from framed.cobra.simulation import MOMA, lMOMA
 from framed.solvers.solver import Status
@@ -20,7 +23,7 @@ def fit_fluxes_to_model(model, fluxes, constraints=None, quadratic=False):
 
 
 def flux_distance(original, other, normalize=False, quadratic=False):
-    x = array(original.values())
+    x = array(list(original.values()))
     y = array([other[r_id] for r_id in original])
 
     if quadratic:
@@ -31,7 +34,7 @@ def flux_distance(original, other, normalize=False, quadratic=False):
         size = sum(abs(x))
 
     if normalize:
-        return dist / size
+        return old_div(dist, size)
     else:
         return dist
 
@@ -75,8 +78,8 @@ def compare_fluxes(original, other, tolerance=1e-6, abstol=1e-9, sort=False, pat
 
 def compute_turnover(model, v):
     m_r_table = model.metabolite_reaction_lookup_table()
-    t = {m_id: 0.5*sum([abs(coeff * v[r_id]) for r_id, coeff in neighbours.items()])
-         for m_id, neighbours in m_r_table.items()}
+    t = {m_id: 0.5*sum([abs(coeff * v[r_id]) for r_id, coeff in list(neighbours.items())])
+         for m_id, neighbours in list(m_r_table.items())}
     return t
 
 

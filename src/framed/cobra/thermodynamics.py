@@ -3,6 +3,10 @@
 Author: Daniel Machado
 
 """
+from __future__ import division
+from __future__ import print_function
+from builtins import zip
+from past.utils import old_div
 from framed.solvers.solver import OptimizationWarning
 from ..solvers import solver_instance
 from ..solvers.solver import Status, VarType
@@ -51,7 +55,7 @@ def looplessFBA(model, objective=None, minimize=False, constraints=None, interna
         solver.ll_FBA_flag = True
 
         if not internal:
-            internal = [r_id for r_id, reaction in model.reactions.items()
+            internal = [r_id for r_id, reaction in list(model.reactions.items())
                         if len(reaction.stoichiometry) > 1]
 
         Sint = [[model.reactions[r_id].stoichiometry[m_id]
@@ -164,7 +168,7 @@ def TFA(model, deltaG0, sdeltaG0=None, measured_concentrations=None, concentrati
                 for m_id in model.reactions[r_id].stoichiometry:
                     if m_id not in excluded and m_id not in included:
                         if m_id in measured_concentrations:
-                            ln_min_j = np.log(measured_concentrations[m_id] / sqrt(measured_fold_change))
+                            ln_min_j = np.log(old_div(measured_concentrations[m_id], sqrt(measured_fold_change)))
                             ln_max_j = np.log(measured_concentrations[m_id] * sqrt(measured_fold_change))
                         else:
                             ln_min_j, ln_max_j = ln_min, ln_max
@@ -181,7 +185,7 @@ def TFA(model, deltaG0, sdeltaG0=None, measured_concentrations=None, concentrati
                                       update_problem=False)
                 solver.add_constraint('ub_dG_' + r_id, {'dG_' + r_id: -1, 'y_' + r_id: bigM}, '<', bigM,
                                       update_problem=False)
-                lhs = {'ln_' + m_id: RT * coeff for m_id, coeff in model.reactions[r_id].stoichiometry.items()
+                lhs = {'ln_' + m_id: RT * coeff for m_id, coeff in list(model.reactions[r_id].stoichiometry.items())
                        if m_id in included}
                 lhs.update({'dG0_' + r_id: 1, 'dG_' + r_id: -1})
                 solver.add_constraint('dGsum_' + r_id, lhs, '=', 0, update_problem=False)
@@ -228,7 +232,7 @@ def TVA(model, deltaG0, sdeltaG0=None, measured_concentrations=None, concentrati
     solver = solver_instance(model)
 
     if not reactions:
-        reactions = model.reactions.keys()
+        reactions = list(model.reactions.keys())
 
     bounds = OrderedDict()
 
@@ -339,7 +343,7 @@ def NET(model, deltaG0, sdeltaG0=None, measured_concentrations=None, concentrati
             for m_id in model.reactions[r_id].stoichiometry:
                 if m_id not in excluded and m_id not in included:
                     if m_id in measured_concentrations:
-                        ln_min_j = np.log(measured_concentrations[m_id] / sqrt(measured_fold_change))
+                        ln_min_j = np.log(old_div(measured_concentrations[m_id], sqrt(measured_fold_change)))
                         ln_max_j = np.log(measured_concentrations[m_id] * sqrt(measured_fold_change))
                     else:
                         ln_min_j, ln_max_j = ln_min, ln_max
@@ -350,7 +354,7 @@ def NET(model, deltaG0, sdeltaG0=None, measured_concentrations=None, concentrati
 
     for r_id in model.reactions:
         if r_id in deltaG0:
-            lhs = {'ln_' + m_id: RT * coeff for m_id, coeff in model.reactions[r_id].stoichiometry.items()
+            lhs = {'ln_' + m_id: RT * coeff for m_id, coeff in list(model.reactions[r_id].stoichiometry.items())
                    if m_id in included}
             lhs.update({'dG0_' + r_id: 1, 'dG_' + r_id: -1})
             solver.add_constraint('dGsum_' + r_id, lhs, '=', 0, update_problem=False)

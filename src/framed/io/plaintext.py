@@ -4,6 +4,7 @@ Author: Daniel Machado
 
 """
 
+from builtins import str
 from ..model.model import Model
 from ..model.cbmodel import CBModel
 from os.path import splitext, basename

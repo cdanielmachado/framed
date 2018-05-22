@@ -4,7 +4,10 @@ Author: Daniel Machado
 
 """
 
-from collections import OrderedDict
+from builtins import str
+from builtins import zip
+from builtins import range
+from collections import OrderedDict, Iterable
 from .solver import Solver, Solution, Status, VarType, Parameter, default_parameters
 from cplex import Cplex, infinity, SparsePair
 import sys
@@ -43,7 +46,10 @@ class CplexSolver(Solver):
             Parameter.OPTIMALITY_TOL: self.problem.parameters.simplex.tolerances.optimality,
             Parameter.INT_FEASIBILITY_TOL: self.problem.parameters.mip.tolerances.integrality,
             Parameter.MIP_ABS_GAP: self.problem.parameters.mip.tolerances.mipgap,
-            Parameter.MIP_REL_GAP: self.problem.parameters.mip.tolerances.absmipgap
+            Parameter.MIP_REL_GAP: self.problem.parameters.mip.tolerances.absmipgap,
+            Parameter.POOL_SIZE: self.problem.parameters.mip.limits.populate,
+            Parameter.POOL_GAP: self.problem.parameters.mip.pool.relgap
+
         }
 
         self.set_logging()
@@ -53,6 +59,8 @@ class CplexSolver(Solver):
         self._cached_sense = None
         self._cached_lower_bounds = {}
         self._cached_upper_bounds = {}
+        self._cached_vars = []
+        self._cached_constrs = []
 
         if model:
             self.build_problem(model)
@@ -66,10 +74,13 @@ class CplexSolver(Solver):
             ub (float): upper bound
             vartype (VarType): variable type (default: CONTINUOUS)
             persistent (bool): if the variable should be reused for multiple calls (default: true)
-            update_problem (bool): update problem immediately (ignored in CPLEX interface)
+            update_problem (bool): update problem immediately
         """
 
-        self.add_variables([var_id], [lb], [ub], [vartype])
+        if update_problem:
+            self.add_variables([var_id], [lb], [ub], [vartype])
+        else:
+            self._cached_vars.append((var_id, lb, ub, vartype))
 
         if not persistent:
             self.temp_vars.add(var_id)
@@ -94,8 +105,8 @@ class CplexSolver(Solver):
             self.problem.variables.add(names=var_ids, lb=lbs, ub=ubs, types=vartypes)
 
         self.var_ids.extend(var_ids)
-        self._cached_lower_bounds.update(dict(zip(var_ids, lbs)))
-        self._cached_upper_bounds.update(dict(zip(var_ids, ubs)))
+        self._cached_lower_bounds.update(dict(list(zip(var_ids, lbs))))
+        self._cached_upper_bounds.update(dict(list(zip(var_ids, ubs))))
         self._cached_lin_obj.update({var_id: 0.0 for var_id in var_ids})
 
     def add_constraint(self, constr_id, lhs, sense='=', rhs=0, persistent=True, update_problem=True):
@@ -107,10 +118,13 @@ class CplexSolver(Solver):
             sense (str): constraint sense (any of: '<', '=', '>'; default '=')
             rhs (float): right-hand side of equation (default: 0)
             persistent (bool): if the variable should be reused for multiple calls (default: True)
-            update_problem (bool): update problem immediately (not supported in CPLEX interface)
+            update_problem (bool): update problem immediately
         """
 
-        self.add_constraints([constr_id], [lhs], [sense], [rhs])
+        if update_problem:
+            self.add_constraints([constr_id], [lhs], [sense], [rhs])
+        else:
+            self._cached_constrs.append((constr_id, lhs, sense, rhs))
 
         if not persistent:
             self.temp_constrs.add(constr_id)
@@ -144,9 +158,22 @@ class CplexSolver(Solver):
         Arguments:
             var_id (str): variable identifier
         """
-        if var_id in self.var_ids:
-            self.problem.variables.delete(var_id)
-            self.var_ids.remove(var_id)
+        self.remove_variables([var_id])
+
+    def remove_variables(self, var_ids):
+        """ Remove variables from the current problem.
+
+        Arguments:
+            var_ids (list): variable identifiers
+        """
+
+        found = []
+        for var_id in var_ids:
+            if var_id in self.var_ids:
+                found.append(var_id)
+                self.var_ids.remove(var_id)
+
+        self.problem.variables.delete(found)
 
     def remove_constraint(self, constr_id):
         """ Remove a constraint from the current problem.
@@ -154,12 +181,35 @@ class CplexSolver(Solver):
         Arguments:
             constr_id (str): constraint identifier
         """
-        if constr_id in self.constr_ids:
-            self.problem.linear_constraints.delete(constr_id)
-            self.constr_ids.remove(constr_id)
+        self.remove_constraints([constr_id])
+
+    def remove_constraints(self, constr_ids):
+        """ Remove constraints from the current problem.
+
+        Arguments:
+            constr_ids (list): constraint identifiers
+        """
+
+        found = []
+        for constr_id in constr_ids:
+            if constr_id in self.constr_ids:
+                found.append(constr_id)
+                self.constr_ids.remove(constr_id)
+
+        self.problem.linear_constraints.delete(found)
 
     def update(self):
-        pass
+        """ Update internal structure. Used for efficient lazy updating. """
+
+        if self._cached_vars:
+            var_ids, lbs, ubs, vartypes = list(zip(*self._cached_vars))
+            self.add_variables(var_ids, lbs, ubs, vartypes)
+            self._cached_vars = []
+
+        if self._cached_constrs:
+            constr_ids, lhs, senses, rhs = list(zip(*self._cached_constrs))
+            self.add_constraints(constr_ids, lhs, senses, rhs)
+            self._cached_constrs = []
 
     def set_objective(self, linear=None, quadratic=None, minimize=True):
         """ Set a predefined objective for this problem.
@@ -184,12 +234,12 @@ class CplexSolver(Solver):
                     updated_coeffs[var_id] = 0.0
 
             if updated_coeffs:
-                self.problem.objective.set_linear(updated_coeffs.items())
+                self.problem.objective.set_linear(list(updated_coeffs.items()))
                 self._cached_lin_obj.update(updated_coeffs)
 
         if quadratic:
             self.problem.objective.set_quadratic([0.0] * len(self.var_ids)) #TODO: is this really necessary ?
-            quad_coeffs = [(r_id1, r_id2, coeff) for (r_id1, r_id2), coeff in quadratic.items()]
+            quad_coeffs = [(r_id1, r_id2, coeff) for (r_id1, r_id2), coeff in list(quadratic.items())]
             self.problem.objective.set_quadratic_coefficients(quad_coeffs)
 
         if minimize != self._cached_sense:
@@ -210,18 +260,19 @@ class CplexSolver(Solver):
         var_ids = list(model.reactions.keys())
         lbs = [rxn.lb for rxn in model.reactions.values()]
         ubs = [rxn.ub for rxn in model.reactions.values()]
+
         var_types = [VarType.CONTINUOUS] * len(var_ids)
         self.add_variables(var_ids, lbs, ubs, var_types)
 
         constr_ids = list(model.metabolites.keys())
         table = model.metabolite_reaction_lookup(force_recalculate=True)
-        lhs = table.values()
+        lhs = list(table.values())
         senses = ['='] * len(constr_ids)
         rhs = [0] * len(constr_ids)
         self.add_constraints(constr_ids, lhs, senses, rhs)
 
     def solve(self, linear=None, quadratic=None, minimize=None, model=None, constraints=None, get_values=True,
-              get_shadow_prices=False, get_reduced_costs=False):
+              get_shadow_prices=False, get_reduced_costs=False, pool_size=0, pool_gap=None):
         """ Solve the optimization problem.
 
         Arguments:
@@ -230,9 +281,11 @@ class CplexSolver(Solver):
             minimize (bool): solve a minimization problem (default: True)
             model (CBModel): model (optional, leave blank to reuse previous model structure)
             constraints (dict): additional constraints (optional)
-            get_values (bool): set to false for speedup if you only care about the objective value (default: True)
+            get_values (bool or list): set to false for speedup if you only care about the objective value (default: True)
             get_shadow_prices (bool): return shadow prices if available (default: False)
             get_reduced_costs (bool): return reduced costs if available (default: False)
+            pool_size (int): calculate solution pool of given size (only for MILP problems)
+            pool_gap (float): maximum relative gap for solutions in pool (optional)
 
         Returns:
             Solution: solution
@@ -250,30 +303,68 @@ class CplexSolver(Solver):
 
         #run the optimization
 
-        problem.solve()
-        cplex_status = problem.solution.get_status()
+        if pool_size == 0:
 
-        status = self.status_mapping[cplex_status] if cplex_status in self.status_mapping else Status.UNKNOWN
-        message = str(problem.solution.get_status_string())
+            problem.solve()
 
-        if status == Status.OPTIMAL:
-            fobj = problem.solution.get_objective_value()
-            values, shadow_prices, reduced_costs = None, None, None
+            status = self.status_mapping.get(problem.solution.get_status(), Status.UNKNOWN)
+            message = str(problem.solution.get_status_string())
 
-            if get_values:
-                values = OrderedDict([(r_id, problem.solution.get_values(r_id)) for r_id in self.var_ids])
+            if status == Status.OPTIMAL:
+                fobj = problem.solution.get_objective_value()
+                values, shadow_prices, reduced_costs = None, None, None
 
-            if get_shadow_prices:
-                shadow_prices = OrderedDict(zip(self.constr_ids,
-                                                problem.solution.get_dual_values(self.constr_ids)))
+                if get_values:
+                    if isinstance(get_values, Iterable):
+                        get_values = list(get_values)
+                        values = OrderedDict(list(zip(get_values, problem.solution.get_values(get_values))))
+                    else:
+                        values = OrderedDict(list(zip(self.var_ids, problem.solution.get_values())))
 
-            if get_reduced_costs:
-                reduced_costs = OrderedDict(zip(self.var_ids,
-                                                problem.solution.get_reduced_costs(self.var_ids)))
+                if get_shadow_prices:
+                    shadow_prices = OrderedDict(list(zip(self.constr_ids,
+                                                    problem.solution.get_dual_values(self.constr_ids))))
 
-            solution = Solution(status, message, fobj, values, shadow_prices, reduced_costs)
+                if get_reduced_costs:
+                    reduced_costs = OrderedDict(list(zip(self.var_ids,
+                                                    problem.solution.get_reduced_costs(self.var_ids))))
+
+                solution = Solution(status, message, fobj, values, shadow_prices, reduced_costs)
+            else:
+                solution = Solution(status, message)
+
         else:
-            solution = Solution(status, message)
+            pool_pmap = {
+                'SolnPoolIntensity': problem.parameters.mip.pool.intensity,
+                'PopulateLim': problem.parameters.mip.limits.populate,
+                'SolnPoolCapacity': problem.parameters.mip.pool.capacity,
+                'SolnPoolReplace': problem.parameters.mip.pool.replace,
+                'SolnPoolGap': problem.parameters.mip.pool.relgap,
+                'SolnPoolAGap': problem.parameters.mip.pool.absgap
+
+            }
+
+            default_params = {
+                'SolnPoolIntensity': 3,
+                'PopulateLim': 10 * pool_size,
+                'SolnPoolCapacity': pool_size,
+                'SolnPoolReplace': 1
+            }
+
+            for param, val in list(default_params.items()):
+                pool_pmap[param].set(val)
+
+            if pool_gap:
+                pool_pmap['SolnPoolGap'].set(pool_gap)
+
+            problem.populate_solution_pool()
+
+            status = self.status_mapping.get(problem.solution.get_status(), Status.UNKNOWN)
+
+            if status == Status.OPTIMAL or status == Status.UNKNOWN:
+                solution = self.get_solution_pool(get_values)
+            else:
+                solution = []
 
         if constraints:
             self.reset_bounds(changed_lb, changed_ub)
@@ -288,7 +379,7 @@ class CplexSolver(Solver):
         def _dict_diff(dict1, dict2):
             return set(dict1.items()) - set(dict2.items())
 
-        for r_id, x in constraints.items():
+        for r_id, x in list(constraints.items()):
             if r_id in self.var_ids:
                 lb, ub = x if isinstance(x, tuple) else (x, x)
                 lower_bounds[r_id] = lb if lb is not None else -infinity
@@ -308,6 +399,37 @@ class CplexSolver(Solver):
 
         return lb_new, ub_new
 
+    def get_solution_pool(self, get_values=True):
+        """ Return a solution pool for MILP problems.
+        Must be called after using solve with pool_size argument > 0.
+
+        Arguments:
+            get_values (bool or list): set to false for speedup if you only care about the objective value (default: True)
+
+        Returns:
+            list: list of Solution objects
+
+        """
+        pool = self.problem.solution.pool
+        solutions = []
+
+        for i in range(pool.get_num()):
+            obj = pool.get_objective_value(i)
+            # TODO: remove all OrderedDicts when migrating to python 3.7
+#            values = OrderedDict([(r_id, pool.get_values(i, r_id)) for r_id in self.var_ids])
+            if get_values:
+                if isinstance(get_values, Iterable):
+                    get_values = list(get_values)
+                    values = dict(list(zip(get_values, pool.get_values(i, get_values))))
+                else:
+                    values = dict(list(zip(self.var_ids, pool.get_values(i))))
+            else:
+                values = None
+            sol = Solution(fobj=obj, values=values)
+            solutions.append(sol)
+
+        return solutions
+
     def reset_bounds(self, updated_lb, updated_ub):
         if updated_lb:
             lb_old = [(r_id, self._cached_lower_bounds[r_id]) for r_id, _ in updated_lb]
@@ -316,18 +438,19 @@ class CplexSolver(Solver):
             ub_old = [(r_id, self._cached_upper_bounds[r_id]) for r_id, _ in updated_ub]
             self.problem.variables.set_upper_bounds(ub_old)
 
-    #TODO: 2_program_MMsolver.prof
     def set_lower_bounds(self, bounds_dict):
-        self.problem.variables.set_lower_bounds([(var_id, lb if lb is not None else -infinity) for var_id, lb in bounds_dict.iteritems()])
+        self.problem.variables.set_lower_bounds([(var_id, lb if lb is not None else -infinity)
+                                                 for var_id, lb in bounds_dict.items()])
 
-    #TODO: 2_program_MMsolver.prof
     def set_upper_bounds(self, bounds_dict):
-        self.problem.variables.set_lower_bounds([(var_id, ub if ub is not None else infinity) for var_id, ub in bounds_dict.iteritems()])
+        self.problem.variables.set_lower_bounds([(var_id, ub if ub is not None else infinity)
+                                                 for var_id, ub in bounds_dict.items()])
 
-    #TODO: 2_program_MMsolver.prof
     def set_bounds(self, bounds_dict):
-        self.problem.variables.set_lower_bounds([(var_id, bounds[0] if bounds[0] is not None else -infinity) for var_id, bounds in bounds_dict.iteritems()])
-        self.problem.variables.set_upper_bounds([(var_id, bounds[1] if bounds[1] is not None else infinity) for var_id, bounds in bounds_dict.iteritems()])
+        self.problem.variables.set_lower_bounds([(var_id, bounds[0] if bounds[0] is not None else -infinity)
+                                                 for var_id, bounds in bounds_dict.items()])
+        self.problem.variables.set_upper_bounds([(var_id, bounds[1] if bounds[1] is not None else infinity)
+                                                 for var_id, bounds in bounds_dict.items()])
 
     def set_parameter(self, parameter, value):
         """ Set a parameter value for this optimization problem

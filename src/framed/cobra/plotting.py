@@ -3,6 +3,12 @@
 Author: Daniel Machado
    
 """
+from __future__ import division
+from __future__ import absolute_import
+
+
+from builtins import range
+from past.utils import old_div
 
 from .variability import flux_envelope
 from .simulation import FBA
@@ -90,12 +96,12 @@ def plot_flux_envelope(model, r_x, r_y, substrate=None, constraints=None, refere
 
 def _normalize_list(values, x):
     for i in range(len(values)):
-        values[i] = values[i] / x if values[i] is not None else None
+        values[i] = old_div(values[i], x) if values[i] is not None else None
 
 
 def _normalize_dict(fluxes, x):
-    for r_id, flux in fluxes.items():
-        fluxes[r_id] = flux / x if flux is not None else None
+    for r_id, flux in list(fluxes.items()):
+        fluxes[r_id] = old_div(flux, x) if flux is not None else None
 
 
 def plot_flux_bounds(range1, range2=None, keys=None, log=False, unbounded=1000):
@@ -111,7 +117,7 @@ def plot_flux_bounds(range1, range2=None, keys=None, log=False, unbounded=1000):
     """
 
     if not keys:
-        keys = range1.keys()
+        keys = list(range1.keys())
 
     def bounded_left(x):
         return -unbounded if x is None else x

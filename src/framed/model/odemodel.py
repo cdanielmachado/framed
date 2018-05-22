@@ -1,3 +1,5 @@
+from __future__ import print_function
+from builtins import object
 from collections import OrderedDict
 from re import findall
 from .model import Model
@@ -71,13 +73,13 @@ class ODEModel(Model):
     def merge_constants(self):
         constants = OrderedDict()
 
-        for c_id, comp in self.compartments.items():
+        for c_id, comp in list(self.compartments.items()):
             constants[c_id] = comp.size
 
         constants.update(self.constant_params)
 
-        for r_id, params in self.local_params.items():
-            for p_id, value in params.items():
+        for r_id, params in list(self.local_params.items()):
+            for p_id, value in list(params.items()):
                 full_id = '{}_{}'.format(r_id, p_id)
                 constants[full_id] = value
 
@@ -99,7 +101,7 @@ class ODEModel(Model):
     def print_balance(self, m_id):
         c_id = self.metabolites[m_id].compartment
         table = self.metabolite_reaction_lookup()
-        terms = ["{:+g} * r['{}']".format(coeff, r_id) for r_id, coeff in table[m_id].items()]
+        terms = ["{:+g} * r['{}']".format(coeff, r_id) for r_id, coeff in list(table[m_id].items())]
         if len(terms)==0 or (self.metabolites[m_id].constant and self.metabolites[m_id].boundary):
             expr= "0"
         else:
@@ -160,12 +162,12 @@ class ODEModel(Model):
 
         if not self._func_str:
             parsed_rates = {r_id: self.parse_rate(r_id, ratelaw)
-                            for r_id, ratelaw in self.ratelaws.items()}
+                            for r_id, ratelaw in list(self.ratelaws.items())}
 
             # put parsed rules by order
             aux = {p_id: self.parse_rule(rule, parsed_rates)
-                            for p_id, rule in self.assignment_rules.items()}
-            trees = [_build_tree_rules(v_id, aux) for v_id in aux.keys()]
+                            for p_id, rule in list(self.assignment_rules.items())}
+            trees = [_build_tree_rules(v_id, aux) for v_id in list(aux.keys())]
             order = _get_oder_rules(trees)
 
             parsed_rules = OrderedDict([(id, aux[id]) for id in order])
@@ -202,7 +204,8 @@ class ODEModel(Model):
         if params:
             p.update(params)
 
-        exec ('from math import log',globals())
+
+        exec('from math import log', globals())
         exec(self.build_ode(), globals())
         ode_func = eval('ode_func')
 
@@ -243,7 +246,7 @@ def _get_order_nodes(tree):
             res = _get_order_nodes(child) + res
     return res
 
-class MyTree:
+class MyTree(object):
     "Generic tree node."
     def __init__(self, name='root', children=None):
         self.name = name

@@ -4,10 +4,13 @@ This module implements abstract classes common to any solver interface.
 Author: Daniel Machado
 
 """
+from __future__ import division
 
 
 #CONSTANTS
-class Status:
+from past.utils import old_div
+from builtins import object
+class Status(object):
     """ Enumeration of possible solution status. """
     OPTIMAL = 1
     UNKNOWN = 0
@@ -17,14 +20,14 @@ class Status:
     INF_OR_UNB = -4
 
 
-class VarType:
+class VarType(object):
     """ Enumeration of possible variable types. """
     BINARY = 1
     INTEGER = 2
     CONTINUOUS = 3
 
 
-class Parameter:
+class Parameter(object):
     """ Enumeration of parameters common to all solvers. """
     TIME_LIMIT = 0
     FEASIBILITY_TOL = 1
@@ -32,6 +35,8 @@ class Parameter:
     OPTIMALITY_TOL = 3
     MIP_REL_GAP = 4
     MIP_ABS_GAP = 5
+    POOL_SIZE = 6
+    POOL_GAP = 7
 
 
 default_parameters = {
@@ -52,7 +57,7 @@ def set_default_parameter(parameter, value):
     default_parameters[parameter] = value
 
 
-class Solution:
+class Solution(object):
     """ Stores the results of an optimization.
 
     Instantiate without arguments to create an empty Solution representing a failed optimization.
@@ -91,16 +96,16 @@ class Solution:
         if not self.values:
             return None
 
-        values = self.values.items()
+        values = list(self.values.items())
 
         if sort:
-            values.sort(key= lambda r_id_val: abs(r_id_val[1]), reverse=True)
+            values.sort(key= lambda x: abs(x[1]), reverse=True)
 
         if not zeros:
-            values = filter(lambda r_id_val: abs(r_id_val[1]) > abstol, values)
+            values = [x for x in values if abs(x[1]) > abstol]
 
         if pattern:
-            values = filter(lambda r_id_val: pattern in r_id_val[0], values)
+            values = [x for x in values if pattern in x[0]]
 
         entries = ['{:<12} {: .6g}'.format(r_id, val) for (r_id, val) in values]
 
@@ -120,13 +125,13 @@ class Solution:
         if not self.shadow_prices:
             return None
 
-        values = self.shadow_prices.items()
+        values = list(self.shadow_prices.items())
 
         if not zeros:
-            values = filter(lambda m_id_val: abs(m_id_val[1]) > abstol, values)
+            values = [x for x in values if abs(x[1]) > abstol]
 
         if pattern:
-            values = filter(lambda m_id_val: pattern in m_id_val[0], values)
+            values = [x for x in values if pattern in x[0]]
 
         entries = ['{:<12} {: .6g}'.format(m_id, val) for (m_id, val) in values]
 
@@ -147,13 +152,13 @@ class Solution:
         if not self.reduced_costs:
             return None
 
-        values = self.reduced_costs.items()
+        values = list(self.reduced_costs.items())
 
         if not zeros:
-            values = filter(lambda r_id_val: abs(r_id_val[1]) > abstol, values)
+            values = [x for x in values if abs(x[1]) > abstol]
 
         if pattern:
-            values = filter(lambda r_id_val: pattern in r_id_val[0], values)
+            values = [x for x in values if pattern in x[0]]
 
         entries = ['{:<12} {: .6g}'.format(r_id, val) for (r_id, val) in values]
 
@@ -197,18 +202,20 @@ class Solution:
             flux_out.sort(key=lambda x: x[1], reverse=False)
         
         if percentage:
-            turnover = sum(map(lambda x: x[1], flux_in))
-            flux_in = map(lambda a_b_c: (a_b_c[0], a_b_c[1] / turnover, a_b_c[2]), flux_in)
-            flux_out = map(lambda a_b_c: (a_b_c[0], a_b_c[1] / turnover, a_b_c[2]), flux_out)
+            turnover = sum([x[1] for x in flux_in])
+            flux_in = [(x[0], old_div(x[1], turnover), x[2]) for x in flux_in]
+            flux_out = [(x[0], old_div(x[1], turnover), x[2]) for x in flux_out]
             print_format = '[ {} ] {:<12} {:< 10.2%}'
         else:
             print_format = '[ {} ] {:<12} {:< 10.6g}'
 
         if equations:
             print_format += '\t{}'
-            lines = map(lambda a_b_c: print_format.format(a_b_c[2], a_b_c[0], a_b_c[1], model.print_reaction(a_b_c[0], metabolite_names=True)[len(a_b_c[0])+1:]), flux_in + flux_out)
+            lines = [print_format.format(x[2], x[0], x[1], 
+                                         model.print_reaction(x[0], metabolite_names=True)[len(x[0])+1:]) 
+                     for x in flux_in + flux_out]
         else:
-            lines = map(lambda a_b_c: print_format.format(a_b_c[2], a_b_c[0], a_b_c[1]), flux_in + flux_out)
+            lines = [print_format.format(x[2], x[0], x[1]) for x in flux_in + flux_out]           
         
         return '\n'.join(lines)
 
@@ -226,8 +233,8 @@ class Solution:
             return None
 
         m_r_table = model.metabolite_reaction_lookup()
-        t = {m_id: 0.5*sum([abs(coeff * self.values[r_id]) for r_id, coeff in neighbours.items()])
-             for m_id, neighbours in m_r_table.items()}
+        t = {m_id: 0.5*sum([abs(coeff * self.values[r_id]) for r_id, coeff in list(neighbours.items())])
+             for m_id, neighbours in list(m_r_table.items())}
         return t
 
     def show_metabolite_turnover(self, model, zeros=False, pattern=None, sort=False, abstol=1e-9):
@@ -246,23 +253,23 @@ class Solution:
         if not self.values:
             return None
 
-        values = self.get_metabolites_turnover(model).items()
+        values = list(self.get_metabolites_turnover(model).items())
 
         if sort:
-            values.sort(key=lambda key_val: abs(key_val[1]), reverse=True)
+            values.sort(key=lambda x: abs(x[1]), reverse=True)
 
         if not zeros:
-            values = filter(lambda key_val: abs(key_val[1]) > abstol, values)
+            values = [x for x in values if abs(x[1]) > abstol]
 
         if pattern:
-            values = filter(lambda key_val: pattern in key_val[0], values)
+            values = [key_val for key_val in values if pattern in key_val[0]]
 
         entries = ['{:<12} {: .6g}'.format(key, val) for (key, val) in values]
 
         return '\n'.join(entries)
 
 
-class Solver:
+class Solver(object):
     """ Abstract class representing a generic solver.
 
     All solver interfaces should implement the methods defined in this class.
@@ -309,12 +316,28 @@ class Solver:
             var_id (str): variable identifier
         """
         pass
-    
+
+    def remove_variables(self, var_ids):
+        """ Remove variables from the current problem.
+
+        Arguments:
+            var_ids (list): variable identifiers
+        """
+        pass
+
     def remove_constraint(self, constr_id):
         """ Remove a constraint from the current problem.
         
         Arguments:
             constr_id (str): constraint identifier
+        """
+        pass
+
+    def remove_constraints(self, constr_ids):
+        """ Remove constraints from the current problem.
+
+        Arguments:
+            constr_ids (list): constraint identifiers
         """
         pass
 
@@ -342,12 +365,10 @@ class Solver:
             clean_constraints (bool): remove non persistent constraints (default: True)
         """
         if clean_variables:
-            for var_id in self.temp_vars:
-                self.remove_variable(var_id)
+            self.remove_variables(self.temp_vars)
         
         if clean_constraints:
-            for constr_id in self.temp_constrs:
-                self.remove_constraint(constr_id)
+            self.remove_constraints(self.temp_constrs)
 
     def update(self):
         """ Update internal structure. Used for efficient lazy updating. """
@@ -374,7 +395,7 @@ class Solver:
             model : CBModel
         """
 
-        for r_id, reaction in model.reactions.items():
+        for r_id, reaction in list(model.reactions.items()):
             self.add_variable(r_id, reaction.lb, reaction.ub, update_problem=False)
         self.update()
         
@@ -384,7 +405,7 @@ class Solver:
         self.update()
             
     def solve(self, linear=None, quadratic=None, minimize=None, model=None, constraints=None, get_values=True,
-              get_shadow_prices=False, get_reduced_costs=False):
+              get_shadow_prices=False, get_reduced_costs=False, pool_size=0, pool_gap=None):
         """ Solve the optimization problem.
 
         Arguments:
@@ -393,15 +414,31 @@ class Solver:
             minimize (bool): solve a minimization problem (default: True)
             model (CBModel): model (optional, leave blank to reuse previous model structure)
             constraints (dict): additional constraints (optional)
-            get_values (bool): set to false for speedup if you only care about the objective value (default: True)
+            get_values (bool or list): set to false for speedup if you only care about the objective value (default: True)
             get_shadow_prices (bool): return shadow prices if available (default: False)
             get_reduced_costs (bool): return reduced costs if available (default: False)
+            pool_size (int): calculate solution pool of given size (only for MILP problems)
+            pool_gap (float): maximum relative gap for solutions in pool (optional)
 
         Returns:
             Solution: solution
         """
 
         # An exception is raised if the subclass does not implement this method.
+        raise Exception('Not implemented for this solver.')
+
+    def get_solution_pool(self, get_values=True):
+        """ Return a solution pool for MILP problems.
+        Must be called after using solve with pool_size argument > 0.
+
+        Arguments:
+
+            get_values (bool or list): set to false for speedup if you only care about the objective value (default: True)
+
+        Returns:
+            list: list of Solution objects
+
+        """
         raise Exception('Not implemented for this solver.')
 
     def set_parameter(self, parameter, value):
@@ -422,7 +459,7 @@ class Solver:
             parameters (dict of Parameter to value): parameter values
         """
 
-        for parameter, value in parameters.items():
+        for parameter, value in list(parameters.items()):
             self.set_parameter(parameter, value)
 
     def set_logging(self, enabled=False):
@@ -443,7 +480,6 @@ class Solver:
 
         raise Exception('Not implemented for this solver.')
 
-    #TODO: 2_program_MMsolver.prof
     def set_lower_bounds(self, bounds_dict):
         """ Set lower bounds from dictionary
 
@@ -453,7 +489,6 @@ class Solver:
 
         raise Exception('Not implemented for this solver.')
 
-    #TODO: 2_program_MMsolver.prof
     def set_upper_bounds(self, bounds_dict):
         """ Set upper bounds from dictionary
 
@@ -463,7 +498,6 @@ class Solver:
 
         raise Exception('Not implemented for this solver.')
 
-    #TODO: 2_program_MMsolver.prof
     def set_bounds(self, bounds_dict):
         """ Set lower and upper bounds from tuple dictionary
 

@@ -5,7 +5,9 @@ Author: Daniel Machado
 
 """
 
-from collections import OrderedDict
+from builtins import str
+from builtins import range
+from collections import OrderedDict, Iterable
 from .solver import Solver, Solution, Status, VarType, Parameter, default_parameters
 from gurobipy import Model as GurobiModel, GRB, quicksum
 
@@ -31,7 +33,9 @@ parameter_mapping = {
     Parameter.INT_FEASIBILITY_TOL: GRB.Param.IntFeasTol,
     Parameter.OPTIMALITY_TOL: GRB.Param.OptimalityTol,
     Parameter.MIP_ABS_GAP: GRB.Param.MIPGapAbs,
-    Parameter.MIP_REL_GAP: GRB.Param.MIPGap
+    Parameter.MIP_REL_GAP: GRB.Param.MIPGap,
+    Parameter.POOL_SIZE: GRB.Param.PoolSolutions,
+    Parameter.POOL_GAP: GRB.Param.PoolGap
 }
 
 
@@ -96,7 +100,7 @@ class GurobiSolver(Solver):
             constr = self.problem.getConstrByName(constr_id)
             self.problem.remove(constr)
 
-        expr = quicksum(coeff * self.problem.getVarByName(r_id) for r_id, coeff in lhs.items() if coeff)
+        expr = quicksum(coeff * self.problem.getVarByName(r_id) for r_id, coeff in list(lhs.items()) if coeff)
 
         self.problem.addConstr(expr, grb_sense[sense], rhs, constr_id)
         self.constr_ids.append(constr_id)
@@ -109,24 +113,44 @@ class GurobiSolver(Solver):
                                 
     def remove_variable(self, var_id):
         """ Remove a variable from the current problem.
-        
+
         Arguments:
             var_id (str): variable identifier
         """
-        if var_id in self.var_ids:
-            self.problem.remove(self.problem.getVarByName(var_id))
-            self.var_ids.remove(var_id)
-    
+        self.remove_variables([var_id])
+
+    def remove_variables(self, var_ids):
+        """ Remove variables from the current problem.
+
+        Arguments:
+            var_ids (list): variable identifiers
+        """
+
+        for var_id in var_ids:
+            if var_id in self.var_ids:
+                self.problem.remove(self.problem.getVarByName(var_id))
+                self.var_ids.remove(var_id)
+
     def remove_constraint(self, constr_id):
         """ Remove a constraint from the current problem.
-        
+
         Arguments:
             constr_id (str): constraint identifier
         """
-        if constr_id in self.constr_ids:
-            self.problem.remove(self.problem.getConstrByName(constr_id))
-            self.constr_ids.remove(constr_id)
-    
+        self.remove_constraints([constr_id])
+
+    def remove_constraints(self, constr_ids):
+        """ Remove constraints from the current problem.
+
+        Arguments:
+            constr_ids (list): constraint identifiers
+        """
+
+        for constr_id in constr_ids:
+            if constr_id in self.constr_ids:
+                self.problem.remove(self.problem.getConstrByName(constr_id))
+                self.constr_ids.remove(constr_id)
+
     def update(self):
         """ Update internal structure. Used for efficient lazy updating. """
         self.problem.update()
@@ -148,11 +172,11 @@ class GurobiSolver(Solver):
         quad_obj = []
 
         if linear:
-            lin_obj = [f * self.problem.getVarByName(r_id) for r_id, f in linear.items() if f]
+            lin_obj = [f * self.problem.getVarByName(r_id) for r_id, f in list(linear.items()) if f]
 
         if quadratic:
             quad_obj = [q * self.problem.getVarByName(r_id1) * self.problem.getVarByName(r_id2)
-                        for (r_id1, r_id2), q in quadratic.items() if q]
+                        for (r_id1, r_id2), q in list(quadratic.items()) if q]
 
         obj_expr = quicksum(quad_obj + lin_obj)
         sense = GRB.MINIMIZE if minimize else GRB.MAXIMIZE
@@ -160,7 +184,7 @@ class GurobiSolver(Solver):
         self.problem.setObjective(obj_expr, sense)
 
     def solve(self, linear=None, quadratic=None, minimize=None, model=None, constraints=None, get_values=True,
-              get_shadow_prices=False, get_reduced_costs=False):
+              get_shadow_prices=False, get_reduced_costs=False, pool_size=0, pool_gap=None):
         """ Solve the optimization problem.
 
         Arguments:
@@ -169,9 +193,11 @@ class GurobiSolver(Solver):
             minimize (bool): solve a minimization problem (default: True)
             model (CBModel): model (optional, leave blank to reuse previous model structure)
             constraints (dict): additional constraints (optional)
-            get_values (bool): set to false for speedup if you only care about the objective value (default: True)
+            get_values (bool or list): set to false for speedup if you only care about the objective value (default: True)
             get_shadow_prices (bool): return shadow prices if available (default: False)
             get_reduced_costs (bool): return reduced costs if available (default: False)
+            pool_size (int): calculate solution pool of given size (only for MILP problems)
+            pool_gap (float): maximum relative gap for solutions in pool (optional)
 
         Returns:
             Solution: solution
@@ -184,7 +210,7 @@ class GurobiSolver(Solver):
 
         if constraints:
             old_constraints = {}
-            for r_id, x in constraints.items():
+            for r_id, x in list(constraints.items()):
                 lb, ub = x if isinstance(x, tuple) else (x, x)
                 if r_id in self.var_ids:
                     lpvar = problem.getVarByName(r_id)
@@ -198,52 +224,104 @@ class GurobiSolver(Solver):
         self.set_objective(linear, quadratic, minimize)
 
         #run the optimization
-        problem.optimize()
+        if pool_size == 0:
 
-        status = status_mapping[problem.status] if problem.status in status_mapping else Status.UNKNOWN
-        message = str(problem.status)
+            problem.optimize()
 
-        if status == Status.OPTIMAL:
-            fobj = problem.ObjVal
-            values, shadow_prices, reduced_costs = None, None, None
+            status = status_mapping.get(problem.status, Status.UNKNOWN)
+            message = str(problem.status)
 
-            if get_values:
-                values = OrderedDict([(r_id, problem.getVarByName(r_id).X) for r_id in self.var_ids])
+            if status == Status.OPTIMAL:
+                fobj = problem.ObjVal
+                values, shadow_prices, reduced_costs = None, None, None
 
-            if get_shadow_prices:
-                shadow_prices = OrderedDict([(m_id, problem.getConstrByName(m_id).Pi) for m_id in self.constr_ids])
+                if get_values:
+                    if isinstance(get_values, Iterable):
+                        get_values = list(get_values)
+                        values = OrderedDict([(r_id, problem.getVarByName(r_id).X) for r_id in get_values])
+                    else:
+                        values = OrderedDict([(r_id, problem.getVarByName(r_id).X) for r_id in self.var_ids])
 
-            if get_reduced_costs:
-                reduced_costs = OrderedDict([(r_id, problem.getVarByName(r_id).RC) for r_id in self.var_ids])
+                if get_shadow_prices:
+                    shadow_prices = OrderedDict([(m_id, problem.getConstrByName(m_id).Pi) for m_id in self.constr_ids])
 
-            solution = Solution(status, message, fobj, values, shadow_prices, reduced_costs)
+                if get_reduced_costs:
+                    reduced_costs = OrderedDict([(r_id, problem.getVarByName(r_id).RC) for r_id in self.var_ids])
+
+                solution = Solution(status, message, fobj, values, shadow_prices, reduced_costs)
+            else:
+                solution = Solution(status, message)
+
         else:
-            solution = Solution(status, message)
+
+            problem.setParam(GRB.Param.PoolSearchMode, 2)
+            self.set_parameter(Parameter.POOL_SIZE, pool_size)
+
+            if pool_gap:
+                self.set_parameter(Parameter.POOL_GAP, pool_gap)
+
+            problem.optimize()
+
+            status = status_mapping.get(problem.status, Status.UNKNOWN)
+
+            if status == Status.OPTIMAL or status == Status.UNKNOWN:
+                solution = self.get_solution_pool()
+            else:
+                solution = []
 
         #reset old constraints because temporary constraints should not be persistent
         if constraints:
-            for r_id, (lb, ub) in old_constraints.items():
+            for r_id, (lb, ub) in list(old_constraints.items()):
                 lpvar = problem.getVarByName(r_id)
                 lpvar.lb, lpvar.ub = lb, ub
             problem.update()
 
         return solution
 
-    #TODO: 2_program_MMsolver.prof
+    def get_solution_pool(self, get_values=True):
+        """ Return a solution pool for MILP problems.
+        Must be called after using solve with pool_size argument > 0.
+
+        Arguments:
+            get_values (bool or list): set to false for speedup if you only care about the objective value (default: True)
+
+        Returns:
+            list: list of Solution objects
+
+        """
+        solutions = []
+
+        for i in range(self.problem.SolCount):
+            self.problem.setParam(GRB.param.SolutionNumber, i)
+            obj = self.problem.PoolObjVal
+            # TODO: remove all OrderedDicts when migrating to python 3.7
+#            values = OrderedDict([(r_id, self.problem.getVarByName(r_id).Xn) for r_id in self.var_ids])
+
+            if get_values:
+                if isinstance(get_values, Iterable):
+                    get_values = list(get_values)
+                    values = {r_id: self.problem.getVarByName(r_id).Xn for r_id in get_values}
+                else:
+                    values = {r_id: self.problem.getVarByName(r_id).Xn for r_id in self.var_ids}
+            else:
+                values = None
+            sol = Solution(fobj=obj, values=values)
+            solutions.append(sol)
+
+        return solutions
+
     def set_lower_bounds(self, bounds_dict):
-        for var_id, lb in bounds_dict.iteritems():
+        for var_id, lb in bounds_dict.items():
             lpvar = self.problem.getVarByName(var_id)
             lpvar.lb = lb if lb is not None else GRB.INFINITY
 
-    #TODO: 2_program_MMsolver.prof
     def set_upper_bounds(self, bounds_dict):
-        for var_id, ub in bounds_dict.iteritems():
+        for var_id, ub in bounds_dict.items():
             lpvar = self.problem.getVarByName(var_id)
             lpvar.ub = ub if ub is not None else GRB.INFINITY
 
-    #TODO: 2_program_MMsolver.prof
     def set_bounds(self, bounds_dict):
-        for var_id, bounds in bounds_dict.iteritems():
+        for var_id, bounds in bounds_dict.items():
             lpvar = self.problem.getVarByName(var_id)
             lpvar.lb = bounds[0] if bounds[0] is not None else GRB.INFINITY
             lpvar.ub = bounds[1] if bounds[1] is not None else GRB.INFINITY

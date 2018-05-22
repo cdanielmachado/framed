@@ -33,10 +33,10 @@ def get_default_solver():
     if default_solver:
         return default_solver
 
-    solver_order = ['gurobi', 'cplex']
+    solver_order = ['cplex', 'gurobi']
 
     for solver in solver_order:
-        if solver in solvers.keys():
+        if solver in list(solvers.keys()):
             default_solver = solver
             break
 
@@ -55,7 +55,7 @@ def set_default_solver(solvername):
 
     global default_solver
 
-    if solvername.lower() in solvers.keys():
+    if solvername.lower() in list(solvers.keys()):
         default_solver = solvername.lower()
     else:
         raise EnvironmentError("Solver '{}' not available.".format(solvername))

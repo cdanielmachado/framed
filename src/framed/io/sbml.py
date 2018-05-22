@@ -4,6 +4,10 @@ Author: Daniel Machado
    
 """
 
+from builtins import map
+from builtins import str
+from builtins import range
+from builtins import object
 from ..model.model import Model, Metabolite, Reaction, Compartment
 from ..model.odemodel import ODEModel
 from ..model.cbmodel import CBModel, Gene, Protein, GPRAssociation
@@ -45,7 +49,7 @@ non_alphanum = re.compile('\W+')
 re_type = type(non_alphanum)
 
 
-class Flavor:
+class Flavor(object):
     """ Enumeration of available model flavors. """
 
     COBRA = 'cobra'  # UCSD models in the old cobra toolbox format
@@ -55,7 +59,8 @@ class Flavor:
     FBC2 = 'fbc2'  # other models in sbml-fbc2 format
 
 
-def load_sbml_model(filename, kind=None, flavor=None, exchange_detection_mode=None):
+def load_sbml_model(filename, kind=None, flavor=None, exchange_detection_mode=None,
+                    load_gprs=True, load_metadata=True):
     """ Loads a metabolic model from a file.
     
     Arguments:
@@ -92,21 +97,23 @@ def load_sbml_model(filename, kind=None, flavor=None, exchange_detection_mode=No
 
     if sbml_model is None:
         document.printErrors()
-        raise IOError('Failed to load model.')
+        raise IOError('Failed to load model {}.'.format(filename))
 
     if kind and kind.lower() == CB_MODEL:
-        model = _load_cbmodel(sbml_model, flavor, exchange_detection_mode=exchange_detection_mode)
+        model = _load_cbmodel(sbml_model, flavor, exchange_detection_mode=exchange_detection_mode,
+                              load_gprs=load_gprs, load_metadata=load_metadata)
     elif kind and kind.lower() == ODE_MODEL:
         model = _load_odemodel(sbml_model)
     else:
         model = _load_stoichiometric_model(sbml_model)
 
-    _load_metadata(sbml_model, model)
+    if load_metadata:
+        _load_metadata(sbml_model, model)
 
     return model
 
 
-def load_cbmodel(filename, flavor=None, exchange_detection_mode=None):
+def load_cbmodel(filename, flavor=None, exchange_detection_mode=None, load_gprs=True, load_metadata=True):
     """
     Args:
         filename (str): SBML file path
@@ -135,7 +142,8 @@ def load_cbmodel(filename, flavor=None, exchange_detection_mode=None):
         CBModel: constraint-based model
     """
 
-    model = load_sbml_model(filename, kind=CB_MODEL, flavor=flavor, exchange_detection_mode=exchange_detection_mode)
+    model = load_sbml_model(filename, kind=CB_MODEL, flavor=flavor, exchange_detection_mode=exchange_detection_mode,
+                            load_gprs=load_gprs, load_metadata=load_metadata)
 
     fix_cb_model(model, flavor=flavor)
 
@@ -154,23 +162,25 @@ def _load_stoichiometric_model(sbml_model):
     return model
 
 
-def _load_compartments(sbml_model, model):
+def _load_compartments(sbml_model, model, load_metadata=True):
     for compartment in sbml_model.getListOfCompartments():
-        model.add_compartment(_load_compartment(compartment))
+        model.add_compartment(_load_compartment(compartment, load_metadata=load_metadata))
 
 
-def _load_compartment(compartment):
+def _load_compartment(compartment, load_metadata=True):
     comp = Compartment(compartment.getId(), compartment.getName(), compartment.getSize())
-    _load_metadata(compartment, comp)
+
+    if load_metadata:
+        _load_metadata(compartment, comp)
     return comp
 
 
-def _load_metabolites(sbml_model, model, flavor=None):
+def _load_metabolites(sbml_model, model, flavor=None, load_metadata=True):
     for species in sbml_model.getListOfSpecies():
-        model.add_metabolite(_load_metabolite(species, flavor), clear_tmp=False)
+        model.add_metabolite(_load_metabolite(species, flavor, load_metadata=load_metadata), clear_tmp=False)
 
 
-def _load_metabolite(species, flavor=None):
+def _load_metabolite(species, flavor=None, load_metadata=True):
     metabolite = Metabolite(species.getId(), species.getName(), species.getCompartment(),
                             species.getBoundaryCondition(), species.getConstant())
 
@@ -184,17 +194,20 @@ def _load_metabolite(species, flavor=None):
             charge = fbc_species.getCharge()
             metabolite.metadata['CHARGE'] = str(charge)
 
-    _load_metadata(species, metabolite)
+    if load_metadata:
+        _load_metadata(species, metabolite)
+
     return metabolite
 
 
-def _load_reactions(sbml_model, model, exchange_detection_mode=None):
+def _load_reactions(sbml_model, model, exchange_detection_mode=None, load_metadata=True):
     for reaction in sbml_model.getListOfReactions():
-        r = _load_reaction(reaction, sbml_model=sbml_model, exchange_detection_mode=exchange_detection_mode)
+        r = _load_reaction(reaction, sbml_model=sbml_model, exchange_detection_mode=exchange_detection_mode,
+                           load_metadata=load_metadata)
         model.add_reaction(r, clear_tmp=False)
 
 
-def _load_reaction(reaction, sbml_model, exchange_detection_mode=None):
+def _load_reaction(reaction, sbml_model, exchange_detection_mode=None, load_metadata=True):
     """
     Args:
         reaction: <SBMLReaction> object 
@@ -264,11 +277,14 @@ def _load_reaction(reaction, sbml_model, exchange_detection_mode=None):
 
     rxn = Reaction(reaction.getId(), name=reaction.getName(), reversible=reaction.getReversible(),
                    stoichiometry=stoichiometry, regulators=modifiers, is_exchange=is_exchange)
-    _load_metadata(reaction, rxn)
+
+    if load_metadata:
+        _load_metadata(reaction, rxn)
+
     return rxn
 
 
-def _load_cbmodel(sbml_model, flavor, exchange_detection_mode=None):
+def _load_cbmodel(sbml_model, flavor, exchange_detection_mode=None, load_gprs=True, load_metadata=True):
     if exchange_detection_mode and exchange_detection_mode not in {None, 'unbalanced', 'boundary'}:
         try:
             exchange_detection_mode = re.compile(exchange_detection_mode)
@@ -286,17 +302,20 @@ def _load_cbmodel(sbml_model, flavor, exchange_detection_mode=None):
             exchange_detection_mode = 'unbalanced'
 
     model = CBModel(sbml_model.getId())
-    _load_compartments(sbml_model, model)
-    _load_metabolites(sbml_model, model, flavor)
-    _load_reactions(sbml_model, model, exchange_detection_mode=exchange_detection_mode)
+    _load_compartments(sbml_model, model, load_metadata=load_metadata)
+    _load_metabolites(sbml_model, model, flavor, load_metadata=load_metadata)
+    _load_reactions(sbml_model, model, exchange_detection_mode=exchange_detection_mode, load_metadata=load_metadata)
+
     if flavor in {None, Flavor.COBRA, Flavor.COBRA_OTHER, Flavor.SEED}:
         _load_cobra_bounds(sbml_model, model)
         _load_cobra_objective(sbml_model, model)
-        _load_cobra_gpr(sbml_model, model)
+        if load_gprs:
+            _load_cobra_gpr(sbml_model, model)
     elif flavor in {Flavor.BIGG, Flavor.FBC2}:
         _load_fbc2_bounds(sbml_model, model)
         _load_fbc2_objective(sbml_model, model)
-        _load_fbc2_gpr(sbml_model, model)
+        if load_gprs:
+            _load_fbc2_gpr(sbml_model, model)
     else:
         raise TypeError("Unsupported SBML flavor: {}".format(flavor))
 
@@ -350,7 +369,7 @@ def _load_cobra_gpr(sbml_model, model):
     for gene in sorted(genes):
         model.add_gene(Gene(gene, gene[2:]))
 
-    for r_id, gpr in gprs.items():
+    for r_id, gpr in list(gprs.items()):
         model.set_gpr_association(r_id, gpr, add_genes=False)
 
 
@@ -571,7 +590,7 @@ def save_cbmodel(model, filename, flavor=Flavor.COBRA):
 
 
 def _save_compartments(model, sbml_model):
-    for compartment in model.compartments.values():
+    for compartment in list(model.compartments.values()):
         sbml_compartment = sbml_model.createCompartment()
         sbml_compartment.setId(compartment.id)
         sbml_compartment.setName(compartment.name)
@@ -581,7 +600,7 @@ def _save_compartments(model, sbml_model):
 
 
 def _save_metabolites(model, sbml_model, flavor):
-    for metabolite in model.metabolites.values():
+    for metabolite in list(model.metabolites.values()):
         species = sbml_model.createSpecies()
         species.setId(metabolite.id)
         species.setName(metabolite.name)
@@ -606,7 +625,7 @@ def _save_metabolites(model, sbml_model, flavor):
 
 
 def _save_reactions(model, sbml_model):
-    for reaction in model.reactions.values():
+    for reaction in list(model.reactions.values()):
         sbml_reaction = sbml_model.createReaction()
         sbml_reaction.setId(reaction.id)
         sbml_reaction.setName(reaction.name)
@@ -614,7 +633,7 @@ def _save_reactions(model, sbml_model):
         sbml_reaction.setFast(False)
         _save_metadata(reaction, sbml_reaction)
 
-        for m_id, coeff in reaction.stoichiometry.items():
+        for m_id, coeff in list(reaction.stoichiometry.items()):
             if coeff < 0:
                 speciesReference = sbml_reaction.createReactant()
                 speciesReference.setSpecies(m_id)
@@ -625,7 +644,7 @@ def _save_reactions(model, sbml_model):
                 speciesReference.setSpecies(m_id)
                 speciesReference.setStoichiometry(coeff)
                 speciesReference.setConstant(True)
-        for m_id, kind in reaction.regulators.items():
+        for m_id, kind in list(reaction.regulators.items()):
             speciesReference = sbml_reaction.createModifier()
             speciesReference.setSpecies(m_id)
             if kind == '+':
@@ -653,7 +672,7 @@ def _save_gpr_associations(model, sbml_model, flavor):
 
 
 def _save_cobra_parameters(model, sbml_model, set_default_bounds=False):
-    for r_id, reaction in model.reactions.items():
+    for r_id, reaction in list(model.reactions.items()):
         sbml_reaction = sbml_model.getReaction(r_id)
         kineticLaw = sbml_reaction.createKineticLaw()
         kineticLaw.setFormula('0')
@@ -675,7 +694,7 @@ def _save_cobra_parameters(model, sbml_model, set_default_bounds=False):
 
 
 def _save_cobra_gprs(model, sbml_model):
-    for r_id, reaction in model.reactions.items():
+    for r_id, reaction in list(model.reactions.items()):
         if reaction.gpr:
             reaction.metadata[GPR_TAG] = str(reaction.gpr)
             sbml_reaction = sbml_model.getReaction(r_id)
@@ -699,7 +718,7 @@ def _save_fbc_fluxbounds(model, sbml_model):
     zero_bound.setValue(0)
     zero_bound.setConstant(True)
 
-    for r_id, reaction in model.reactions.items():
+    for r_id, reaction in list(model.reactions.items()):
         fbcrxn = sbml_model.getReaction(r_id).getPlugin('fbc')
 
         if reaction.lb is None or reaction.lb <= DEFAULT_LOWER_BOUND:
@@ -733,7 +752,7 @@ def _save_fbc_objective(model, sbml_model):
     obj.setId('objective')
     fbcmodel.setActiveObjectiveId('objective')
     obj.setType('maximize')
-    for r_id, reaction in model.reactions.items():
+    for r_id, reaction in list(model.reactions.items()):
         if reaction.objective:
             r_obj = obj.createFluxObjective()
             r_obj.setReaction(r_id)
@@ -742,13 +761,13 @@ def _save_fbc_objective(model, sbml_model):
 
 def _save_fbc_gprs(model, sbml_model):
     fbcmodel = sbml_model.getPlugin('fbc')
-    for gene in model.genes.values():
+    for gene in list(model.genes.values()):
         gene_prod = fbcmodel.createGeneProduct()
         gene_prod.setId(gene.id)
         gene_prod.setName(gene.name)
         gene_prod.setLabel(gene.name)
 
-    for r_id, reaction in model.reactions.items():
+    for r_id, reaction in list(model.reactions.items()):
         if reaction.gpr:
             fbcrxn = sbml_model.getReaction(r_id).getPlugin('fbc')
             gpr_assoc = fbcrxn.createGeneProductAssociation()
@@ -768,18 +787,18 @@ def _save_fbc_gprs(model, sbml_model):
 
 
 def _save_concentrations(model, sbml_model):
-    for m_id, value in model.concentrations.items():
+    for m_id, value in list(model.concentrations.items()):
         species = sbml_model.getSpecies(m_id)
         species.setInitialConcentration(value)
 
 
 def _save_global_parameters(model, sbml_model):
-    for p_id, value in model.constant_params.items():
+    for p_id, value in list(model.constant_params.items()):
         parameter = sbml_model.createParameter()
         parameter.setId(p_id)
         parameter.setValue(value)
         parameter.setConstant(True)
-    for p_id, value in model.variable_params.items():
+    for p_id, value in list(model.variable_params.items()):
         parameter = sbml_model.createParameter()
         parameter.setId(p_id)
         parameter.setValue(value)
@@ -787,19 +806,19 @@ def _save_global_parameters(model, sbml_model):
 
 
 def _save_kineticlaws(model, sbml_model):
-    for r_id, ratelaw in model.ratelaws.items():
+    for r_id, ratelaw in list(model.ratelaws.items()):
         sbml_reaction = sbml_model.getReaction(r_id)
         kineticLaw = sbml_reaction.createKineticLaw()
         #kineticLaw.setFormula(ratelaw)
         kineticLaw.setMath(parseL3FormulaWithModel(ratelaw, sbml_model)) #avoids conversion of Pi to pi
-        for p_id, value in model.local_params[r_id].items():
+        for p_id, value in list(model.local_params[r_id].items()):
             parameter = kineticLaw.createParameter()
             parameter.setId(p_id)
             parameter.setValue(value)
 
 
 def _save_assignment_rules(model, sbml_model):
-    for p_id, formula in model.assignment_rules.items():
+    for p_id, formula in list(model.assignment_rules.items()):
         rule = sbml_model.createAssignmentRule()
         rule.setVariable(p_id)
         rule.setFormula(formula)
@@ -810,7 +829,7 @@ def _save_metadata(elem, sbml_elem):
     if elem.metadata:
         try:
             notes = ['<p>{}: {}</p>'.format(key, cgi.escape(value))
-                     for key, value in elem.metadata.items()]
+                     for key, value in list(elem.metadata.items())]
             note_string = '<html>' + ''.join(notes) + '</html>'
             note_xml = XMLNode.convertStringToXMLNode(note_string)
             note_xml.getNamespaces().add('http://www.w3.org/1999/xhtml')

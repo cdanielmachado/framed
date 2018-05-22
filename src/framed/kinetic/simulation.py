@@ -5,6 +5,7 @@ Author: Daniel Machado
 """
 
 
+from builtins import zip
 from numpy import linspace, array, dot, isnan
 from numpy.linalg import norm
 from scipy.integrate import odeint
@@ -88,7 +89,7 @@ def find_steady_state(model, parameters=None, endtime=1e9, abstol=1e-6):
 
     _, X, v_ss = time_course(model, t_steps=[0, endtime], parameters=parameters, compute_rates=True)
 
-    x_ss = OrderedDict(zip(model.metabolites.keys(), X[-1, :]))
+    x_ss = OrderedDict(list(zip(list(model.metabolites.keys()), X[-1, :])))
 
     S = array(model.stoichiometric_matrix())
     error = norm(dot(S, list(v_ss.values())))

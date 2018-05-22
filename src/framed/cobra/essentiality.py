@@ -4,6 +4,7 @@ This module implements methods to compute gene and reaction essentiality.
 @author: Daniel Machado
    
 """
+from __future__ import absolute_import
 
 from ..solvers import solver_instance
 from ..solvers.solver import Status

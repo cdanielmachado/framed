@@ -43,6 +43,6 @@ def molecular_weight(formula):
     for elem in set(elements) - set(ATOMIC_WEIGHTS):
         warn('Atomic weight not listed for element: {}'.format(elem))
 
-    weights = [ATOMIC_WEIGHTS[elem] * n for elem, n in elements.items() if elem in ATOMIC_WEIGHTS]
+    weights = [ATOMIC_WEIGHTS[elem] * n for elem, n in list(elements.items()) if elem in ATOMIC_WEIGHTS]
 
     return sum(weights)

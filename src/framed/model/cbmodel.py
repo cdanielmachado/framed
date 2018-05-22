@@ -1,3 +1,5 @@
+from builtins import str
+from builtins import object
 import re
 import warnings
 from collections import OrderedDict
@@ -6,7 +8,7 @@ from .model import Model, Metabolite, Reaction, Compartment, AttrOrderedDict
 from .parser import ReactionParser
 
 
-class Gene:
+class Gene(object):
     """ Base class for modeling genes. """
 
     def __init__(self, elem_id, name=None):
@@ -31,7 +33,7 @@ class Gene:
         return g
 
 
-class Protein:
+class Protein(object):
     """ Base class for modeling proteins. 
         
         One protein is composed of a list of genes encoding one or more subunits.
@@ -64,7 +66,7 @@ class Protein:
         return p
 
 
-class GPRAssociation:
+class GPRAssociation(object):
     """ Base class for modeling Gene-Protein-Reaction associations. 
 
         Each GPR association is composed by a list of proteins that can catalyze a reaction.
@@ -304,7 +306,7 @@ class CBModel(Model):
             coefficients (dict): dictionary of reactions and coefficients
 
         """
-        for r_id, coeff, in coefficients.items():
+        for r_id, coeff, in list(coefficients.items()):
             self.set_reaction_objective(r_id, coeff)
 
     def set_reaction_objective(self, r_id, coeff=0):
@@ -350,7 +352,7 @@ class CBModel(Model):
         """
 
         if self._biomass_reaction is None or update:
-            matches = [r_id for r_id, rxn in self.reactions.items() if rxn.objective]
+            matches = [r_id for r_id, rxn in list(self.reactions.items()) if rxn.objective]
 
             if matches:
                 self._biomass_reaction = matches[0]
@@ -428,7 +430,7 @@ class CBModel(Model):
             list: list of active reactions
         """
         genes_state = {gene: gene in active_genes for gene in self.genes}
-        return [r_id for r_id, rxn in self.reactions.items() if rxn.evaluate_gpr(genes_state)]
+        return [r_id for r_id, rxn in list(self.reactions.items()) if rxn.evaluate_gpr(genes_state)]
 
     def add_ratio_constraint(self, r_id_num, r_id_den, ratio):
         """ Add a flux ratio constraint to the model.
@@ -500,7 +502,7 @@ class CBModel(Model):
         return r_id
 
     def get_objective(self):
-        return {r_id: rxn.objective for r_id, rxn in self.reactions.items() if rxn.objective}
+        return {r_id: rxn.objective for r_id, rxn in list(self.reactions.items()) if rxn.objective}
 
     def gene_to_reaction_lookup(self):
         """ Build a dictionary from genes to associated reactions.
@@ -512,7 +514,7 @@ class CBModel(Model):
         if not self._g_r_lookup:
             self._g_r_lookup = OrderedDict([(g_id, []) for g_id in self.genes])
 
-            for r_id, rxn in self.reactions.items():
+            for r_id, rxn in list(self.reactions.items()):
                 genes = rxn.get_associated_genes()
                 for g_id in genes:
                     self._g_r_lookup[g_id].append(r_id)
@@ -532,7 +534,7 @@ class CBModel(Model):
         return g_r_lookup[g_id]
 
     def print_objective(self):
-        coeffs = ['{:+g} {}'.format(rxn.objective, r_id) for r_id, rxn in self.reactions.items() if rxn.objective]
+        coeffs = ['{:+g} {}'.format(rxn.objective, r_id) for r_id, rxn in list(self.reactions.items()) if rxn.objective]
         return ' '.join(coeffs)
 
 
