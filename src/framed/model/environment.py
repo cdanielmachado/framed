@@ -287,7 +287,7 @@ class Environment(MutableMapping):
 
                 row = row.split("#", 1)[0]
                 row = [c.strip() for c in row.split(sep)]
-                row = dict(list(zip(header, row)))
+                row = dict(zip(header, row))
 
                 env[row[reaction_col]] = (float(row[lower_bound_col]), float(row[upper_bound_col]))
 

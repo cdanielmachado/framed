@@ -43,7 +43,7 @@ def fit_from_metabolomics(model, t_steps, data, parameters=None, bounds=None, me
     X_exp = array(list(data.values())).T
 
     def fit_distance(p):
-        new_params = dict(list(zip(parameters, p)))
+        new_params = dict(zip(parameters, p))
         _, X = time_course(model, t_steps=t_steps, parameters=new_params)
         error = sum((X[:,mets] - X_exp)**2)
         if not isfinite(error):
@@ -51,7 +51,7 @@ def fit_from_metabolomics(model, t_steps, data, parameters=None, bounds=None, me
         return error
 
     res = minimize(fit_distance, p0, method=method, bounds=bounds)
-    fitted_params = dict(list(zip(parameters, res.x)))
+    fitted_params = dict(zip(parameters, res.x))
 
     if update_model:
         model.set_parameters(fitted_params)

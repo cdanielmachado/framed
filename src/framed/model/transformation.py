@@ -64,7 +64,7 @@ def make_irreversible(model, inplace=True, reactions=None):
 
     mapping = dict()
 
-    for r_id, reaction in model.reactions.items():
+    for r_id, reaction in model.reactions.copy().items():
         if reaction.reversible and r_id in reactions:
             fwd_id = reaction.id + '_f'
             bwd_id = reaction.id + '_b'
@@ -116,7 +116,7 @@ def empty_compartments(model):
 def split_isozymes(model):
     mapping = dict()
 
-    for r_id, reaction in model.reactions.items():
+    for r_id, reaction in model.reactions.copy().items():
 
         if reaction.gpr is not None and len(reaction.gpr.proteins) > 1:
             mapping[r_id] = []

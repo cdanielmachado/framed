@@ -105,8 +105,8 @@ class CplexSolver(Solver):
             self.problem.variables.add(names=var_ids, lb=lbs, ub=ubs, types=vartypes)
 
         self.var_ids.extend(var_ids)
-        self._cached_lower_bounds.update(dict(list(zip(var_ids, lbs))))
-        self._cached_upper_bounds.update(dict(list(zip(var_ids, ubs))))
+        self._cached_lower_bounds.update(dict(zip(var_ids, lbs)))
+        self._cached_upper_bounds.update(dict(zip(var_ids, ubs)))
         self._cached_lin_obj.update({var_id: 0.0 for var_id in var_ids})
 
     def add_constraint(self, constr_id, lhs, sense='=', rhs=0, persistent=True, update_problem=True):
@@ -317,17 +317,17 @@ class CplexSolver(Solver):
                 if get_values:
                     if isinstance(get_values, Iterable):
                         get_values = list(get_values)
-                        values = OrderedDict(list(zip(get_values, problem.solution.get_values(get_values))))
+                        values = OrderedDict(zip(get_values, problem.solution.get_values(get_values)))
                     else:
-                        values = OrderedDict(list(zip(self.var_ids, problem.solution.get_values())))
+                        values = OrderedDict(zip(self.var_ids, problem.solution.get_values()))
 
                 if get_shadow_prices:
-                    shadow_prices = OrderedDict(list(zip(self.constr_ids,
-                                                    problem.solution.get_dual_values(self.constr_ids))))
+                    shadow_prices = OrderedDict(zip(self.constr_ids,
+                                                    problem.solution.get_dual_values(self.constr_ids)))
 
                 if get_reduced_costs:
-                    reduced_costs = OrderedDict(list(zip(self.var_ids,
-                                                    problem.solution.get_reduced_costs(self.var_ids))))
+                    reduced_costs = OrderedDict(zip(self.var_ids,
+                                                    problem.solution.get_reduced_costs(self.var_ids)))
 
                 solution = Solution(status, message, fobj, values, shadow_prices, reduced_costs)
             else:
@@ -420,9 +420,9 @@ class CplexSolver(Solver):
             if get_values:
                 if isinstance(get_values, Iterable):
                     get_values = list(get_values)
-                    values = dict(list(zip(get_values, pool.get_values(i, get_values))))
+                    values = dict(zip(get_values, pool.get_values(i, get_values)))
                 else:
-                    values = dict(list(zip(self.var_ids, pool.get_values(i))))
+                    values = dict(zip(self.var_ids, pool.get_values(i)))
             else:
                 values = None
             sol = Solution(fobj=obj, values=values)

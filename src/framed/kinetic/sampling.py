@@ -40,7 +40,7 @@ def sample_kinetic_model(model, size, parameters=None, distribution='normal', di
     v_sample = []
     for i in range(int(size)):
         p = parameter_perturbation(p0, distribution, dist_args, log_scale)
-        new_params = dict(list(zip(parameters, p)))
+        new_params = dict(zip(parameters, p))
         _, v = find_steady_state(model, parameters=new_params)
         if v:
             p_sample.append(p)

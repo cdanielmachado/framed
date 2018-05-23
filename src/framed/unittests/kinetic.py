@@ -37,7 +37,7 @@ def run_calibration():
     perturbed = {'k1': 0.8, 'k2': 0.9, 'k3': 1.5}
     t_final = 10
     t, X = time_course(model, t_final, steps=100, parameters=perturbed)
-    all_data = dict(list(zip(list(model.metabolites.keys()), X.T)))
+    all_data = dict(zip(list(model.metabolites.keys()), X.T))
     bounds = [(0, 10)]*3
     fitted = fit_from_metabolomics(model, t, all_data, bounds=bounds)
     plot_timecourse(model, t_final, data=all_data, data_steps=t, parameters=fitted)
@@ -46,8 +46,8 @@ def run_calibration():
 
 def main():
     run_simulation_and_plot()
-#    run_sampling()
-#    run_calibration()
+    run_sampling()
+    run_calibration()
 
 
 if __name__ == '__main__':
