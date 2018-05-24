@@ -216,6 +216,25 @@ def convert_constraints(constraints, mapping_rev, mapping_iso):
     return constraints
 
 
+def convert_id_to_expr(r_id, mapping_rev, mapping_iso, coeff=1):
+
+    if r_id in mapping_rev:
+        r_id_f, r_id_b = mapping_rev[r_id]
+        expr1 = {r_id_f: coeff, r_id_b: -coeff}
+    else:
+        expr1 = {r_id: coeff}
+
+    expr2 = {}
+
+    for r_id2, val in expr1.items():
+        if r_id2 in mapping_iso:
+            expr2.update({r_id3: val for r_id3 in mapping_iso[r_id2]})
+        else:
+            expr2[r_id2] = val
+
+    return expr2
+
+
 def gpr_transform(model, inplace=True, gene_prefix='G_', usage_prefix='u_', pseudo_genes=None):
     """ Transformation method that integrates GPR associations directly into the stoichiometric matrix.
 
@@ -243,10 +262,13 @@ def gpr_transform(model, inplace=True, gene_prefix='G_', usage_prefix='u_', pseu
     mapping_rev = make_irreversible(model)
     mapping_iso = split_isozymes(model)
     u_reactions = genes_to_species(model, gene_prefix=gene_prefix, usage_prefix=usage_prefix, pseudo_genes=pseudo_genes)
+
     model.convert_fluxes = lambda x, net=True: merge_fluxes(x, mapping_rev, mapping_iso, net)
     model.convert_constraints = lambda x: convert_constraints(x, mapping_rev, mapping_iso)
-    if inplace:
-        return u_reactions
-    else:
-        return model, u_reactions
+    model.convert_id_to_expr = lambda x, coeff=1: convert_id_to_expr(x, mapping_rev, mapping_iso, coeff=coeff)
+    model.mapping_rev = mapping_rev
+    model.mapping_iso = mapping_iso
+    model.u_reactions = u_reactions
 
+    if not inplace:
+        return model
