@@ -54,6 +54,7 @@ def GIMME(model, gene_exp, cutoff=25, growth_frac=0.9, constraints=None, parsimo
     """
 
     rxn_exp = gene_to_reaction_expression(model, gene_exp, or_func=max)
+
     threshold = percentile(list(rxn_exp.values()), cutoff)
     coeffs = {r_id: threshold-val for r_id, val in rxn_exp.items() if val < threshold}
 
@@ -151,7 +152,12 @@ def eFlux(model, gene_exp, scale_rxn=None, scale_value=None, constraints=None, p
         sol = FBA(model, constraints=bounds)
 
     if scale_rxn is not None:
-        k = abs(old_div(scale_value, sol.values[scale_rxn]))
+
+        if sol.values[scale_rxn] != 0:
+            k = abs(old_div(scale_value, sol.values[scale_rxn]))
+        else:
+            k = 0
+
         for r_id, val in sol.values.items():
             sol.values[r_id] = val * k
 
