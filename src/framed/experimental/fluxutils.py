@@ -39,11 +39,17 @@ def flux_distance(original, other, normalize=False, quadratic=False):
         return dist
 
 
-def compare_fluxes(original, other, tolerance=1e-6, abstol=1e-9, sort=False, pattern=None):
+def compare_fluxes(original, other, tolerance=1e-6, abstol=1e-9, sort=False, intersection=True, pattern=None):
 
-    only_left = sorted(set(original.keys()) - set(other.keys()))
-    only_right = sorted(set(other.keys()) - set(original.keys()))
     common = sorted(set(original.keys()) & set(other.keys()))
+
+    if intersection:
+        only_left = []
+        only_right = []
+    else:
+        only_left = sorted(set(original.keys()) - set(other.keys()))
+        only_right = sorted(set(other.keys()) - set(original.keys()))
+
 
     difference = [(r_id, abs(original[r_id] - other[r_id])) for r_id in common]
     flux_left = [(r_id, original[r_id]) for r_id in only_left]
