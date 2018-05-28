@@ -1,3 +1,6 @@
+from __future__ import division
+from builtins import zip
+from past.utils import old_div
 from framed.io.sbml import load_odemodel
 from matplotlib.pyplot import show
 from framed.kinetic.fitting import fit_from_metabolomics
@@ -15,7 +18,7 @@ PREY_PREDATOR = '../../../examples/models/prey_predator.xml'
 def run_simulation_and_plot():
     model = load_odemodel(KINETIC_MODEL)
     plot_timecourse(model, 1e3, metabolites=['cglcex', 'cg6p', 'cpep', 'cpyr'],
-                    xlabel='time', ylabel='concentration', parameters={'Dil': 0.2/3600})
+                    xlabel='time', ylabel='concentration', parameters={'Dil': old_div(0.2,3600)})
     show()
 
 
@@ -34,7 +37,7 @@ def run_calibration():
     perturbed = {'k1': 0.8, 'k2': 0.9, 'k3': 1.5}
     t_final = 10
     t, X = time_course(model, t_final, steps=100, parameters=perturbed)
-    all_data = dict(zip(model.metabolites.keys(), X.T))
+    all_data = dict(zip(list(model.metabolites.keys()), X.T))
     bounds = [(0, 10)]*3
     fitted = fit_from_metabolomics(model, t, all_data, bounds=bounds)
     plot_timecourse(model, t_final, data=all_data, data_steps=t, parameters=fitted)
@@ -42,9 +45,9 @@ def run_calibration():
 
 
 def main():
-#    run_simulation_and_plot()
+    run_simulation_and_plot()
     run_sampling()
-#    run_calibration()
+    run_calibration()
 
 
 if __name__ == '__main__':

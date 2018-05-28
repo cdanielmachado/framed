@@ -4,6 +4,7 @@ Author: Marta Matos
 
 """
 
+from builtins import range
 from framed.io.sbml import _load_compartments, _load_metabolites, _load_reactions, _load_cobra_bounds, _load_cobra_objective
 from libsbml import SBMLReader, SBMLDocument, XMLNode
 from re import match
@@ -83,13 +84,13 @@ def GapFind(model, solver, root_gaps_only=False, tol=1e-5):
             if ind_consumption == []:
                 if (len(ind_consumption.intersection(rev_reactions_inds)) == 0) or (
                         len(ind_consumption.intersection(rev_reactions_inds)) != 0 and len(ind_production) == 0):
-                    root_not_consumed_mets.append(model.metabolites.keys()[i])
+                    root_not_consumed_mets.append(list(model.metabolites.keys())[i])
                     root_not_consumed_mets_ind.append(i)
 
             if ind_production == []:
                 if (len(ind_production.intersection(rev_reactions_inds)) == 0) or (
                         len(ind_production.intersection(rev_reactions_inds)) != 0 and len(ind_consumption) == 0):
-                    root_not_produced_mets.append(model.metabolites.keys()[i])
+                    root_not_produced_mets.append(list(model.metabolites.keys())[i])
                     root_not_produced_mets_ind.append(i)
 
         gap_metabolites = [root_not_consumed_mets, root_not_produced_mets]
@@ -100,7 +101,7 @@ def GapFind(model, solver, root_gaps_only=False, tol=1e-5):
             ind = where(SMatrix[row, :] != 0.)[0]
             gap_reactions_ind = gap_reactions_ind + list(ind)
 
-        gap_reactions = [model.reactions.keys()[ind] for ind in set(gap_reactions_ind)]
+        gap_reactions = [list(model.reactions.keys())[ind] for ind in set(gap_reactions_ind)]
 
     else:
         n_reactions = len(model.reactions)
@@ -165,8 +166,8 @@ def GapFind(model, solver, root_gaps_only=False, tol=1e-5):
 
         if solution.status == Status.OPTIMAL or solution.status == Status.SUBOPTIMAL:
             # get gap metabolites
-            gap_mets_ind = [ind for ind in range(0, n_mets) if solution.values.values()[n_reactions + ind] < abs(tol)]
-            gap_metabolites = [model.metabolites.keys()[gap_mets_ind[ind]] for ind in range(0, len(gap_mets_ind))]
+            gap_mets_ind = [ind for ind in range(0, n_mets) if list(solution.values.values())[n_reactions + ind] < abs(tol)]
+            gap_metabolites = [list(model.metabolites.keys())[gap_mets_ind[ind]] for ind in range(0, len(gap_mets_ind))]
 
             # get reactions associated with gap metabolites and unable to carry flux
             SMatrix = array(model.stoichiometric_matrix())
@@ -175,7 +176,7 @@ def GapFind(model, solver, root_gaps_only=False, tol=1e-5):
                 ind = where(SMatrix[row, :] != 0.)[0]
                 gap_reactions_ind = gap_reactions_ind + list(ind)
 
-            gap_reactions = [model.reactions.keys()[ind] for ind in set(gap_reactions_ind)]
+            gap_reactions = [list(model.reactions.keys())[ind] for ind in set(gap_reactions_ind)]
 
         else:
             gap_metabolites = None
@@ -316,7 +317,7 @@ def _load_constraintbased_model(sbml_model, model):
     _load_cobra_bounds(sbml_model, model_extended)
     _load_cobra_objective(sbml_model, model_extended)
 
-    reactions_ids = model_extended.reactions.keys()[len(model.reactions):]
+    reactions_ids = list(model_extended.reactions.keys())[len(model.reactions):]
     return (model_extended, reactions_ids)
 
 

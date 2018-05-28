@@ -3,9 +3,12 @@
 @author: Kai Zhuang
 
 """
+from __future__ import division
+from __future__ import absolute_import
+from past.utils import old_div
 __author__ = 'kaizhuang'
 
-from base import Bioreactor
+from .base import Bioreactor
 from ..solvers.solver import Status
 
 # value definition for oxygen_availability flag
@@ -59,7 +62,7 @@ class IdealBatch(Bioreactor_ox):
         Sf = dfba_solution[r_substrate][-1]
         S0 = dfba_solution[r_substrate][0]
         Pf = dfba_solution[r_product][-1]
-        product_yield = Pf / (S0 - Sf)
+        product_yield = old_div(Pf, (S0 - Sf))
 
         return product_yield
 

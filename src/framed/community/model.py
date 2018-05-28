@@ -1,3 +1,4 @@
+from builtins import object
 from collections import OrderedDict
 
 from framed.model.cbmodel import CBModel, CBReaction
@@ -269,13 +270,13 @@ class Community(object):
 
             return new_obj
 
-        models_missing_extracelullar_compartment = [m.id for m in self._organisms.itervalues()
+        models_missing_extracelullar_compartment = [m.id for m in self._organisms.values()
                                                     if self._extracellular_compartment not in m.compartments]
         if models_missing_extracelullar_compartment:
             raise RuntimeError("Extracellular compartment '{}' missing from models: '{}'".format(
                 self._extracellular_compartment, "', '".join(models_missing_extracelullar_compartment)))
 
-        models_missing_biomass = [m.id for m in self._organisms.itervalues() if not m.biomass_reaction]
+        models_missing_biomass = [m.id for m in self._organisms.values() if not m.biomass_reaction]
         if models_missing_biomass:
             raise RuntimeError("Biomass reaction not found in models: {}".format("', '".join(models_missing_biomass)))
 
@@ -416,8 +417,8 @@ class Community(object):
                         self._organisms_exchange_reactions[org_id][rxn.id] = CommunityNameMapping(
                             organism_reaction=r_id,
                             original_reaction=r_id,
-                            extracellular_metabolite=rxn.stoichiometry.keys()[0],
-                            original_metabolite=rxn.stoichiometry.keys()[0],
+                            extracellular_metabolite=list(rxn.stoichiometry.keys())[0],
+                            original_metabolite=list(rxn.stoichiometry.keys())[0],
                             organism_metabolite=None)
                         self._organisms_reactions[org_id].add(rxn.id)
 
@@ -446,7 +447,7 @@ class Community(object):
         if self._create_biomass:
             biomass_rxn = CBReaction('R_Community_Growth', name="Community Growth",
                                      reversible=False, is_exchange=False, is_sink=True, objective=1.0)
-            for org_biomass in organisms_biomass_metabolites.itervalues():
+            for org_biomass in organisms_biomass_metabolites.values():
                 biomass_rxn.stoichiometry[org_biomass] = -1
 
             merged_model.add_reaction(biomass_rxn)
@@ -480,7 +481,7 @@ class Community(object):
         if exchanged_metabolites_blacklist is None:
             exchanged_metabolites_blacklist = self._exchanged_metabolites_blacklist
 
-        copy_community = Community(self.id, models=self._organisms.values(),
+        copy_community = Community(self.id, models=list(self._organisms.values()),
                                    copy_models=copy_models, create_biomass=create_biomass,
                                    extracellular_compartment_id=self._extracellular_compartment,
                                    merge_extracellular_compartments=merge_extracellular_compartments,
@@ -501,7 +502,7 @@ class Community(object):
 
         comm_fluxes = OrderedDict()
 
-        for org_id, model in self._organisms.iteritems():
+        for org_id, model in self._organisms.items():
             org_fluxes = [(r_id[:-(1+len(org_id))], val) for r_id, val in fluxes.items() if r_id.endswith(org_id)]
             comm_fluxes[org_id] = OrderedDict(org_fluxes)
 

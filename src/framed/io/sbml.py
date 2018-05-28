@@ -4,6 +4,10 @@ Author: Daniel Machado
    
 """
 
+from builtins import map
+#from builtins import str
+from builtins import range
+from builtins import object
 from ..model.model import Model, Metabolite, Reaction, Compartment
 from ..model.odemodel import ODEModel
 from ..model.cbmodel import CBModel, Gene, Protein, GPRAssociation
@@ -45,7 +49,7 @@ non_alphanum = re.compile('\W+')
 re_type = type(non_alphanum)
 
 
-class Flavor:
+class Flavor(object):
     """ Enumeration of available model flavors. """
 
     COBRA = 'cobra'  # UCSD models in the old cobra toolbox format
@@ -252,15 +256,15 @@ def _load_reaction(reaction, sbml_model, exchange_detection_mode=None, load_meta
     if exchange_detection_mode == "unbalanced":
         sign = None
         is_exchange = True
-        for m_id, c in stoichiometry.iteritems():
+        for m_id, c in stoichiometry.items():
             if sign is None:
                 sign = c > 0
             else:
                 if sign != c > 0:
                     is_exchange = False
     elif exchange_detection_mode == "boundary":
-        products = {m_id for m_id, c in stoichiometry.iteritems() if c > 0}
-        reactants = {m_id for m_id, c in stoichiometry.iteritems() if c < 0}
+        products = {m_id for m_id, c in stoichiometry.items() if c > 0}
+        reactants = {m_id for m_id, c in stoichiometry.items() if c < 0}
         boundary_products = {m_id for m_id in products if sbml_model.getSpecies(m_id).getBoundaryCondition()}
         is_exchange = (boundary_products and not (products - boundary_products))
         if not is_exchange:

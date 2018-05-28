@@ -1,3 +1,5 @@
+from __future__ import print_function
+from builtins import object
 from collections import OrderedDict
 from re import findall
 from .model import Model
@@ -202,8 +204,9 @@ class ODEModel(Model):
         if params:
             p.update(params)
 
-        exec 'from math import log' in globals()
-        exec self.build_ode() in globals()
+
+        exec('from math import log', globals())
+        exec(self.build_ode(), globals())
         ode_func = eval('ode_func')
 
         return lambda t, x: ode_func(t, x, r, p, v)
@@ -233,7 +236,6 @@ def _get_oder_rules(trees):
     for tree in trees:
         new_elems = _get_order_nodes(tree)
         [res.append(item) for item in new_elems if item not in res]
-    print res
     return res
 
 
@@ -244,7 +246,7 @@ def _get_order_nodes(tree):
             res = _get_order_nodes(child) + res
     return res
 
-class MyTree:
+class MyTree(object):
     "Generic tree node."
     def __init__(self, name='root', children=None):
         self.name = name

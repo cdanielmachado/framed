@@ -1,3 +1,4 @@
+from builtins import range
 from framed import FBA
 from framed.solvers import solver_instance
 from framed.solvers.solver import VarType, Status
@@ -47,7 +48,7 @@ def minimal_medium(model, exchange_reactions=None, direction=-1, min_mass_weight
             warn(message)
 
     if exchange_reactions is None:
-        exchange_reactions = list(model.get_exchange_reactions())
+        exchange_reactions = model.get_exchange_reactions()
 
     if not solver:
         solver = solver_instance(model)

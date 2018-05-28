@@ -1,3 +1,4 @@
+from builtins import object
 import re
 from framed.model.cbmodel import CBModel, CBReaction, Gene
 from framed.model.model import Metabolite
@@ -331,7 +332,7 @@ class BiooptParser(object):
             for m_external, i in self.__parse_external_metabolites_section(ext_m_text, filename=filename, section_start=ext_m_line, strip_comments=False):
                 if m_external.id in model.metabolites:
                     model.metabolites[m_external.id].boundary = True
-                    for external_r_id, coef in met2rxn[m_external.id].iteritems():
+                    for external_r_id, coef in met2rxn[m_external.id].items():
                         model.reactions[external_r_id].is_exchange = True
                         del model.reactions[external_r_id].stoichiometry[m_external.id]
                 elif react_text:
@@ -359,16 +360,16 @@ def write_model_to_file(model, filename, inf=1000):
         inf (float): Number which would be used for constraints with infinite bounds
     """
     ret = "-REACTIONS\n"
-    for r in model.reactions.itervalues():
-        reactants = " + ".join("{}{}".format("" if abs(coef) == 1 else "{0:.5g} ".format(coef), m_id) for m_id, coef in r.stoichiometry.iteritems() if coef < 0)
-        products = " + ".join("{}{}".format("" if abs(coef) == 1 else "{0:.5g} ".format(coef), m_id) for m_id, coef in r.stoichiometry.iteritems() if coef < 0)
+    for r in model.reactions.values():
+        reactants = " + ".join("{}{}".format("" if abs(coef) == 1 else "{0:.5g} ".format(coef), m_id) for m_id, coef in r.stoichiometry.items() if coef < 0)
+        products = " + ".join("{}{}".format("" if abs(coef) == 1 else "{0:.5g} ".format(coef), m_id) for m_id, coef in r.stoichiometry.items() if coef < 0)
         dir = "<->" if r.reversible else "->"
         ret += "{name}\t:\t{lhs} {dir} {rhs}".format(name=r.name, lhs=reactants, dir=dir, rhs=products) + "\n"
     ret += "\n"
 
     ret += "-CONSTRAINTS\n"
 
-    for r in model.reactions.itervalues():
+    for r in model.reactions.values():
         lb = -inf if r.lb is None else r.lb
         ub = inf if r.ub is None else r.ub
         if r.reversible:
@@ -390,7 +391,7 @@ def write_model_to_file(model, filename, inf=1000):
     obj = model.get_objective()
     if obj:
         ret += "-OBJECTIVE\n"
-        ret += " ".join("{} {}".format(r_id, coef) for r_id, coef in obj.iteritems())
+        ret += " ".join("{} {}".format(r_id, coef) for r_id, coef in obj.items())
         ret += "\n\n"
 
     if filename:

@@ -1,3 +1,5 @@
+from builtins import next
+from builtins import zip
 import errno
 import os
 import warnings
@@ -293,15 +295,15 @@ class Environment(MutableMapping):
 
     @staticmethod
     def from_community_models(community):
-        community_mets = {m: r_id for r_id, metabolites in community.merged.get_exchange_reactions().iteritems() for m
+        community_mets = {m: r_id for r_id, metabolites in community.merged.get_exchange_reactions().items() for m
                           in metabolites}
 
         community_exch_rxns = {map.original_reaction: community_mets[map.extracellular_metabolite]
-                               for model in community.organisms_exchange_reactions.itervalues()
-                               for map in model.itervalues()}
+                               for model in community.organisms_exchange_reactions.values()
+                               for map in model.values()}
 
         environment = Environment()
-        for k, v in Environment.from_models(community.organisms.itervalues()).iteritems():
+        for k, v in Environment.from_models(iter(community.organisms.values())).items():
             environment[community_exch_rxns[k]] = v
 
         return environment
@@ -310,7 +312,7 @@ class Environment(MutableMapping):
         if not isinstance(other, Environment):
             raise EnvironmentError("Only Environments objects can be combined together")
 
-        for k, v in other.iteritems():
+        for k, v in other.items():
             if k in self:
                 self[k] = (self[k][0] + v[0], self[k][1] + v[1])
             else:

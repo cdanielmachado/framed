@@ -4,10 +4,13 @@ This module implements abstract classes common to any solver interface.
 Author: Daniel Machado
 
 """
+from __future__ import division
 
 
 #CONSTANTS
-class Status:
+from past.utils import old_div
+from builtins import object
+class Status(object):
     """ Enumeration of possible solution status. """
     OPTIMAL = 1
     UNKNOWN = 0
@@ -17,14 +20,14 @@ class Status:
     INF_OR_UNB = -4
 
 
-class VarType:
+class VarType(object):
     """ Enumeration of possible variable types. """
     BINARY = 1
     INTEGER = 2
     CONTINUOUS = 3
 
 
-class Parameter:
+class Parameter(object):
     """ Enumeration of parameters common to all solvers. """
     TIME_LIMIT = 0
     FEASIBILITY_TOL = 1
@@ -54,7 +57,7 @@ def set_default_parameter(parameter, value):
     default_parameters[parameter] = value
 
 
-class Solution:
+class Solution(object):
     """ Stores the results of an optimization.
 
     Instantiate without arguments to create an empty Solution representing a failed optimization.
@@ -93,16 +96,16 @@ class Solution:
         if not self.values:
             return None
 
-        values = self.values.items()
+        values = list(self.values.items())
 
         if sort:
-            values.sort(key= lambda (_, val): abs(val), reverse=True)
+            values.sort(key= lambda x: abs(x[1]), reverse=True)
 
         if not zeros:
-            values = filter(lambda (r_id, val): abs(val) > abstol, values)
+            values = [x for x in values if abs(x[1]) > abstol]
 
         if pattern:
-            values = filter(lambda (r_id, val): pattern in r_id, values)
+            values = [x for x in values if pattern in x[0]]
 
         entries = ['{:<12} {: .6g}'.format(r_id, val) for (r_id, val) in values]
 
@@ -122,13 +125,13 @@ class Solution:
         if not self.shadow_prices:
             return None
 
-        values = self.shadow_prices.items()
+        values = list(self.shadow_prices.items())
 
         if not zeros:
-            values = filter(lambda (m_id, val): abs(val) > abstol, values)
+            values = [x for x in values if abs(x[1]) > abstol]
 
         if pattern:
-            values = filter(lambda (m_id, val): pattern in m_id, values)
+            values = [x for x in values if pattern in x[0]]
 
         entries = ['{:<12} {: .6g}'.format(m_id, val) for (m_id, val) in values]
 
@@ -149,13 +152,13 @@ class Solution:
         if not self.reduced_costs:
             return None
 
-        values = self.reduced_costs.items()
+        values = list(self.reduced_costs.items())
 
         if not zeros:
-            values = filter(lambda (r_id, val): abs(val) > abstol, values)
+            values = [x for x in values if abs(x[1]) > abstol]
 
         if pattern:
-            values = filter(lambda (r_id, val): pattern in r_id, values)
+            values = [x for x in values if pattern in x[0]]
 
         entries = ['{:<12} {: .6g}'.format(r_id, val) for (r_id, val) in values]
 
@@ -199,18 +202,20 @@ class Solution:
             flux_out.sort(key=lambda x: x[1], reverse=False)
         
         if percentage:
-            turnover = sum(map(lambda x: x[1], flux_in))
-            flux_in = map(lambda (a, b, c): (a, b / turnover, c), flux_in)
-            flux_out = map(lambda (a, b, c): (a, b / turnover, c), flux_out)
+            turnover = sum([x[1] for x in flux_in])
+            flux_in = [(x[0], old_div(x[1], turnover), x[2]) for x in flux_in]
+            flux_out = [(x[0], old_div(x[1], turnover), x[2]) for x in flux_out]
             print_format = '[ {} ] {:<12} {:< 10.2%}'
         else:
             print_format = '[ {} ] {:<12} {:< 10.6g}'
 
         if equations:
             print_format += '\t{}'
-            lines = map(lambda (a, b, c): print_format.format(c, a, b, model.print_reaction(a, metabolite_names=True)[len(a)+1:]), flux_in + flux_out)
+            lines = [print_format.format(x[2], x[0], x[1], 
+                                         model.print_reaction(x[0], metabolite_names=True)[len(x[0])+1:]) 
+                     for x in flux_in + flux_out]
         else:
-            lines = map(lambda (a, b, c): print_format.format(c, a, b), flux_in + flux_out)           
+            lines = [print_format.format(x[2], x[0], x[1]) for x in flux_in + flux_out]           
         
         return '\n'.join(lines)
 
@@ -248,23 +253,23 @@ class Solution:
         if not self.values:
             return None
 
-        values = self.get_metabolites_turnover(model).items()
+        values = list(self.get_metabolites_turnover(model).items())
 
         if sort:
-            values.sort(key=lambda (_, val): abs(val), reverse=True)
+            values.sort(key=lambda x: abs(x[1]), reverse=True)
 
         if not zeros:
-            values = filter(lambda (_, val): abs(val) > abstol, values)
+            values = [x for x in values if abs(x[1]) > abstol]
 
         if pattern:
-            values = filter(lambda (key, val): pattern in key, values)
+            values = [key_val for key_val in values if pattern in key_val[0]]
 
         entries = ['{:<12} {: .6g}'.format(key, val) for (key, val) in values]
 
         return '\n'.join(entries)
 
 
-class Solver:
+class Solver(object):
     """ Abstract class representing a generic solver.
 
     All solver interfaces should implement the methods defined in this class.

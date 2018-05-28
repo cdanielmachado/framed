@@ -3,8 +3,10 @@ This module implements kinetic model calibration methods.
 
 Author: Daniel Machado
 """
+from __future__ import print_function
 
 
+from builtins import zip
 from framed.kinetic.simulation import time_course
 from numpy import array, sum, isfinite
 from scipy.optimize import minimize
@@ -31,21 +33,21 @@ def fit_from_metabolomics(model, t_steps, data, parameters=None, bounds=None, me
     if parameters:
         p0 = [model_params[key] for key in parameters]
     else:
-        parameters = model_params.keys()
-        p0 = model_params.values()
+        parameters = list(model_params.keys())
+        p0 = list(model_params.values())
 
     if not bounds:
         bounds = [(0, None)]*len(p0)
 
-    mets = [model.metabolites.keys().index(m_id) for m_id in data.keys()]
-    X_exp = array(data.values()).T
+    mets = [list(model.metabolites.keys()).index(m_id) for m_id in data.keys()]
+    X_exp = array(list(data.values())).T
 
     def fit_distance(p):
         new_params = dict(zip(parameters, p))
         _, X = time_course(model, t_steps=t_steps, parameters=new_params)
         error = sum((X[:,mets] - X_exp)**2)
         if not isfinite(error):
-            print 'warning: error = ', error
+            print('warning: error = ', error)
         return error
 
     res = minimize(fit_distance, p0, method=method, bounds=bounds)

@@ -5,6 +5,8 @@ Author: Daniel Machado
 
 """
 
+from builtins import str
+from builtins import range
 from collections import OrderedDict, Iterable
 from .solver import Solver, Solution, Status, VarType, Parameter, default_parameters
 from gurobipy import Model as GurobiModel, GRB, quicksum
@@ -309,17 +311,17 @@ class GurobiSolver(Solver):
         return solutions
 
     def set_lower_bounds(self, bounds_dict):
-        for var_id, lb in bounds_dict.iteritems():
+        for var_id, lb in bounds_dict.items():
             lpvar = self.problem.getVarByName(var_id)
             lpvar.lb = lb if lb is not None else GRB.INFINITY
 
     def set_upper_bounds(self, bounds_dict):
-        for var_id, ub in bounds_dict.iteritems():
+        for var_id, ub in bounds_dict.items():
             lpvar = self.problem.getVarByName(var_id)
             lpvar.ub = ub if ub is not None else GRB.INFINITY
 
     def set_bounds(self, bounds_dict):
-        for var_id, bounds in bounds_dict.iteritems():
+        for var_id, bounds in bounds_dict.items():
             lpvar = self.problem.getVarByName(var_id)
             lpvar.lb = bounds[0] if bounds[0] is not None else GRB.INFINITY
             lpvar.ub = bounds[1] if bounds[1] is not None else GRB.INFINITY

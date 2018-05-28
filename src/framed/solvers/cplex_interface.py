@@ -4,6 +4,9 @@ Author: Daniel Machado
 
 """
 
+from builtins import str
+from builtins import zip
+from builtins import range
 from collections import OrderedDict, Iterable
 from .solver import Solver, Solution, Status, VarType, Parameter, default_parameters
 from cplex import Cplex, infinity, SparsePair
@@ -140,7 +143,7 @@ class CplexSolver(Solver):
                      '<': 'L',
                      '>': 'G'}
 
-        exprs = [SparsePair(ind=constr.keys(), val=constr.values()) for constr in lhs]
+        exprs = [SparsePair(ind=list(constr.keys()), val=list(constr.values())) for constr in lhs]
         senses = [map_sense[sense] for sense in senses]
 
         self.problem.linear_constraints.add(lin_expr=exprs,
@@ -199,12 +202,12 @@ class CplexSolver(Solver):
         """ Update internal structure. Used for efficient lazy updating. """
 
         if self._cached_vars:
-            var_ids, lbs, ubs, vartypes = zip(*self._cached_vars)
+            var_ids, lbs, ubs, vartypes = list(zip(*self._cached_vars))
             self.add_variables(var_ids, lbs, ubs, vartypes)
             self._cached_vars = []
 
         if self._cached_constrs:
-            constr_ids, lhs, senses, rhs = zip(*self._cached_constrs)
+            constr_ids, lhs, senses, rhs = list(zip(*self._cached_constrs))
             self.add_constraints(constr_ids, lhs, senses, rhs)
             self._cached_constrs = []
 
@@ -231,7 +234,7 @@ class CplexSolver(Solver):
                     updated_coeffs[var_id] = 0.0
 
             if updated_coeffs:
-                self.problem.objective.set_linear(updated_coeffs.items())
+                self.problem.objective.set_linear(list(updated_coeffs.items()))
                 self._cached_lin_obj.update(updated_coeffs)
 
         if quadratic:
@@ -254,15 +257,16 @@ class CplexSolver(Solver):
             model : CBModel
         """
 
-        var_ids = model.reactions.keys()
+        var_ids = list(model.reactions.keys())
         lbs = [rxn.lb for rxn in model.reactions.values()]
         ubs = [rxn.ub for rxn in model.reactions.values()]
+
         var_types = [VarType.CONTINUOUS] * len(var_ids)
         self.add_variables(var_ids, lbs, ubs, var_types)
 
-        constr_ids = model.metabolites.keys()
+        constr_ids = list(model.metabolites.keys())
         table = model.metabolite_reaction_lookup(force_recalculate=True)
-        lhs = table.values()
+        lhs = list(table.values())
         senses = ['='] * len(constr_ids)
         rhs = [0] * len(constr_ids)
         self.add_constraints(constr_ids, lhs, senses, rhs)
@@ -436,17 +440,17 @@ class CplexSolver(Solver):
 
     def set_lower_bounds(self, bounds_dict):
         self.problem.variables.set_lower_bounds([(var_id, lb if lb is not None else -infinity)
-                                                 for var_id, lb in bounds_dict.iteritems()])
+                                                 for var_id, lb in bounds_dict.items()])
 
     def set_upper_bounds(self, bounds_dict):
         self.problem.variables.set_lower_bounds([(var_id, ub if ub is not None else infinity)
-                                                 for var_id, ub in bounds_dict.iteritems()])
+                                                 for var_id, ub in bounds_dict.items()])
 
     def set_bounds(self, bounds_dict):
         self.problem.variables.set_lower_bounds([(var_id, bounds[0] if bounds[0] is not None else -infinity)
-                                                 for var_id, bounds in bounds_dict.iteritems()])
+                                                 for var_id, bounds in bounds_dict.items()])
         self.problem.variables.set_upper_bounds([(var_id, bounds[1] if bounds[1] is not None else infinity)
-                                                 for var_id, bounds in bounds_dict.iteritems()])
+                                                 for var_id, bounds in bounds_dict.items()])
 
     def set_parameter(self, parameter, value):
         """ Set a parameter value for this optimization problem

@@ -7,10 +7,15 @@ titer, and productivity.
 @author: Kai Zhuang
 
 """
+from __future__ import division
+from __future__ import print_function
+from __future__ import absolute_import
 
+from builtins import str
+from past.utils import old_div
 import numpy
 
-from base import *
+from .base import *
 from framed.bioreactor.dfba import dFBA
 from ..cobra.variability import production_envelope
 
@@ -124,7 +129,7 @@ def calculate_performance(strain, bioreactor, r_substrate, r_target, t0, tf, dt,
 
     # perform FBA simulation
     if verbose:
-        print 'Performing FBA simulation.'
+        print('Performing FBA simulation.')
     if hasattr(strain, 'solver'):
         fba_solution = strain.solver.solve(strain.fba_objective, minimize=False, constraints=strain.fba_constraints)
     else:
@@ -142,20 +147,20 @@ def calculate_performance(strain, bioreactor, r_substrate, r_target, t0, tf, dt,
         performance['biomass_yield'] = 0
         performance['product_titer'] = 0
         performance['productivity'] = 0
-        performance['product_yield'] = - v_target/v_substrate
+        performance['product_yield'] = old_div(- v_target,v_substrate)
 
         for r_id in additional_yields:
             pid = 'yield_' + r_id.lstrip('R_EX_').rstrip('_e')
-            performance[pid] = - fba_solution.values[r_id] / v_substrate
+            performance[pid] = old_div(- fba_solution.values[r_id], v_substrate)
         dfba_solution = None
 
         if verbose:
-            print 'none growing'
+            print('none growing')
 
     # if the strain grows but does not produce, set yield, titer, productivity to zero, and calculate growth from FBA
     elif v_target <= 10**-6:
         performance['growth_rate'] = v_biomass
-        performance['biomass_yield'] = - v_biomass/v_substrate
+        performance['biomass_yield'] = old_div(- v_biomass,v_substrate)
         performance['product_titer'] = 0
         performance['productivity'] = 0
         performance['product_yield'] = 0
@@ -166,7 +171,7 @@ def calculate_performance(strain, bioreactor, r_substrate, r_target, t0, tf, dt,
         dfba_solution = None
 
         if verbose:
-            print 'none producing'
+            print('none producing')
 
     # if the strain both grows and produces, perform dFBA simulation, and calculate yield, titer, productivity
     else:
@@ -174,7 +179,7 @@ def calculate_performance(strain, bioreactor, r_substrate, r_target, t0, tf, dt,
         bioreactor.set_organisms([strain])
 
         if verbose:
-            print 'Performing dFBA simulation.'
+            print('Performing dFBA simulation.')
         dfba_solution = dFBA(bioreactor, t0, tf, dt, initial_conditions, solver=dfba_solver, verbose=verbose)
 
         # calculate yield using dFBA solution if the method is known,
@@ -182,7 +187,7 @@ def calculate_performance(strain, bioreactor, r_substrate, r_target, t0, tf, dt,
         try:
             performance['product_yield'] = bioreactor.calculate_yield_from_dfba()
         except NotImplementedError:
-            performance['product_yield'] = - v_target / v_substrate
+            performance['product_yield'] = old_div(- v_target, v_substrate)
 
         # calculate titer and productivity using dFBA solution.
             # if specific calculation functions exist for the bioreactor, use them
@@ -198,15 +203,15 @@ def calculate_performance(strain, bioreactor, r_substrate, r_target, t0, tf, dt,
         except NotImplementedError:
              # the index at which the production is finished.  round off to 4 decimal places
             index = numpy.around(dfba_solution[r_target]).argmax()
-            performance['productivity'] = performance['product_titer']/dfba_solution['time'][index]
+            performance['productivity'] = old_div(performance['product_titer'],dfba_solution['time'][index])
 
         performance['growth_rate'] = v_biomass
-        performance['biomass_yield'] = - v_biomass/v_substrate
+        performance['biomass_yield'] = old_div(- v_biomass,v_substrate)
 
         # calculate additional yields
         for r_id in additional_yields:
             id = 'yield_' + r_id.lstrip('R_EX_').rstrip('_e')
-            performance[id] = - fba_solution.values[r_id] / v_substrate
+            performance[id] = old_div(- fba_solution.values[r_id], v_substrate)
 
     if save_dfba_solution:
         performance['dfba_solution'] = dfba_solution

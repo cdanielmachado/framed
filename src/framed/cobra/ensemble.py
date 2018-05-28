@@ -1,3 +1,7 @@
+from __future__ import print_function
+from builtins import map
+from builtins import range
+from builtins import object
 from collections import OrderedDict
 
 from framed import solver_instance
@@ -7,7 +11,7 @@ from framed import load_cbmodel, save_cbmodel
 from framed import FBA, pFBA
 
 
-class EnsembleModel:
+class EnsembleModel(object):
     """ An Ensemble Model represents a collection of models that differ by a few reactions.
     They can be used to account for uncertainty in the structure of the metabolic network.
 
@@ -61,7 +65,7 @@ def simulate_ensemble(ensemble, method='FBA', constraints=None, solver=None, get
     """
 
     if method not in ['FBA', 'pFBA']:
-        print 'Method not available:', method
+        print('Method not available:', method)
         return
 
     if not solver:
@@ -108,7 +112,7 @@ def save_ensemble(ensemble, outputfile, **kwargs):
     """
 
     for r_id, states in ensemble.reaction_states.items():
-        state_as_str = ' '.join(map(str, map(int, states)))
+        state_as_str = ' '.join([str(int(x)) for x in states])
         ensemble.model.reactions[r_id].metadata['ENSEMBLE_STATE'] = state_as_str
 
     save_cbmodel(ensemble.model, outputfile, **kwargs)
@@ -132,13 +136,13 @@ def load_ensemble(inputfile, **kwargs):
     for r_id, rxn in model.reactions.items():
         if 'ENSEMBLE_STATE' in rxn.metadata:
             state_as_str = rxn.metadata['ENSEMBLE_STATE']
-            states = map(bool, map(int, (state_as_str.split())))
+            states = [bool(int(x)) for x in state_as_str.split()]
             reaction_states[r_id] = states
 
-    sizes = map(len, reaction_states.values())
+    sizes = list(map(len, reaction_states.values()))
 
     if len(set(sizes)) > 1:
-        print 'Error: reactions have different ensemble size'
+        print('Error: reactions have different ensemble size')
         return
 
     return EnsembleModel(model, sizes[0], reaction_states)

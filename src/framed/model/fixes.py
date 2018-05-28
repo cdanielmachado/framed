@@ -54,7 +54,8 @@ def fix_cobra_model(model, remove_boundary=True, set_reversibilty=True, use_infi
 # TODO: this approach doesn't work when a model has multiple external compartments
 def fix_sink_reactions(model):
     exchange_compartments = {}
-    for r in model.reactions.itervalues():
+
+    for r in model.reactions.values():
 
         if not r.is_exchange: continue
 
@@ -66,8 +67,8 @@ def fix_sink_reactions(model):
             exchange_compartments[met.compartment].append(r.id)
 
     if exchange_compartments:
-        extracellular = max(exchange_compartments.iteritems(), key=lambda x: len(x[1]))[0]
-        for compartment, reactions in exchange_compartments.iteritems():
+        extracellular = max(iter(exchange_compartments.items()), key=lambda x: len(x[1]))[0]
+        for compartment, reactions in exchange_compartments.items():
             if compartment == extracellular:
                 continue
 
@@ -81,7 +82,7 @@ def remove_boundary_metabolites(model, tag=None):
     """ Remove remove boundary metabolites. """
 
     if tag:
-        boundary = filter(lambda m_id: m_id.endswith(tag), model.metabolites)
+        boundary = [m_id for m_id in model.metabolites if m_id.endswith(tag)]
     else:
         boundary = [m_id for m_id, met in model.metabolites.items() if met.boundary]
 
@@ -93,6 +94,7 @@ def fix_reversibility(model):
 
     for reaction in model.reactions.values():
         reaction.reversible = (reaction.lb is None or reaction.lb < 0)
+
 
 
 def clean_bounds(model, threshold=1000):

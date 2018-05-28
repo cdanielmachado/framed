@@ -1,3 +1,5 @@
+from builtins import str
+from builtins import object
 import re
 import warnings
 from collections import OrderedDict
@@ -6,7 +8,7 @@ from .model import Model, Metabolite, Reaction, Compartment, AttrOrderedDict
 from .parser import ReactionParser
 
 
-class Gene:
+class Gene(object):
     """ Base class for modeling genes. """
 
     def __init__(self, elem_id, name=None):
@@ -31,7 +33,7 @@ class Gene:
         return g
 
 
-class Protein:
+class Protein(object):
     """ Base class for modeling proteins. 
         
         One protein is composed of a list of genes encoding one or more subunits.
@@ -64,7 +66,7 @@ class Protein:
         return p
 
 
-class GPRAssociation:
+class GPRAssociation(object):
     """ Base class for modeling Gene-Protein-Reaction associations. 
 
         Each GPR association is composed by a list of proteins that can catalyze a reaction.

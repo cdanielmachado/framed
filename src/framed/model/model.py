@@ -4,6 +4,8 @@ Author: Daniel Machado
 
 """
 
+from builtins import str
+from builtins import object
 from collections import OrderedDict
 from copy import copy, deepcopy
 import itertools
@@ -12,7 +14,7 @@ from .parser import ReactionParser
 import warnings
 
 
-class Metabolite:
+class Metabolite(object):
     """ Base class for modeling metabolites. """
 
     def __init__(self, elem_id, name=None, compartment=None, boundary=False, constant=False):
@@ -49,7 +51,7 @@ class Metabolite:
         return met
 
 
-class Reaction:
+class Reaction(object):
     """ Base class for modeling reactions. """
 
     def __init__(self, elem_id, name=None, reversible=True, stoichiometry=None, regulators=None, is_exchange=None,
@@ -170,7 +172,7 @@ class Reaction:
         return r
 
 
-class Compartment:
+class Compartment(object):
     """ Base class for modeling compartments. """
 
     def __init__(self, elem_id, name=None, size=1.0):
@@ -220,7 +222,7 @@ class AttrOrderedDict(OrderedDict):
             super(AttrOrderedDict, self).__setattr__(name, value)
 
     def __dir__(self):
-        return dir(OrderedDict) + self.keys()
+        return dir(OrderedDict) + list(self.keys())
 
     def __copy__(self):
         my_copy = AttrOrderedDict()
@@ -351,7 +353,7 @@ class Model(object):
         if safe_delete:
             m_r_lookup = self.metabolite_reaction_lookup()
 
-        for m_id in id_list:
+        for m_id in list(id_list):
             if m_id in self.metabolites:
                 del self.metabolites[m_id]
             else:
@@ -475,7 +477,7 @@ class Model(object):
         """
         table = self.metabolite_reaction_lookup()
 
-        return table[m_id].keys()
+        return list(table[m_id].keys())
 
     def get_activation_targets(self, m_id):
         table = self.regulatory_lookup()
@@ -619,6 +621,6 @@ class Model(object):
 
         """
 
-        assert c_id in self.compartments.keys(), 'No such compartment: ' + c_id
+        assert c_id in list(self.compartments.keys()), 'No such compartment: ' + c_id
 
         return [m_id for m_id, met in self.metabolites.items() if met.compartment == c_id]

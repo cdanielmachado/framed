@@ -1,5 +1,8 @@
 #!/usr/bin/env python
 
+from __future__ import division
+from __future__ import print_function
+from past.utils import old_div
 import argparse
 import textwrap
 import os
@@ -68,7 +71,7 @@ def main(models, communities=None, scores=None, output=None, flavor=None, media=
         pattern = models[0]
         models = glob.glob(pattern)
         if len(models) == 0:
-            print "No files found: {}".format(pattern)
+            print("No files found: {}".format(pattern))
             return
 
     if not flavor:
@@ -78,18 +81,18 @@ def main(models, communities=None, scores=None, output=None, flavor=None, media=
 
     if communities is not None:
         comm_dict = load_communities(communities)
-        pre_filter = {org_id for organisms in comm_dict.values() for org_id in organisms}
+        pre_filter = {org_id for organisms in list(comm_dict.values()) for org_id in organisms}
 
         if verbose:
-            print "Loading models...".format(len(pre_filter))
+            print("Loading models...".format(len(pre_filter)))
 
         model_dict = load_models(models, flavor, pre_filter)
     else:
         if verbose:
-            print "Loading models...".format(len(models))
+            print("Loading models...".format(len(models)))
 
         model_dict = load_models(models, flavor)
-        comm_dict = {'all': model_dict.keys()}
+        comm_dict = {'all': list(model_dict.keys())}
 
     # load media
 
@@ -122,7 +125,7 @@ def main(models, communities=None, scores=None, output=None, flavor=None, media=
     smt_data = []
     smt_global = []
 
-    for comm_id, organisms in comm_dict.items():
+    for comm_id, organisms in list(comm_dict.items()):
 
         comm_models = [model_dict[organism_id] for organism_id in organisms]
         community = Community(comm_id, comm_models, copy_models=False, extracellular_compartment_id=ext_comp_id)
@@ -144,20 +147,20 @@ def main(models, communities=None, scores=None, output=None, flavor=None, media=
             if 'mip' in scores:
 
                 if verbose:
-                    print 'Running MIP for community {} on medium {}...'.format(comm_id, medium_id)
+                    print('Running MIP for community {} on medium {}...'.format(comm_id, medium_id))
 
                 mip, extras = mip_score(community, environment=env, verbose=verbose,
                                         min_mass_weight=min_mass_weight, exclude=excluded_mets)
                 if mip is None:
                     mip_data.append((comm_id, medium_id, 'Failed', 'Failed'))
                 else:
-                    nip = mip / float(len(extras['noninteracting_medium']))
+                    nip = old_div(mip, float(len(extras['noninteracting_medium'])))
                     mip_data.append((comm_id, medium_id, mip, nip))
 
             if 'mro' in scores:
 
                 if verbose:
-                    print 'Running MRO for community {} on medium {}...'.format(comm_id, medium_id)
+                    print('Running MRO for community {} on medium {}...'.format(comm_id, medium_id))
 
                 mro, _ = mro_score(community, environment=env, verbose=verbose,
                                    min_mass_weight=min_mass_weight, exclude=excluded_mets)
@@ -169,46 +172,46 @@ def main(models, communities=None, scores=None, output=None, flavor=None, media=
             if 'scs' in scores:
 
                 if verbose:
-                    print 'Running SCS for community {} on medium {}...'.format(comm_id, medium_id)
+                    print('Running SCS for community {} on medium {}...'.format(comm_id, medium_id))
 
                 scs = species_coupling_score(community, environment=env, verbose=verbose)
 
-                for org1, values in scs.items():
+                for org1, values in list(scs.items()):
                     if values is None:
                         scs_data.append((comm_id, medium_id, org1, 'Failed', 'Failed'))
                     else:
-                        for org2, value in values.items():
+                        for org2, value in list(values.items()):
                             scs_data.append((comm_id, medium_id, org1, org2, value))
 
             if 'mus' in scores:
 
                 if verbose:
-                    print 'Running MUS for community {} on medium {}...'.format(comm_id, medium_id)
+                    print('Running MUS for community {} on medium {}...'.format(comm_id, medium_id))
 
                 mus = metabolite_uptake_score(community, environment=env, verbose=verbose,
                                               min_mass_weight=min_mass_weight, exclude=excluded_mets)
 
-                for org, values in mus.items():
+                for org, values in list(mus.items()):
                     if values is None:
                         mus_data.append((comm_id, medium_id, org, 'Failed', 'Failed'))
                     else:
-                        metabolites.update(values.keys())
-                        for met, value in values.items():
+                        metabolites.update(list(values.keys()))
+                        for met, value in list(values.items()):
                             mus_data.append((comm_id, medium_id, org, met, value))
 
             if 'mps' in scores:
 
                 if verbose:
-                    print 'Running MPS for community {} on medium {}...'.format(comm_id, medium_id)
+                    print('Running MPS for community {} on medium {}...'.format(comm_id, medium_id))
 
                 mps = metabolite_production_score(community, environment=env, exclude=excluded_mets)
 
-                for org, values in mps.items():
+                for org, values in list(mps.items()):
                     if values is None:
                         mps_data.append((comm_id, medium_id, org, 'Failed', 'Failed'))
                     else:
-                        metabolites.update(values.keys())
-                        for met, value in values.items():
+                        metabolites.update(list(values.keys()))
+                        for met, value in list(values.items()):
                             mps_data.append((comm_id, medium_id, org, met, value))
 
             if 'smetana' in scores:
@@ -278,7 +281,7 @@ def main(models, communities=None, scores=None, output=None, flavor=None, media=
         detailed_df.to_csv(prefix + 'detailed.tsv', sep='\t', index=False)
 
     if verbose:
-        print 'Done.'
+        print('Done.')
 
 
 if __name__ == '__main__':

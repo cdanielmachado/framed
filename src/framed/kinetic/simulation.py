@@ -5,6 +5,7 @@ Author: Daniel Machado
 """
 
 
+from builtins import zip
 from numpy import linspace, array, dot, isnan
 from numpy.linalg import norm
 from scipy.integrate import odeint
@@ -30,7 +31,7 @@ def time_course(model, time=0, steps=100, t_steps=None, parameters=None, compute
     r = OrderedDict()
     f = model.get_ode(r, parameters)
     f2 = lambda x, t: f(t, x)
-    x0 = model.concentrations.values()
+    x0 = list(model.concentrations.values())
 
     if t_steps is None:
         t_steps = linspace(0, time, steps)
@@ -91,7 +92,7 @@ def find_steady_state(model, parameters=None, endtime=1e9, abstol=1e-6):
     x_ss = OrderedDict(zip(model.metabolites.keys(), X[-1, :]))
 
     S = array(model.stoichiometric_matrix())
-    error = norm(dot(S, v_ss.values()))
+    error = norm(dot(S, list(v_ss.values())))
 
     if error > abstol or isnan(error):
         warn('Simulation did not reach a steady state.')

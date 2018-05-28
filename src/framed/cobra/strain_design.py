@@ -4,6 +4,7 @@ Author: Daniel Machado
 
 """
 
+from builtins import range
 from itertools import combinations
 from collections import OrderedDict
 from .deletion import deletion
@@ -103,7 +104,8 @@ def combinatorial_deletion(model, objective, max_dels, kind='reactions', targets
                     del_set, fval, solutions, abstol):
                 solutions[del_set] = fval
 
-    solutions = OrderedDict(sorted(solutions.items(), key=lambda (_, fval): fval, reverse=True))
+    solutions = OrderedDict(sorted(solutions.items(), key=lambda sol_tuple: sol_tuple[1], reverse=True))
+
     return solutions
 
 
@@ -194,7 +196,9 @@ def greedy_deletion(model, objective, max_dels, kind='reactions', targets=None, 
                 if fval > wt_fval + abstol and solution.values[biomass] >= min_growth * wt_growth and not _redundant(
                         del_set, fval, solutions, abstol):
                     solutions.append((del_set, fval))
-        solutions.sort(key=lambda (_, fval): fval, reverse=True)
+
+        solutions.sort(key=lambda sol_tuple: sol_tuple[1], reverse=True)
+
         candidates = [del_set | {target} for del_set, _ in solutions[:pop_size] for target in targets
                       if len(del_set | {target}) <= max_dels and (del_set | {target}) not in visited]
 

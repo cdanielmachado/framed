@@ -3,12 +3,13 @@
 Authors: Daniel Machado, Kai Zhuang
 
 """
+from __future__ import absolute_import
 
 from collections import OrderedDict
 from ..solvers import solver_instance
 from ..solvers.solver import Status
-from simulation import FBA
-from thermodynamics import looplessFBA
+from .simulation import FBA
+from .thermodynamics import looplessFBA
 from numpy import linspace
 from warnings import warn
 

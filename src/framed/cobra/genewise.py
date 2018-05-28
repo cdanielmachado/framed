@@ -36,7 +36,7 @@ def gene_wise(method):
         if transformed:
             reactions = [r_id for r_id in model.reactions if r_id.startswith('u_')]
         else:
-            model, reactions = gpr_transform(model, inplace=False)
+            model = gpr_transform(model, inplace=False)
 
         if constraints:
             constraints = model.convert_constraints(constraints)
@@ -46,7 +46,7 @@ def gene_wise(method):
             if not set(reference.keys()).issubset(model.reactions):
                 raise RuntimeError('Reference fluxes must be calculated for extended model.')
 
-        sol = method(model, constraints=constraints, reactions=reactions, **kwargs)
+        sol = method(model, constraints=constraints, reactions=model.u_reactions, **kwargs)
 
         sol.extended = sol.values
         sol.values = model.convert_fluxes(sol.values)

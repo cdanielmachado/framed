@@ -3,6 +3,8 @@ This module implements flux space sampling for kinetic models.
 
 Author: Daniel Machado
 """
+from builtins import zip
+from builtins import range
 from ..kinetic.simulation import find_steady_state
 import numpy as np
 
@@ -31,8 +33,8 @@ def sample_kinetic_model(model, size, parameters=None, distribution='normal', di
     if parameters:
         p0 = np.array([model_params[key] for key in parameters])
     else:
-        parameters = model_params.keys()
-        p0 = np.array(model_params.values())
+        parameters = list(model_params.keys())
+        p0 = np.array(list(model_params.values()))
 
     p_sample = []
     v_sample = []
@@ -42,7 +44,7 @@ def sample_kinetic_model(model, size, parameters=None, distribution='normal', di
         _, v = find_steady_state(model, parameters=new_params)
         if v:
             p_sample.append(p)
-            v_sample.append(v.values())
+            v_sample.append(list(v.values()))
 
     fail_rate = 100 * (size - len(v_sample))/float(size)
 

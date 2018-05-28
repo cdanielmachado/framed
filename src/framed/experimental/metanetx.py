@@ -1,8 +1,9 @@
+from builtins import object
 import pandas as pd
 from warnings import warn
 
 
-class MetaNetX:
+class MetaNetX(object):
     """ This class implements a resource for mapping idenfitiers based on the MetaNetX database.
 
         It must be instantiated with the path to the local directory where MNX is stored.

@@ -31,9 +31,9 @@ def plot_timecourse(model, time, steps=100, parameters=None, metabolites=None, x
     t, X = time_course(model, time, steps=steps, parameters=parameters)
     fig = figure()
     ax = fig.add_subplot(111)
-    legend = model.metabolites.keys()
+    legend = list(model.metabolites.keys())
     if metabolites:
-        indices = [model.metabolites.keys().index(m_id) for m_id in metabolites]
+        indices = [list(model.metabolites.keys()).index(m_id) for m_id in metabolites]
         X = X[:, indices]
         legend = metabolites
     ax.plot(t, X)
@@ -41,7 +41,7 @@ def plot_timecourse(model, time, steps=100, parameters=None, metabolites=None, x
 
     if data is not None and data_steps is not None:
         if not metabolites:
-            metabolites = model.metabolites.keys()
+            metabolites = list(model.metabolites.keys())
         values = [data[m_id] for m_id in metabolites]
         ax.set_color_cycle(None)
         ax.plot(data_steps, array(values).T, '.')
@@ -71,7 +71,7 @@ def plot_flux_sampling(model, sample, reactions=None):
         raise RuntimeError('to run this method please install seaborn')
 
     if not reactions:
-        reactions = model.reactions.keys()
+        reactions = list(model.reactions.keys())
 
     sample = array(sample)
     n = len(reactions)
@@ -80,8 +80,9 @@ def plot_flux_sampling(model, sample, reactions=None):
     for i, rxn_y in enumerate(reactions):
         for j, rxn_x in enumerate(reactions):
             ax = subplot2grid((n, n), (n-1-i, j))
-            x_data = sample[:, model.reactions.keys().index(rxn_x)]
-            y_data = sample[:, model.reactions.keys().index(rxn_y)]
+
+            x_data = sample[:, list(model.reactions.keys()).index(rxn_x)]
+            y_data = sample[:, list(model.reactions.keys()).index(rxn_y)]
 
             x_min, x_max = min(x_data), max(x_data)
             x_delta = (x_max - x_min)*margin if x_max > x_min else x_max

@@ -1,3 +1,8 @@
+from __future__ import division
+from builtins import map
+from builtins import range
+from past.utils import old_div
+from builtins import object
 from framed.community.model import Community
 from framed.experimental.medium import minimal_medium
 from framed.solvers import solver_instance
@@ -14,7 +19,7 @@ import itertools
 
 from framed.solvers.solver import Status
 
-class GrowthStatus:
+class GrowthStatus(object):
     NOGROWTH = "no growth"
     DEPENDENT = "dependant"
     INDEPENDENT = "independant"
@@ -35,7 +40,7 @@ class SmetanaScore(object):
 
 
 def calculate_smetana_score(community, scscores, mpscores, muscores, report_zero_scores=False):
-    metabolites = {met for mets in mpscores.itervalues() if mets for met in mets}
+    metabolites = {met for mets in mpscores.values() if mets for met in mets}
 
     scores = []
     for org_donor in community.organisms:
@@ -123,11 +128,11 @@ def species_coupling_score(community, environment, min_growth=1.0, max_uptake=10
                                            merge_extracellular_compartments=False)
     environment.apply(interacting_community.merged, inplace=True) # other values are copied from previous copy
 
-    for b in interacting_community.organisms_biomass_reactions.itervalues():
+    for b in interacting_community.organisms_biomass_reactions.values():
         interacting_community.merged.reactions[b].lb = 0
 
     solver = solver_instance(interacting_community.merged)
-    for org_id, rxns in interacting_community.organisms_reactions.iteritems():
+    for org_id, rxns in interacting_community.organisms_reactions.items():
         org_var = 'y_{}'.format(org_id)
         solver.add_variable(org_var, 0, 1, vartype=VarType.BINARY, update_problem=False)
         for r_id in rxns:
@@ -139,14 +144,14 @@ def species_coupling_score(community, environment, min_growth=1.0, max_uptake=10
     scores = {}
     extras = {'dependencies': {}}
 
-    for org_id, biomass_id in interacting_community.organisms_biomass_reactions.iteritems():
+    for org_id, biomass_id in interacting_community.organisms_biomass_reactions.items():
         other_biomasses = {o for o in interacting_community.organisms if o != org_id}
         solver.add_constraint('SMETANA_Biomass', {interacting_community.organisms_biomass_reactions[org_id]: 1}, '>', min_growth)
         objective = {"y_{}".format(o): 1.0 for o in other_biomasses}
 
         previous_constraints = []
         donors_list = []
-        for i in xrange(n_solutions):
+        for i in range(n_solutions):
             sol = solver.solve(objective, minimize=True, get_values=True)
 
             if sol.status != Status.OPTIMAL:
@@ -169,7 +174,7 @@ def species_coupling_score(community, environment, min_growth=1.0, max_uptake=10
         if donors_list:
             donors_list_n = float(len(donors_list))
             donors_counter = Counter(chain(*donors_list))
-            scores[org_id] = {o: donors_counter[o]/donors_list_n for o in other_biomasses}
+            scores[org_id] = {o: old_div(donors_counter[o],donors_list_n) for o in other_biomasses}
             extras['dependencies'][org_id] = donors_list
         else:
             scores[org_id] = None
@@ -203,8 +208,8 @@ def metabolite_uptake_score(community, environment, min_mass_weight=True, min_gr
 
     environment.apply(interacting_community.merged, inplace=True)
     rxn2met = {ex.organism_reaction: ex.original_metabolite
-               for org_exchanges in interacting_community.organisms_exchange_reactions.itervalues()
-               for ex in org_exchanges.itervalues()}
+               for org_exchanges in interacting_community.organisms_exchange_reactions.values()
+               for ex in org_exchanges.values()}
 
     m_rxns = interacting_community.merged.reactions
     media_metabolites = {met
@@ -215,12 +220,12 @@ def metabolite_uptake_score(community, environment, min_mass_weight=True, min_gr
     solutions = []
     scores = {}
     extras = {'dependencies': {}}
-    for org_id, exchange_rxns in community.organisms_exchange_reactions.iteritems():
+    for org_id, exchange_rxns in community.organisms_exchange_reactions.items():
         biomass_reaction = interacting_community.organisms_biomass_reactions[org_id]
         interacting_community.merged.biomass_reaction = biomass_reaction
 
         # Remove metabolites present in the medium from the list of uptake candidates
-        exchange_rxns = {rxn_id for rxn_id, cnm in exchange_rxns.iteritems()
+        exchange_rxns = {rxn_id for rxn_id, cnm in exchange_rxns.items()
                          if cnm.extracellular_metabolite not in media_metabolites}
 
         medium_list, sol = minimal_medium(interacting_community.merged,
@@ -233,9 +238,9 @@ def metabolite_uptake_score(community, environment, min_mass_weight=True, min_gr
         solutions.append(sol)
 
         if medium_list:
-            medium_list = map(lambda medium: [rxn2met[rxn_id] for rxn_id in medium], medium_list)
+            medium_list = [[rxn2met[rxn_id] for rxn_id in medium] for medium in medium_list]
             medium_list_n = float(len(medium_list))
-            scores[org_id] = {m: count / medium_list_n for m, count in Counter(chain(*medium_list)).iteritems()}
+            scores[org_id] = {m: old_div(count, medium_list_n) for m, count in Counter(chain(*medium_list)).items()}
         else:
             scores[org_id] = {} if sol.status == Status.OPTIMAL else None
         extras['dependencies'][org_id] = medium_list
@@ -267,8 +272,8 @@ def metabolite_production_score(community, environment=None, max_uptake=100, min
 
     reactions = interacting_community.merged.reactions
     rxn2met = {ex.organism_reaction: ex.original_metabolite
-           for org_exchanges in interacting_community.organisms_exchange_reactions.itervalues()
-           for ex in org_exchanges.itervalues()}
+           for org_exchanges in interacting_community.organisms_exchange_reactions.values()
+           for ex in org_exchanges.values()}
     media_metabolites = {met
            for exch_id in interacting_community.merged.get_exchange_reactions()
            for met in interacting_community.merged.reactions[exch_id].stoichiometry
@@ -277,7 +282,7 @@ def metabolite_production_score(community, environment=None, max_uptake=100, min
     solver = solver_instance(interacting_community.merged)
 
     # Binary constraints that forces biomass production of any model that activates exchanges
-    for org_id, exchanges in interacting_community.organisms_exchange_reactions.iteritems():
+    for org_id, exchanges in interacting_community.organisms_exchange_reactions.items():
         org_var = 'y_{}'.format(org_id)
         solver.add_variable(org_var, 0, 1, vartype=VarType.BINARY, update_problem=False)
         for r_id in exchanges:
@@ -291,9 +296,9 @@ def metabolite_production_score(community, environment=None, max_uptake=100, min
             solver.add_constraint('c_{}_ub'.format(r_id), {r_id: 1, org_var: -ub}, '<', 0, update_problem=False)
 
     scores = {}
-    for org_id, exchange_rxns in community.organisms_exchange_reactions.iteritems():
+    for org_id, exchange_rxns in community.organisms_exchange_reactions.items():
         # Remove metabolites present in the medium from the list of product candidates
-        exchange_rxns = {rxn_id for rxn_id, cnm in exchange_rxns.iteritems()
+        exchange_rxns = {rxn_id for rxn_id, cnm in exchange_rxns.items()
                          if cnm.extracellular_metabolite not in media_metabolites}
 
         org_biomass = community.organisms_biomass_reactions[org_id]
@@ -301,7 +306,7 @@ def metabolite_production_score(community, environment=None, max_uptake=100, min
         solver.update()
 
         org_products = set()
-        for i in xrange(30000):
+        for i in range(30000):
             if not exchange_rxns:
                 break
 
@@ -453,7 +458,7 @@ def mro_score(community, environment=None, direction=-1, min_mass_weight=False, 
     numerator = len(individual_media) * sum(map(len, pairwise.values()))
     denominator = float(len(pairwise) * sum(map(len, individual_media.values())))
 
-    score = numerator / denominator if denominator != 0 else None
+    score = old_div(numerator, denominator) if denominator != 0 else None
     extras = {'noninteracting_medium': noninteracting_medium, 'individual_media': individual_media, 
               'pairwise': pairwise, 'solutions': solutions}
 
