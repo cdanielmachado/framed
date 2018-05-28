@@ -1,3 +1,6 @@
+
+__version__ = '0.5.0'
+
 from .cobra.deletion import reaction_deletion, gene_deletion
 from .cobra.essentiality import essential_genes, essential_reactions
 from .cobra.phaseplane import PhPP
