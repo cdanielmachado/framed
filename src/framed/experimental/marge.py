@@ -91,9 +91,11 @@ def marge(model, rel_expression, transformed=False, constraints_a=None, constrai
         print('Failed to solve first problem.')
         return None, None, solution1, None
 
+    opt_tol = 1e-6
+
     for g_id, val in rel_expression.items():
-        solver.add_constraint(g_id + '_o+', {g_id + '_+': 1}, '=', solution1.values[g_id + '_+'], update_problem=False)
-        solver.add_constraint(g_id + '_o-', {g_id + '_-': 1}, '=', solution1.values[g_id + '_-'], update_problem=False)
+        solver.add_constraint(g_id + '_o+', {g_id + '_+': 1}, '<', solution1.values[g_id + '_+'] + opt_tol, update_problem=False)
+        solver.add_constraint(g_id + '_o-', {g_id + '_-': 1}, '<', solution1.values[g_id + '_-'] + opt_tol, update_problem=False)
 
     solver.update()
 
