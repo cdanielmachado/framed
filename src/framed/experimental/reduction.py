@@ -6,7 +6,7 @@ International Workshop on Biological Processes & Petri Nets (BioPPN).
 from __future__ import division
 
 from builtins import str
-from past.utils import old_div
+
 from framed.model.model import Reaction
 from framed.model.cbmodel import CBModel
 from uuid import uuid4
@@ -33,7 +33,7 @@ def remove_balanced_metabolite(model, m_id, fluxes, must_keep=None, abstol=1e-9)
     neighbours = _metabolite_neighbours(model, [m_id])
 
     balance = sum([model.stoichiometry[(m_id, r_id)] * fluxes[r_id] for r_id in neighbours])
-    turnover = old_div(sum([abs(model.stoichiometry[(m_id, r_id)] * fluxes[r_id]) for r_id in neighbours]), 2.0)
+    turnover = sum([abs(model.stoichiometry[(m_id, r_id)] * fluxes[r_id]) for r_id in neighbours]) / 2.0
 
     #   print 'removing {}\t balance {}\t turnover {}'.format(m_id, balance, turnover)
 
@@ -45,10 +45,10 @@ def remove_balanced_metabolite(model, m_id, fluxes, must_keep=None, abstol=1e-9)
         new_coeffs = dict()
 
         for m_id2 in new_neighbours:
-            coeff = old_div(sum([model.stoichiometry[(m_id2, r_id)] * fluxes[r_id] for r_id in neighbours if
-                         (m_id2, r_id) in model.stoichiometry]), turnover)
-            flow = old_div(sum([abs(model.stoichiometry[(m_id2, r_id)]) * fluxes[r_id] for r_id in neighbours if
-                        (m_id2, r_id) in model.stoichiometry]), 2)
+            coeff = sum([model.stoichiometry[(m_id2, r_id)] * fluxes[r_id] for r_id in neighbours if
+                         (m_id2, r_id) in model.stoichiometry]) / turnover
+            flow = sum([abs(model.stoichiometry[(m_id2, r_id)]) * fluxes[r_id] for r_id in neighbours if
+                        (m_id2, r_id) in model.stoichiometry]) / 2
             if abs(coeff) > abstol:
                 new_coeffs[m_id2] = coeff
             else:

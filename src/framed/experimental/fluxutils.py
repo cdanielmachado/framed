@@ -1,6 +1,6 @@
 from __future__ import division
 from __future__ import print_function
-from past.utils import old_div
+
 from collections import OrderedDict
 from framed.cobra.simulation import MOMA, lMOMA
 from framed.solvers.solver import Status
@@ -34,7 +34,7 @@ def flux_distance(original, other, normalize=False, quadratic=False):
         size = sum(abs(x))
 
     if normalize:
-        return old_div(dist, size)
+        return dist / size
     else:
         return dist
 

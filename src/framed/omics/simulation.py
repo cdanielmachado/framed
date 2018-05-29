@@ -5,7 +5,7 @@ Author: Daniel Machado
 """
 from __future__ import division
 
-from past.utils import old_div
+
 from framed.solvers import solver_instance
 from framed.cobra.simulation import FBA, pFBA
 from numpy import percentile
@@ -134,7 +134,7 @@ def eFlux(model, gene_exp, scale_rxn=None, scale_value=None, constraints=None, p
     bounds = {}
 
     for r_id, reaction in model.reactions.items():
-        val = old_div(rxn_exp[r_id], max_exp) if r_id in rxn_exp else 1
+        val = rxn_exp[r_id] / max_exp if r_id in rxn_exp else 1
         lb2 = -val if reaction.lb is None or reaction.lb < 0 else 0
         ub2 = val if reaction.ub is None or reaction.ub > 0 else 0
         bounds[r_id] = (lb2, ub2)
@@ -154,7 +154,7 @@ def eFlux(model, gene_exp, scale_rxn=None, scale_value=None, constraints=None, p
     if scale_rxn is not None:
 
         if sol.values[scale_rxn] != 0:
-            k = abs(old_div(scale_value, sol.values[scale_rxn]))
+            k = abs(scale_value / sol.values[scale_rxn])
         else:
             k = 0
 

@@ -8,7 +8,7 @@ from __future__ import division
 
 
 #CONSTANTS
-from past.utils import old_div
+
 from builtins import object
 class Status(object):
     """ Enumeration of possible solution status. """
@@ -203,8 +203,8 @@ class Solution(object):
         
         if percentage:
             turnover = sum([x[1] for x in flux_in])
-            flux_in = [(x[0], old_div(x[1], turnover), x[2]) for x in flux_in]
-            flux_out = [(x[0], old_div(x[1], turnover), x[2]) for x in flux_out]
+            flux_in = [(x[0], x[1] / turnover, x[2]) for x in flux_in]
+            flux_out = [(x[0], x[1] / turnover, x[2]) for x in flux_out]
             print_format = '[ {} ] {:<12} {:< 10.2%}'
         else:
             print_format = '[ {} ] {:<12} {:< 10.6g}'

@@ -7,7 +7,7 @@ from __future__ import division
 
 from builtins import zip
 from builtins import str
-from past.utils import old_div
+
 import unittest
 
 from framed.io.sbml import load_cbmodel
@@ -63,7 +63,7 @@ class FBAwithRatioTest(unittest.TestCase):
         model.add_ratio_constraint(r_id1, r_id2, ratio)
         solution = FBA(model, get_shadow_prices=True, get_reduced_costs=True)
         self.assertEqual(solution.status, Status.OPTIMAL)
-        self.assertEqual(old_div(solution.values[r_id1], solution.values[r_id2]), ratio)
+        self.assertEqual(solution.values[r_id1] / solution.values[r_id2], ratio)
 
 class pFBATest(unittest.TestCase):
     """ Test pFBA simulation. """

@@ -6,7 +6,7 @@ Author: Daniel Machado
 from __future__ import division
 from __future__ import print_function
 from builtins import zip
-from past.utils import old_div
+
 from framed.solvers.solver import OptimizationWarning
 from ..solvers import solver_instance
 from ..solvers.solver import Status, VarType
@@ -168,7 +168,7 @@ def TFA(model, deltaG0, sdeltaG0=None, measured_concentrations=None, concentrati
                 for m_id in model.reactions[r_id].stoichiometry:
                     if m_id not in excluded and m_id not in included:
                         if m_id in measured_concentrations:
-                            ln_min_j = np.log(old_div(measured_concentrations[m_id], sqrt(measured_fold_change)))
+                            ln_min_j = np.log(measured_concentrations[m_id]/ sqrt(measured_fold_change))
                             ln_max_j = np.log(measured_concentrations[m_id] * sqrt(measured_fold_change))
                         else:
                             ln_min_j, ln_max_j = ln_min, ln_max
@@ -343,7 +343,7 @@ def NET(model, deltaG0, sdeltaG0=None, measured_concentrations=None, concentrati
             for m_id in model.reactions[r_id].stoichiometry:
                 if m_id not in excluded and m_id not in included:
                     if m_id in measured_concentrations:
-                        ln_min_j = np.log(old_div(measured_concentrations[m_id], sqrt(measured_fold_change)))
+                        ln_min_j = np.log(measured_concentrations[m_id] / sqrt(measured_fold_change))
                         ln_max_j = np.log(measured_concentrations[m_id] * sqrt(measured_fold_change))
                     else:
                         ln_min_j, ln_max_j = ln_min, ln_max

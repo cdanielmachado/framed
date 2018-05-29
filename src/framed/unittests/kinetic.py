@@ -1,6 +1,6 @@
 from __future__ import division
 from builtins import zip
-from past.utils import old_div
+
 from framed.io.sbml import load_odemodel
 from matplotlib.pyplot import show
 from framed.kinetic.fitting import fit_from_metabolomics
@@ -18,7 +18,7 @@ PREY_PREDATOR = '../../../examples/models/prey_predator.xml'
 def run_simulation_and_plot():
     model = load_odemodel(KINETIC_MODEL)
     plot_timecourse(model, 1e3, metabolites=['cglcex', 'cg6p', 'cpep', 'cpyr'],
-                    xlabel='time', ylabel='concentration', parameters={'Dil': old_div(0.2,3600)})
+                    xlabel='time', ylabel='concentration', parameters={'Dil': 0.2 / 3600})
     show()
 
 

@@ -1,7 +1,7 @@
 from __future__ import division
 from __future__ import print_function
 from builtins import range
-from past.utils import old_div
+
 from collections import OrderedDict
 from random import gauss, random
 
@@ -17,7 +17,7 @@ def lp_sampler(model, n_samples=1000, weights=None, constraints=None, select_pro
     if not weights:
         variability = FVA(model, constraints=constraints)
 
-        weights = {r_id: old_div(1.0,(ub - lb)) for r_id, (lb, ub) in variability.items()
+        weights = {r_id: 1.0 / (ub - lb) for r_id, (lb, ub) in variability.items()
                    if ub is not None and lb is not None
                        and variation_threshold < (ub - lb) < futile_cycle_threshold}
 
