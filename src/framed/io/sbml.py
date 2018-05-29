@@ -92,7 +92,7 @@ def load_sbml_model(filename, kind=None, flavor=None, exchange_detection_mode=No
         raise IOError("Model file was not found")
 
     reader = SBMLReader()
-    document = reader.readSBML(filename)
+    document = reader.readSBML(str(filename))
     sbml_model = document.getModel()
 
     if sbml_model is None:

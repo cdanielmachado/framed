@@ -128,13 +128,13 @@ def clean_bigg_ids(model):
         del ord_dict[key]
         ord_dict[new_key] = item
 
-    for m_id, metabolite in model.metabolites.items():
+    for m_id, metabolite in model.metabolites.copy().items():
         metabolite.id = clean(m_id)
         key_replace(model.metabolites, m_id, metabolite.id)
 
-    for r_id, reaction in model.reactions.items():
+    for r_id, reaction in model.reactions.copy().items():
         reaction.id = clean(r_id)
         key_replace(model.reactions, r_id, reaction.id)
 
-        for m_id in reaction.stoichiometry.keys():
+        for m_id in reaction.stoichiometry.copy().keys():
             key_replace(reaction.stoichiometry, m_id, clean(m_id))
