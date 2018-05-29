@@ -4,3 +4,4 @@ scipy
 sympy
 seaborn
 python-libsbml
+sphinx==1.7.0
