@@ -22,7 +22,8 @@ import sys
 
 import mock
 
-MOCK_MODULES = ['cplex', 'gurobipy', 'glpkpi']
+MOCK_MODULES = ['cplex', 'gurobipy', 'future', 'builtins']
+
 for mod_name in MOCK_MODULES:
     sys.modules[mod_name] = mock.Mock()
 
