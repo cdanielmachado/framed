@@ -1,5 +1,5 @@
 
-__version__ = '0.5.0'
+__version__ = '0.5.1'
 
 from .cobra.deletion import reaction_deletion, gene_deletion
 from .cobra.essentiality import essential_genes, essential_reactions
