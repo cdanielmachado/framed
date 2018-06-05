@@ -458,7 +458,7 @@ def _load_fbc2_gpr(sbml_model, model):
         fbcrxn = reaction.getPlugin('fbc')
         gpr_assoc = fbcrxn.getGeneProductAssociation()
         if gpr_assoc:
-            gpr = _parse_fbc_association(gpr_assoc.getAssociation(), reaction.id)
+            gpr = _parse_fbc_association(gpr_assoc.getAssociation(), reaction.getId())
             model.set_gpr_association(reaction.getId(), gpr, add_genes=False)
         else:
             model.set_gpr_association(reaction.getId(), None)
