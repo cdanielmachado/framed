@@ -26,6 +26,7 @@ class MetaNetX(object):
             filename = self.path_to_files + '/reac_xref.tsv'
             self.reac_xref = pd.read_csv(filename, sep='\t', header=None, comment='#',
                                          names=['external_id', 'mnx_id'])
+
             if self.version >= 3.0:
                 self.reac_xref = self.reac_xref[self.reac_xref['external_id'].str.contains(':')]
 
