@@ -7,6 +7,7 @@ Author: Daniel Machado
 from ..solvers import solver_instance
 from ..solvers.solver import Status, VarType
 from warnings import warn
+from collections import Iterable
 
 
 def FBA(model, objective=None, minimize=False, constraints=None, solver=None, get_values=True,
@@ -205,13 +206,16 @@ def lMOMA(model, reference=None, constraints=None, reactions=None, solver=None):
     return solution
 
 
-def ROOM(model, reference=None, constraints=None, reactions=None, solver=None, delta=0.03, epsilon=0.001):
+def ROOM(model, reference=None, constraints=None, wt_constraints=None, robust=False, reactions=None, solver=None,
+         delta=0.03, epsilon=0.001):
     """ Run a Regulatory On/Off Minimization (ROOM) simulation:
     
     Arguments:
         model (CBModel): a constraint-based model
-        reference (dict): reference flux distribution (optional)
+        reference (dict): reference flux distribution or flux ranges (optional)
         constraints (dict): environmental or additional constraints (optional)
+        wt_constraints (dict): constraints to calculate wild-type phenotype (optional)
+        robust (bool): use FVA to calculate flux ranges for wild-type phenotype
         reactions (list): list of reactions to include in the objective (optional, default: all)
         solver (Solver): solver instance instantiated with the model, for speed (optional)
         delta (float): relative tolerance (default: 0.03)
@@ -223,18 +227,20 @@ def ROOM(model, reference=None, constraints=None, reactions=None, solver=None, d
 
     U = 1e6
     L = -1e6
-    
-    if reference is None:
-        wt_solution = pFBA(model)
-        reference = wt_solution.values
-    else:
-        reactions = reference.keys()
-
-    if reactions is None:
-        reactions = model.reactions.keys()
 
     if not solver:
         solver = solver_instance(model)
+
+    if reference is None:
+        if robust:
+            from framed.cobra.variability import FVA
+            reference = FVA(model, constraints=wt_constraints, solver=solver)
+        else:
+            wt_solution = pFBA(model, constraints=wt_constraints, solver=solver)
+            reference = wt_solution.values
+
+    if reactions is None:
+        reactions = reference.keys()
 
     objective = dict()
     if not hasattr(solver, 'ROOM_flag'):
@@ -248,9 +254,14 @@ def ROOM(model, reference=None, constraints=None, reactions=None, solver=None, d
 
         for r_id in reactions:
             y_i = 'y_' + r_id
-            w_i = reference[r_id]
-            w_u = w_i + delta*abs(w_i) + epsilon
-            w_l = w_i - delta*abs(w_i) - epsilon
+            if isinstance(reference[r_id], Iterable):
+                w_i_min = reference[r_id][0] if reference[r_id][0] is not None else -1000
+                w_i_max = reference[r_id][1] if reference[r_id][1] is not None else 1000
+            else:
+                w_i_min = reference[r_id]
+                w_i_max = reference[r_id]
+            w_u = w_i_max + delta*abs(w_i_max) + epsilon
+            w_l = w_i_min - delta*abs(w_i_min) - epsilon
             solver.add_constraint('c' + r_id + '_u', {r_id: 1, y_i: (w_u - U)}, '<', w_u, persistent=False, update_problem=False)
             solver.add_constraint('c' + r_id + '_l', {r_id: 1, y_i: (w_l - L)}, '>', w_l, persistent=False, update_problem=False)
         solver.update()
