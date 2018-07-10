@@ -234,7 +234,7 @@ def ROOM(model, reference=None, constraints=None, wt_constraints=None, robust=Fa
     if reference is None:
         if robust:
             from framed.cobra.variability import FVA
-            reference = FVA(model, constraints=wt_constraints, solver=solver)
+            reference = FVA(model, obj_percentage=1.0, constraints=wt_constraints, solver=solver)
         else:
             wt_solution = pFBA(model, constraints=wt_constraints, solver=solver)
             reference = wt_solution.values
