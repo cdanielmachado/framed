@@ -40,9 +40,11 @@ def parse_formula(formula):
 def molecular_weight(formula):
     elements = parse_formula(formula)
 
-    for elem in set(elements) - set(ATOMIC_WEIGHTS):
-        warn('Atomic weight not listed for element: {}'.format(elem))
+    missing = set(elements) - set(ATOMIC_WEIGHTS)
 
-    weights = [ATOMIC_WEIGHTS[elem] * n for elem, n in elements.items() if elem in ATOMIC_WEIGHTS]
+    if missing:
+        warn('Atomic weight not listed for elements: ' + ','.join(missing))
+        return
 
-    return sum(weights)
+    return sum(ATOMIC_WEIGHTS[elem] * n for elem, n in elements.items())
+
