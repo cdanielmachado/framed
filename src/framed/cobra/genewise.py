@@ -48,9 +48,16 @@ def gene_wise(method):
 
         sol = method(model, constraints=constraints, reactions=model.u_reactions, **kwargs)
 
-        sol.extended = sol.values
-        sol.values = model.convert_fluxes(sol.values)
+        if kwargs.get('pool_size', 0) == 0:
 
+            sol.extended = sol.values
+            sol.values = model.convert_fluxes(sol.values)
+
+        else:
+            for sol_i in sol:
+                sol_i.extended = sol_i.values
+                sol_i.values = model.convert_fluxes(sol_i.values)
+                
         return sol
     return func_wrapper
 
@@ -125,7 +132,8 @@ def gene_lMOMA(model, reference=None, constraints=None, reactions=None, solver=N
 
 
 @gene_wise
-def gene_ROOM(model, reference=None, constraints=None, reactions=None, solver=None, delta=0.03, epsilon=0.001):
+def gene_ROOM(model, reference=None, constraints=None, wt_constraints=None, reactions=None, solver=None,
+              delta=0.03, epsilon=0.001, pool_size=0):
     """ Perform a gene-wise version of ROOM.
 
     This method minimizes the regulatory on/off adjustment at gene level (rather than reaction level).
@@ -144,5 +152,5 @@ def gene_ROOM(model, reference=None, constraints=None, reactions=None, solver=No
         Solution: solution
     """
 
-    return ROOM(model, reference=reference, constraints=constraints, reactions=reactions,
-                solver=solver, delta=delta, epsilon=epsilon)
+    return ROOM(model, reference=reference, constraints=constraints, wt_constraints=wt_constraints, reactions=reactions,
+                solver=solver, delta=delta, epsilon=epsilon, pool_size=pool_size)
