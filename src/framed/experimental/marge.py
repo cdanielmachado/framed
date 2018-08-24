@@ -5,10 +5,32 @@ from framed import FBA
 
 
 def marge(model, rel_expression, transformed=False, constraints_a=None, constraints_b=None, rel_constraints=None,
-          growth_frac_a=None, growth_frac_b=None, pseudo_genes=None):
+          growth_frac_a=0.0, growth_frac_b=0.0, gene_prefix='G_', pseudo_genes=None):
+    """ Metabolic Analysis with Relative Gene Expression (MARGE)
+
+    Args:
+        model (CBModel): organism model
+        rel_expression (dict): relative gene expression (condition B / condition A)
+        transformed (bool): True if the model is already in extended GPR format (default: False)
+        constraints_a (dict): additional constrants to use for condition A (optional)
+        constraints_b (dict): additional constrants to use for condition B (optional)
+        rel_constraints (dict): relative constraints between conditions (such as flux ratios) (default: False)
+        growth_frac_a (float): minimum growth rate in condition A (default: 0.0)
+        growth_frac_b (float): minimum growth rate in condition B (default: 0.0)
+        gene_prefix (str): prefix used in gene identifiers (default: 'G_')
+
+        pseudo_genes (list): pseudo-genes in model to ignore (e.g: 'spontaneous') (optional)
+
+    Returns:
+        dict: fluxes in condition A
+        dict: fluxes in condition B
+        Solution: solver solution for step 1 (minimize flux changes)
+        Solution: solver solution for step 2 (minimize absolute fluxes)
+
+    """
 
     if not transformed:
-        model = gpr_transform(model, inplace=False, pseudo_genes=pseudo_genes)
+        model = gpr_transform(model, inplace=False, gene_prefix=gene_prefix, pseudo_genes=pseudo_genes)
 
     if constraints_a is None:
         constraints_a = {}
@@ -23,7 +45,7 @@ def marge(model, rel_expression, transformed=False, constraints_a=None, constrai
     if rel_constraints is None:
         rel_constraints = {}
 
-    if growth_frac_a is not None:
+    if growth_frac_a > 0:
         biomass = model.biomass_reaction
         sol_a = FBA(model, constraints=constraints_a)
         if sol_a.status != Status.OPTIMAL:
@@ -31,14 +53,13 @@ def marge(model, rel_expression, transformed=False, constraints_a=None, constrai
             return None, None, None, None
         constraints_a[biomass] = (sol_a.fobj * growth_frac_a, None)
 
-    if growth_frac_b is not None:
+    if growth_frac_b > 0:
         biomass = model.biomass_reaction
         sol_b = FBA(model, constraints=constraints_b)
         if sol_b.status != Status.OPTIMAL:
             print('Failed to solve reference model for condition B.')
             return None, None, None, None
         constraints_b[biomass] = (sol_b.fobj * growth_frac_b, None)
-
 
     solver = solver_instance()
 
@@ -73,8 +94,8 @@ def marge(model, rel_expression, transformed=False, constraints_a=None, constrai
         solver.add_constraint(r_id + '_rel', constr, update_problem=False)
 
     for g_id, val in rel_expression.items():
-        u_id_a = 'u_' + g_id[2:] + '_a'
-        u_id_b = 'u_' + g_id[2:] + '_b'
+        u_id_a = 'u_' + g_id[len(gene_prefix):] + '_a'
+        u_id_b = 'u_' + g_id[len(gene_prefix):] + '_b'
         solver.add_constraint(g_id + '_c+', {g_id + '_+': 1, u_id_b: -1, u_id_a: val}, '>', 0, update_problem=False)
         solver.add_constraint(g_id + '_c-', {g_id + '_-': 1, u_id_b: 1, u_id_a: -val}, '>', 0, update_problem=False)
 
