@@ -101,9 +101,9 @@ def clean_bounds(model, threshold=1000):
     """ Remove artificially large bounds (unbounded = no bounds). """
 
     for reaction in model.reactions.values():
-        if reaction.lb <= -threshold:
+        if reaction.lb is not None and reaction.lb <= -threshold:
             reaction.lb = None
-        if reaction.ub >= threshold:
+        if reaction.ub is not None and reaction.ub >= threshold:
             reaction.ub = None
 
 
