@@ -17,7 +17,8 @@ import numpy as np
 
 
 def plot_flux_envelope(model, r_x, r_y, substrate=None, constraints=None, reference=None, alternatives=None,
-                       label_x=None, label_y=None, filename=None, steps=10, plot_kwargs=None, fill_kwargs=None):
+                       label_x=None, label_y=None, filename=None, steps=10, flip_x=False, flip_y=False, plot_kwargs=None, fill_kwargs=None,
+                       ax=None):
     """ Plots the flux envelope for a pair of reactions.
     
     Arguments:
@@ -39,7 +40,8 @@ def plot_flux_envelope(model, r_x, r_y, substrate=None, constraints=None, refere
         matplotlib.Axes: axes object
     """
 
-    _, ax = plt.subplots()
+    if ax is None:
+        _, ax = plt.subplots()
 
     if not plot_kwargs:
         plot_kwargs = {'color': 'b'}
@@ -48,6 +50,16 @@ def plot_flux_envelope(model, r_x, r_y, substrate=None, constraints=None, refere
         fill_kwargs = {'color': 'b', 'alpha': 0.2}
 
     xvals, ymins, ymaxs = flux_envelope(model, r_x, r_y, steps, constraints)
+
+    if flip_x:
+        xvals = [-x for x in xvals]
+        ymins = reversed(ymins)
+        ymaxs = reversed(ymaxs)
+
+    if flip_y:
+        tmp = ymins
+        ymins = [-y for y in ymaxs]
+        ymaxs = [-y for y in tmp]
 
     if substrate:
         sol = FBA(model)
