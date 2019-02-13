@@ -287,7 +287,7 @@ class Community(object):
         community_metabolite_exchange_lookup = {}
 
         for org_id, model in self._organisms.items():
-            self._organisms_reactions[org_id] = set()
+            self._organisms_reactions[org_id] = []
             self._organisms_exchange_reactions[org_id] = {}
             self._organisms_biomass_reactions[org_id] = {}
             exchanged_metabolites = {m_id for r_id in model.get_exchange_reactions()
@@ -409,7 +409,7 @@ class Community(object):
                         new_rxn.stoichiometry[m_id] = 1
                         organisms_biomass_metabolites[org_id] = m_id
 
-                    self._organisms_reactions[org_id].add(new_rxn.id)
+                    self._organisms_reactions[org_id].append(new_rxn.id)
                     merged_model.add_reaction(new_rxn)
 
                 else:
@@ -420,7 +420,7 @@ class Community(object):
                             extracellular_metabolite=list(rxn.stoichiometry.keys())[0],
                             original_metabolite=list(rxn.stoichiometry.keys())[0],
                             organism_metabolite=None)
-                        self._organisms_reactions[org_id].add(rxn.id)
+                        self._organisms_reactions[org_id].append(rxn.id)
 
                     if r_id in merged_model.reactions:
                         continue
