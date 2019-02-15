@@ -55,6 +55,9 @@ class CplexSolver(Solver):
         self.set_logging()
         self.set_parameters(default_parameters)
 
+#        self.problem.parameters.randomseed.set(0)
+#        self.problem.parameters.mip.strategy.search.set(1)
+
         self._cached_lin_obj = {}
         self._cached_sense = None
         self._cached_lower_bounds = {}
