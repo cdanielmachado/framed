@@ -56,8 +56,6 @@ def minimal_medium(model, exchange_reactions=None, direction=-1, min_mass_weight
     else:
         persistent = False
 
-    solver.set_lower_bounds({model.biomass_reaction: min_growth})
-
     if not milp and max_compounds is not None:
             raise RuntimeError("max_compounds can only be used with MILP formulation")
 
@@ -174,6 +172,8 @@ def minimal_medium(model, exchange_reactions=None, direction=-1, min_mass_weight
     else:
         constraints = {r_id: (model.reactions[r_id].lb, max_uptake if r_id in valid_reactions else 0)
                        for r_id in exchange_reactions}
+
+    constraints[model.biomass_reaction] = (min_growth, None)
 
     if n_solutions == 1:
 

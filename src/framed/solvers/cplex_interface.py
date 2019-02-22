@@ -304,6 +304,9 @@ class CplexSolver(Solver):
 
         self.set_objective(linear, quadratic, minimize)
 
+#        from datetime import datetime
+#        self.write_to_file(f"{datetime.now()}.lp")
+
         #run the optimization
 
         if pool_size == 0:

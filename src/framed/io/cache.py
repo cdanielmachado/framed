@@ -23,6 +23,8 @@ class ModelCache:
 
         model = load_cbmodel(self.paths[model_id], **self.load_args)
 
+        self.cache[model_id] = model
+
         if self.post_processing is not None:
             self.post_processing(model)
 
