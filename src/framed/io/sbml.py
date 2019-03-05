@@ -609,17 +609,20 @@ def _save_metabolites(model, sbml_model, flavor):
         species.setConstant(metabolite.constant)
         species.setHasOnlySubstanceUnits(True)
 
-        # if flavor in {Flavor.BIGG, Flavor.FBC2}:
-        #     fbc_species = species.getPlugin('fbc')
-        #
-        #     if 'FORMULA' in metabolite.metadata:
-        #         fbc_species.setChemicalFormula(metabolite.metadata['FORMULA'])
-        #     if 'CHARGE' in metabolite.metadata:
-        #         try:
-        #             charge = int(metabolite.metadata['CHARGE'])
-        #             fbc_species.setCharge(charge)
-        #         except ValueError:
-        #             pass
+        if flavor in {Flavor.BIGG, Flavor.FBC2}:
+            fbc_species = species.getPlugin('fbc')
+
+            if 'FORMULA' in metabolite.metadata:
+                try:
+                    fbc_species.setChemicalFormula(metabolite.metadata['FORMULA'])
+                except:
+                    pass
+            if 'CHARGE' in metabolite.metadata:
+                try:
+                    charge = int(metabolite.metadata['CHARGE'])
+                    fbc_species.setCharge(charge)
+                except:
+                    pass
 
         _save_metadata(metabolite, species)
 

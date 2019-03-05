@@ -138,3 +138,14 @@ def clean_bigg_ids(model):
 
         for m_id in reaction.stoichiometry.copy().keys():
             key_replace(reaction.stoichiometry, m_id, clean(m_id))
+
+
+def clean_formulas_and_charges(model):
+    for met in model.metabolites.values():
+        if 'FORMULA' in met.metadata:
+            met.metadata['FORMULA'] = sorted(met.metadata['FORMULA'].split(";"))[0]
+
+        if 'CHARGE' in met.metadata:
+            met.metadata['CHARGE'] = sorted(met.metadata['CHARGE'].split(";"))[0]
+        else:
+            met.metadata['CHARGE'] = '0'
