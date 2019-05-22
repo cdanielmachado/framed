@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name = 'framed',
-    version = '0.5.1',
+    version = '0.5.2',
     package_dir = {'':'src'},
     packages = find_packages('src'),
     install_requires = ["numpy",
