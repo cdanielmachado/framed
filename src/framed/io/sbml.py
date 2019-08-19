@@ -5,21 +5,21 @@ Author: Daniel Machado
 """
 
 from builtins import map
-#from builtins import str
 from builtins import range
 from builtins import object
-from ..model.model import Model, Metabolite, Reaction, Compartment
+
+from ..model.model import Model, Metabolite, Reaction, Compartment, ReactionType
 from ..model.odemodel import ODEModel
 from ..model.cbmodel import CBModel, Gene, Protein, GPRAssociation
 from ..model.fixes import fix_cb_model
 
-import os
 from collections import OrderedDict
 from sympy.parsing.sympy_parser import parse_expr
 from sympy import to_dnf, Or, And
 from sympy.logic.boolalg import is_dnf
 from libsbml import SBMLReader, SBMLWriter, SBMLDocument, XMLNode, AssignmentRule, parseL3FormulaWithModel, FbcExtension
 
+import os
 import cgi
 import warnings
 import re
@@ -168,7 +168,7 @@ def _load_compartments(sbml_model, model, load_metadata=True):
 
 
 def _load_compartment(compartment, load_metadata=True):
-    comp = Compartment(compartment.getId(), compartment.getName(), compartment.getSize())
+    comp = Compartment(compartment.getId(), compartment.getName(), False, compartment.getSize())
 
     if load_metadata:
         _load_metadata(compartment, comp)
@@ -275,8 +275,10 @@ def _load_reaction(reaction, sbml_model, exchange_detection_mode=None, load_meta
     else:
         is_exchange = exchange_detection_mode.match(reaction.getId()) is not None
 
+    reaction_type = ReactionType.EXCHANGE if is_exchange else None
+
     rxn = Reaction(reaction.getId(), name=reaction.getName(), reversible=reaction.getReversible(),
-                   stoichiometry=stoichiometry, regulators=modifiers, is_exchange=is_exchange)
+                   stoichiometry=stoichiometry, regulators=modifiers, reaction_type=reaction_type)
 
     if load_metadata:
         _load_metadata(reaction, rxn)
@@ -321,6 +323,20 @@ def _load_cbmodel(sbml_model, flavor, exchange_detection_mode=None, load_gprs=Tr
 
     if exchange_detection_mode and len(model.get_exchange_reactions()) == 0:
         warnings.warn("Exchange reactions were not detected")
+
+    external_comp = {
+        model.metabolites[m_id].compartment
+        for r_id in model.get_exchange_reactions()
+        for m_id in model.reactions[r_id].stoichiometry
+    }
+
+    for c_id in external_comp:
+        model.compartments[c_id].external = True
+
+    if len(external_comp) > 1:
+        warnings.warn("Multiple external compartments detected.")
+    elif len(external_comp) == 0:
+        warnings.warn("No external compartments detected.")
 
     return model
 

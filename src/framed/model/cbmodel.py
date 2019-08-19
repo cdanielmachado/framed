@@ -24,14 +24,6 @@ class Gene(object):
     def __str__(self):
         return self.name
 
-    # TODO: 5_program_deepcopy.prof
-    def copy(self):
-        g = Gene(elem_id=self.id, name=self.name)
-        if len(self.metadata):
-            g.metadata.update(self.metadata)
-
-        return g
-
 
 class Protein(object):
     """ Base class for modeling proteins. 
@@ -55,15 +47,6 @@ class Protein(object):
                 return '(' + ' and '.join(self.genes) + ')'
         else:
             return str(self.genes[0])
-
-    # TODO: 5_program_deepcopy.prof
-    def copy(self):
-        p = Protein()
-        p.genes = self.genes
-        if len(self.metadata):
-            p.metadata.update(self.metadata)
-
-        return p
 
 
 class GPRAssociation(object):
@@ -101,22 +84,13 @@ class GPRAssociation(object):
             genes |= set(protein.genes)
         return genes
 
-    # TODO: 5_program_deepcopy.prof
-    def copy(self):
-        gpr = GPRAssociation()
-        gpr.proteins = [p.copy() for p in self.proteins]
-        if len(self.metadata):
-            gpr.metadata.update(self.metadata)
-
-        return gpr
-
 
 class CBReaction(Reaction):
 
     def __init__(self, elem_id, name=None, reversible=True, stoichiometry=None, regulators=None,
-                 lb=None, ub=None, objective=0, gpr_association=None, is_exchange=None, is_sink=None):
+                 lb=None, ub=None, objective=0, gpr_association=None, reaction_type=None):
         Reaction.__init__(self, elem_id, name=name, reversible=reversible, stoichiometry=stoichiometry,
-                          regulators=regulators, is_exchange=is_exchange, is_sink=is_sink)
+                          regulators=regulators, reaction_type=reaction_type)
 
         if lb is None and not reversible:
             lb = 0
@@ -204,18 +178,6 @@ class CBReaction(Reaction):
 
         return res
 
-    # TODO: 5_program_deepcopy.prof
-    def copy(self):
-        r = CBReaction(elem_id=self.id, name=self.name, reversible=self.reversible,
-                        stoichiometry=self.stoichiometry, regulators=self.regulators,
-                        is_exchange=self.is_exchange, is_sink=self.is_sink, lb=self.lb, ub=self.ub,
-                        objective=self.objective, gpr_association=self.gpr.copy() if self.gpr else self.gpr)
-        r._bool_function = self._bool_function
-        if len(self.metadata):
-            r.metadata.update(self.metadata)
-
-        return r
-
 
 class CBModel(Model):
 
@@ -226,27 +188,25 @@ class CBModel(Model):
         """
         Model.__init__(self, model_id)
         self.genes = AttrOrderedDict()
+        self._g_r_lookup = None
         self._biomass_reaction = None
-        self._biomass_reaction_set = False
 
     def _clear_temp(self):
         Model._clear_temp(self)
         self._g_r_lookup = None
+        self._biomass_reaction = None
 
     @property
     def biomass_reaction(self):
-        if not self._biomass_reaction_set:
+        if self._biomass_reaction is None:
             self.detect_biomass_reaction()
 
         return self._biomass_reaction
 
     @biomass_reaction.setter
     def biomass_reaction(self, r_id):
-        if r_id:
-            assert r_id in self.reactions, "{} is not a valid reaction id in this model".format(r_id)
-
+        assert r_id in self.reactions, "{} is not a valid reaction id in this model".format(r_id)
         self._biomass_reaction = r_id
-        self._biomass_reaction_set = True
 
     def get_flux_bounds(self, r_id):
         """ Get flux bounds for reaction
@@ -336,7 +296,7 @@ class CBModel(Model):
                 reversible=reaction.reversible,
                 stoichiometry=reaction.stoichiometry,
                 regulators=reaction.regulators,
-                is_exchange=reaction.is_exchange
+                reaction_type=reaction.reaction_type
             )
 
             cbreaction.metadata = reaction.metadata

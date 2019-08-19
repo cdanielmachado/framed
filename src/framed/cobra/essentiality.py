@@ -7,7 +7,7 @@ This module implements methods to compute gene and reaction essentiality.
 from __future__ import absolute_import
 
 from ..solvers import solver_instance
-from ..solvers.solver import Status
+from framed.solvers.solution import Status
 from .simulation import FBA
 from .deletion import gene_deletion, reaction_deletion
 

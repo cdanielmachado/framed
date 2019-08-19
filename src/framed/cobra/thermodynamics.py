@@ -9,7 +9,8 @@ from builtins import zip
 
 from framed.solvers.solver import OptimizationWarning
 from ..solvers import solver_instance
-from ..solvers.solver import Status, VarType
+from ..solvers.solver import VarType
+from framed.solvers.solution import Status
 import numpy as np
 import scipy as sp
 from collections import OrderedDict

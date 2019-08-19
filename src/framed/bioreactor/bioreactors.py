@@ -9,7 +9,7 @@ from __future__ import absolute_import
 __author__ = 'kaizhuang'
 
 from .base import Bioreactor
-from ..solvers.solver import Status
+from framed.solvers.solution import Status
 
 # value definition for oxygen_availability flag
 ANAEROBIC = 0

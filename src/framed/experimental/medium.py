@@ -1,7 +1,8 @@
 from builtins import range
 from framed import FBA
 from framed.solvers import solver_instance
-from framed.solvers.solver import VarType, Status
+from framed.solvers.solver import VarType
+from framed.solvers.solution import Status
 from warnings import warn
 from framed.experimental.elements import molecular_weight
 import pandas as pd

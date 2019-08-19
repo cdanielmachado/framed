@@ -8,7 +8,7 @@ from framed.cobra.deletion import deletion, deleted_genes_to_reactions
 from framed.io.sbml import load_cbmodel as sbml_read
 from framed import FBA, pFBA, MOMA, lMOMA, ROOM
 from itertools import chain
-from framed.solvers.solver import Status
+from framed.solvers.solution import Status
 import warnings
 import argparse
 import re

@@ -8,7 +8,8 @@ Author: Daniel Machado
 from builtins import str
 from builtins import range
 from collections import OrderedDict, Iterable
-from .solver import Solver, Solution, Status, VarType, Parameter, default_parameters
+from .solver import Solver, VarType, Parameter, default_parameters
+from framed.solvers.solution import Solution, Status
 from gurobipy import Model as GurobiModel, GRB, quicksum
 
 import warnings

@@ -8,7 +8,8 @@ from builtins import range
 from framed.io.sbml import _load_compartments, _load_metabolites, _load_reactions, _load_cobra_bounds, _load_cobra_objective
 from libsbml import SBMLReader, SBMLDocument, XMLNode
 from re import match
-from framed.solvers.solver import VarType, Status
+from framed.solvers.solver import VarType
+from framed.solvers.solution import Status
 from numpy import where, array
 
 

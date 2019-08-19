@@ -8,7 +8,6 @@ from builtins import str
 from builtins import object
 from collections import OrderedDict
 from copy import copy, deepcopy
-import itertools
 
 from .parser import ReactionParser
 import warnings
@@ -42,20 +41,20 @@ class Metabolite(object):
     def __setstate__(self, state):
         self.__dict__.update(state)
 
-    # TODO: 5_program_deepcopy.prof
-    def copy(self):
-        met = Metabolite(elem_id=self.id, name=self.name, compartment=self.compartment, boundary=self.boundary, constant=self.constant)
-        if len(self.metadata):
-            met.metadata = OrderedDict(self.metadata)
 
-        return met
+class ReactionType(object):
+    """ Enumeration of possible reaction types. """
+    ENZYMATIC = 0
+    TRANSPORT = 1
+    EXCHANGE = 2
+    SINK = 3
+    OTHER = 4
 
 
 class Reaction(object):
     """ Base class for modeling reactions. """
 
-    def __init__(self, elem_id, name=None, reversible=True, stoichiometry=None, regulators=None, is_exchange=None,
-                 is_sink=None):
+    def __init__(self, elem_id, name=None, reversible=True, stoichiometry=None, regulators=None, reaction_type=None):
         """
         Arguments:
             elem_id (str): a valid unique identifier
@@ -67,8 +66,7 @@ class Reaction(object):
         self.id = elem_id
         self.name = name if name is not None else elem_id
         self.reversible = reversible
-        self.is_exchange = is_exchange
-        self.is_sink = is_sink
+        self.reaction_type = reaction_type if reaction_type is not None else ReactionType.OTHER
         self.stoichiometry = OrderedDict()
         self.regulators = OrderedDict()
         self.metadata = OrderedDict()
@@ -158,24 +156,13 @@ class Reaction(object):
         Returns:
             str: reaction string
         """
-        res = self.id + ': ' + self.to_equation_string(metabolite_names=metabolite_names)
-        return res
-
-    # TODO: 5_program_deepcopy.prof
-    def copy(self):
-        r = Reaction(elem_id=self.id, name=self.name, reversible=self.reversible, is_exchange=self.is_exchange,
-                     is_sink=self.is_sink, stoichiometry=self.stoichiometry,
-                     regulators=self.regulators)
-        if len(self.metadata):
-            r.metadata = OrderedDict(self.metadata)
-
-        return r
+        return self.id + ': ' + self.to_equation_string(metabolite_names=metabolite_names)
 
 
 class Compartment(object):
     """ Base class for modeling compartments. """
 
-    def __init__(self, elem_id, name=None, size=1.0):
+    def __init__(self, elem_id, name=None, external=False, size=1.0):
         """
         Arguments:
             elem_id (str): a valid unique identifier
@@ -185,6 +172,7 @@ class Compartment(object):
         self.id = elem_id
         self.name = name if name is not None else elem_id
         self.size = size
+        self.external = external
         self.metadata = OrderedDict()
 
     def __str__(self):
@@ -197,13 +185,6 @@ class Compartment(object):
     def __setstate__(self, state):
         self.__dict__.update(state)
 
-    # TODO: 5_program_deepcopy.prof
-    def copy(self):
-        cp = Compartment(elem_id=self.id, name=self.name, size=self.size)
-        if len(self.metadata):
-            cp.metadata = OrderedDict(self.metadata)
-
-        return cp
 
 class AttrOrderedDict(OrderedDict):
 
@@ -268,10 +249,11 @@ class Model(object):
         self._m_r_lookup = None
         self._reg_lookup = None
         self._s_matrix = None
+        self._parser = None
 
     def __getstate__(self):
+        self._clear_temp()
         state = self.__dict__.copy()
-        state['_parser'] = None
         return state
 
     def __setstate__(self, state):
@@ -284,8 +266,11 @@ class Model(object):
             Model: model copy
 
         """
-        self._updated = False
+        self._clear_temp()
         return deepcopy(self)
+
+    def get_reactions_by_type(self, reaction_type):
+        return [rxn.id for rxn in self.reactions.values() if rxn.reaction_type == reaction_type]
 
     def get_exchange_reactions(self, include_sink=False):
         """
@@ -297,15 +282,24 @@ class Model(object):
         Returns: list
         """
 
-        return [rxn.id for rxn in self.reactions.values() if rxn.is_exchange or include_sink and rxn.is_sink]
+        exchange = self.get_reactions_by_type(ReactionType.EXCHANGE)
 
-    def get_sink_reactions(self):
-        """
-        Get list of sink reactions
+        if include_sink:
+            exchange += self.get_reactions_by_type(ReactionType.SINK)
 
-        Returns: list
-        """
-        return [rxn.id for rxn in self.reactions.values() if rxn.is_sink]
+        return exchange
+
+    def get_external_metabolites(self, validate=False):
+        mets = [m_id for r_id in self.get_exchange_reactions()
+                for m_id in self.reactions[r_id].stoichiometry.keys()]
+
+        if validate:
+            invalid = [m_id for m_id in mets
+                       if not self.compartments[self.metabolites[m_id].compartment].external]
+            if invalid:
+                print("The following metabolites are not in an external compartment:", invalid)
+
+        return mets
 
     def add_metabolite(self, metabolite, clear_tmp=True):
         """ Add a single metabolite to the model.

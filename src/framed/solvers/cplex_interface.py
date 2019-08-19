@@ -8,7 +8,8 @@ from builtins import str
 from builtins import zip
 from builtins import range
 from collections import OrderedDict, Iterable
-from .solver import Solver, Solution, Status, VarType, Parameter, default_parameters
+from .solver import Solver, VarType, Parameter, default_parameters
+from framed.solvers.solution import Solution, Status
 from cplex import Cplex, infinity, SparsePair
 import sys
 
@@ -458,6 +459,12 @@ class CplexSolver(Solver):
         self.problem.variables.set_upper_bounds([(var_id, bounds[1] if bounds[1] is not None else infinity)
                                                  for var_id, bounds in bounds_dict.items()])
 
+    def update_coefficient(self, coeff, var_id, value):
+        self.problem.linear_constraints.set_coefficients([(coeff, var_id, value)])
+
+    def update_coefficients(self, coefficients):
+        self.problem.linear_constraints.set_coefficients(coefficients)
+
     def set_parameter(self, parameter, value):
         """ Set a parameter value for this optimization problem
 
@@ -497,3 +504,4 @@ class CplexSolver(Solver):
         """
 
         self.problem.write(filename)
+
