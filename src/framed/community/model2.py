@@ -77,11 +77,13 @@ class Community(object):
                 if met.compartment not in old_ext_comps: # if is internal
                     new_id = rename(m_id)
                     new_met = Metabolite(new_id, met.name, rename(met.compartment))
+                    new_met.metadata = met.metadata.copy()
                     comm_model.add_metabolite(new_met)
                     self.metabolite_map[(org_id, m_id)] = new_id
 
                 elif m_id not in comm_model.metabolites: # if is external but was not added yet
                     new_met = Metabolite(m_id, met.name, ext_comp_id)
+                    new_met.metadata = met.metadata.copy()
                     comm_model.add_metabolite(new_met, clear_tmp=False)
                     ext_mets.append(new_met.id)
 
@@ -112,6 +114,7 @@ class Community(object):
                 )
 
                 comm_model.add_reaction(new_rxn, clear_tmp=False)
+                new_rxn.metadata = rxn.metadata.copy()
                 self.reaction_map[(org_id, r_id)] = new_id
 
         # Add exchange reactions
