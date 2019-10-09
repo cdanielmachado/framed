@@ -8,7 +8,7 @@ from random import gauss, random
 from framed.cobra.simulation import pFBA
 from framed.cobra.variability import FVA
 from framed.solvers import solver_instance
-from framed.solvers.solver import Status
+from framed.solvers.solution import Status
 
 
 def lp_sampler(model, n_samples=1000, weights=None, constraints=None, select_probability=0.01,

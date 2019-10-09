@@ -5,7 +5,8 @@ Author: Daniel Machado
 """
 
 from ..solvers import solver_instance
-from ..solvers.solver import Status, VarType
+from ..solvers.solver import VarType
+from framed.solvers.solution import Status
 from warnings import warn
 from collections import Iterable
 
@@ -42,7 +43,8 @@ def FBA(model, objective=None, minimize=False, constraints=None, solver=None, ge
     return solution
 
 
-def pFBA(model, objective=None, obj_frac=None, minimize=False, constraints=None, reactions=None, solver=None):
+def pFBA(model, objective=None, obj_frac=None, minimize=False, constraints=None, reactions=None, solver=None,
+         cleanup=True):
     """ Run a parsimonious Flux Balance Analysis (pFBA) simulation:
     
     Arguments:
@@ -102,13 +104,10 @@ def pFBA(model, objective=None, obj_frac=None, minimize=False, constraints=None,
             objective[r_id] = 1
 
     solution = solver.solve(objective, minimize=True, constraints=constraints)
-
-    #post process
-    
     solver.remove_constraint('obj')
     solution.pre_solution = pre_solution
 
-    if solution.status == Status.OPTIMAL:
+    if cleanup:
         for r_id in reactions:
             if model.reactions[r_id].reversible:
                 pos, neg = r_id + '+', r_id + '-'

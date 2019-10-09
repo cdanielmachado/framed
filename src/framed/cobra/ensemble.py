@@ -6,7 +6,7 @@ from collections import OrderedDict
 
 from framed import solver_instance
 from framed.model.transformation import disconnected_metabolites
-from framed.solvers.solver import Status
+from framed.solvers.solution import Status
 from framed import load_cbmodel, save_cbmodel
 from framed import FBA, pFBA
 

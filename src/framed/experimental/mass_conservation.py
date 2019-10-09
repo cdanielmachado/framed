@@ -1,5 +1,6 @@
 from framed import solver_instance
-from framed.solvers.solver import Status, VarType
+from framed.solvers.solver import VarType
+from framed.solvers.solution import Status
 
 
 def check_mass_conservation(model, unbalanced_reactions=None):

@@ -2,7 +2,7 @@ from builtins import object
 from collections import OrderedDict
 
 from framed.model.cbmodel import CBModel, CBReaction
-from framed.model.model import Compartment, Metabolite
+from framed.model.model import Compartment, Metabolite, ReactionType
 from ..model.model import AttrOrderedDict
 from warnings import warn
 from copy import deepcopy
@@ -262,7 +262,7 @@ class Community(object):
             return "{} ({})".format(object_name, organism_name)
 
         def _copy_object(obj, org_id, compartment=None):
-            new_obj = obj.copy()
+            new_obj = deepcopy(obj)
             new_obj.id = _id_pattern(obj.id, org_id)
             new_obj.name = _name_pattern(obj.name, org_id)
             if compartment:
@@ -281,7 +281,6 @@ class Community(object):
             raise RuntimeError("Biomass reaction not found in models: {}".format("', '".join(models_missing_biomass)))
 
         merged_model = CBModel(self.id)
-        merged_model.biomass_reaction = None
 
         organisms_biomass_metabolites = {}
         community_metabolite_exchange_lookup = {}
@@ -329,7 +328,7 @@ class Community(object):
 
                             exch_id = _id_pattern("R_EX_" + m_id, "pool_blacklist")
                             exch_name = _name_pattern(met.name, "pool (blacklist) exchange")
-                            blk_rxn = CBReaction(exch_id, name=exch_name, reversible=False, is_exchange=False, is_sink=True)
+                            blk_rxn = CBReaction(exch_id, name=exch_name, reversible=False, reaction_type=ReactionType.SINK)
                             blk_rxn.stoichiometry[pool_id] = -1.0
                             community_metabolite_exchange_lookup[new_met.id] = exch_id
                             merged_model.add_reaction(blk_rxn)
@@ -341,18 +340,17 @@ class Community(object):
 
                         exch_id = _id_pattern("R_EX_" + m_id, "pool")
                         exch_name = _name_pattern(met.name, "pool exchange")
-                        new_rxn = CBReaction(exch_id, name=exch_name, reversible=True, is_exchange=True)
+                        new_rxn = CBReaction(exch_id, name=exch_name, reversible=True, reaction_type=ReactionType.EXCHANGE)
                         new_rxn.stoichiometry[pool_id] = -1.0
                         community_metabolite_exchange_lookup[new_met.id] = exch_id
                         merged_model.add_reaction(new_rxn)
 
             for r_id, rxn in model.reactions.items():
 
-                is_exchange = rxn.is_exchange
+                is_exchange = rxn.reaction_type == ReactionType.EXCHANGE
 
                 if not is_exchange or not self._merge_extracellular_compartments:
                     new_rxn = _copy_object(rxn, org_id)
-                    new_rxn.is_exchange = False
 
                     for m_id, coeff in rxn.stoichiometry.items():
                         m_blacklisted = m_id in self._exchanged_metabolites_blacklist
@@ -376,14 +374,14 @@ class Community(object):
                                 self._organisms_exchange_reactions[org_id][new_rxn.id] = cnm
 
                                 if not self.interacting:
-                                    sink_rxn = CBReaction('Sink_{}'.format(new_id), is_exchange=False, is_sink=True, reversible=False)
+                                    sink_rxn = CBReaction('Sink_{}'.format(new_id), reaction_type=ReactionType.SINK, reversible=False)
                                     sink_rxn.stoichiometry = {new_id: -1}
                                     sink_rxn.lb = 0.0
                                     merged_model.add_reaction(sink_rxn)
                                 elif m_blacklisted:
                                     pool_blacklist_id = _id_pattern(m_id, "pool_blacklist")
                                     blacklist_export_rxn = CBReaction('R_EX_BLACKLIST_{}'.format(new_id),
-                                                                      is_exchange=False, is_sink=False,
+                                                                      reaction_type=ReactionType.OTHER,
                                                                       reversible=False)
                                     blacklist_export_rxn.stoichiometry = {new_id: -1, pool_blacklist_id: 1}
                                     blacklist_export_rxn.lb = 0.0
@@ -426,7 +424,7 @@ class Community(object):
                         continue
 
                     new_rxn = deepcopy(rxn)
-                    new_rxn.is_exchange = True
+                    new_rxn.reaction_type = ReactionType.EXCHANGE
                     if rxn.id == model.biomass_reaction and self._create_biomass:
                         new_rxn.reversible = False
                         new_rxn.objective = False
@@ -446,7 +444,7 @@ class Community(object):
 
         if self._create_biomass:
             biomass_rxn = CBReaction('R_Community_Growth', name="Community Growth",
-                                     reversible=False, is_exchange=False, is_sink=True, objective=1.0)
+                                     reversible=False, reaction_type=ReactionType.SINK, objective=1.0)
             for org_biomass in organisms_biomass_metabolites.values():
                 biomass_rxn.stoichiometry[org_biomass] = -1
 

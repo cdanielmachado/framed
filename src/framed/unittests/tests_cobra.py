@@ -16,7 +16,7 @@ from framed.cobra.variability import FVA
 from framed.io.plaintext import read_model_from_file, write_model_to_file
 from framed.cobra.deletion import gene_deletion
 from framed.cobra.essentiality import essential_genes
-from framed.solvers.solver import Status
+from framed.solvers.solution import Status
 from framed.model.transformation import make_irreversible, simplify
 from framed.solvers import set_default_solver
 

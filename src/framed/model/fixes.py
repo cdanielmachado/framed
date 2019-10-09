@@ -37,7 +37,7 @@ def default_fixes(model):
 #    fix_sink_reactions(model)
 
 
-def fix_cobra_model(model, remove_boundary=True, set_reversibilty=True, use_infinity=True, clean_ids=True, fix_sinks=False):
+def fix_cobra_model(model, remove_boundary=True, set_reversibilty=True, use_infinity=True, clean_ids=True):#, fix_sinks=False):
 
     if remove_boundary:
         remove_boundary_metabolites(model, tag='_b')
@@ -47,35 +47,36 @@ def fix_cobra_model(model, remove_boundary=True, set_reversibilty=True, use_infi
         clean_bounds(model)
     if clean_ids:
         clean_bigg_ids(model)
-    if fix_sinks:
-        fix_sink_reactions(model)
+#    if fix_sinks:
+#        fix_sink_reactions(model)
 
 
 # TODO: this approach doesn't work when a model has multiple external compartments
-def fix_sink_reactions(model):
-    exchange_compartments = {}
-
-    for r in model.reactions.values():
-
-        if not r.is_exchange: continue
-
-        for m_id in r.stoichiometry:
-            met = model.metabolites[m_id]
-            if met.boundary: continue
-            if met.compartment not in exchange_compartments:
-                exchange_compartments[met.compartment] = []
-            exchange_compartments[met.compartment].append(r.id)
-
-    if exchange_compartments:
-        extracellular = max(iter(exchange_compartments.items()), key=lambda x: len(x[1]))[0]
-        for compartment, reactions in exchange_compartments.items():
-            if compartment == extracellular:
-                continue
-
-            for r_id in reactions:
-                reaction = model.reactions[r_id]
-                reaction.is_sink = True
-                reaction.is_exchange = False
+# def fix_sink_reactions(model):
+#     exchange_compartments = {}
+#
+#     for r in model.reactions.values():
+#
+#         if not r.is_exchange:
+#             continue
+#
+#         for m_id in r.stoichiometry:
+#             met = model.metabolites[m_id]
+#             if met.boundary: continue
+#             if met.compartment not in exchange_compartments:
+#                 exchange_compartments[met.compartment] = []
+#             exchange_compartments[met.compartment].append(r.id)
+#
+#     if exchange_compartments:
+#         extracellular = max(iter(exchange_compartments.items()), key=lambda x: len(x[1]))[0]
+#         for compartment, reactions in exchange_compartments.items():
+#             if compartment == extracellular:
+#                 continue
+#
+#             for r_id in reactions:
+#                 reaction = model.reactions[r_id]
+#                 reaction.is_sink = True
+#                 reaction.is_exchange = False
 
 
 def remove_boundary_metabolites(model, tag=None):

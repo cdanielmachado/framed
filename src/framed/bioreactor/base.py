@@ -9,7 +9,7 @@ __author__ = 'kaizhuang'
 
 from copy import deepcopy
 from ..solvers import solver_instance
-from ..solvers.solver import Status
+from framed.solvers.solution import Status
 from scipy.integrate import ode
 import numpy
 import collections

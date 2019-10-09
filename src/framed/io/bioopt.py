@@ -1,7 +1,7 @@
 from builtins import object
 import re
 from framed.model.cbmodel import CBModel, CBReaction, Gene
-from framed.model.model import Metabolite
+from framed.model.model import Metabolite, ReactionType
 from os.path import basename
 from itertools import chain
 from collections import OrderedDict
@@ -333,7 +333,7 @@ class BiooptParser(object):
                 if m_external.id in model.metabolites:
                     model.metabolites[m_external.id].boundary = True
                     for external_r_id, coef in met2rxn[m_external.id].items():
-                        model.reactions[external_r_id].is_exchange = True
+                        model.reactions[external_r_id].reaction_type = ReactionType.EXCHANGE
                         del model.reactions[external_r_id].stoichiometry[m_external.id]
                 elif react_text:
                     warnings.warn_explicit(

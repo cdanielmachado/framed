@@ -10,7 +10,7 @@ from collections import OrderedDict
 from .deletion import deletion
 from .simulation import pFBA
 from .essentiality import essentiality
-from ..solvers.solver import Status
+from framed.solvers.solution import Status
 from ..solvers import solver_instance
 
 

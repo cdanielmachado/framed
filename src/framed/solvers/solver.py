@@ -10,14 +10,6 @@ from __future__ import division
 #CONSTANTS
 
 from builtins import object
-class Status(object):
-    """ Enumeration of possible solution status. """
-    OPTIMAL = 1
-    UNKNOWN = 0
-    SUBOPTIMAL = -1
-    UNBOUNDED = -2
-    INFEASIBLE = -3
-    INF_OR_UNB = -4
 
 
 class VarType(object):
@@ -55,218 +47,6 @@ def set_default_parameter(parameter, value):
 
     global default_parameters
     default_parameters[parameter] = value
-
-
-class Solution(object):
-    """ Stores the results of an optimization.
-
-    Instantiate without arguments to create an empty Solution representing a failed optimization.
-    """
-
-    def __init__(self, status=Status.UNKNOWN, message=None, fobj=None, values=None, shadow_prices=None, reduced_costs=None):
-        self.status = status
-        self.message = message
-        self.fobj = fobj
-        self.values = values
-        self.shadow_prices = shadow_prices
-        self.reduced_costs = reduced_costs
-
-    def __str__(self):
-        status_codes = {Status.OPTIMAL: 'Optimal',
-                        Status.UNKNOWN: 'Unknown',
-                        Status.SUBOPTIMAL: 'Suboptimal',
-                        Status.UNBOUNDED: 'Unbounded',
-                        Status.INFEASIBLE: 'Infeasible',
-                        Status.INF_OR_UNB: 'Infeasible or Unbounded'}
-
-        return 'Objective: {}\nStatus: {}\n'.format(self.fobj, status_codes[self.status])
-
-    def show_values(self, zeros=False, pattern=None, sort=False, abstol=1e-9):
-        """ Show solution results.
-
-        Arguments:
-            zeros (bool): show zero values (default: False)
-            pattern (str): show only reactions that contain pattern (optional)
-            sort (bool): sort values by magnitude (default: False)
-            
-        Returns:
-            str: printed table with variable values
-        """
-
-        if not self.values:
-            return None
-
-        values = list(self.values.items())
-
-        if sort:
-            values.sort(key= lambda x: abs(x[1]), reverse=True)
-
-        if not zeros:
-            values = [x for x in values if abs(x[1]) > abstol]
-
-        if pattern:
-            values = [x for x in values if pattern in x[0]]
-
-        entries = ['{:<12} {: .6g}'.format(r_id, val) for (r_id, val) in values]
-
-        return '\n'.join(entries)
-
-    def show_shadow_prices(self, zeros=False, pattern=None, abstol=1e-9):
-        """ Show shadow prices.
-
-        Arguments:
-            zeros (bool): show zero values (default: False)
-            pattern (str): show only metabolites that contain pattern (optional)
-        
-        Returns:
-            str: printed table with shadow prices 
-        """
-
-        if not self.shadow_prices:
-            return None
-
-        values = list(self.shadow_prices.items())
-
-        if not zeros:
-            values = [x for x in values if abs(x[1]) > abstol]
-
-        if pattern:
-            values = [x for x in values if pattern in x[0]]
-
-        entries = ['{:<12} {: .6g}'.format(m_id, val) for (m_id, val) in values]
-
-        return '\n'.join(entries)
-
-    def show_reduced_costs(self, zeros=False, pattern=None, abstol=1e-9):
-        """ Show reduced costs.
-
-        Arguments:
-            zeros (bool): show zero values (default: False)
-            pattern (str): show only reactions that contain pattern (optional)
-            abstol (float): abstolute tolerance to hide null values (default: 1e-9)
-
-        Returns:
-            str: printed table with shadow prices
-        """
-
-        if not self.reduced_costs:
-            return None
-
-        values = list(self.reduced_costs.items())
-
-        if not zeros:
-            values = [x for x in values if abs(x[1]) > abstol]
-
-        if pattern:
-            values = [x for x in values if pattern in x[0]]
-
-        entries = ['{:<12} {: .6g}'.format(r_id, val) for (r_id, val) in values]
-
-        return '\n'.join(entries)
-
-    def show_metabolite_balance(self, m_id, model, sort=False, percentage=False, equations=False, abstol=1e-9):
-        """ Show metabolite balance details.
-
-        Arguments:
-            m_id (str): metabolite id
-            model (CBModel): model that generated the solution
-            zeros (bool): show zero entries (default: False)
-            percentage (bool): show percentage of total turnover instead of flux (default: False)
-            equations (bool): show reaction equations (default: False)
-            abstol (float): abstolute tolerance to hide null values (default: 1e-9)
-
-        Returns:
-            str: formatted output
-        """
-                
-        if not self.values:
-            return None
-        
-        inputs = model.get_metabolite_producers(m_id)
-        outputs = model.get_metabolite_consumers(m_id)
-        
-        fwd_in = [(r_id, model.reactions[r_id].stoichiometry[m_id] * self.values[r_id], '--> o')
-                  for r_id in inputs if self.values[r_id] > 0]
-        rev_in = [(r_id, model.reactions[r_id].stoichiometry[m_id] * self.values[r_id], 'o <--')
-                  for r_id in outputs if self.values[r_id] < 0]
-        fwd_out = [(r_id, model.reactions[r_id].stoichiometry[m_id] * self.values[r_id], 'o -->')
-                   for r_id in outputs if self.values[r_id] > 0]
-        rev_out = [(r_id, model.reactions[r_id].stoichiometry[m_id] * self.values[r_id], '<-- o')
-                    for r_id in inputs if self.values[r_id] < 0]
-        
-        flux_in = [x for x in fwd_in + rev_in if x[1] > abstol]
-        flux_out = [x for x in fwd_out + rev_out if -x[1] > abstol]
-        
-        if sort:
-            flux_in.sort(key=lambda x: x[1], reverse=True)
-            flux_out.sort(key=lambda x: x[1], reverse=False)
-        
-        if percentage:
-            turnover = sum([x[1] for x in flux_in])
-            flux_in = [(x[0], x[1] / turnover, x[2]) for x in flux_in]
-            flux_out = [(x[0], x[1] / turnover, x[2]) for x in flux_out]
-            print_format = '[ {} ] {:<12} {:< 10.2%}'
-        else:
-            print_format = '[ {} ] {:<12} {:< 10.6g}'
-
-        if equations:
-            print_format += '\t{}'
-            lines = [print_format.format(x[2], x[0], x[1], 
-                                         model.print_reaction(x[0], metabolite_names=True)[len(x[0])+1:]) 
-                     for x in flux_in + flux_out]
-        else:
-            lines = [print_format.format(x[2], x[0], x[1]) for x in flux_in + flux_out]           
-        
-        return '\n'.join(lines)
-
-    def get_metabolites_turnover(self, model):
-        """ Calculate metabolite turnover.
-
-        Arguments:
-            model (CBModel): model that generated the solution
-        
-        Returns:
-            dict: metabolite turnover rates
-        """
-
-        if not self.values:
-            return None
-
-        m_r_table = model.metabolite_reaction_lookup()
-        t = {m_id: 0.5*sum([abs(coeff * self.values[r_id]) for r_id, coeff in neighbours.items()])
-             for m_id, neighbours in m_r_table.items()}
-        return t
-
-    def show_metabolite_turnover(self, model, zeros=False, pattern=None, sort=False, abstol=1e-9):
-        """ Show solution results.
-
-        Arguments:
-            model (CBModel): model that generated the solution
-            zeros (bool): show zero values (default: False)
-            pattern (str): show only reactions that contain pattern (optional)
-            sort (bool): sort values by magnitude (default: False)
-
-        Returns:
-            str: printed table
-        """
-
-        if not self.values:
-            return None
-
-        values = list(self.get_metabolites_turnover(model).items())
-
-        if sort:
-            values.sort(key=lambda x: abs(x[1]), reverse=True)
-
-        if not zeros:
-            values = [x for x in values if abs(x[1]) > abstol]
-
-        if pattern:
-            values = [key_val for key_val in values if pattern in key_val[0]]
-
-        entries = ['{:<12} {: .6g}'.format(key, val) for (key, val) in values]
-
-        return '\n'.join(entries)
 
 
 class Solver(object):
@@ -421,7 +201,7 @@ class Solver(object):
             pool_gap (float): maximum relative gap for solutions in pool (optional)
 
         Returns:
-            Solution: solution
+            framed.solvers.solution.Solution: solution
         """
 
         # An exception is raised if the subclass does not implement this method.
@@ -505,6 +285,12 @@ class Solver(object):
             bounds_dict (dict): lower and upper bounds
         """
 
+        raise Exception('Not implemented for this solver.')
+
+    def update_coefficient(self, coeff, var_id, value):
+        raise Exception('Not implemented for this solver.')
+
+    def update_coefficients(self, coefficients):
         raise Exception('Not implemented for this solver.')
 
 

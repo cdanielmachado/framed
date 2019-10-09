@@ -3,7 +3,7 @@ from __future__ import print_function
 
 from collections import OrderedDict
 from framed.cobra.simulation import MOMA, lMOMA
-from framed.solvers.solver import Status
+from framed.solvers.solution import Status
 from numpy import array, sqrt, sum, abs
 
 

@@ -11,7 +11,7 @@ from __future__ import absolute_import
 from builtins import object
 from .simulation import FBA
 from ..solvers import solver_instance
-from ..solvers.solver import Status
+from framed.solvers.solution import Status
 import numpy
 import matplotlib.pyplot as plt
 

@@ -1,6 +1,6 @@
 from framed.solvers import solver_instance
 from framed.model.transformation import gpr_transform
-from framed.solvers.solver import Status
+from framed.solvers.solution import Status
 from framed import FBA
 
 
