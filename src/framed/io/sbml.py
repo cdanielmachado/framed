@@ -438,7 +438,6 @@ def parse_gpr_rule(rule, prefix=None):
         protein.genes = [str(expr)]
         gpr.proteins = [protein]
 
-
     return gpr
 
 
