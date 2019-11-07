@@ -312,7 +312,7 @@ class BiooptParser(object):
 
         if const_text:
             for (r_id, lb, ub), i in self.__parse_constraints_section(const_text, filename=filename, section_start=const_line, strip_comments=False):
-                if r_id in model.reactions and lb < 0 and not model.reactions[r_id].reversible:
+                if r_id in model.reactions and not model.reactions[r_id].reversible and (lb is None or lb < 0):
                     warnings.warn_explicit(
                         "Reaction '{0}' from '{1}' has effective bounds not compatible with reaction direction in '{2}' section ({3} : [{4}, {5}])".format(r_id, const_name, react_name, "<->" if reactions[r_id].reversibl else "->", lb, ub),
                         BiooptParseWarning, filename=filename, lineno=const_line+i+1)
